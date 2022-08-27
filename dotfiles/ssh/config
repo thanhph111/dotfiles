@@ -1,0 +1,19 @@
+#: vim: set nospell:
+
+#: Source a `local` config file at the same place of this file if it exists
+Include local
+
+#: Use 'Secretive' as main agent
+Host *
+    IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+    AddKeysToAgent true
+
+# Connect 'Cloud9' instances via 'Visual Studio Code'
+Host "Cloud9 - *"
+    User ec2-user
+    ProxyCommand sh -c "~/.ssh/ssm-proxy.sh %h %p"
+
+#: Example for a 'Cloud9' host configuration
+# Host "Cloud9 - Something"
+#: Specify the instance ID here
+#     HostName i-something

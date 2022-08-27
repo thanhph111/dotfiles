@@ -45,6 +45,9 @@
     # ripgrep
     ~/.config/ripgrep: dotfiles/ripgrep/*
 
+    # SSH
+    ~/.ssh: dotfiles/ssh/*
+
     # Starship
     ~/.config/starship: dotfiles/starship/*
 
