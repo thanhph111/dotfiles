@@ -20,6 +20,8 @@
     ~/.config/bash: dotfiles/bash/bash/*
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
+    # bpython
+    ~/.config/bpython: dotfiles/bpython/*
 
 - create:
     ~/.cache:
