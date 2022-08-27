@@ -97,7 +97,7 @@ setopt AUTO_PUSHD
 
 #: Import a shell script
 include() {
-    [[ -f "$1" ]] && source "$1"
+    [[ -r "$1" ]] && source "$1"
 }
 
 #: Download stream from Teams records
