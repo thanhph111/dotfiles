@@ -1,4 +1,4 @@
-#: vim: set nospell:
+#: vim: set nospell filetype=sshconfig:
 
 #: Source a `local` config file at the same place of this file if it exists
 Include local
