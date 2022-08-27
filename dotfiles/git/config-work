@@ -1,0 +1,5 @@
+#: vim: set autoindent noexpandtab tabstop=4 shiftwidth=4:
+
+[user]
+    email = thanh.huuphan@gft.com
+	signingkey = 2BBB93827DA74E62

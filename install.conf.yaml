@@ -18,6 +18,9 @@
     # bpython
     ~/.config/bpython: dotfiles/bpython/*
 
+    # Git
+    ~/.config/git: dotfiles/git/*
+
     # GitHub CLI
     ~/.config/gh: dotfiles/gh/*
 
