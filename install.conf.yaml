@@ -39,6 +39,9 @@
     # Python
     ~/.config/python: dotfiles/python/*
 
+    # ripgrep
+    ~/.config/ripgrep: dotfiles/ripgrep/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 

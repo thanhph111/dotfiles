@@ -1,0 +1,8 @@
+--colors
+path:fg:152,23,72
+--colors
+line:fg:3
+--colors
+column:fg:14
+--colors
+match:fg:0,165,237
