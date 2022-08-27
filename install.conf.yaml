@@ -1,0 +1,21 @@
+- defaults:
+    link:
+      create: true
+      glob: true
+      relink: true
+
+- clean:
+    ~/:
+    ~/.config:
+    ~/.local:
+
+- link:
+    # Zsh
+    ~/.zprofile: dotfiles/zsh/zprofile
+    ~/.zshrc: dotfiles/zsh/zshrc
+    ~/.config/zsh: dotfiles/zsh/zsh/*
+    # Vim
+    ~/.vimrc: dotfiles/vim/vimrc
+
+- create:
+    ~/.cache:
