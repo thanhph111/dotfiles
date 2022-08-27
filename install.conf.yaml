@@ -27,6 +27,9 @@
     # iTerm2
     ~/.config/iterm2: dotfiles/iterm2/*
 
+    # kitty
+    ~/.config/kitty: dotfiles/kitty/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
