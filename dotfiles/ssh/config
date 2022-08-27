@@ -5,7 +5,6 @@ Include local
 
 #: Use 'Secretive' as main agent
 Host *
-    IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
     AddKeysToAgent yes
     IgnoreUnknown UseKeychain
     UseKeychain yes
