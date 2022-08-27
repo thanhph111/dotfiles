@@ -56,5 +56,9 @@
     ~/.zshrc: dotfiles/zsh/zshrc
     ~/.config/zsh: dotfiles/zsh/zsh/*
 
+    # Scripts
+    ~/.local/bin: dotfiles/scripts/bin/*
+    ~/.local/functions: dotfiles/scripts/functions/*
+
 - create:
     ~/.cache:

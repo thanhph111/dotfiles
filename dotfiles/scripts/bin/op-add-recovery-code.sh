@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+# op-add-recovery-code.sh: Add recovery code to the 1Password items.
+
+# Usage: op-add-recovery-code.sh file_or_folder_path
+# Step:
+#     1. Set up 1Password CLI:
+#     https://developer.1password.com/docs/cli/get-started
+#     2. Store list of recovery codes line by line in a file whose name is the
+#     item ID you want to add (get them by running `op item list`).
+#     3. Run this script with the file or folder include multiple files as an
+#     argument.
+
+set -e
+
+add_recovery_code_from_file() {
+    filepath="$1"
+    echo "==> Processing '$filepath'"
+
+    # Check if the file exists
+    [ ! -f "$filepath" ] && {
+        echo "'$filepath' does not exist, skipping"
+        return
+    }
+
+    # Check if the file mime is text-based
+    file_mime=$(file --mime-type -b "$filepath")
+    [ "$file_mime" != "text/plain" ] && {
+        echo "'$filepath' is not a text file, skipping"
+        return
+    }
+
+    # Get the length of the file
+    grep -q '[^[:space:]]' <"$filepath" || {
+        echo "'$filepath' is empty, skipping"
+        return
+    }
+    line_count=$(grep -c "" "$filepath")
+
+    # Get the width of the `line_count` number
+    max_index_width=${#line_count}
+
+    # Check if the item exists in 1Password
+    filename="$(basename $filepath)"
+    item_id="${filename%.*}"
+    if output=$(op item get $item_id --cache); then
+        item_name=$(sed -nr 's/^Title:[[:space:]]+//p' <<<"$output")
+        echo "Found item '$item_id' ($item_name), adding recovery code"
+    else
+        echo "Failed to get item '$item_id', skipping"
+        return
+    fi
+
+    # Loop through the file and add the recovery code
+    index=0
+    # while read line; do
+    while IFS="" read -r line || [ -n "$line" ]; do
+        # if line is empty, skip
+        [ -z "$line" ] && {
+            echo "warning: '$line'"
+            continue
+        }
+        index=$((index + 1))
+        formatted_index=$(printf "%0${max_index_width}d" $index)
+        op item edit "$item_id" \
+            "Recovery Codes.code $formatted_index[password]=$line" \
+            &>/dev/null || {
+            echo "    Failed to add code $formatted_index: $line"
+            return
+        }
+        echo "    Added code $formatted_index: $line"
+    done <"$filepath"
+}
+
+# Check if `op` is installed
+command -v op &>/dev/null || {
+    echo "'op' is not installed, skipping"
+    exit 0
+}
+
+first_argument="$1"
+
+# Check if argument is folder or file
+if [ -d "$first_argument" ]; then
+    # If argument is a folder, loop through all files in the folder
+    for filepath in "$first_argument"/*; do
+        add_recovery_code_from_file "$filepath"
+        echo
+    done
+elif [ -f "$first_argument" ]; then
+    # If argument is a file, add the recovery code from the file
+    add_recovery_code_from_file "$first_argument"
+else
+    echo "Invalid argument: '$first_argument'"
+    echo "Usage: $0 <folder_or_file>"
+    exit 1
+fi
