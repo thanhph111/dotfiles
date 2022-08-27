@@ -66,6 +66,9 @@
     # Warp
     ~/.warp: dotfiles/warp/*
 
+    # WezTerm
+    ~/.config/wezterm: dotfiles/wezterm/*
+
     # Zsh
     ~/.zprofile: dotfiles/zsh/zprofile
     ~/.zshrc: dotfiles/zsh/zshrc
