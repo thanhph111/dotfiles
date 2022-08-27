@@ -1,0 +1,128 @@
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+tap "homebrew/services"
+tap "jandedobbeleer/oh-my-posh"
+tap "jorgelbg/tap"
+# Official Amazon AWS command-line interface
+brew "awscli"
+# Programmable completion for Bash 3.2
+brew "bash-completion"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Fancy interface to the Python interpreter
+brew "bpython"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Diff that understands syntax
+brew "difftastic"
+# Modern replacement for 'ls'
+brew "exa"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
+# GNU Pretty Good Privacy (PGP) package
+brew "gnupg"
+# Colorize logfiles and command output
+brew "grc"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick"
+# JSON output from a shell
+brew "jo"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Development kit for the Java programming language
+brew "openjdk"
+# Open-source distributed event streaming platform
+brew "kafka"
+# Generic command-line non-JVM Apache Kafka producer and consumer
+brew "kcat"
+# Pager program similar to more
+brew "less"
+# Mac App Store command-line interface
+brew "mas"
+# Platform built on V8 to build network applications
+brew "node"
+# Command-line collection runner for Postman
+brew "newman"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# Python package management tool
+brew "poetry"
+# Object-relational database system
+brew "postgresql"
+# Protocol buffers (Google's data interchange format)
+brew "protobuf"
+# Python version management
+brew "pyenv"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Command-line deletion tool focused on safety, ergonomics, and performance
+brew "rm-improved"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Simplified and community-driven man pages
+brew "tldr"
+# Download YouTube videos from the command-line
+brew "youtube-dl"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Prompt theme engine for any shell
+brew "jandedobbeleer/oh-my-posh/oh-my-posh"
+# Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
+# the macOS keychain.
+brew "jorgelbg/tap/pinentry-touchid"
+# Command-line helper for the 1Password password manager
+cask "1password-cli"
+# Audio utility
+cask "background-music"
+# Open-source KVM software
+cask "barrier"
+# Utility to hide menu bar items
+cask "hiddenbar"
+# Open-source keystroke visualizer
+cask "keycastr"
+# GPU-based terminal emulator
+cask "kitty"
+# Store SSH keys in the Secure Enclave
+cask "secretive"
+# Plugin for AWS CLI to start and end sessions that connect to managed instances
+cask "session-manager-plugin"
+# Quicklook extension for source files
+cask "syntax-highlight"
+# Terminal emulator, SSH and serial client
+cask "tabby"
+mas "1Password for Safari", id: 1569813296
+mas "AdBlock Pro", id: 1018301773
+mas "Amphetamine", id: 937984704
+mas "Boop", id: 1518425043
+mas "Color Picker", id: 1545870783
+mas "Dark Reader for Safari", id: 1438243180
+mas "Developer", id: 640199958
+mas "Dropover", id: 1355679052
+mas "Equinox", id: 1591510203
+mas "Keynote", id: 409183694
+mas "Notion Web Clipper", id: 1559269364
+mas "Numbers", id: 409203825
+mas "OwlOCR", id: 1499181666
+mas "Pages", id: 409201541
+mas "Pasty", id: 1544620654
+mas "Shazam", id: 897118787
+mas "Tomito", id: 1526042938
+mas "Vectornator", id: 1219074514
+mas "Velja", id: 1607635845

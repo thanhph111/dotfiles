@@ -29,6 +29,10 @@
     # GitHub CLI
     ~/.config/gh: dotfiles/gh/*
 
+    # Homebrew
+    # Generate from `brew bundle dump --global --force --describe`
+    ~/.Brewfile: dotfiles/homebrew/Brewfile
+
     # iTerm2
     ~/.config/iterm2: dotfiles/iterm2/*
 
@@ -73,3 +77,15 @@
 
 - create:
     ~/.cache:
+
+- shell:
+    # - description: Install Homebrew
+    #   command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    #   stdin: true
+    #   stdout: true
+    #   stderr: true
+    - description: Install all Homebrew packages and macOS apps
+      command: brew bundle --global --verbose
+      stdin: true
+      stdout: true
+      stderr: true
