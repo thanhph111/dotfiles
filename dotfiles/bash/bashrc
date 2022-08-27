@@ -441,6 +441,9 @@ export POETRY_VIRTUALENVS_IN_PROJECT=1
 #: Rust programing language
 include "$HOME/.cargo/env"
 
+#: Go programming language
+include "$HOME/.gvm/scripts/gvm"
+
 #: Oh My Posh
 eval "$(oh-my-posh init bash)"
 
