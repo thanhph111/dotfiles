@@ -42,6 +42,9 @@
     # ripgrep
     ~/.config/ripgrep: dotfiles/ripgrep/*
 
+    # Starship
+    ~/.config/starship: dotfiles/starship/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
