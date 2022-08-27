@@ -3,11 +3,16 @@
       create: true
       glob: true
       relink: true
+    shell:
+      stdout: true
+      stderr: true
 
 - clean:
     ~/:
     ~/.config:
+      recursive: true
     ~/.local:
+      recursive: true
 
 - link:
     # Bash
