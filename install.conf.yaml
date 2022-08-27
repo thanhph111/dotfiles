@@ -14,6 +14,10 @@
     ~/.zprofile: dotfiles/zsh/zprofile
     ~/.zshrc: dotfiles/zsh/zshrc
     ~/.config/zsh: dotfiles/zsh/zsh/*
+    # Bash
+    ~/.profile: dotfiles/bash/profile
+    ~/.bashrc: dotfiles/bash/bashrc
+    ~/.config/bash: dotfiles/bash/bash/*
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 

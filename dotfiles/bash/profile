@@ -1,0 +1,42 @@
+#: ~/.profile: executed by the command interpreter for login shells. This file
+#: is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
+
+#: Use Kvantum to override Qt style
+export QT_STYLE_OVERRIDE=kvantum
+
+#: Rust programming language
+source "$HOME/.cargo/env"
+
+#: Pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+
+#: IBus Bamboo
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+#: For Qt4 application
+export QT4_IM_MODULE=ibus
+#: For Clutter/OpenGL application
+export CLUTTER_IM_MODULE=ibus
+export GLFW_IM_MODULE=ibus
+
+#: If running bash
+[ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+
+#: Disable macOS deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
