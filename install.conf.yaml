@@ -36,6 +36,9 @@
     # PowerShell
     ~/.config/powershell: dotfiles/powershell/*
 
+    # Python
+    ~/.config/python: dotfiles/python/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
