@@ -40,3 +40,6 @@ export GLFW_IM_MODULE=ibus
 
 #: Disable macOS deprecation warning
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+#: Change GNU Readline initialization file location, not sure if it works
+export INPUTRC="$HOME/.config/readline/inputrc"

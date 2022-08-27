@@ -1,0 +1,46 @@
+$include /etc/inputrc
+
+# Up and down arrows move through history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+# Also for <Ctrl-p> and <Ctrl-n>
+"\C-p":history-search-backward
+"\C-n":history-search-forward
+
+# Use arrow keys to move by characters
+"\e[C": forward-char
+"\e[D": backward-char
+
+# Autocomplete either in capital letters or not
+set completion-ignore-case On
+
+# Cycle through results when tab
+# TAB: menu-complete
+# "\e[Z": menu-complete-backward
+TAB: complete
+
+# "\e[3~": backward-kill-word
+
+# Clear current lines with `Esc`
+# Escape: kill-whole-line
+
+# `Ctrl` + `Backspace` to kill word
+# "\C-h": backward-kill-word
+
+# Colors for menu completion
+set colored-stats On
+
+# Maximum number of characters to be the common prefix to display for completions
+set completion-prefix-display-length 3
+
+set mark-symlinked-directories On
+set show-all-if-ambiguous On
+set show-all-if-unmodified On
+set visible-stats On
+set expand-tilde Off
+
+#: Don't auto execute when pasting output have linebreaks,
+#: we need a comfirm <Enter> to make it run
+#: Also try to open editing mode <C-x C-e> before pasting something,
+#: if it looks good, save it and exit, the shell will executing it.
+set enable-bracketed-paste
