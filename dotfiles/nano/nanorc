@@ -1,0 +1,18 @@
+set linenumbers
+set autoindent
+set mouse
+set smooth
+set softwrap
+set tabsize 4
+set tabstospaces
+set smarthome
+set nohelp
+set boldtext
+
+# TODO: Uncompatible on macOS, need to check
+# set numbercolor white
+# set titlecolor red,yellow
+# set statuscolor red,yellow
+# set functioncolor red,yellow
+# set keycolor red,yellow
+# set numbercolor red,yellow

@@ -30,6 +30,9 @@
     # kitty
     ~/.config/kitty: dotfiles/kitty/*
 
+    # nano
+    ~/.nanorc: dotfiles/nano/nanorc
+
     # Oh My Posh
     ~/.config/oh-my-posh: dotfiles/oh-my-posh/*
 
