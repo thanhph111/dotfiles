@@ -30,6 +30,9 @@
     # kitty
     ~/.config/kitty: dotfiles/kitty/*
 
+    # Oh My Posh
+    ~/.config/oh-my-posh: dotfiles/oh-my-posh/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 

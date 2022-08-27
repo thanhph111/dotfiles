@@ -1,0 +1,241 @@
+#: https://ohmyposh.dev/docs
+#: https://www.nerdfonts.com/cheat-sheet
+#: https://onlineunicodetools.com/escape-unicode
+#: https://dencode.com/en/string/unicode-escape
+
+console_title_template = "{{ .Shell }} \u2724 {{ .Folder }}"
+final_space = true
+version = 2.0
+
+[[blocks]]
+alignment = "left"
+type = "prompt"
+
+[[blocks.segments]]
+background = "p:red"
+foreground = "p:lightWhite"
+leading_diamond = "\ue0b6"
+style = "diamond"
+template = " <b>{{ now | date \"15:04:05\" }}</b> "
+type = "time"
+
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+powerline_symbol = "\ue0b4"
+style = "powerline"
+template = """ \
+    {{ if .SSHSession }}\
+        \uf817 \
+    {{ end }}\
+
+    {{ if .Root }} \
+        \uf997\
+    {{ end }}\
+
+    {{ .UserName }} \
+    \uf444 \
+    <b>{{ .HostName }}</b> \
+    """
+type = "session"
+
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+style = "powerline"
+template = "\uf444 {{ .Name }} "
+type = "shell"
+# [blocks.segments.properties]
+[blocks.segments.properties.mapped_shell_names]
+bash = "Bash"
+fish = "Fish"
+lua = "Lua"
+pwsh = "PowerShell"
+zsh = "Zsh"
+
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+style = "powerline"
+template = "{{ if .Env.NO_HISTORY }}\uf708{{ end }} "
+type = "text"
+[blocks.segments.properties]
+var_name = "NO_HISTORY"
+
+[[blocks.segments]]
+background = "p:blue"
+foreground = "p:lightWhite"
+powerline_symbol = "\ue0b4"
+style = "powerline"
+template = " {{ .Path }} "
+type = "path"
+[blocks.segments.properties]
+enable_hyperlink = true
+folder_icon = "\ue5fe"
+folder_separator_icon = " \u203a "
+home_icon = "\uf015"
+max_depth = 2.0
+style = "agnoster_short"
+[blocks.segments.properties.mapped_locations]
+"/" = "\uf992\u203a "
+"C\\:" = "\uf992 "
+"~/Desktop/Projects" = "\uf1d8 "
+"~/Documents/Projects" = "\uf1d8 "
+
+[[blocks.segments]]
+background = "p:green"
+foreground = "p:lightWhite"
+powerline_symbol = "\ue0b4"
+style = "powerline"
+template = """ \
+    \uf81f \
+    {{ if .Error }}\
+        {{ .Error }}\
+    {{ else }}\
+        {{ if .Venv }}\
+            {{ .Venv }} \
+        {{ end }}\
+        {{ .Full }}\
+    {{ end }} \
+    """
+type = "python"
+
+[[blocks.segments]]
+background = "p:lightGreen"
+background_templates = [
+    "{{ if or (.Working.Changed) (.Staging.Changed) }}p:magenta{{ end }}",
+    "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:yellow{{ end }}",
+    "{{ if gt .Ahead 0 }}p:lightYellow{{ end }}",
+    "{{ if gt .Behind 0 }}p:red{{ end }}",
+]
+foreground = "p:black"
+foreground_templates = [
+    "{{ if or (.Working.Changed) (.Staging.Changed) }}p:lightWhite{{ end }}",
+    "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:lightWhite{{ end }}",
+    "{{ if gt .Ahead 0 }}p:black{{ end }}",
+    "{{ if gt .Behind 0 }}p:lightWhite{{ end }}",
+]
+powerline_symbol = "\ue0b4"
+style = "powerline"
+template = """ \
+    {{ if .UpstreamIcon }}\
+        {{ .UpstreamIcon }} \
+    {{ end }}\
+
+    {{ .HEAD }}\
+
+    {{ .BranchStatus }}\
+
+    {{ if .Working.Changed }} \
+        \u2502\
+        {{ if gt .Working.Added 0 }} \
+            \uf055 {{ .Working.Added }}\
+        {{ end }}\
+        {{ if gt .Working.Modified 0 }} \
+            \uf10c {{ .Working.Modified }}\
+        {{ end }}\
+        {{ if gt .Working.Deleted 0 }} \
+            \uf056 {{ .Working.Deleted }}\
+        {{ end }}\
+        {{ if gt .Working.Unmerged 0 }} \
+            \uf059 {{ .Working.Unmerged }}\
+        {{ end }}\
+    {{ end }}\
+
+    {{ if .Staging.Changed }} \
+        ┊\
+        {{ if gt .Staging.Added 0 }} \
+            <p:green>\uf055</> {{ .Staging.Added }}\
+        {{ end }}\
+        {{ if gt .Staging.Modified 0 }} \
+            <p:lightYellow>\uf10c</> {{ .Staging.Modified }}\
+        {{ end }}\
+        {{ if gt .Staging.Deleted 0 }} \
+            <p:red>\uf056</> {{ .Staging.Deleted }}\
+        {{ end }}\
+        {{ if gt .Staging.Unmerged 0 }} \
+            <p:blue>\uf059</> {{ .Staging.Unmerged }}\
+        {{ end }}\
+    {{ end }}\
+    {{ if gt .StashCount 0 }} \
+        \u2502 \uf692 {{ .StashCount }}\
+    {{ end }} \
+    """
+type = "git"
+[blocks.segments.properties]
+branch_ahead_icon = "\uf6bb"
+branch_behind_icon = "\uf6ba"
+branch_gone_icon = "\uf204 "
+branch_icon = "\ue0a0 "
+branch_identical_icon = "\uf205 "
+branch_max_length=20
+commit_icon = "\uf417 "
+fetch_stash_count = true
+fetch_status = true
+fetch_upstream_icon = true
+git_icon = "\uf4a9 "
+tag_icon = "\uf412 "
+truncate_symbol="…"
+
+[[blocks]]
+alignment = "left"
+type = "prompt"
+
+[[blocks.segments]]
+background = "p:red"
+foreground = "p:lightWhite"
+leading_diamond = " \ue0b6"
+style = "diamond"
+template = " \ue3bf {{ .Code }} "
+trailing_diamond = "\ue0b4"
+type = "exit"
+
+[[blocks]]
+alignment = "left"
+type = "prompt"
+
+[[blocks.segments]]
+background = "p:green"
+foreground = "p:lightWhite"
+leading_diamond = " \ue0b6"
+style = "diamond"
+template = " {{ .FormattedMs }} "
+trailing_diamond = "\ue0b4"
+type = "executiontime"
+[blocks.segments.properties]
+style = "austin"
+
+[[blocks]]
+alignment = "left"
+newline = true
+type = "prompt"
+
+[[blocks.segments]]
+foreground = "p:blue"
+style = "plain"
+template = "\u25b6"
+type = "text"
+
+[palette]
+#: Create palette match terminal colors
+black = "black"                # "#181A1B"
+blue = "blue"                  # "#0A6AB6"
+cyan = "cyan"                  # "#37AAB9"
+darkGray = "darkGray"          # "#555B5E"
+green = "green"                # "#2B803E"
+lightBlue = "lightBlue"        # "#0287C3"
+lightCyan = "lightCyan"        # "#4AE3F7"
+lightGreen = "lightGreen"      # "#ADDD1E"
+lightMagenta = "lightMagenta"  # "#D10AFF"
+lightRed = "lightRed"          # "#FF3078"
+lightWhite = "lightWhite"      # "#DCDFE4"
+lightYellow = "lightYellow"    # "#FFEC16"
+magenta = "magenta"            # "#522E92"
+red = "red"                    # "#A91409"
+white = "white"                # "#788187"
+yellow = "yellow"              # "#CC7A00"
+
+[transient_prompt]
+background = "transparent"
+foreground = "p:lightWhite"
+template = "{{ .Shell }}> "
