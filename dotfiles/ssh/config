@@ -6,7 +6,10 @@ Include local
 #: Use 'Secretive' as main agent
 Host *
     IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
-    AddKeysToAgent true
+    AddKeysToAgent yes
+    IgnoreUnknown UseKeychain
+    UseKeychain yes
+    IdentityFile ~/.ssh/thanhph111
 
 # Connect 'Cloud9' instances via 'Visual Studio Code'
 Host "Cloud9 - *"
