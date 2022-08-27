@@ -33,6 +33,9 @@
     # Oh My Posh
     ~/.config/oh-my-posh: dotfiles/oh-my-posh/*
 
+    # PowerShell
+    ~/.config/powershell: dotfiles/powershell/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
