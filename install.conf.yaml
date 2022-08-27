@@ -24,6 +24,9 @@
     # GitHub CLI
     ~/.config/gh: dotfiles/gh/*
 
+    # iTerm2
+    ~/.config/iterm2: dotfiles/iterm2/*
+
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
