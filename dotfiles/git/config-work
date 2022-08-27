@@ -1,4 +1,5 @@
 #: vim: set autoindent noexpandtab tabstop=4 shiftwidth=4:
+#: vim: set list nospell filetype=gitconfig:
 
 [user]
     email = thanh.huuphan@gft.com

@@ -1,5 +1,5 @@
 #: vim: set autoindent noexpandtab tabstop=4 shiftwidth=4:
-#: vim: set list nospell:
+#: vim: set list nospell filetype=gitconfig:
 
 [core]
 	editor = $VISUAL
