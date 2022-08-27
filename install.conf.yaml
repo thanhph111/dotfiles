@@ -51,6 +51,9 @@
     # Vim
     ~/.vimrc: dotfiles/vim/vimrc
 
+    # Warp
+    ~/.warp: dotfiles/warp/*
+
     # Zsh
     ~/.zprofile: dotfiles/zsh/zprofile
     ~/.zshrc: dotfiles/zsh/zshrc
