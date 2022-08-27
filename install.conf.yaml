@@ -22,6 +22,8 @@
     ~/.vimrc: dotfiles/vim/vimrc
     # bpython
     ~/.config/bpython: dotfiles/bpython/*
+    # GitHub CLI
+    ~/.config/gh: dotfiles/gh/*
 
 - create:
     ~/.cache:

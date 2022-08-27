@@ -1,0 +1,24 @@
+# Use SSH protocol to perform git operations
+git_protocol: ssh
+
+# Let the environment decide which editor to use
+editor:
+
+# Always use interactively prompt
+prompt: enabled
+
+# Set the value to "cat" to disable the pager.
+pager: bat
+
+aliases:
+    co: pr checkout
+
+    # Aliases to set profiles, useful for multiple GitHub accounts
+    personal: '!cp ~/.config/gh/hosts-personal.yml ~/.config/gh/hosts.yml && gh auth status'
+    work: '!cp ~/.config/gh/hosts-work.yml ~/.config/gh/hosts.yml && gh auth status'
+
+# HTTP traffic will be handled by net/http.DefaultTransport.
+http_unix_socket:
+
+# Let the environment decide which browser to use
+browser:
