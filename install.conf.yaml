@@ -10,20 +10,24 @@
     ~/.local:
 
 - link:
-    # Zsh
-    ~/.zprofile: dotfiles/zsh/zprofile
-    ~/.zshrc: dotfiles/zsh/zshrc
-    ~/.config/zsh: dotfiles/zsh/zsh/*
     # Bash
     ~/.profile: dotfiles/bash/profile
     ~/.bashrc: dotfiles/bash/bashrc
     ~/.config/bash: dotfiles/bash/bash/*
-    # Vim
-    ~/.vimrc: dotfiles/vim/vimrc
+
     # bpython
     ~/.config/bpython: dotfiles/bpython/*
+
     # GitHub CLI
     ~/.config/gh: dotfiles/gh/*
+
+    # Vim
+    ~/.vimrc: dotfiles/vim/vimrc
+
+    # Zsh
+    ~/.zprofile: dotfiles/zsh/zprofile
+    ~/.zshrc: dotfiles/zsh/zshrc
+    ~/.config/zsh: dotfiles/zsh/zsh/*
 
 - create:
     ~/.cache:
