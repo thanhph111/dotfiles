@@ -9,9 +9,19 @@
 #: If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+#: Create config directory
+export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
+mkdir -p "$BASH_CONFIG_DIR"
+
 #: Create cache directory
-export BASH_CACHE_DIR=~/.cache/bash
+export USER_CACHE_DIR="${XDG_CACH_HOME:-$HOME/.cache}"
+export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
 mkdir -p "$BASH_CACHE_DIR"
+
+#: Overwrite with local pre-config
+[[ -r "$BASH_CONFIG_DIR/local.pre.bash" ]] &&
+    source "$BASH_CONFIG_DIR/local.pre.bash"
 
 #: Make `less` more friendly for non-text input files, see `lesspipe(1)`
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -31,14 +41,13 @@ alias force-dark-chrome="sudo sed -i \
 
 #: Bash session without history logging
 #: Set Oh My Posh theme
-export POSHTHEME=~/.config/oh-my-posh/multiplex.omp.toml
-# POSHTHEME=~/.poshthemes/test.omp.json
+export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
 alias bashout="bash --init-file \
 <(echo 'source ~/.bashrc; \
 unset HISTFILE; \
 PROMPT_COMMAND=; \
 export NO_HISTORY=1; \
-eval \"\$(oh-my-posh --init --shell bash --config $POSHTHEME)\"')"
+eval \"\$(oh-my-posh init bash)\"')"
 
 #: A lite Bash version
 alias bashlite='bash --rcfile ~/.vscode/.bashrc'
@@ -206,7 +215,7 @@ psgrep() {
 
 #: Check if exist and source a file without repeat filepath
 include() {
-    [[ -f "$1" ]] && source "$1"
+    [[ -r "$1" ]] && source "$1"
 }
 
 #: Source all other function files in my directory
@@ -414,8 +423,7 @@ quote=01"
 
 #: Enable programmable completion features
 [ -f /etc/bash_completion ] && ! shopt -oq posix && source /etc/bash_completion
-[[ -r "$(brew --prefix)/etc/bash_completion" ]] &&
-    source "$(brew --prefix)/etc/bash_completion"
+command -v brew &>/dev/null && include "$(brew --prefix)/etc/bash_completion"
 
 #: }}}
 
@@ -484,3 +492,6 @@ if [ -n "$KITTY_INSTALLATION_DIR" ] &&
 fi
 
 #: }}}
+
+#: Overwrite with local post-config
+include "$BASH_CONFIG_DIR/local.post.bash"

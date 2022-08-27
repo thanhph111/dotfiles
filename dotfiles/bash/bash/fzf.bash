@@ -1,4 +1,4 @@
-FZF_REPO_DIR=/opt/homebrew/opt/fzf
+[[ -z "$FZF_REPO_DIR" ]] && return
 
 # Setup fzf
 # ---------
