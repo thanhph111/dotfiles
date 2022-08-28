@@ -8,7 +8,7 @@
 
 - shell:
     - description: Print a message to remind to check if above issues are resolved
-      command: echo "Please check if above issues are resolved"
+      command: echo "Please check if sync issues are resolved"
       stdin: true
       stdout: true
       stderr: true
