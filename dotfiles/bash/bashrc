@@ -213,9 +213,9 @@ psgrep() {
     fi
 }
 
-#: Check if exist and source a file without repeat filepath
+#: Check if a file readable and source it without repeating filepath
 include() {
-    [[ -r "$1" ]] && source "$1"
+    [[ -r "$1" ]] && source "$1" || true
 }
 
 #: Source all other function files in my directory
