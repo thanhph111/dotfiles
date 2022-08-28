@@ -90,3 +90,114 @@ Set-PSReadLineKeyHandler -Chord 'Oem7', 'Shift+Oem7' `
 #endregion
 
 #endregion
+
+#region Old Windows profile
+
+<#
+# Print the message when starting PowerShell
+"Welcome back!"
+
+
+# Set prompt theme
+Import-Module posh-git
+Import-Module oh-my-posh
+Set-Theme Multiplex2
+
+
+# Run '.environ' file which executes commands and assigns some variables that depend on specific computer
+$USER_PATHS = @()
+$USER_MODULES = @()
+$USER_REMOVED_ALIASES = @()
+$USER_NEW_ALIASES = @{}
+$USER_ENVIRONMENT_VARIABLES = @{}
+if (Test-Path $HOME/.environ) { Invoke-Expression (Get-Content -Raw $HOME/.environ) }
+
+
+# Add paths
+$Env:Path += ";" + ((@(
+            (Get-ChildItem (Join-Path $Env:OneDriveConsumer Cloud\Binaries) -Recurse -Directory "bin").FullName
+            $USER_PATHS
+        ) | Select-Object -Unique) -join ";")
+
+
+# Import modules
+Import-Module -DisableNameChecking (@(
+    "C:\Users\thanh\Desktop\Local\Repos\dotfiles-manager\DotfilesManager.psm1"
+    (Get-Module (Join-Path $PSScriptRoot Modules\UserModules\*) -ListAvailable).RootModule
+    $USER_MODULES
+) | Select-Object -Unique)
+
+
+# Remove aliases
+@(
+    # Remove cd alias to use custom cd alias in Goto-Shortcut.ps1
+    "cd"
+    $USER_REMOVED_ALIASES
+) | ForEach-Object { Remove-Item Alias:$_ -Force }
+
+
+# Create aliases
+(@{
+    "whereis" = "where.exe"
+} + $USER_NEW_ALIASES).GetEnumerator() | ForEach-Object { Set-Alias -Name $_.Key -Value $_.Value }
+
+
+# Set environment variables
+(@{
+    USER_CLOUD_ASSET = "$Env:OneDriveConsumer\Cloud\Assets\"
+} + $USER_ENVIRONMENT_VARIABLES).GetEnumerator() | ForEach-Object { Set-Item -Path Env:$($_.Key) -Value $_.Value }
+
+
+# Default parameter values
+# $PSDefaultParameterValues = @{
+#     "Out-File:Encoding" = "utf8"
+# }
+
+
+# Change keymaps in PSReadLine
+Set-PSReadLineKeyHandler -Key "Ctrl+m" -Function MenuComplete
+Set-PSReadLineKeyHandler -Key "shift+tab" -Function ForwardWord
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+Set-PSReadLineOption -HistorySearchCursorMovesToEnd
+#>
+
+#endregion
+
+#region Local config example
+
+<#
+# User paths
+$USER_PATHS = @(
+    "C:\Program Files\gnuwin32\bin"
+)
+
+# User modules
+$USER_MODULES = @(
+    "C:\Users\thanh\Desktop\Local\Repos\set-atom-profile\Set-AtomProfile.psm1"
+)
+
+# User removed aliases
+$USER_REMOVED_ALIASES = @(
+    "si"
+)
+
+# User new aliases
+$USER_NEW_ALIASES = @{
+    "ghelp" = "Get-Help"
+}
+
+# User environment variables
+$USER_ENVIRONMENT_VARIABLES = @{
+    DOTNET_CLI_TELEMETRY_OPTOUT = 1
+}
+
+# Set encoding
+$PSDefaultParameterValues["*:Encoding"] = "Default"
+$OutputEncoding = [System.Text.Utf8Encoding]::new($false)
+
+# GitHub CLI completion
+Invoke-Expression -Command $(gh completion -s powershell | Out-String)
+#>
+
+#endregion
