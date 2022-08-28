@@ -14,4 +14,4 @@
       command: command -v brew >/dev/null 2>&1 && brew bundle --global --verbose --no-lock
       stdin: true
       stdout: true
-      # stderr: true
+      stderr: true
