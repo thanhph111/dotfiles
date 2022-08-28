@@ -337,6 +337,7 @@ clean-history() {
 }
 #: I trap above command after setting OMP in this file (as it also has its trap)
 
+HISTFILE="$BASH_CACHE_DIR/history"
 #: Also append each line to history file for safe keeping
 #: If the last command fails, it won't be added to history file
 if [ -z "$PROMPT_COMMAND" ]; then
