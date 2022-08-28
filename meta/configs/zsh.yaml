@@ -1,0 +1,6 @@
+# Zsh
+
+- link:
+    ~/.zprofile: dotfiles/zsh/zprofile
+    ~/.zshrc: dotfiles/zsh/zshrc
+    ~/.config/zsh: dotfiles/zsh/zsh/*

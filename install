@@ -1,21 +1,78 @@
 #!/usr/bin/env bash
 
-# Configuration root relative filepath
-CONFIG="install.conf.yaml"
-
-# Dotbot root relative filepaths
-DOTBOT_DIR="dotbot"
-DOTBOT_BIN="$DOTBOT_DIR/bin/dotbot"
-
 # Exit immediately if an error occurs
 set -e
 
 # Go to the project directory
 cd "$(dirname "$BASH_SOURCE")"
 
+# Profiles and configs paths
+META_DIR="$PWD/meta"
+CONFIG_DIR="$META_DIR/configs"
+PROFILES_DIR="$META_DIR/profiles"
+BASE_CONFIG_PATH="$META_DIR/base.yaml"
+
+# Dotbot paths
+DOTBOT_DIR="$PWD/dotbot"
+DOTBOT_BIN="$DOTBOT_DIR/bin/dotbot"
+
 # Update Dotbot submodule
 git -C "$DOTBOT_DIR" submodule sync --quiet --recursive
 git submodule update --init --recursive "$DOTBOT_DIR"
 
-# Run Dotbot
-"$PWD/$DOTBOT_BIN" -d "$PWD" -c "$PWD/$CONFIG" "${@}"
+usage() {
+    echo "Usage: $0 command"
+    echo
+    echo "Commands:"
+    echo "  profile     Install by profile"
+    echo "    $0 profile <profile> [<config>...]"
+    echo
+    echo "  config      Install by configs"
+    echo "    $0 config <config> [<config>...]"
+    echo "    <config>-sudo: Install with sudo"
+}
+
+case "$1" in
+profile)
+    profile_name=$2
+    [[ -z "$profile_name" ]] && {
+        usage
+        exit 1
+    }
+    shift 2
+    ;;
+config)
+    shift
+    [[ -z "$@" ]] && {
+        usage
+        exit 1
+    }
+    ;;
+*)
+    usage
+    exit 1
+    ;;
+esac
+
+configs="$(cat $PROFILES_DIR/$profile_name | xargs) $@"
+
+for config in $configs; do
+    echo "Configure $config"
+
+    config_path="$CONFIG_DIR/${config%-sudo}.yaml"
+    [[ ! -r "$config_path" ]] && {
+        echo "Ignoring unknown config: $config_path"
+        continue
+    }
+
+    tempfile="$(mktemp)"
+    cat "$BASE_CONFIG_PATH" "$config_path" >"$tempfile"
+
+    if [[ $config == *sudo* ]]; then
+        sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile"
+    else
+        "$DOTBOT_BIN" -d "$PWD" -c "$tempfile"
+    fi
+
+    rm -f "$tempfile"
+done

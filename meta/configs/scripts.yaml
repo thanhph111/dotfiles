@@ -1,0 +1,5 @@
+# Scripts
+
+- link:
+    ~/.local/bin: dotfiles/scripts/bin/*
+    ~/.local/functions: dotfiles/scripts/functions/*

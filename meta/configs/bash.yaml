@@ -1,0 +1,6 @@
+# Bash
+
+- link:
+    ~/.profile: dotfiles/bash/profile
+    ~/.bashrc: dotfiles/bash/bashrc
+    ~/.config/bash: dotfiles/bash/bash/*

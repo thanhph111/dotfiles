@@ -1,0 +1,4 @@
+# GNU Readline
+
+- link:
+    ~/.config/readline: dotfiles/readline/*
