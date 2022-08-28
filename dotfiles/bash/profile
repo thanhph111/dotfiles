@@ -14,6 +14,9 @@
 #: Set PATH so it includes user's private bin if it exists
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
+#: GnuPG home
+export GNUPGHOME="$HOME/.config/gnupg"
+
 #: Use Kvantum to override Qt style
 export QT_STYLE_OVERRIDE=kvantum
 

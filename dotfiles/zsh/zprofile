@@ -1,3 +1,6 @@
+#: GnuPG home
+export GNUPGHOME="$HOME/.config/gnupg"
+
 #: Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
