@@ -1,0 +1,344 @@
+// Import atom library to use default color
+@import "ui-variables";
+
+
+// Some variables
+@my-font-family: "Noto Sans";
+@my-code-font-family: "SF Mono";
+@my-font-weight-light: 400;
+@my-font-weight-bold: 600;
+@dashed-color: rgba(171, 178, 191, 0.2);
+@border-style: 1px solid @tab-border-color;
+
+
+// Global settings
+img {
+    border-radius: 5px;
+}
+.btn {
+    border-radius: 5px;
+}
+
+
+// Custom editor
+atom-text-editor {
+    font-weight: 400;
+
+    // Disable scrollbar
+    // .horizontal-scrollbar,
+    // .vertical-scrollbar {
+    // 	display: none;
+    // }
+
+    .wrap-guide {
+        background: none;
+        border-color: @dashed-color;
+        border-style: dashed;
+        border-width: 0.5px;
+    }
+}
+
+
+// Custom UI
+atom-workspace {
+	font-family: @my-font-family;
+
+	// All others elements
+	font-weight: @my-font-weight-bold;
+
+	// Paragraph elements
+	p {
+		font-weight: @my-font-weight-light;
+	}
+
+	// Main elements
+	.radio label,
+	.checkbox label,
+	.btn,
+	.settings-view .package-card .package-name,
+	label {
+		font-weight: @my-font-weight-bold;
+	}
+
+	// Auxiliary elements
+	.settings-view {
+		.setting-description,
+		.settings-view .text,
+		.package-card .package-description {
+			font-family: @my-font-family;
+	 		font-weight: @my-font-weight-light;
+		}
+	}
+}
+
+
+// Custom scrollbar
+// https://gist.github.com/alunux/75935b097e4c5c1d186700ecd526953e
+.scrollbars-visible-always {
+    ::-webkit-scrollbar {
+        // width: 12px;
+        display: none;
+    }
+    // :hover::-webkit-scrollbar {
+    //     display: block;
+    // }
+    :active::-webkit-scrollbar-thumb {
+        border: 0;
+    }
+    atom-text-editor ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+        background: none;
+    }
+    // ::-webkit-scrollbar-thumb {
+    //     background: fade(rgb(50,50,0), 40%);
+    //     border-radius: 6px;
+    //     border-width: 3px;
+    // }
+
+    .github-RecentCommits,
+    .github-StagingView-list {
+        &::-webkit-scrollbar {
+            display: block;
+        }
+    }
+    .tree-view {
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        // &:hover::-webkit-scrollbar {
+        //   display: block;
+        // }
+        // &::-webkit-scrollbar-track {
+        //   background: none;
+        // }
+    }
+
+    .settings-view {
+        ::-webkit-scrollbar {
+            display: block;
+        }
+        ::-webkit-scrollbar-track {
+            background: none;
+        }
+        // :hover::-webkit-scrollbar {
+        //     display: block;
+        // }
+    }
+
+    #linter-panel {
+        &::-webkit-scrollbar {
+            display: block;
+        }
+    }
+}
+
+
+// Change font in notifications
+atom-notifications .detail .line {
+	font-family: @my-code-font-family;
+	font-weight: @my-font-weight-light;
+}
+
+
+// Custom theme-one-dark-ui
+.theme-one-dark-ui,
+.theme-pristine-ui {
+	// Font in tab bar
+	.tab-bar {
+		font-size: 12px;
+		font-weight: @my-font-weight-bold;
+	}
+
+	// Font in status bar
+	.status-bar {
+		font-size: 10.5px;
+		font-family: @my-code-font-family;
+	}
+
+	// Font in tree view
+	.tree-view {
+		font-size: 10.5px;
+		font-family: @my-code-font-family;
+        #add-projects-view {
+            font-family: @my-font-family;
+        }
+	}
+
+	// Adjust tab height
+	@tab-height: 3em;
+	.tab-bar {
+		height: @tab-height;
+		// Align content in tab
+		box-sizing: content-box;
+		.tab .title,
+		.tab.active .title {
+			height: @tab-height;
+			line-height: @tab-height;
+		}
+		// Align close icon in tab
+		.tab.modified .close-icon,
+		.close-icon {
+			top: (@tab-height - 1.5) / 2;
+			right: 0.7em;
+		}
+	}
+
+	// Add dashed border to active tab
+	atom-pane-container
+	.tab-bar {
+		.tab.active[data-type$="Editor"],
+		.tab.active[data-type$="SettingsView"],
+		.tab.active[data-type$="AboutView"],
+		.tab.active[data-type$="TimecopView"],
+		.tab.active[data-type$="StyleguideView"],
+		.tab.active[data-type$="MarkdownPreviewView"] {
+			border-bottom: 1px dashed @dashed-color;
+		}
+	}
+
+	// Modify config menu to match style
+	.settings-view .config-menu {
+		padding: 0;
+		border-image: unset;
+	}
+
+	// Modify sub section to match style
+	.settings-view .sub-section .sub-section-body {
+		padding-left: 30px;
+		border: 0;
+	}
+
+	// Adjust config menu size
+	.settings-view .config-menu {
+		min-width: 14em;
+		max-width: 16em;
+	}
+
+  // Remove sticky sub section headings
+  .settings-view .sub-section .sub-section-heading {
+    position: static;
+  }
+}
+
+
+// Custom pristine-ui
+.theme-pristine-ui {
+	// Fix status bar issue
+	.ksg-shortcut {
+		height: 3em;
+	}
+
+	// Get border for button
+	.btn-group > .btn {
+		border: 1px solid #21242b;
+	}
+}
+
+
+// Custom highlight-selected
+atom-text-editor .highlights {
+    // Box
+    .highlight-selected .region {
+        border-radius: 0.2em;
+        border-width: 0.5px;
+        border-color: @tab-background-color-active;
+        border-left-width: 0;
+        border-right-width: 0;
+    }
+    // Background (set in settings)
+    .highlight-selected.background .region {
+        background-color: rgb(255, 214, 153, 0.5);
+    }
+    // Light theme box (set in settings)
+    .highlight-selected.light-theme .region {
+        border-radius: 0.2em;
+        border-width: 0.5px;
+        border-color: @tab-background-color-active;
+        border-left-width: 0;
+        border-right-width: 0;
+    }
+    // Light theme background (set in settings)
+    // .highlight-selected.light-theme.background .region {
+    //     background-color: rgba(255, 128, 64, 0.2);
+    // }
+}
+
+
+// Custom minimap
+atom-text-editor,
+html {
+	atom-text-editor-minimap {
+		// Auto hide minimap
+		.minimap-visible-area {
+			// Color of Visible area.
+			background-color: #7c7c7c;
+			// Default 0 when you not working with minimap
+			opacity: 0.1;
+			// Change cursor style to pointer.
+			cursor: grab;
+			// Transition duration
+			transition: 0.5s opacity;
+            // Only display Minimap visible area when working.
+			&:hover {
+				opacity: 0.2;
+			}
+            // Change cursor when dragging.
+			&:active {
+				cursor: default;
+			}
+		}
+		&:hover {
+			.minimap-visible-area {
+				opacity: 0.2;
+				transition: opacity 0.2s;
+			} // When Hover to all minimap area, visible area will display.
+		}
+		&:active {
+			.minimap-visible-area {
+				opacity: 0.2;
+				transition: opacity 0.5s;
+			} // Display Minimap visible area when dragging.
+		}
+
+		// Disable scrollbar
+		.minimap-scroll-indicator {
+			display: none;
+		}
+	}
+}
+
+
+// Change default font in markdown preview
+.markdown-preview {
+	// font-family: @my-font-family;
+	font-family: "Roboto Slab";
+}
+
+
+// title-bar-replacer custom
+.title-bar-replacer {
+	// Add bottom border to title to match style
+    border-bottom: @border-style;
+    background: @tool-panel-background-color;
+    margin: 0;
+}
+
+
+// Change selected highlights' color in minimap
+.minimap
+.highlight-selected {
+	background: @ui-site-color-5;
+}
+
+
+// Hand writing mono font custom, only for python.
+// .syntax--self.syntax--python,
+// .syntax--entity.syntax--name.syntax--function.syntax--python,
+// .syntax--entity.syntax--name.syntax--type.syntax--class.syntax--python,
+// .syntax--support.syntax--function.syntax--builtin.syntax--python,
+.syntax--storage.syntax--type.syntax--function.syntax--python,
+.syntax--storage.syntax--type.syntax--class.syntax--python {
+	font-family: Operator Mono;
+	font-style: italic;
+	font-weight: 300;
+}

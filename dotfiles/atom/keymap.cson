@@ -1,0 +1,6 @@
+'atom-text-editor':
+  'ctrl-alt-l': 'editor:split-selections-into-lines'
+  'ctrl-shift-m': 'bracket-matcher:select-inside-brackets'
+
+'atom-text-editor[data-grammar="source gfm"]':
+  'ctrl-shift-m': 'markdown-preview:toggle'

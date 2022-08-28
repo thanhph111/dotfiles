@@ -1,0 +1,283 @@
+"*":
+  "atom-beautify":
+    executables:
+      autopep8:
+        path: "C:\\Users\\thanh\\AppData\\Local\\Programs\\Python\\Python38-32\\Scripts\\autopep8.exe"
+      black:
+        path: "C:\\Users\\thanh\\AppData\\Local\\Programs\\Python\\Python38-32\\Scripts\\black.exe"
+    python:
+      default_beautifier: "yapf"
+      formatter: "yapf"
+  "atom-ide-ui":
+    "atom-ide-code-format":
+      formatOnType: false
+    "atom-ide-debugger":
+      showDebuggerOnBpSet: false
+    "atom-ide-diagnostics-ui": {}
+    "atom-ide-outline-view": {}
+    "debugger-exceptionBreakpointsCollapsed": false
+  "atom-terminus":
+    app: "wt"
+    args: "-d ."
+  "autocomplete-plus":
+    confirmCompletion: "tab always, enter when suggestion explicitly selected"
+  "autocomplete-python":
+    suggestionPriority: 2
+    useSnippets: "all"
+  "bracket-matcher":
+    highlightMatchingLineNumber: true
+  "city-lights-ui":
+    fontSize: 12
+  "code-peek": {}
+  "copy-as-rtf":
+    fontface: "Cascadia Mono"
+    fontsize: 10
+    style: "default"
+  "copy-with-style":
+    preset1:
+      background_color: "#ffffff"
+      font_family: "Cascadia Mono"
+  core:
+    allowPendingPaneItems: false
+    autoHideMenuBar: true
+    automaticallyUpdate: false
+    closeDeletedFileTabs: true
+    disabledPackages: [
+      "atom-beautify"
+      "atom-ide-ui"
+      "busy-signal"
+      "code-peek"
+      "copy-as-rtf"
+      "goto"
+      "ide-python"
+      "intentions"
+      "language-powershell"
+      "linter-pycodestyle"
+      "python-autopep8"
+      "python-black"
+      "script"
+      "tablr"
+      "todo-show"
+      "autocomplete-python"
+      "kite"
+      "linter"
+      "linter-flake8"
+      "linter-ui-default"
+    ]
+    editor:
+      multiCursorOnClick: true
+    ignoredNames: [
+      ".git"
+      ".hg"
+      ".svn"
+      ".DS_Store"
+      "._*"
+      "Thumbs.db"
+      "desktop.ini"
+      "Pipfile*"
+      ".git*"
+      "__pycache__"
+      ".venv"
+    ]
+    openEmptyEditorOnStart: false
+    packagesWithKeymapsDisabled: []
+    telemetryConsent: "no"
+    themes: [
+      "one-dark-ui"
+      "one-dark-pro-vivid-syntax"
+    ]
+    titleBar: "hidden"
+    uriHandlerRegistration: "always"
+  "custom-title":
+    template: "My Atom"
+  editor:
+    fontFamily: "SF Mono Medium, Cascadia Code, CaskaydiaCove NF"
+    fontSize: 12
+    invisibles: {}
+    scrollPastEnd: true
+    scrollSensitivity: 50
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+    tabLength: 4
+  "exception-reporting":
+    userId: "7c448283-0a8d-4948-9e2b-13cbbde8d932"
+  "file-icons": {}
+  "git-history": {}
+  "git-log":
+    fontScale: 1
+  "goto-definition": {}
+  "highlight-selected":
+    hideHighlightOnSelectedWord: true
+    highlightBackground: true
+    highlightInPanes: false
+    showResultsOnScrollBar: true
+  "ide-python":
+    pylsPlugins:
+      flake8:
+        enabled: true
+  kite:
+    showWelcomeNotificationOnStartup: false
+  linter:
+    lintOnChangeInterval: 1000
+    lintPreviewTabs: false
+  "linter-flake8":
+    ignoreErrorCodes: [
+      "E203"
+      "W503"
+    ]
+  "linter-pycodestyle":
+    ignoreErrorCodes: [
+      "W605"
+    ]
+  "linter-pylama": {}
+  "linter-ui-default":
+    decorateOnTreeView: "None"
+    panelHeight: 200
+    statusBarRepresents: "Current File"
+  "markdown-preview": {}
+  minimap:
+    absoluteMode: true
+    createPluginInDevMode: true
+    devicePixelRatioRounding: false
+    plugins:
+      "highlight-selected": true
+      "highlight-selectedDecorationsZIndex": 0
+    redrawDelay: 200
+    scrollAnimation: true
+    scrollAnimationDuration: 200
+  "nord-atom-syntax":
+    accessibility: {}
+  "nord-atom-ui": {}
+  "one-dark-ui": {}
+  "one-vibrancy":
+    effect: "dark"
+  organized: {}
+  "package-switch":
+    SaveData: [
+      "busy-signal"
+      "intentions"
+      "ide-python"
+      "atom-ide-ui"
+      "code-peek"
+      "todo-show"
+      "copy-as-rtf"
+      "python-autopep8"
+      "linter-pycodestyle"
+      "atom-beautify"
+    ]
+  "pristine-ui": {}
+  "python-autopep8":
+    maxLineLength: 79
+  "python-black":
+    fmtOnSave: false
+    lineLength: 79
+  script:
+    enableExecTime: false
+  "split-diff":
+    colors: {}
+    ignoreWhitespace: true
+    muteNotifications: true
+    turnOffSoftWrap: true
+  "status-bar": {}
+  "structure-view":
+    DoubleClickToFoldTreeView: false
+    ShowProperties: false
+    ShowVariables: false
+  tasks:
+    addTimestampOnConvertToTask: true
+  terminus:
+    ansiColors:
+      normal:
+        black: "#181a1b"
+        blue: "#0a6ab6"
+        cyan: "#37aab9"
+        green: "#38803a"
+        magenta: "#522e92"
+        red: "#a91409"
+        white: "#788187"
+        yellow: "#cc7a00"
+      zBright:
+        brightBlack: "#555b5e"
+        brightBlue: "#0287c3"
+        brightCyan: "#4ae3f7"
+        brightGreen: "#addd1e"
+        brightMagenta: "#d10aff"
+        brightRed: "#ff3078"
+        brightWhite: "#dcdfe4"
+        brightYellow: "#ffec16"
+    core:
+      mapTerminalsTo: "Folder"
+      shellArguments: "-NoProfile -NoLogo -NoExit -File C:\\Users\\thanh\\Documents\\WindowsPowerShell\\VSCode.PowerShell_profile.ps1"
+    iconColors:
+      blue: "#0a6ab6"
+      cyan: "#37aab9"
+      green: "#38803a"
+      magenta: "#522e92"
+      red: "#a91409"
+      yellow: "#cc7a00"
+    style:
+      animationSpeed: 5
+      defaultPanelHeight: "35%"
+      fontFamily: "CaskaydiaCove NF, Menlo, Consolas, DejaVu Sans Mono, monospace"
+      fontSize: "12"
+    toggles:
+      runInsertedText: false
+      selectToCopy: false
+  "title-bar-replacer":
+    colors: {}
+    colours:
+      style: "Compact"
+    configuration: {}
+    general:
+      autoHide: true
+  todo: {}
+  "todo-show":
+    showInTable: [
+      "Type"
+      "Text"
+    ]
+    sortBy: "Type"
+  "tree-view":
+    hideIgnoredNames: true
+  "tree-view-sort":
+    type: 2
+  welcome:
+    showOnStartup: false
+".basic.html.text":
+  editor:
+    showIndentGuide: true
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+".coffee.source":
+  editor:
+    showIndentGuide: true
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+".css.source":
+  editor:
+    showIndentGuide: true
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+".gfm.source":
+  editor:
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+".json.source":
+  editor:
+    showIndentGuide: true
+    tabLength: 4
+".plain.text":
+  editor:
+    softWrap: true
+    softWrapAtPreferredLineLength: true
+".powershell.source":
+  editor:
+    preferredLineLength: 100
+    showIndentGuide: true
+    tabLength: 4
+".python.regexp.source":
+  editor:
+    preferredLineLength: 79
+".python.source":
+  editor:
+    preferredLineLength: 88
