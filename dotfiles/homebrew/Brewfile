@@ -22,6 +22,8 @@ brew "difftastic"
 brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
+# Generate introspection data for GObject libraries
+brew "gobject-introspection"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
@@ -63,7 +65,7 @@ brew "pipx"
 # Python package management tool
 brew "poetry"
 # Object-relational database system
-brew "postgresql"
+brew "postgresql@14"
 # Protocol buffers (Google's data interchange format)
 brew "protobuf"
 # Python version management
@@ -99,6 +101,8 @@ cask "hiddenbar"
 cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
+# Command-line shell and scripting language
+cask "powershell"
 # Store SSH keys in the Secure Enclave
 cask "secretive"
 # Plugin for AWS CLI to start and end sessions that connect to managed instances
