@@ -11,7 +11,7 @@
     #   stdout: true
     #   stderr: true
     - description: Install all Homebrew packages and macOS apps
-      command: command -v brew >/dev/null 2>&1 && brew bundle --global --verbose
+      command: command -v brew >/dev/null 2>&1 && brew bundle --global --verbose --no-lock
       stdin: true
       stdout: true
-      stderr: true
+      # stderr: true
