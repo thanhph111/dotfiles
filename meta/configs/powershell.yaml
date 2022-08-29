@@ -4,3 +4,19 @@
     ~/.config/powershell/Microsoft.PowerShell_profile.ps1: dotfiles/powershell/Microsoft.PowerShell_profile.ps1
     ~/.config/powershell/PoshThemes: dotfiles/powershell/PoshThemes
     ~/.config/powershell/Modules/UserModules: dotfiles/powershell/Modules/UserModules/*
+
+- ifanylinux:
+    - shell:
+        - description: Install PowerShell modules
+          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf"
+          stdin: true
+          stdout: true
+          stderr: true
+
+- ifmacos:
+    - shell:
+        - description: Install PowerShell modules
+          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf"
+          stdin: true
+          stdout: true
+          stderr: true

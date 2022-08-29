@@ -1,12 +1,5 @@
-#: Get-Package
-#:
-#: Name                           Version          Source                           ProviderName
-#: ----                           -------          ------                           ------------
-#: z                              1.1.13           https://www.powershellgallery.c… PowerShellGet
-#: Terminal-Icons                 0.7.1            https://www.powershellgallery.c… PowerShellGet
-#: posh-git                       1.0.0            https://www.powershellgallery.c… PowerShellGet
-#: oh-my-posh                     6.33.0           https://www.powershellgallery.c… PowerShellGet
-#: PSFzf                          2.2.9            https://www.powershellgallery.c… PowerShellGet
+#: Install extra modules
+# Install-Module -Name z,Terminal-Icons,PsFzf
 
 #: Print the message when starting PowerShell
 "Welcome back!"
@@ -27,7 +20,7 @@ Enable-PoshTooltips
 #region Terminal-Icons
 
 #: This will slow down the startup time, about 400ms
-# Import-Module Terminal-Icons
+Import-Module Terminal-Icons
 
 #endregion
 

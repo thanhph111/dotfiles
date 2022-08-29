@@ -3,3 +3,8 @@
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
 	shallow = true
+[submodule "ifplatform"]
+	path = plugins/ifplatform
+	url = https://github.com/ssbanerje/dotbot-ifplatform.git
+    ignore = dirty
+    shallow = true
