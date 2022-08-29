@@ -1,0 +1,78 @@
+{
+    "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+    "Sources": [
+        {
+            "Packages": [
+                {
+                    "PackageIdentifier": "AgileBits.1Password"
+                },
+                {
+                    "PackageIdentifier": "BlenderFoundation.Blender"
+                },
+                {
+                    "PackageIdentifier": "DebaucheeOpenSourceGroup.Barrier"
+                },
+                {
+                    "PackageIdentifier": "Discord.Discord"
+                },
+                {
+                    "PackageIdentifier": "Fork.Fork"
+                },
+                {
+                    "PackageIdentifier": "Git.Git"
+                },
+                {
+                    "PackageIdentifier": "GitHub.GitHubDesktop"
+                },
+                {
+                    "PackageIdentifier": "GitHub.cli"
+                },
+                {
+                    "PackageIdentifier": "GnuPG.Gpg4win"
+                },
+                {
+                    "PackageIdentifier": "Google.Chrome"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.OneDrive"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.PowerToys"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.Teams"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.VisualStudioCode"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.WindowsTerminal"
+                },
+                {
+                    "PackageIdentifier": "QL-Win.QuickLook"
+                },
+                {
+                    "PackageIdentifier": "Spotify.Spotify"
+                },
+                {
+                    "PackageIdentifier": "Valve.Steam"
+                },
+                {
+                    "PackageIdentifier": "VideoLAN.VLC"
+                },
+                {
+                    "PackageIdentifier": "qBittorrent.qBittorrent"
+                },
+                {
+                    "PackageIdentifier": "vim.vim"
+                }
+            ],
+            "SourceDetails": {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type": "Microsoft.PreIndexed.Package"
+            }
+        }
+    ]
+}

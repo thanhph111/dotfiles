@@ -1,0 +1,8 @@
+# Windows Package Manager (winget)
+
+- shell:
+    - description: Install packages using winget
+      command: winget import --import-file ./dotfiles/winget/packages.json
+      stdin: true
+      stdout: true
+      stderr: true
