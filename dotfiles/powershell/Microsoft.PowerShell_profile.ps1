@@ -10,7 +10,8 @@
 # Import-Module oh-my-posh
 
 #: Use a theme
-oh-my-posh --init --shell pwsh --config ~/.poshthemes/multiplex.omp.toml | Invoke-Expression
+$env:POSH_THEME = "~/.config/oh-my-posh/multiplex.toml"
+oh-my-posh init pwsh | Invoke-Expression
 
 #: Enable-PoshTransientPrompt
 Enable-PoshTooltips
