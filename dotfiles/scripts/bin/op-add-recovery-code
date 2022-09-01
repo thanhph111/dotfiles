@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# op-add-recovery-code.sh: Add recovery code to the 1Password items.
+# op-add-recovery-code: Add recovery code to the 1Password items.
 
-# Usage: op-add-recovery-code.sh file_or_folder_path
+# Usage: op-add-recovery-code file_or_folder_path
 # Step:
 #     1. Set up 1Password CLI:
 #     https://developer.1password.com/docs/cli/get-started
