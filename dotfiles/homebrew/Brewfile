@@ -89,28 +89,82 @@ brew "jandedobbeleer/oh-my-posh/oh-my-posh"
 # Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
 # the macOS keychain.
 brew "jorgelbg/tap/pinentry-touchid"
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
 # Command-line helper for the 1Password password manager
 cask "1password-cli"
+# Application uninstaller
+cask "appcleaner"
 # Audio utility
 cask "background-music"
 # Open-source KVM software
 cask "barrier"
+# Cross platform SQL editor and database management app
+cask "beekeeper-studio"
+# Tool to customize input devices and automate computer systems
+cask "bettertouchtool"
+# 3D creation suite
+cask "blender"
+# Server and cloud storage browser
+cask "cyberduck"
+# App to build and share containerized applications and microservices
+cask "docker"
+# Collaborative team software
+cask "figma"
+# Web browser
+cask "firefox"
+# GIT client
+cask "fork"
+# Git client focusing on productivity
+cask "gitkraken"
+# Web browser
+cask "google-chrome"
 # Utility to hide menu bar items
 cask "hiddenbar"
+# Free and open-source media player
+cask "iina"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# File archiver
+cask "keka"
+# Blocks all Keyboard and TouchBar input
+cask "keyboardcleantool"
 # Open-source keystroke visualizer
 cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
+# App to write, plan, collaborate, and get organized
+cask "notion"
+# Customize and maintain app icons
+cask "pictogram"
+# Collaboration platform for API development
+cask "postman"
 # Command-line shell and scripting language
 cask "powershell"
+# Control your tools with a few keystrokes
+cask "raycast"
 # Store SSH keys in the Secure Enclave
 cask "secretive"
 # Plugin for AWS CLI to start and end sessions that connect to managed instances
 cask "session-manager-plugin"
+# Screenshot measurement and annotation tool
+cask "shottr"
+# Team communication and collaboration software
+cask "slack"
+# Communicate and share information between devices
+cask "soduto"
+# Music streaming service
+cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
 # Terminal emulator, SSH and serial client
 cask "tabby"
+# General-purpose text editor
+cask "textmate"
+# Open-source code editor
+cask "visual-studio-code"
+# Rust-based terminal
+cask "warp"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
 mas "Amphetamine", id: 937984704
