@@ -1,4 +1,4 @@
 # nano
 
 - link:
-    ~/.nanorc: dotfiles/nano/nanorc
+    ~/.config/nano/nanorc: dotfiles/nano/nanorc
