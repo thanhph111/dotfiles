@@ -55,26 +55,38 @@ config)
     ;;
 esac
 
-configs="$(cat $PROFILES_DIR/$profile_name | xargs) $@"
+# Synthesize configs
+configs=''
+while read -r line; do
+    # Ignore line starting with '#'
+    [[ "$line" =~ ^\#.*$ ]] && continue
+    configs="$configs $line"
+done <"$PROFILES_DIR/$profile_name"
+configs="$configs $@"
 
+# Add all Dotbot plugins
 plugin_args=''
 for plugin_dir in $DOTBOT_PLUGINS_DIR/*; do
     [[ -d "$plugin_dir" ]] || continue
     plugin_args+="--plugin-dir $plugin_dir"
 done
 
+# Loop though configs and execute each with base config
 for config in $configs; do
     echo "Configure $config"
 
+    # Check if config file readable
     config_path="$CONFIG_DIR/${config%-sudo}.yaml"
     [[ ! -r "$config_path" ]] && {
         echo "Ignoring unknown config: $config_path"
         continue
     }
 
+    # Create a temporary config file with base config and current config
     tempfile="$(mktemp)"
     cat "$BASE_CONFIG_PATH" "$config_path" >"$tempfile"
 
+    # Allows execute a config as a superuser with sudo suffix, i.e. `bash-sudo`
     if [[ $config == *sudo* ]]; then
         sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
     else
