@@ -11,6 +11,8 @@ META_DIR="$PWD/meta"
 CONFIG_DIR="$META_DIR/configs"
 PROFILES_DIR="$META_DIR/profiles"
 BASE_CONFIG_PATH="$META_DIR/base.yaml"
+PRE_CONFIG_PATH="$META_DIR/pre.yaml"
+POST_CONFIG_PATH="$META_DIR/post.yaml"
 
 # Dotbot paths
 DOTBOT_DIR="$PWD/dotbot"
@@ -31,6 +33,23 @@ usage() {
     echo "  config      Install by configs"
     echo "    $0 config <config> [<config>...]"
     echo "    <config>-sudo: Install with sudo"
+}
+
+run_config() {
+    config_path="$1"
+
+    # Create a temporary config file with base config and current config
+    tempfile="$(mktemp)"
+    cat "$BASE_CONFIG_PATH" "$config_path" >"$tempfile"
+
+    # Allows execute a config as a superuser with sudo suffix, i.e. `bash-sudo`
+    if [[ $config == *sudo* ]]; then
+        sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
+    else
+        "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
+    fi
+
+    rm -f "$tempfile"
 }
 
 case "$1" in
@@ -71,8 +90,13 @@ for plugin_dir in $DOTBOT_PLUGINS_DIR/*; do
     plugin_args+="--plugin-dir $plugin_dir"
 done
 
+# Run pre config
+echo 'Running pre config'
+run_config "$PRE_CONFIG_PATH"
+
 # Loop though configs and execute each with base config
 for config in $configs; do
+    echo
     echo "Configure $config"
 
     # Check if config file readable
@@ -82,16 +106,11 @@ for config in $configs; do
         continue
     }
 
-    # Create a temporary config file with base config and current config
-    tempfile="$(mktemp)"
-    cat "$BASE_CONFIG_PATH" "$config_path" >"$tempfile"
-
-    # Allows execute a config as a superuser with sudo suffix, i.e. `bash-sudo`
-    if [[ $config == *sudo* ]]; then
-        sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
-    else
-        "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
-    fi
-
-    rm -f "$tempfile"
+    # Run config
+    run_config "$config_path"
 done
+
+# Run post config
+echo
+echo 'Running post config'
+run_config "$POST_CONFIG_PATH"

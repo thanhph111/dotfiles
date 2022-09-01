@@ -1,0 +1,9 @@
+- clean:
+    ~/:
+    ~/.config:
+      recursive: true
+    ~/.local:
+      recursive: true
+
+- create:
+    ~/.cache:

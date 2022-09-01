@@ -6,13 +6,3 @@
     shell:
       stdout: true
       stderr: true
-
-- clean:
-    ~/:
-    ~/.config:
-      recursive: true
-    ~/.local:
-      recursive: true
-
-- create:
-    ~/.cache:
