@@ -13,8 +13,12 @@ export USER_CACHE_DIR="${XDG_CACH_HOME:-$HOME/.cache}"
 export ZSH_CACHE_DIR="$USER_CACHE_DIR/zsh"
 mkdir -p "$ZSH_CACHE_DIR"
 
+#: Overwrite with local pre-config
+[[ -r "$ZSH_CONFIG_DIR/local.pre.zsh" ]] &&
+    source "$ZSH_CONFIG_DIR/local.pre.zsh"
+
 #: Set Oh My Zsh installation directory to check if it's already installed later
-[[ -d "$HOME/.oh-my-zsh" ]] && export ZSH="$HOME/.oh-my-zsh"
+[[ -z "$ZSH" ]] && [[ -d "$HOME/.oh-my-zsh" ]] && export ZSH="$HOME/.oh-my-zsh"
 
 
 #: Oh My Zsh {{{
@@ -489,8 +493,8 @@ autoload -U colors && colors
     done
 }
 
-#: Overwrite with local config
-include "$ZSH_CONFIG_DIR/local.zsh"
+#: Overwrite with local post-config
+include "$ZSH_CONFIG_DIR/local.post.zsh"
 
 #: Build completion
 #: If wanna run `compinit` only every 24 hours, see:
