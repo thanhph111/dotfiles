@@ -4,6 +4,8 @@ tap "homebrew/core"
 tap "homebrew/services"
 tap "jandedobbeleer/oh-my-posh"
 tap "jorgelbg/tap"
+# Record and share terminal sessions
+brew "asciinema"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Programmable completion for Bash 3.2
@@ -123,6 +125,8 @@ cask "google-chrome"
 cask "hiddenbar"
 # Free and open-source media player
 cask "iina"
+# Tool to optimize images to a smaller size
+cask "imageoptim"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
 # File archiver
@@ -177,6 +181,7 @@ mas "Equinox", id: 1591510203
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
+mas "One Thing", id: 1604176982
 mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
