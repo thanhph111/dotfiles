@@ -1,8 +1,8 @@
 tap "homebrew/bundle"
 tap "homebrew/cask"
+tap "homebrew/cask-fonts"
 tap "homebrew/core"
 tap "homebrew/services"
-tap "jandedobbeleer/oh-my-posh"
 tap "jorgelbg/tap"
 # Record and share terminal sessions
 brew "asciinema"
@@ -60,6 +60,8 @@ brew "mas"
 brew "node"
 # Command-line collection runner for Postman
 brew "newman"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Execute binaries from Python packages in isolated environments
@@ -86,8 +88,6 @@ brew "youtube-dl"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Prompt theme engine for any shell
-brew "jandedobbeleer/oh-my-posh/oh-my-posh"
 # Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
 # the macOS keychain.
 brew "jorgelbg/tap/pinentry-touchid"
@@ -115,6 +115,19 @@ cask "docker"
 cask "figma"
 # Web browser
 cask "firefox"
+cask "font-fira-code"
+# Developer targeted fonts with a high number of glyphs
+cask "font-fira-code-nerd-font"
+# Typeface made for developers
+cask "font-jetbrains-mono"
+# Developer targeted fonts with a high number of glyphs
+cask "font-jetbrains-mono-nerd-font"
+# Serif font "New York" by Apple
+cask "font-new-york"
+# Monospaced variant of "San Francisco" by Apple
+cask "font-sf-mono"
+# Sans-serif variant of "San Francisco" by Apple
+cask "font-sf-pro"
 # GIT client
 cask "fork"
 # Git client focusing on productivity
