@@ -1,3 +1,4 @@
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 #: https://ohmyposh.dev/docs
 #: https://www.nerdfonts.com/cheat-sheet
 #: https://onlineunicodetools.com/escape-unicode
@@ -45,7 +46,7 @@ foreground = "p:lightWhite"
 style = "powerline"
 template = "\uf444 {{ .Name }} "
 type = "shell"
-# [blocks.segments.properties]
+[blocks.segments.properties]
 [blocks.segments.properties.mapped_shell_names]
 bash = "Bash"
 fish = "Fish"
@@ -168,14 +169,14 @@ branch_behind_icon = "\uf6ba"
 branch_gone_icon = "\uf204 "
 branch_icon = "\ue0a0 "
 branch_identical_icon = "\uf205 "
-branch_max_length=20
+branch_max_length = 20
 commit_icon = "\uf417 "
 fetch_stash_count = true
 fetch_status = true
 fetch_upstream_icon = true
 git_icon = "\uf4a9 "
 tag_icon = "\uf412 "
-truncate_symbol="…"
+truncate_symbol = "\u2026"
 
 [[blocks]]
 alignment = "left"
@@ -218,24 +219,19 @@ type = "text"
 
 [palette]
 #: Create palette match terminal colors
-black = "black"                # "#181A1B"
-blue = "blue"                  # "#0A6AB6"
-cyan = "cyan"                  # "#37AAB9"
-darkGray = "darkGray"          # "#555B5E"
-green = "green"                # "#2B803E"
-lightBlue = "lightBlue"        # "#0287C3"
-lightCyan = "lightCyan"        # "#4AE3F7"
-lightGreen = "lightGreen"      # "#ADDD1E"
-lightMagenta = "lightMagenta"  # "#D10AFF"
-lightRed = "lightRed"          # "#FF3078"
-lightWhite = "lightWhite"      # "#DCDFE4"
-lightYellow = "lightYellow"    # "#FFEC16"
-magenta = "magenta"            # "#522E92"
-red = "red"                    # "#A91409"
-white = "white"                # "#788187"
-yellow = "yellow"              # "#CC7A00"
-
-# [transient_prompt]
-# background = "transparent"
-# foreground = "p:lightWhite"
-# template = "{{ .Shell }}> "
+black = "black"               # "#181A1B"
+blue = "blue"                 # "#0A6AB6"
+cyan = "cyan"                 # "#37AAB9"
+darkGray = "darkGray"         # "#555B5E"
+green = "green"               # "#2B803E"
+lightBlue = "lightBlue"       # "#0287C3"
+lightCyan = "lightCyan"       # "#4AE3F7"
+lightGreen = "lightGreen"     # "#ADDD1E"
+lightMagenta = "lightMagenta" # "#D10AFF"
+lightRed = "lightRed"         # "#FF3078"
+lightWhite = "lightWhite"     # "#DCDFE4"
+lightYellow = "lightYellow"   # "#FFEC16"
+magenta = "magenta"           # "#522E92"
+red = "red"                   # "#A91409"
+white = "white"               # "#788187"
+yellow = "yellow"             # "#CC7A00"
