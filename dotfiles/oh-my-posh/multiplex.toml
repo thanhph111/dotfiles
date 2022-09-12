@@ -4,6 +4,8 @@
 #: https://onlineunicodetools.com/escape-unicode
 #: https://dencode.com/en/string/unicode-escape
 
+#: Version: 9.0.0
+
 console_title_template = "{{ .Shell }} \u2724 {{ .Folder }}"
 final_space = true
 version = 2.0
