@@ -129,8 +129,8 @@ template = """ \
 
     {{ if .Working.Changed }} \
         \u2502\
-        {{ if gt .Working.Added 0 }} \
-            \uf055 {{ .Working.Added }}\
+        {{ if gt .Working.Untracked 0 }} \
+            \uf055 {{ .Working.Untracked }}\
         {{ end }}\
         {{ if gt .Working.Modified 0 }} \
             \uf10c {{ .Working.Modified }}\
