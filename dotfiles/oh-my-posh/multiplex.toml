@@ -122,7 +122,7 @@ template = """ \
         {{ .UpstreamIcon }} \
     {{ end }}\
 
-    {{ .HEAD }}\
+    {{ .HEAD }} \
 
     {{ .BranchStatus }}\
 
@@ -235,7 +235,7 @@ red = "red"                    # "#A91409"
 white = "white"                # "#788187"
 yellow = "yellow"              # "#CC7A00"
 
-[transient_prompt]
-background = "transparent"
-foreground = "p:lightWhite"
-template = "{{ .Shell }}> "
+# [transient_prompt]
+# background = "transparent"
+# foreground = "p:lightWhite"
+# template = "{{ .Shell }}> "
