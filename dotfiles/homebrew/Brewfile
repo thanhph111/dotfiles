@@ -36,6 +36,8 @@ brew "gh"
 brew "git"
 # Git extension for versioning large files
 brew "git-lfs"
+# Blazing fast terminal-ui for git written in rust
+brew "gitui"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
 # Colorize logfiles and command output
@@ -52,6 +54,8 @@ brew "openjdk"
 brew "kafka"
 # Generic command-line non-JVM Apache Kafka producer and consumer
 brew "kcat"
+# Simple terminal UI for git commands
+brew "lazygit"
 # Pager program similar to more
 brew "less"
 # Mac App Store command-line interface
