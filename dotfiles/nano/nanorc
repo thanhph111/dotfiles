@@ -9,7 +9,7 @@ set smarthome
 set nohelp
 set boldtext
 
-# TODO: Uncompatible on macOS, need to check
+# TODO: Incompatible on macOS, need to check
 # set numbercolor white
 # set titlecolor red,yellow
 # set statuscolor red,yellow
