@@ -88,6 +88,8 @@ brew "starship"
 brew "tldr"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
+# Process YAML documents from the CLI
+brew "yq"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
@@ -164,6 +166,8 @@ cask "postman"
 cask "powershell"
 # Control your tools with a few keystrokes
 cask "raycast"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
 # Store SSH keys in the Secure Enclave
 cask "secretive"
 # Plugin for AWS CLI to start and end sessions that connect to managed instances
