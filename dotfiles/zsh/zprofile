@@ -1,5 +1,6 @@
 #: Configuration directory for applications respecting XDG specifications
 export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
 
 #: GnuPG home
 export GNUPGHOME="$HOME/.config/gnupg"
