@@ -15,7 +15,7 @@ export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
 mkdir -p "$BASH_CONFIG_DIR"
 
 #: Create cache directory
-export USER_CACHE_DIR="${XDG_CACH_HOME:-$HOME/.cache}"
+export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
 mkdir -p "$BASH_CACHE_DIR"
 
