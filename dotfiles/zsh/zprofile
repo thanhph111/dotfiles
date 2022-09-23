@@ -8,4 +8,4 @@ export GNUPGHOME="$HOME/.config/gnupg"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 #: Pyenv
-eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
