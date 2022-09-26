@@ -243,6 +243,8 @@ let &t_SR = "\e[3 q"  ": REPLACE mode
 let &t_EI = "\e[1 q"  ": NORMAL mode (ELSE)
 ": The cursor is still beam when opening, let's cheat a bit
 autocmd MyAutocmdGroup VimEnter * silent execute '!echo -ne "' . &t_EI . '"'
+": Restore the cursor when exiting
+autocmd MyAutocmdGroup VimLeave * silent execute '!echo -ne "' . &t_SI . '"'
 ": Undercurl support
 try
     let &t_Cs = "\e[4:3m"
