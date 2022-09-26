@@ -68,6 +68,8 @@ brew "newman"
 brew "oh-my-posh"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
+# Python dependency management tool
+brew "pipenv"
 # Execute binaries from Python packages in isolated environments
 brew "pipx"
 # Python package management tool
