@@ -58,6 +58,8 @@ brew "lazygit"
 brew "less"
 # Mac App Store command-line interface
 brew "mas"
+# Interactive cheatsheet tool for the command-line
+brew "navi"
 # Platform built on V8 to build network applications
 brew "node"
 # Command-line collection runner for Postman
@@ -86,6 +88,8 @@ brew "rm-improved"
 brew "starship"
 # Simplified and community-driven man pages
 brew "tldr"
+# Internet file retriever
+brew "wget"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
 # Process YAML documents from the CLI
