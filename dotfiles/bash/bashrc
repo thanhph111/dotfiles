@@ -488,6 +488,7 @@ alias vimf="fzf --bind 'enter:abort+execute(vim -p {+} </dev/tty)'"
 # export KITTY_DEVELOP_FROM=~/Desktop/Projects/kitty
 #: Kitty shell integration
 if [ -n "$KITTY_INSTALLATION_DIR" ] &&
+    export KITTY_SHELL_INTEGRATION="no-rc no-title"
     [ -f "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]; then
     source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
