@@ -7,3 +7,6 @@
 
 - create:
     ~/.cache:
+    ~/.config:
+    ~/.local/share:
+    ~/.local/state:
