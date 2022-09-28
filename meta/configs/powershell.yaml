@@ -8,7 +8,7 @@
 - ifanylinux:
     - shell:
         - description: Install PowerShell modules
-          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Force"
+          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery"
           stdin: true
           stdout: true
           stderr: true
@@ -16,7 +16,7 @@
 - ifmacos:
     - shell:
         - description: Install PowerShell modules
-          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Force"
+          command: pwsh -c "Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery"
           stdin: true
           stdout: true
           stderr: true
