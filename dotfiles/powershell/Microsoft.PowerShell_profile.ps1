@@ -36,6 +36,9 @@ Set-PsFzfOption -PSReadlineChordReverseHistory "Ctrl+r"
 
 #region PSReadLine
 
+#: Use Emacs mode
+Set-PSReadLineOption -EditMode Emacs
+
 #: Change prompt in multiple line mode
 Set-PSReadLineOption -ContinuationPrompt "..."
 
