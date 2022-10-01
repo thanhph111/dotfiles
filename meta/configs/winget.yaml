@@ -1,8 +1,11 @@
 # Windows Package Manager (winget)
 
+# This config still can't be included in the Windows profile as it can't be
+# run as an administrator, but the install script requires it to link the files.
+# Keep updating news from GitHub
 - shell:
     - description: Install packages using winget
-      command: winget import --import-file ./dotfiles/winget/packages.json
+      command: winget import --import-file .\dotfiles\winget\packages.json
       stdin: true
       stdout: true
       stderr: true
