@@ -1,0 +1,22 @@
+# PowerShell
+
+- link:
+    ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: dotfiles/powershell/Microsoft.PowerShell_profile.ps1
+    ~/Documents/WindowsPowerShell/PoshThemes: dotfiles/powershell/PoshThemes
+    ~/Documents/WindowsPowerShell/Modules/UserModules: dotfiles/powershell/Modules/UserModules/*
+
+- shell:
+    - description: Install PowerShell modules
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted;
+        Install-Module -Name PSReadline -Force -Scope CurrentUser;
+        Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Confirm:$False -Scope CurrentUser;
+        "
+      stdin: true
+      stdout: true
+      stderr: true
