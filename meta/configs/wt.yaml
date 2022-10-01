@@ -1,14 +1,9 @@
 # Windows Terminal
 
-# This config does nothing
-# Until one of the following issues is resolved, the settings sync is quite a pain:
+# Check if we can use built-in sync feature
 # - https://github.com/microsoft/terminal/issues/2933
 # - https://github.com/microsoft/terminal/issues/6687
 # - https://github.com/microsoft/terminal/issues/4566
 
-- shell:
-    - description: Print a message to remind to check if above issues are resolved
-      command: echo "Please check if sync issues are resolved"
-      stdin: true
-      stdout: true
-      stderr: true
+- link:
+    $LOCALAPPDATA/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json: dotfiles/wt/settings.json
