@@ -32,8 +32,8 @@ template = """ \
         \uf817 \
     {{ end }}\
 
-    {{ if .Root }} \
-        \uf997\
+    {{ if .Root }}\
+        \uf997 \
     {{ end }}\
 
     {{ .UserName }} \
