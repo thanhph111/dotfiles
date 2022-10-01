@@ -39,14 +39,14 @@ Set-PsFzfOption -PSReadlineChordReverseHistory "Ctrl+r"
 #: Change prompt in multiple line mode
 Set-PSReadLineOption -ContinuationPrompt "..."
 
-#: Set this after 2.2.0 for prediction feature
-# Set-PSReadLineOption -PredictionViewStyle ListView
-# Set-PSReadLineOption -PredictionSource History
+#: Prediction on type
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -PredictionSource History
 
 #region Change keymaps in PSReadLine
 
 #: Tab behavior, choose one of these
-Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 # Set-PSReadlineKeyHandler -Key Tab -Function Complete
 # Set-PSReadLineKeyHandler -Key Tab -Function TabCompleteNext
 #: Also the `Shift+Tab` key
