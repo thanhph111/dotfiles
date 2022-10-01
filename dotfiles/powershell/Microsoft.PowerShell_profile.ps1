@@ -81,6 +81,19 @@ Set-PSReadLineKeyHandler -Chord 'Oem7', 'Shift+Oem7' `
     }
 }
 
+#: Don't save to history when using VSCode terminal
+if ($env:TERM_PROGRAM -eq 'vscode') {
+    Set-PSReadLineOption -HistorySaveStyle SaveNothing
+}
+
+#: Intercept history saving
+Set-PSReadLineOption -AddToHistoryHandler {
+    param([string]$line)
+
+    #: Don't save to history commands which has less than 4 characters or starts with space or end with semicolon
+    return $line.Length -gt 3 -and $line[0] -ne " " -and $line[0] -ne ";"
+}
+
 #endregion
 
 #endregion
