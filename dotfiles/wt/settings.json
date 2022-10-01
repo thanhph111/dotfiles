@@ -53,7 +53,7 @@
                 "startingDirectory": "%USERPROFILE%/Desktop"
             },
             {
-                "commandline": "vim.bat",
+                "commandline": "vim.exe",
                 "cursorShape": "filledBox",
                 "font":
                 {
