@@ -5,7 +5,7 @@
 #:   z
 
 #: Print the message when starting PowerShell
-"Welcome back!"
+'Welcome back!'
 
 #region Oh My Posh
 
@@ -13,7 +13,7 @@
 # Import-Module oh-my-posh
 
 #: Use a theme
-$env:POSH_THEME = "~/.config/oh-my-posh/multiplex.toml"
+$env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
 oh-my-posh init pwsh | Invoke-Expression
 
 #: Enable-PoshTransientPrompt
@@ -46,9 +46,9 @@ Import-Module Terminal-Icons
 #region PSFzf
 
 #: Looking for filepaths
-Set-PsFzfOption -PSReadlineChordProvider "Ctrl+p"
+Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+p'
 #: Looking for history commands
-Set-PsFzfOption -PSReadlineChordReverseHistory "Ctrl+r"
+Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
 
 #endregion
 
@@ -58,7 +58,7 @@ Set-PsFzfOption -PSReadlineChordReverseHistory "Ctrl+r"
 Set-PSReadLineOption -EditMode Emacs
 
 #: Change prompt in multiple line mode
-Set-PSReadLineOption -ContinuationPrompt "..."
+Set-PSReadLineOption -ContinuationPrompt '...'
 
 #: Prediction on type
 Set-PSReadLineOption -PredictionViewStyle ListView
@@ -85,7 +85,7 @@ Set-PSReadLineOption -HistorySearchCursorMovesToEnd
 #: Insert paired quotes if not already on a quote
 Set-PSReadLineKeyHandler -Chord 'Oem7', 'Shift+Oem7' `
     -BriefDescription SmartInsertQuote `
-    -LongDescription "Insert paired quotes if not already on a quote" `
+    -LongDescription 'Insert paired quotes if not already on a quote' `
     -ScriptBlock {
     param($key, $arg)
     $line = $null
@@ -112,7 +112,7 @@ Set-PSReadLineOption -AddToHistoryHandler {
     param([string]$line)
 
     #: Don't save to history commands which has less than 4 characters or starts with space or end with semicolon
-    return $line.Length -gt 3 -and $line[0] -ne " " -and $line[0] -ne ";"
+    return $line.Length -gt 3 -and $line[0] -ne ' ' -and $line[0] -ne ';'
 }
 
 #endregion

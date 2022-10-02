@@ -2,7 +2,7 @@
 
 Param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("windows")]
+    [ValidateSet('windows')]
     [string]$Profile,
     [Parameter(Mandatory = $false)]
     [string[]]$Configs
@@ -10,11 +10,11 @@ Param(
 
 
 # Exit immediately if an error occurs
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = 'Stop'
 
 # This script is only for Windows
-if ($env:OS -ne "Windows_NT") {
-    Write-Error "This script is only for Windows."
+if ($env:OS -ne 'Windows_NT') {
+    Write-Error 'This script is only for Windows.'
     exit 1
 }
 
@@ -33,7 +33,7 @@ $PostConfigFilePath = "$MetaDirectoryPath\post.yaml"
 $DotbotDirectoryPath = "$PWD\dotbot"
 $DotbotBinaryFilePath = "$DotbotDirectoryPath\bin\dotbot"
 $DotbotPluginDirectoryPath = "$PWD\plugins"
-$DotbotExcludedPlugin = @("ifplatform")
+$DotbotExcludedPlugin = @('ifplatform')
 $DotbotPluginArguments = Get-ChildItem -Directory -Path $DotbotPluginDirectoryPath | ForEach-Object {
     if ($DotbotExcludedPlugin -notcontains $_.Name) {
         "-p $DotbotPluginDirectoryPath\$_"
@@ -47,18 +47,18 @@ git submodule update --init --recursive
 function Test-PythonInstalled {
     # Check if Python is installed
     # Python redirects to Microsoft Store in Windows 10 when not installed
-    foreach ($PythonCommand in ("python", "python3")) {
+    foreach ($PythonCommand in ('python', 'python3')) {
         if (
             & {
-                $ErrorActionPreference = "SilentlyContinue"
+                $ErrorActionPreference = 'SilentlyContinue'
                 ![string]::IsNullOrEmpty((&$PythonCommand -V))
-                $ErrorActionPreference = "Stop"
+                $ErrorActionPreference = 'Stop'
             }
         ) {
             return $PythonCommand
         }
     }
-    Write-Error "Python is not installed."
+    Write-Error 'Python is not installed.'
     exit 1
 }
 
@@ -85,11 +85,11 @@ function Invoke-Config {
 $PythonCommand = Test-PythonInstalled
 
 # Invoke pre-config
-Write-Output "Running pre-config..."
+Write-Output 'Running pre-config...'
 Invoke-Config -ConfigFilePath $PreConfigFilePath
 
 # Invoke config
-Write-Output "Running configs..."
+Write-Output 'Running configs...'
 @(
     & {
         if (!$Profile) {
@@ -99,7 +99,7 @@ Write-Output "Running configs..."
         if (Test-Path $profileFilePath) {
             Get-Content -Path $profileFilePath | ForEach-Object {
                 # Ignore comments and empty lines
-                if (!($_ -match "^\s*#" -or [string]::IsNullOrEmpty($_))) {
+                if (!($_ -match '^\s*#' -or [string]::IsNullOrEmpty($_))) {
                     $_
                 }
             }
@@ -116,7 +116,7 @@ Write-Output "Running configs..."
 }
 
 # Invoke pre-config
-Write-Output "Running post-config..."
+Write-Output 'Running post-config...'
 Invoke-Config -ConfigFilePath $PostConfigFilePath
 
 exit 0
