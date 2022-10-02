@@ -8,8 +8,6 @@
 
 console_title_template = "{{ .Shell }} \u2724 {{ .Folder }}"
 final_space = true
-# Only good for Windows Terminal
-pwd = "osc99"
 version = 2.0
 
 [[blocks]]
