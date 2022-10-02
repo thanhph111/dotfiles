@@ -1,5 +1,8 @@
-#: Install extra modules
-# Install-Module -Name z,Terminal-Icons,PsFzf
+#: Install extra modules:
+#:   posh-git
+#:   PsFzf
+#:   Terminal-Icons
+#:   z
 
 #: Print the message when starting PowerShell
 "Welcome back!"
@@ -15,6 +18,10 @@ oh-my-posh init pwsh | Invoke-Expression
 
 #: Enable-PoshTransientPrompt
 Enable-PoshTooltips
+
+#: Enable Git auto-completion
+#: This must be done after Oh My Posh initialization
+$env:POSH_GIT_ENABLED = $true
 
 #endregion
 
