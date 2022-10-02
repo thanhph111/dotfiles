@@ -14,9 +14,17 @@
             -NoLogo
             -NonInteractive
             -Command '
-            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted;
-            Install-Module -Name PSReadline -Force -Scope CurrentUser;
-            Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Confirm:$False -Scope CurrentUser;
+            @(
+                "posh-git",
+                "PsFzf",
+                "PSReadline",
+                "Terminal-Icons",
+                "z"
+            ) | ForEach-Object {
+                if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                    Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+                }
+            }
             '
           stdin: true
           stdout: true
@@ -31,9 +39,17 @@
             -NoLogo
             -NonInteractive
             -Command '
-            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted;
-            Install-Module -Name PSReadline -Force -Scope CurrentUser;
-            Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Confirm:$False -Scope CurrentUser;
+            @(
+                "posh-git",
+                "PsFzf",
+                "PSReadline",
+                "Terminal-Icons",
+                "z"
+            ) | ForEach-Object {
+                if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                    Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+                }
+            }
             '
           stdin: true
           stdout: true
