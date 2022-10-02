@@ -12,11 +12,11 @@
         -NoProfile
         -NoLogo
         -NonInteractive
-        -Command '
+        -Command "
         Set-PSRepository -Name PSGallery -InstallationPolicy Trusted;
         Install-Module -Name PSReadline -Force -Scope CurrentUser;
         Install-Module -Name z,Terminal-Icons,PsFzf -Repository PSGallery -Confirm:$False -Scope CurrentUser;
-        '
+        "
       stdin: true
       stdout: true
       stderr: true
@@ -28,12 +28,12 @@
         -NoProfile
         -NoLogo
         -NonInteractive
-        -Command '
-        [Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", "$env:USERPROFILE\.config", [System.EnvironmentVariableTarget]::User);
-        [Environment]::SetEnvironmentVariable("XDG_CACHE_HOME", "$env:USERPROFILE\.cache", [System.EnvironmentVariableTarget]::User);
-        [Environment]::SetEnvironmentVariable("XDG_STATE_HOME", "$env:USERPROFILE\.local\state", [System.EnvironmentVariableTarget]::User);
-        [Environment]::SetEnvironmentVariable("XDG_DATA_HOME", "$env:USERPROFILE\.local\share", [System.EnvironmentVariableTarget]::User);
-        '
+        -Command "
+        [Environment]::SetEnvironmentVariable('XDG_CONFIG_HOME', '$env:USERPROFILE\.config', [System.EnvironmentVariableTarget]::User);
+        [Environment]::SetEnvironmentVariable('XDG_CACHE_HOME', '$env:USERPROFILE\.cache', [System.EnvironmentVariableTarget]::User);
+        [Environment]::SetEnvironmentVariable('XDG_STATE_HOME', '$env:USERPROFILE\.local\state', [System.EnvironmentVariableTarget]::User);
+        [Environment]::SetEnvironmentVariable('XDG_DATA_HOME', '$env:USERPROFILE\.local\share', [System.EnvironmentVariableTarget]::User);
+        "
       stdin: true
       stdout: true
       stderr: true
