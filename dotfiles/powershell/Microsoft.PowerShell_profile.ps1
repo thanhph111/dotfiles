@@ -28,7 +28,7 @@ $env:POSH_GIT_ENABLED = $true
 #: This set an environment variable and the Oh My Posh theme have to print it out
 if ($env:WT_SESSION) {
     function Set-Osc99 {
-        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)"
+        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)\"
     }
     #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
     New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
