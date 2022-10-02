@@ -495,5 +495,12 @@ fi
 
 #: }}}
 
+#: Miscellaneous {{{
+
+#: Unset history on Visual Studio Code terminal
+[[ $TERM_PROGRAM = "vscode" ]] && unset HISTFILE
+
+#: }}}
+
 #: Overwrite with local post-config
 include "$BASH_CONFIG_DIR/local.post.bash"
