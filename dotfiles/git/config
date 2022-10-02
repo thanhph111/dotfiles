@@ -92,6 +92,9 @@
 		_\
 	"
 
+[include]
+	path = ~/.config/git/local
+
 [includeIf "gitdir:~/Documents/Projects/Work/**"]
 	path = ~/.config/git/config-work
 
