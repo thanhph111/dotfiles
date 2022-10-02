@@ -23,6 +23,17 @@ Enable-PoshTooltips
 #: This must be done after Oh My Posh initialization
 $env:POSH_GIT_ENABLED = $true
 
+#: Send an OSC99 escape sequence to the terminal to let it know of the current directory
+#: Only benefits the Windows Terminal
+#: This set an environment variable and the Oh My Posh theme have to print it out
+if ($env:WT_SESSION) {
+    function Set-Osc99 {
+        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)"
+    }
+    #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
+    New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
+}
+
 #endregion
 
 #region Terminal-Icons

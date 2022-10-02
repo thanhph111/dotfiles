@@ -219,6 +219,11 @@ style = "plain"
 template = "\u25b6"
 type = "text"
 
+[[blocks.segments]]
+style = "plain"
+template = "{{ if .Env.OMP_SUFFIX }}{{ .Env.OMP_SUFFIX }}{{ end }}"
+type = "text"
+
 [palette]
 #: Create palette match terminal colors
 black = "black"               # "#181A1B"
