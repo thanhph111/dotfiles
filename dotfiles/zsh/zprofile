@@ -18,3 +18,10 @@ fi
 
 #: Pyenv
 eval "$(pyenv init -)"
+
+#: PowerShell {{{
+
+export POWERSHELL_UPDATECHECK=Off
+export POWERSHELL_TELEMETRY_OPTOUT=1
+
+#: }}}
