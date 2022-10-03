@@ -219,7 +219,11 @@ include() {
 }
 
 #: Source all other function files in my directory
-[[ -d ~/.local/functions ]] && for file in ~/.local/functions/*; do source $file; done
+[[ -d ~/.config/bash/functions ]] && {
+    for file in ~/.config/bash/functions/*; do
+        [[ -r "$file" ]] && . "$file" &>/dev/null
+    done
+}
 
 #: }}}
 
