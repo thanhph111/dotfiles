@@ -41,9 +41,9 @@ add_recovery_code_from_file() {
     max_index_width=${#line_count}
 
     # Check if the item exists in 1Password
-    filename="$(basename $filepath)"
+    filename="$(basename "$filepath")"
     item_id="${filename%.*}"
-    if output=$(op item get $item_id --cache); then
+    if output=$(op item get "$item_id" --cache); then
         item_name=$(sed -nr 's/^Title:[[:space:]]+//p' <<<"$output")
         echo "Found item '$item_id' ($item_name), adding recovery code"
     else
@@ -63,7 +63,7 @@ add_recovery_code_from_file() {
         index=$((index + 1))
         formatted_index=$(printf "%0${max_index_width}d" $index)
         op item edit "$item_id" \
-            "Recovery Codes.code $formatted_index[password]=$line" \
+            "Recovery Codes.code ${formatted_index}[password]=$line" \
             &>/dev/null || {
             echo "    Failed to add code $formatted_index: $line"
             return

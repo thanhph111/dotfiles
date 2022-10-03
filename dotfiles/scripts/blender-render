@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+write_usage() {
+    echo "Usage: $0 -i input-path [-o output-file] [-e engine-name]"
+    echo "  -i | --input-file    Path to input file"
+    echo "  -o | --output-file   Path to output file"
+    echo "  -e | --engine        Render engine name"
+    echo ""
+    echo "Example: $0 -i $HOME/File.blend -o $HOME/Sample_ -e CYCLES"
+    exit 1
+}
+
+if [[ ! "$1" ]]; then write_usage; fi
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+    -i | --input-file)
+        input_file="$2"
+        shift
+        shift
+        ;;
+    -o | --output-file)
+        output_file="$2"
+        shift
+        shift
+        ;;
+    -e | --engine)
+        engine="$2"
+        shift
+        shift
+        ;;
+    *)
+        echo "Unknown parameter passed: $1"
+        exit 1
+        ;;
+    esac
+done
+
+if [ -z "$input_file" ]; then write_usage; fi
+if [ -z "$output_file" ]; then output_file="//Render_#"; fi
+if [ -z "$engine" ]; then engine="BLENDER_EEVEE"; fi
+
+PARAMS=(
+    "$input_file"
+    --background
+    --render-output "$output_file"
+    --engine "$engine"
+    --render-format PNG
+    --use-extension 1
+    --render-frame 1
+)
+clear_before=false
+term_width=$(tput cols)
+blender "${PARAMS[@]}" | {
+    while IFS= read -r line; do
+        if [[ "$clear_before" == true ]]; then
+            for ((i = 1; i <= $((length / term_width + 1)); i++)); do
+                tput cuu 1
+                tput el
+            done
+        fi
+
+        if [[ "$line" =~ ^Fra: && ! "$line" =~ Finished$|La:0$ ]]; then
+            clear_before=true
+            length=${#line}
+        else
+            clear_before=false
+        fi
+        echo "$line"
+    done
+}
