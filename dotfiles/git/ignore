@@ -1,34 +1,38 @@
 #: vim: set nospell filetype=gitignore:
 
-### Linux ###
+#: Linux {{{
+
 *~
 
-# temporary files which can be created if a process still has a handle open of a deleted file
+#: Temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
 
-# KDE directory preferences
+#: KDE directory preferences
 .directory
 
-# Linux trash folder which might appear on any partition or disk
+#: Linux trash folder which might appear on any partition or disk
 .Trash-*
 
-# .nfs files are created when an open file is removed but is still being accessed
+#: .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
-### macOS ###
-# General
+#: }}}
+
+#: macOS {{{
+
+#: General
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
+#: Icon must end with two \r
 Icon
 
 
-# Thumbnails
+#: Thumbnails
 ._*
 
-# Files that might appear in the root of a volume
+#: Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -37,41 +41,50 @@ Icon
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 
-# Directories potentially created on remote AFP share
+#: Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
 
-### macOS Patch ###
-# iCloud generated files
+#: iCloud generated files
 *.icloud
 
-### Windows ###
-# Windows thumbnail cache files
+#: }}}
+
+#: Windows {{{
+
+#: Windows thumbnail cache files
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 
-# Dump file
+#: Dump file
 *.stackdump
 
-# Folder config file
+#: Folder config file
 [Dd]esktop.ini
 
-# Recycle Bin used on file shares
+#: Recycle Bin used on file shares
 $RECYCLE.BIN/
 
-# Windows Installer files
+#: Windows Installer files
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
 
-# Windows shortcuts
+#: Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows
+#: }}}
+
+#: User specific files {{{
+
+#: Temporary folder at every project root
+/tmp
+
+#: }}}
