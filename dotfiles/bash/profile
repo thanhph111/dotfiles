@@ -40,6 +40,21 @@ export QT_STYLE_OVERRIDE=kvantum
 
 #: }}}
 
+#: AWS {{{
+
+#: Workaround to move AWS config to XDG_CONFIG_HOME until this issue is fixed:
+#: https://github.com/aws/aws-sdk/issues/30
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
+export AWS_CLI_HISTORY_FILE="$XDG_CONFIG_HOME/aws/history"
+export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
+#: For some reason Terraform doesn't like the `AWS_WEB_IDENTITY_TOKEN_FILE`
+#: variable, causing it to throw this: `WebIdentityErr: role ARN is not set`
+#: so you'd better not export it if not necessary.
+# export AWS_WEB_IDENTITY_TOKEN_FILE="$XDG_CONFIG_HOME/aws/token"
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
+
+#: }}}
+
 #: Rust {{{
 
 [[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
