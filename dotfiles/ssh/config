@@ -8,7 +8,7 @@ Host *
     AddKeysToAgent yes
     IgnoreUnknown UseKeychain
     UseKeychain yes
-    IdentityFile ~/.ssh/thanhph111
+    IdentityFile ~/.ssh/keys/thanhph111
 
 # Connect 'Cloud9' instances via 'Visual Studio Code'
 Host "Cloud9 - *"
