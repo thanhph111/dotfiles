@@ -42,7 +42,7 @@ export QT_STYLE_OVERRIDE=kvantum
 
 #: Rust {{{
 
-source "$HOME/.cargo/env"
+[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 #: }}}
 
@@ -69,7 +69,7 @@ export GLFW_IM_MODULE=ibus
 
 #: Bash {{{
 
-[ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+[ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 
 #: }}}
 
