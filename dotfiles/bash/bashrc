@@ -490,7 +490,11 @@ fi
 #: Miscellaneous {{{
 
 #: Unset history on Visual Studio Code terminal
-[[ $TERM_PROGRAM = "vscode" ]] && unset HISTFILE
+[[ $TERM_PROGRAM = "vscode" ]] && {
+    unset HISTFILE
+    unset PROMPT_COMMAND
+    eval "$(oh-my-posh init bash)"
+}
 
 #: }}}
 
