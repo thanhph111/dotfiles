@@ -21,7 +21,7 @@ mkdir -p "$BASH_CACHE_DIR"
 
 #: Overwrite with local pre-config
 [[ -r "$BASH_CONFIG_DIR/local.pre.bash" ]] &&
-    source "$BASH_CONFIG_DIR/local.pre.bash"
+    . "$BASH_CONFIG_DIR/local.pre.bash"
 
 #: Make `less` more friendly for non-text input files, see `lesspipe(1)`
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -43,7 +43,7 @@ alias force-dark-chrome="sudo sed -i \
 #: Set Oh My Posh theme
 export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
 alias bashout="bash --init-file \
-<(echo 'source ~/.bashrc; \
+<(echo '. ~/.bashrc; \
 unset HISTFILE; \
 PROMPT_COMMAND=; \
 export NO_HISTORY=1; \
@@ -60,7 +60,7 @@ sh /dev/stdin"
 update-oh-my-posh() {
     [ "$1" == "" ] && tag='latest/download' || tag="download/v$1"
     url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/$tag/posh-linux-amd64"
-    sudo wget $url -O /usr/local/bin/oh-my-posh
+    sudo wget "$url" -O /usr/local/bin/oh-my-posh
     sudo chmod +x /usr/local/bin/oh-my-posh
 }
 
@@ -69,9 +69,11 @@ alias update-pyenv='pyenv update'
 
 #: Enable color support of `ls` and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors &&
-        eval "$(dircolors -b ~/.dircolors)" ||
+    if [[ -r ~/.dircolors ]]; then
+        eval "$(dircolors -b ~/.dircolors)"
+    else
         eval "$(dircolors -b)"
+    fi
 fi
 alias ls='ls --color=auto --hyperlink=auto'
 alias dir='dir --color=auto'
@@ -132,7 +134,7 @@ export VISUAL=vim
 #: - remaining args:  names of traps to modify
 add-trap() {
     trap_add_cmd=$1
-    shift || fatal "${FUNCNAME} usage error"
+    shift || fatal "${FUNCNAME[*]} usage error"
     for trap_add_name in "$@"; do
         trap -- "$(
             extract_trap_cmd() { printf '%s\n' "$3"; }
@@ -160,14 +162,14 @@ dedup-history() {
 #: Remove duplicate lines from `.bash_history`
 #: https://unix.stackexchange.com/q/18212#comment865944_18443
 dedup-history-2() {
-    cat ~/.cache/bash/history |
-        nl |
+    temporary_file=$(mktemp)
+    nl <~/.cache/bash/history |
         sort -k 2 |
         tac |
         uniq -f 1 |
         sort -n |
-        cut -f 2 |
-        tee ~/.cache/bash/history
+        cut -f 2 >"$temporary_file" &&
+        mv -f "$temporary_file" ~/.cache/bash/history
 }
 
 #: Remove last N lines from `.bash_history`, default is 1
@@ -178,24 +180,24 @@ remove-history() {
 #: Get directory size
 dsize() {
     [ "$1" != "" ] && dir=$1 || dir=$(pwd)
-    echo $(du -hs $dir)
+    du -hs "$dir"
 }
 
 #: Extract compressed files
 extract() {
-    if [ -f $1 ]; then
-        case $1 in
-        *.tar.bz2) tar xjf $1 ;;
-        *.tar.gz) tar xzf $1 ;;
-        *.bz2) bunzip2 $1 ;;
-        *.rar) rar x $1 ;;
-        *.gz) gunzip $1 ;;
-        *.tar) tar xf $1 ;;
-        *.tbz2) tar xjf $1 ;;
-        *.tgz) tar xzf $1 ;;
-        *.zip) unzip $1 ;;
-        *.Z) uncompress $1 ;;
-        *.7z) 7z x $1 ;;
+    if [ -f "$1" ]; then
+        case "$1" in
+        *.tar.bz2) tar xjf "$1" ;;
+        *.tar.gz) tar xzf "$1" ;;
+        *.bz2) bunzip2 "$1" ;;
+        *.rar) rar x "$1" ;;
+        *.gz) gunzip "$1" ;;
+        *.tar) tar xf "$1" ;;
+        *.tbz2) tar xjf "$1" ;;
+        *.tgz) tar xzf "$1" ;;
+        *.zip) unzip "$1" ;;
+        *.Z) uncompress "$1" ;;
+        *.7z) 7z x "$1" ;;
         *) echo "'$1' cannot be extracted via extract()" ;;
         esac
     else
@@ -203,19 +205,9 @@ extract() {
     fi
 }
 
-#: Grep process
-psgrep() {
-    if [ ! -z $1 ]; then
-        echo "Grepping for processes matching $1..."
-        ps aux | grep $1 | grep -v grep
-    else
-        echo "!! Need name to grep for"
-    fi
-}
-
 #: Check if a file readable and source it without repeating filepath
 include() {
-    [[ -r "$1" ]] && source "$1" || true
+    [[ -r "$1" ]] && . "$1" || true
 }
 
 #: Source all other function files in my directory
@@ -229,60 +221,54 @@ include() {
 
 #: System wide settings {{{
 
-#: Define a few Colours
-BLACK='\e[0;30m'
-RED='\e[0;31m'
-GREEN='\e[0;32m'
-YELLOW='\e[0;33m'
-BLUE='\e[0;34m'
-PURPLE='\e[0;35m'
-CYAN='\e[0;36m'
-WHITE='\e[0;37m'
-BRIGHT_BLACK='\e[0;90m'
-BRIGHT_RED='\e[0;91m'
-BRIGHT_GREEN='\e[0;92m'
-BRIGHT_YELLOW='\e[0;93m'
-BRIGHT_BLUE='\e[0;94m'
-BRIGHT_PURPLE='\e[0;95m'
-BRIGHT_CYAN='\e[0;96m'
-BRIGHT_WHITE='\e[97m'
-RESET='\e[0m'
-
 #: Color the man page
 #: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
-export LESS_TERMCAP_mb=$(
+LESS_TERMCAP_mb=$(
     tput bold
     tput setaf 2
 )
-export LESS_TERMCAP_md=$(
+export LESS_TERMCAP_mb
+LESS_TERMCAP_md=$(
     tput bold
     tput setaf 6
 )
-export LESS_TERMCAP_me=$(tput sgr0)
-export LESS_TERMCAP_so=$(
+export LESS_TERMCAP_md
+LESS_TERMCAP_me=$(tput sgr0)
+export LESS_TERMCAP_me
+LESS_TERMCAP_so=$(
     tput bold
     tput setaf 3
     tput setab 4
 )
-export LESS_TERMCAP_se=$(
+export LESS_TERMCAP_so
+LESS_TERMCAP_se=$(
     tput rmso
     tput sgr0
 )
-export LESS_TERMCAP_us=$(
+export LESS_TERMCAP_se
+LESS_TERMCAP_us=$(
     tput smul
     tput bold
     tput setaf 7
 )
-export LESS_TERMCAP_ue=$(
+export LESS_TERMCAP_us
+LESS_TERMCAP_ue=$(
     tput rmul
     tput sgr0
 )
-export LESS_TERMCAP_mr=$(tput rev)
-export LESS_TERMCAP_mh=$(tput dim)
-export LESS_TERMCAP_ZN=$(tput ssubm)
-export LESS_TERMCAP_ZV=$(tput rsubm)
-export LESS_TERMCAP_ZO=$(tput ssupm)
-export LESS_TERMCAP_ZW=$(tput rsupm)
+export LESS_TERMCAP_ue
+LESS_TERMCAP_mr=$(tput rev)
+export LESS_TERMCAP_mr
+LESS_TERMCAP_mh=$(tput dim)
+export LESS_TERMCAP_mh
+LESS_TERMCAP_ZN=$(tput ssubm)
+export LESS_TERMCAP_ZN
+LESS_TERMCAP_ZV=$(tput rsubm)
+export LESS_TERMCAP_ZV
+LESS_TERMCAP_ZO=$(tput ssupm)
+export LESS_TERMCAP_ZO
+LESS_TERMCAP_ZW=$(tput rsupm)
+export LESS_TERMCAP_ZW
 export GROFF_NO_SGR=1
 
 #: Force UTF-8 usage
@@ -364,7 +350,7 @@ fi
 HISTFILESIZE=2000
 
 #: Number of lines to remember in the history list, let not pressure the Bash
-HISTSIZE="$(($HISTFILESIZE * 2 / 3))"
+HISTSIZE="$((HISTFILESIZE * 2 / 3))"
 
 #: }}}
 
@@ -372,7 +358,7 @@ HISTSIZE="$(($HISTFILESIZE * 2 / 3))"
 #: Ref: https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
 #: Make sure `extglob` is on to use extended pattern matching
 shopt -s extglob
-HISTIGNORE="${HISIGNORE}\
+HISTIGNORE="${HISTIGNORE}\
 .( /)*:\
 +( )*:\
 [bf]g+( ):\
@@ -427,7 +413,7 @@ quote=01"
     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
 
 #: Enable programmable completion features
-[ -f /etc/bash_completion ] && ! shopt -oq posix && source /etc/bash_completion
+[ -r /etc/bash_completion ] && ! shopt -oq posix && . /etc/bash_completion
 command -v brew &>/dev/null && include "$(brew --prefix)/etc/bash_completion"
 
 #: }}}
@@ -491,10 +477,12 @@ alias vimf="fzf --bind 'enter:abort+execute(vim -p {+} </dev/tty)'"
 #: Use kitty repo to run code if available
 # export KITTY_DEVELOP_FROM=~/Desktop/Projects/kitty
 #: Kitty shell integration
-if [ -n "$KITTY_INSTALLATION_DIR" ] &&
-    export KITTY_SHELL_INTEGRATION="no-rc no-title"
-    [ -f "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]; then
-    source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
+if
+    [[ -n "$KITTY_INSTALLATION_DIR" ]] &&
+        export KITTY_SHELL_INTEGRATION="no-rc no-title"
+    [[ -r "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]]
+then
+    . "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
 
 #: }}}
