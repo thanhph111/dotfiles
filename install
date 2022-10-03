@@ -4,7 +4,7 @@
 set -e
 
 # Go to the project directory
-cd "$(dirname "$BASH_SOURCE")"
+cd "$(dirname "${BASH_SOURCE[@]}")"
 
 # Profiles and configs paths
 META_DIR="$PWD/meta"
@@ -44,9 +44,9 @@ run_config() {
 
     # Allows execute a config as a superuser with sudo suffix, i.e. `bash-sudo`
     if [[ $config == *sudo* ]]; then
-        sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
+        sudo "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" "${plugin_args[@]}"
     else
-        "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" $plugin_args
+        "$DOTBOT_BIN" -d "$PWD" -c "$tempfile" "${plugin_args[@]}"
     fi
 
     rm -f "$tempfile"
@@ -63,7 +63,7 @@ profile)
     ;;
 config)
     shift
-    [[ -z "$@" ]] && {
+    [[ -z "$*" ]] && {
         usage
         exit 1
     }
@@ -76,18 +76,25 @@ esac
 
 # Synthesize configs
 configs=''
-while read -r line; do
-    # Ignore line starting with '#'
-    [[ "$line" =~ ^\#.*$ ]] && continue
-    configs="$configs $line"
-done <"$PROFILES_DIR/$profile_name"
-configs="$configs $@"
+if [[ -n "$profile_name" ]]; then
+    profile_path="$PROFILES_DIR/$profile_name"
+    [[ -f "$profile_path" ]] || {
+        echo "Profile '$profile_name' not found"
+        exit 1
+    }
+    while read -r line; do
+        # Ignore line starting with '#'
+        [[ "$line" =~ ^\#.*$ ]] && continue
+        configs="$configs $line"
+    done <"$PROFILES_DIR/$profile_name"
+fi
+configs="$configs $*"
 
 # Add all Dotbot plugins
-plugin_args=''
-for plugin_dir in $DOTBOT_PLUGINS_DIR/*; do
+plugin_args=()
+for plugin_dir in "$DOTBOT_PLUGINS_DIR"/*; do
     [[ -d "$plugin_dir" ]] || continue
-    plugin_args+="--plugin-dir $plugin_dir"
+    plugin_args+=(--plugin-dir "${plugin_dir[@]}")
 done
 
 # Run pre config
