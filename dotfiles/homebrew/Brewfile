@@ -142,8 +142,6 @@ cask "font-sf-mono"
 cask "font-sf-pro"
 # GIT client
 cask "fork"
-# Git client focusing on productivity
-cask "gitkraken"
 # Web browser
 cask "google-chrome"
 # Utility to hide menu bar items
