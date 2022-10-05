@@ -103,23 +103,6 @@ include() {
     [[ -r "$1" ]] && source "$1"
 }
 
-#: Download stream from Teams records
-#: Steps:
-#:     1. Find a URL name 'videomanifest?provider=...' in Network tab in Developer tool
-#:     2. Copy that link and test in a video player such as IINA
-#:     3. Paste it as the first argument in this command
-#: If it stuck, try to save it in MKV first
-download_stream() {
-    ffmpeg -i "$1" -c copy "${2-output.mp4}"
-    # ffmepg -i "$1" -c copy -bsf:a aac_adtstoasc "${2-output.mkv}"
-}
-
-#: Measure a shell booting
-time_shell() {
-    shell=${1-$SHELL}
-    for i in $(seq 1 4); do /usr/bin/time $shell -i -c exit; done
-}
-
 #: }}}
 
 #: Aliases {{{
