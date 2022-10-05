@@ -101,6 +101,12 @@ bashout() {
     )
 }
 
+#: Run a command and detach it from current process
+#: You can use it to open a file: `detach xdg-open file.pdf`
+detach() {
+    ("$@" &>/dev/null &)
+}
+
 #: Force Google Chrome to use dark theme, only run after update
 force_dark_chrome() {
     sudo sed \
