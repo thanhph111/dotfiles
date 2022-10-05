@@ -5,7 +5,5 @@
 shell=${1-$SHELL}
 
 for _ in $(seq 1 4); do
-    /usr/bin/time \
-        --format '\t%U user\t\t%S system\t\t%E elapsed' \
-        "$shell" -i -c exit
+    /usr/bin/time "$shell" -i -c exit
 done
