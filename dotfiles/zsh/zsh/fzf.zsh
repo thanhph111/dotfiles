@@ -1,4 +1,6 @@
-FZF_REPO_DIR="$(brew --prefix)/opt/fzf"
+type brew &>/dev/null && FZF_REPO_DIR="$(brew --prefix)/opt/fzf"
+
+[[ -z "$FZF_REPO_DIR" ]] && return
 
 # Setup fzf
 # ---------
