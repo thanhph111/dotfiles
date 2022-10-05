@@ -505,3 +505,11 @@ include "$ZSH_CONFIG_DIR/local.post.zsh"
 if [[ -z "$ZSH" ]]; then
     autoload -Uz compinit && compinit -d "$ZSH_CACHE_DIR/completion"
 fi
+
+#: Execute a custom command without exiting like using `-c`
+#: We can do like this `zsh -is eval echo 123`
+#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
+if [[ $1 == eval ]]; then
+    "$@"
+	set --
+fi
