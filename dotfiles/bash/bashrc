@@ -23,49 +23,134 @@ mkdir -p "$BASH_CACHE_DIR"
 [[ -r "$BASH_CONFIG_DIR/local.pre.bash" ]] &&
     . "$BASH_CONFIG_DIR/local.pre.bash"
 
-#: Make `less` more friendly for non-text input files, see `lesspipe(1)`
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+#: Functions {{{
 
-#: User aliases {{{
+#: Check if a command exists
+command_exists() {
+    command -v "$1" &>/dev/null
+}
 
-#: Force 80-column width to man page if the terminal is wider than 80 columns
-alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) man'
+#: Check if a file readable and source it without repeating filepath
+include() {
+    [[ -r "$1" ]] && . "$1" || true
+}
 
-#: Own VSCode directory to use some extensions like Custom CSS and JS Loader
-alias chown-code='sudo chown -R $(whoami) /usr/share/code/'
+#: Add function to existing trapped signals
+#: https://stackoverflow.com/a/7287873
+#: - 1st arg:  code to add
+#: - remaining args:  names of traps to modify
+add_trap() {
+    trap_add_cmd="$1"
+    shift || fatal "${FUNCNAME[*]} usage error"
+    for trap_add_name in "$@"; do
+        trap -- "$(
+            extract_trap_cmd() { printf '%s\n' "$3"; }
+            eval "extract_trap_cmd $(trap -p "${trap_add_name}")"
+            printf '%s\n' "${trap_add_cmd}"
+        )" "${trap_add_name}" ||
+            fatal "unable to add to trap ${trap_add_name}"
+    done
+}
+declare -f -t trap_add
 
-#: Force Google Chrome to use dark theme, only run after update
-alias force-dark-chrome="sudo sed -i \
-'/^Exec=/ s/$/ --enable-features=WebUIDarkMode --force-dark-mode/' \
-/usr/share/applications/google-chrome.desktop"
+#: Trim leading/trailing spaces and remove duplicate lines from `.bash_history`
+#: https://unix.stackexchange.com/q/18212#comment1110864_18443
+dedup_history() {
+    tac <~/.cache/bash/history |
+        #: Trim leading whitespaces
+        awk '{ sub(/^[ \t]+/, ""); print }' |
+        #: Trim trailing whitespaces
+        awk '{ sub(/[ \t]+$/, ""); print }' |
+        #: Remove duplicate lines
+        awk '!a[$0]++' |
+        tac >/tmp/deduped && mv -f /tmp/deduped ~/.cache/bash/history
+}
+
+#: Remove duplicate lines from `.bash_history`
+#: https://unix.stackexchange.com/q/18212#comment865944_18443
+dedup_history_2() {
+    temporary_file=$(mktemp)
+    nl <~/.cache/bash/history |
+        sort -k 2 |
+        tac |
+        uniq -f 1 |
+        sort -n |
+        cut -f 2 >"$temporary_file" &&
+        mv -f "$temporary_file" ~/.cache/bash/history
+}
+
+#: Remove last N lines from `.bash_history`, default is 1
+remove_history() {
+    sed -n -e :a -e "1,${1:-1}!{P;N;D;};N;ba" -i ~/.cache/bash/history
+}
+
+#: Get directory size
+dsize() {
+    [ "$1" != "" ] && dir=$1 || dir=$(pwd)
+    du -hs "$dir"
+}
 
 #: Bash session without history logging
-#: Set Oh My Posh theme
-export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
-alias bashout="bash --init-file \
-<(echo '. ~/.bashrc; \
-unset HISTFILE; \
-PROMPT_COMMAND=; \
-export NO_HISTORY=1; \
-eval \"\$(oh-my-posh init bash)\"')"
+bashout() {
+    bash --init-file <(
+        echo '. ~/.bashrc'
+        echo 'unset HISTFILE'
+        echo 'PROMPT_COMMAND='
+        echo 'export NO_HISTORY=1'
+        echo 'eval "$(oh-my-posh init bash)"'
+    )
+}
 
-#: A lite Bash version
-alias bashlite='bash --rcfile ~/.vscode/.bashrc'
+#: Force Google Chrome to use dark theme, only run after update
+force_dark_chrome() {
+    sudo sed \
+        -i '/^Exec=/ s/$/ --enable-features=WebUIDarkMode --force-dark-mode/' \
+        /usr/share/applications/google-chrome.desktop
+}
 
 #: Kitty update
-alias update-kitty="curl -L https://sw.kovidgoyal.net/kitty/installer.sh | \
-sh /dev/stdin"
+update_kitty() {
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+}
 
 #: Update Oh My Posh
-update-oh-my-posh() {
+update_oh_my_posh() {
     [ "$1" == "" ] && tag='latest/download' || tag="download/v$1"
     url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/$tag/posh-linux-amd64"
     sudo wget "$url" -O /usr/local/bin/oh-my-posh
     sudo chmod +x /usr/local/bin/oh-my-posh
 }
 
+#: Add an `alert` for long running commands, use like so:
+#:     sleep 3; alert
+alert() {
+    notify-send \
+        --urgency=low \
+        -i "$([ $? -eq 0 ] && echo terminal || echo error)" \
+        "$(history | tail -n1 | sed -e 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//')"
+}
+
+#: Better `mount`
+mnt() {
+    mount |
+        awk -F' ' '{ printf "%s\t%s\n",$1,$3; }' |
+        column -t |
+        grep -E ^/dev/ | sort
+}
+
+#: Source all other function files in my directory
+[[ -d "$BASH_CONFIG_DIR"/functions ]] &&
+    for file in "$BASH_CONFIG_DIR"/functions/*; do include "$file"; done
+
+#: }}}
+
+#: Aliases {{{
+
 #: Update Pyenv
-alias update-pyenv='pyenv update'
+alias update_pyenv='pyenv update'
+
+#: Force 120-column width to man page if the terminal is wider than 120 columns
+alias man='MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS)) man'
 
 #: Enable color support of `ls` and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -94,182 +179,37 @@ alias lsfile='ls -flp | grep -v /'
 alias reboot='sudo shutdown -r now'
 alias shutdown='sudo shutdown -h now'
 
-#: Add an "alert" alias for long running commands, use like so:
-#:     sleep 10; alert
-alias alert="notify-send \
---urgency=low \
--i \"\$([ \$? = 0 ] && echo terminal || echo error)\" \
-\"\$(history|tail -n1|sed -e 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//')\""
-
 #: Clean all buffers
 alias clean="clear && printf '\e[3J'"
 
-#: Other aliases
-alias python=python3
-alias pip=pip3
-alias icat='kitty +kitten icat'
-alias pwsh='pwsh -NoLogo'
-alias mnt="mount | \
-awk -F' ' '{ printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+#: Show all variables
+alias printvar='(set -o posix; set)'
 
-alias open=xdg-open
-command -v kitty &>/dev/null && {
+#: macOS vibe
+command_exists xdg-open && alias open=xdg-open
+
+#: Some kitty utilities
+command_exists kitty && {
     #: Wait for this implemented: https://github.com/BurntSushi/ripgrep/issues/665
     alias hg='kitty +kitten hyperlinked_grep'
     alias diff-kitty='kitty +kitten diff'
     alias ssh-kitty='kitty +kitten ssh'
+    alias icat='kitty +kitten icat'
 }
 
-alias printvar='(set -o posix; set)'
+#: No anoying banner
+command_exists pwsh && alias pwsh='pwsh -NoLogo'
 
-export VISUAL=vim
-
-#: }}}
-
-#: Functions {{{
-
-#: Add function to existing trapped signals
-#: https://stackoverflow.com/a/7287873
-#: - 1st arg:  code to add
-#: - remaining args:  names of traps to modify
-add-trap() {
-    trap_add_cmd=$1
-    shift || fatal "${FUNCNAME[*]} usage error"
-    for trap_add_name in "$@"; do
-        trap -- "$(
-            extract_trap_cmd() { printf '%s\n' "$3"; }
-            eval "extract_trap_cmd $(trap -p "${trap_add_name}")"
-            printf '%s\n' "${trap_add_cmd}"
-        )" "${trap_add_name}" ||
-            fatal "unable to add to trap ${trap_add_name}"
-    done
-}
-declare -f -t trap_add
-
-#: Trim leading/trailing spaces and remove duplicate lines from `.bash_history`
-#: https://unix.stackexchange.com/q/18212#comment1110864_18443
-dedup-history() {
-    tac <~/.cache/bash/history |
-        #: Trim leading whitespaces
-        awk '{ sub(/^[ \t]+/, ""); print }' |
-        #: Trim trailing whitespaces
-        awk '{ sub(/[ \t]+$/, ""); print }' |
-        #: Remove duplicate lines
-        awk '!a[$0]++' |
-        tac >/tmp/deduped && mv -f /tmp/deduped ~/.cache/bash/history
-}
-
-#: Remove duplicate lines from `.bash_history`
-#: https://unix.stackexchange.com/q/18212#comment865944_18443
-dedup-history-2() {
-    temporary_file=$(mktemp)
-    nl <~/.cache/bash/history |
-        sort -k 2 |
-        tac |
-        uniq -f 1 |
-        sort -n |
-        cut -f 2 >"$temporary_file" &&
-        mv -f "$temporary_file" ~/.cache/bash/history
-}
-
-#: Remove last N lines from `.bash_history`, default is 1
-remove-history() {
-    sed -n -e :a -e "1,${1:-1}!{P;N;D;};N;ba" -i ~/.cache/bash/history
-}
-
-#: Get directory size
-dsize() {
-    [ "$1" != "" ] && dir=$1 || dir=$(pwd)
-    du -hs "$dir"
-}
-
-#: Extract compressed files
-extract() {
-    if [ -f "$1" ]; then
-        case "$1" in
-        *.tar.bz2) tar xjf "$1" ;;
-        *.tar.gz) tar xzf "$1" ;;
-        *.bz2) bunzip2 "$1" ;;
-        *.rar) rar x "$1" ;;
-        *.gz) gunzip "$1" ;;
-        *.tar) tar xf "$1" ;;
-        *.tbz2) tar xjf "$1" ;;
-        *.tgz) tar xzf "$1" ;;
-        *.zip) unzip "$1" ;;
-        *.Z) uncompress "$1" ;;
-        *.7z) 7z x "$1" ;;
-        *) echo "'$1' cannot be extracted via extract()" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
-}
-
-#: Check if a file readable and source it without repeating filepath
-include() {
-    [[ -r "$1" ]] && . "$1" || true
-}
-
-#: Source all other function files in my directory
-[[ -d ~/.config/bash/functions ]] && {
-    for file in ~/.config/bash/functions/*; do
-        [[ -r "$file" ]] && . "$file" &>/dev/null
-    done
-}
+#: Other aliases
+alias python=python3
+alias pip=pip3
 
 #: }}}
 
 #: System wide settings {{{
 
-#: Color the man page
-#: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
-LESS_TERMCAP_mb=$(
-    tput bold
-    tput setaf 2
-)
-export LESS_TERMCAP_mb
-LESS_TERMCAP_md=$(
-    tput bold
-    tput setaf 6
-)
-export LESS_TERMCAP_md
-LESS_TERMCAP_me=$(tput sgr0)
-export LESS_TERMCAP_me
-LESS_TERMCAP_so=$(
-    tput bold
-    tput setaf 3
-    tput setab 4
-)
-export LESS_TERMCAP_so
-LESS_TERMCAP_se=$(
-    tput rmso
-    tput sgr0
-)
-export LESS_TERMCAP_se
-LESS_TERMCAP_us=$(
-    tput smul
-    tput bold
-    tput setaf 7
-)
-export LESS_TERMCAP_us
-LESS_TERMCAP_ue=$(
-    tput rmul
-    tput sgr0
-)
-export LESS_TERMCAP_ue
-LESS_TERMCAP_mr=$(tput rev)
-export LESS_TERMCAP_mr
-LESS_TERMCAP_mh=$(tput dim)
-export LESS_TERMCAP_mh
-LESS_TERMCAP_ZN=$(tput ssubm)
-export LESS_TERMCAP_ZN
-LESS_TERMCAP_ZV=$(tput rsubm)
-export LESS_TERMCAP_ZV
-LESS_TERMCAP_ZO=$(tput ssupm)
-export LESS_TERMCAP_ZO
-LESS_TERMCAP_ZW=$(tput rsupm)
-export LESS_TERMCAP_ZW
-export GROFF_NO_SGR=1
+#: Set default editor
+export VISUAL=vim
 
 #: Force UTF-8 usage
 export LANG=en_US.UTF-8
@@ -278,23 +218,111 @@ export LC_ALL=en_US.UTF-8
 #: Disable bash deprecation warning on macOS
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
+#: Ignore some filetypes in autocompletion
+FIGNORE="${FIGNORE}:\
+~:\
+.cmd:\
+.hidden:\
+.log:\
+.swp:\
+.uuid"
+
 #: User paths
-[ -d "$HOME/.local/bin" ] && PATH="$PATH:$HOME/.local/bin"
+[[ -d "$HOME/.local/bin" ]] && PATH="$HOME/.local/bin:$PATH"
+
+#: Make `less` more friendly for non-text input files, see `lesspipe(1)`
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 #: Disable the XON/XOFF feature for forward-search-history (C-s)
 stty -ixon
 
-#: Avoid running when pasting from clipboard
+#: Avoid running commands immediately when pasting from clipboard
 bind 'set enable-bracketed-paste'
 
 #: Check the window size after each command and, if necessary, update the
-#:  values of LINES and COLUMNS.
+#: values of LINES and COLUMNS.
 shopt -s checkwinsize
 
 #: Autocorrect spelling mistakes when using `cd`
 shopt -s cdspell
+
 #: Autocorrect spelling mistakes in directory names
 shopt -s dirspell 2>/dev/null
+
+#: The pattern "**" used in a pathname expansion context will match all files
+#: and zero or more directories and subdirectories
+shopt -s globstar 2>/dev/null
+
+#: Enable programmable completion features
+! shopt -oq posix && include /etc/bash_completion
+command_exists brew && include "$(brew --prefix)/etc/bash_completion"
+
+#: Colorful things {{{
+
+#: Color the man page
+#: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
+LESS_TERMCAP_mb="$(
+    tput bold
+    tput setaf 2
+)"
+LESS_TERMCAP_md="$(
+    tput bold
+    tput setaf 6
+)"
+LESS_TERMCAP_me="$(tput sgr0)"
+LESS_TERMCAP_so="$(
+    tput bold
+    tput setaf 3
+    tput setab 4
+)"
+LESS_TERMCAP_se="$(
+    tput rmso
+    tput sgr0
+)"
+LESS_TERMCAP_us="$(
+    tput smul
+    tput bold
+    tput setaf 7
+)"
+LESS_TERMCAP_ue="$(
+    tput rmul
+    tput sgr0
+)"
+LESS_TERMCAP_mr="$(tput rev)"
+LESS_TERMCAP_mh="$(tput dim)"
+LESS_TERMCAP_ZN="$(tput ssubm)"
+LESS_TERMCAP_ZV="$(tput rsubm)"
+LESS_TERMCAP_ZO="$(tput ssupm)"
+LESS_TERMCAP_ZW="$(tput rsupm)"
+export LESS_TERMCAP_mb
+export LESS_TERMCAP_md
+export LESS_TERMCAP_me
+export LESS_TERMCAP_so
+export LESS_TERMCAP_se
+export LESS_TERMCAP_us
+export LESS_TERMCAP_ue
+export LESS_TERMCAP_mr
+export LESS_TERMCAP_mh
+export LESS_TERMCAP_ZN
+export LESS_TERMCAP_ZV
+export LESS_TERMCAP_ZO
+export LESS_TERMCAP_ZW
+export GROFF_NO_SGR=1
+
+#: Colored GCC warnings and errors
+export GCC_COLORS="\
+error=01;31:\
+warning=01;35:\
+note=01;36:\
+caret=01;32:\
+locus=01:\
+quote=01"
+
+#: }}}
+
+#: }}}
+
+#: History {{{
 
 #: Remove previous duplicate lines when append to the history file {{{
 
@@ -314,11 +342,11 @@ shopt -s histappend
 #: `HISTSIZE`, the `.bash_hisitory` will be wiped with `history -w`.
 #: I also don't want pressure my Bash with `HISTSIZE=`.
 #: So finally I go with this:
-clean-history() {
-    dedup-history
+clean_history() {
+    dedup_history
     #: Or this:
-    # dedup-history-2
-    #: Two command is equally fast, the `dedup-history-2` keeps the early lines
+    # dedup_history_2
+    #: Two command is equally fast, the `dedup_history_2` keeps the early lines
     #: These line is for remind only
     # history -n
     # history -w
@@ -354,6 +382,8 @@ HISTSIZE="$((HISTFILESIZE * 2 / 3))"
 
 #: }}}
 
+#: Ignore some commands when saving to history {{{
+
 #: Patterns to ignore saving to the history file (or also history line, sadly)
 #: Ref: https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
 #: Make sure `extglob` is on to use extended pattern matching
@@ -373,7 +403,7 @@ history+( )+([^ ])*( ):\
 pwd+( ):\
 printf+( )+([^ ])*( ):\
 rm+( )+([^ ])*( ):\
-remove-history*( )*:\
+remove_history*( )*:\
 tree+( )+([^ ])*( ):\
 type+( )+([^ ])*( ):\
 which+( )+([^ ])*( )"
@@ -381,109 +411,111 @@ which+( )+([^ ])*( )"
 # HISTIGNORE="${HISTIGNORE}\
 # $(alias | sed 's/^alias \([^ =]\+\)=.*/:\1+( )+([^ ])*( )/' | tr -d '\n')"
 
-#: Ignore some filetypes in autocompletion
-FIGNORE="${FIGNORE}:\
-~:\
-.cmd:\
-.hidden:\
-.log:\
-.swp:\
-.uuid"
+#: }}}
 
-#: The pattern "**" used in a pathname expansion context will match all files
-#: and zero or more directories and subdirectories
-shopt -s globstar 2>/dev/null
+#: }}}
 
-#: Colored GCC warnings and errors
-export GCC_COLORS="\
-error=01;31:\
-warning=01;35:\
-note=01;36:\
-caret=01;32:\
-locus=01:\
-quote=01"
+#: Prompt {{{
 
-#: Colored prompt in case no powerline is used: `user@host:dir`
-[ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ] &&
-    debian_chroot=$(cat /etc/debian_chroot)
-[ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null &&
-    PS1="${debian_chroot:+($debian_chroot)}\
-\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
-[[ "$TERM" =~ (xterm.*|rxvt.*) ]] &&
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-
-#: Enable programmable completion features
-[ -r /etc/bash_completion ] && ! shopt -oq posix && . /etc/bash_completion
-command -v brew &>/dev/null && include "$(brew --prefix)/etc/bash_completion"
+#: Oh My Posh
+if command_exists oh-my-posh; then
+    export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
+    eval "$(oh-my-posh init bash)"
+else
+    #: Colored prompt in case no powerline is used: `user@host:dir`
+    [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]] &&
+        debian_chroot=$(cat /etc/debian_chroot)
+    [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null &&
+        PS1="${debian_chroot:+($debian_chroot)}\
+    \[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    [[ "$TERM" =~ (xterm.*|rxvt.*) ]] &&
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+fi
 
 #: }}}
 
 #: Tools {{{
 
-#: Opt out .NET telemetry
+#: .NET {{{
+
+#: Opt out telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-#: GitHub CLI completion
+#: }}}
+
+#: GitHub CLI {{{
+
+#: Completion
 eval "$(gh completion -s bash)"
 
-#: Pyenv
-# export PYENV_ROOT="$HOME/.pyenv"
-# export PATH="$PYENV_ROOT/bin:$PATH"
-#: I don't think we need this if it has been run in `.profile`
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
+#: }}}
 
-#: Poetry
-export PATH="$PATH:$HOME/.poetry/bin"
-export POETRY_VIRTUALENVS_IN_PROJECT=1
+#: Poetry {{{
 
-#: Rust programing language
+[[ -d "$HOME/.poetry/bin" ]] && {
+    export PATH="$PATH:$HOME/.poetry/bin"
+}
+
+command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
+
+#: }}}
+
+#: Rust {{{
+
 include "$HOME/.cargo/env"
 
-#: Go programming language
+#: }}}
+
+#: Go {{{
+
 include "$HOME/.gvm/scripts/gvm"
 
-#: Oh My Posh
-eval "$(oh-my-posh init bash)"
+#: }}}
 
-#: Add the `.bash_history` cleanup to the existing trapped signal EXIT
-add-trap clean-history EXIT
+#: Fzf {{{
 
-#: IBus Bamboo
-export GTK_IM_MODULE=ibus
-export QT_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-#: For Qt4 application
-export QT4_IM_MODULE=ibus
-#: For Clutter/OpenGL application
-export CLUTTER_IM_MODULE=ibus
-export GLFW_IM_MODULE=ibus
+if command_exists fzf; then
+    include "$BASH_CONFIG_DIR/fzf.bash"
+    alias vimf="fzf --bind 'enter:abort+execute(vim -p {+} </dev/tty)'"
+    #: Or doing this, I don't know which one is better
+    #: Remember filepaths may contains spaces
+    # vimf () {
+    #     readarray -t files < <(fzf -m)
+    #     nvim -p "${files[@]}"
+    # }
+fi
 
-#: Fzf
-include ~/.config/bash/fzf.bash
-alias vimf="fzf --bind 'enter:abort+execute(vim -p {+} </dev/tty)'"
-#: Or doing this, I don't know which one is better
-#: Remember filepaths may contains spaces
-# vimf () {
-#     readarray -t files < <(fzf -m)
-#     nvim -p "${files[@]}"
-# }
+#: }}}
 
-#: Ripgrep config file
-[ -f "$HOME/.config/ripgrep/config" ] && export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+#: Ripgrep {{{
+
+#: Config file
+[ -f "$HOME/.config/ripgrep/config" ] &&
+    export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+#: }}}
+
+#: GPG {{{
 
 # export GPG_TTY=$(tty)
 
+#: }}}
+
+#: kitty {{{
+
 #: Use kitty repo to run code if available
 # export KITTY_DEVELOP_FROM=~/Desktop/Projects/kitty
+
 #: Kitty shell integration
 if
     [[ -n "$KITTY_INSTALLATION_DIR" ]] &&
-        export KITTY_SHELL_INTEGRATION="no-rc no-title"
-    [[ -r "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]]
+        [[ -r "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash" ]]
 then
+    export KITTY_SHELL_INTEGRATION="no-rc no-title"
     . "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
+
+#: }}}
 
 #: }}}
 
@@ -495,6 +527,10 @@ fi
     unset PROMPT_COMMAND
     eval "$(oh-my-posh init bash)"
 }
+
+#: Cleanup history file when exiting
+#: Have to be down here to avoid other program overriding it
+add_trap clean_history EXIT
 
 #: }}}
 
