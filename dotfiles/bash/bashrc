@@ -415,23 +415,6 @@ which+( )+([^ ])*( )"
 
 #: }}}
 
-#: Prompt {{{
-
-#: Oh My Posh
-if command_exists oh-my-posh; then
-    export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
-    eval "$(oh-my-posh init bash)"
-else
-    #: Colored prompt in case no powerline is used: `user@host:dir`
-    [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]] &&
-        debian_chroot=$(cat /etc/debian_chroot)
-    [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null &&
-        PS1="${debian_chroot:+($debian_chroot)}\
-    \[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
-    [[ "$TERM" =~ (xterm.*|rxvt.*) ]] &&
-        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-fi
-
 #: }}}
 
 #: Tools {{{
@@ -525,9 +508,21 @@ fi
 [[ $TERM_PROGRAM = "vscode" ]] && {
     unset HISTFILE
     unset PROMPT_COMMAND
-    eval "$(oh-my-posh init bash)"
 }
-
+#: And then set the prompt
+if command_exists oh-my-posh; then
+    export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
+    eval "$(oh-my-posh init bash)"
+else
+    #: Colored prompt in case no powerline is used: `user@host:dir`
+    [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]] &&
+        debian_chroot=$(cat /etc/debian_chroot)
+    [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null &&
+        PS1="${debian_chroot:+($debian_chroot)}\
+    \[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    [[ "$TERM" =~ (xterm.*|rxvt.*) ]] &&
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+fi
 #: Cleanup history file when exiting
 #: Have to be down here to avoid other program overriding it
 add_trap clean_history EXIT
