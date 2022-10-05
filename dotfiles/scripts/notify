@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+#: This script is used to send a notification to the user
+
+#: Usage: notify <message> [title] [icon]
+#: Example: notify "Hello World" "Hello" "dialog-information"
+
+message="${1:-Hello World}"
+title="${2}"
+icon="${3:-dialog-information}"
+
+command_exists() {
+    command -v "$@" >/dev/null 2>&1
+}
+
+if command_exists notify-send; then
+    if [ -z "$title" ]; then
+        notify-send -i "$icon" "$message"
+    else
+        notify-send -i "$icon" "$title" "$message"
+    fi
+elif command_exists terminal-notifier; then
+    if [ -z "$title" ]; then
+        terminal-notifier -message "$message" -title "$title"
+    else
+        terminal-notifier -message "$message"
+    fi
+elif command_exists osascript; then
+    if [ -z "$title" ]; then
+        osascript -e "display notification \"$message\" with title \"$title\""
+    else
+        osascript -e "display notification \"$message\""
+    fi
+else
+    #: OSC 99
+    if [[ -z "$title" ]]; then
+        printf '\x1b]99;;%s\x1b\\' "$message"
+    else
+        printf '\x1b]99;i=1:d=0;%s\x1b\\' "$title"
+        printf '\x1b]99;i=1:d=1:p=body;%s\x1b\\' "$message"
+    fi
+fi
+
+#: Add a bell if all above attempts fail
+printf '\a'

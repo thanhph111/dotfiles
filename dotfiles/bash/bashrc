@@ -129,11 +129,16 @@ update_oh_my_posh() {
 
 #: Add an `alert` for long running commands, use like so:
 #:     sleep 3; alert
+#: This function relies on an external script
 alert() {
-    notify-send \
-        --urgency=low \
-        -i "$([ $? -eq 0 ] && echo terminal || echo error)" \
-        "$(history | tail -n1 | sed -e 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//')"
+    notify \
+        "$(
+            history |
+                tail -n1 |
+                sed -e 's/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'
+        )" \
+        "Command executed" \
+        "$([ $? -eq 0 ] && echo terminal || echo error)"
 }
 
 #: Better `mount`
