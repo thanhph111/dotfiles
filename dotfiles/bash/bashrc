@@ -272,7 +272,9 @@ shopt -s globstar 2>/dev/null
 
 #: Enable programmable completion features
 ! shopt -oq posix && include /etc/bash_completion
-command_exists brew && include "$(brew --prefix)/etc/bash_completion"
+#: Use `bash-completion@2` if available
+command_exists brew &&
+    include "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 
 #: Colorful things {{{
 
