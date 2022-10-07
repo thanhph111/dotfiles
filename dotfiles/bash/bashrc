@@ -446,7 +446,7 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 #: GitHub CLI {{{
 
 #: Completion
-eval "$(gh completion -s bash)"
+command_exists gh && eval "$(gh completion -s bash)"
 
 #: }}}
 
