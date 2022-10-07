@@ -42,3 +42,15 @@
       stdin: true
       stdout: true
       stderr: true
+
+- shell:
+    - description: Hide some directories in Home
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "Get-ChildItem -Path ~ -Filter .* | ForEach-Object { $_.Attributes += \"Hidden\" }"
+      stdin: true
+      stdout: true
+      stderr: true
