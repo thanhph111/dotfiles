@@ -9,7 +9,7 @@
     - shell:
         - description: Install PowerShell modules
           command: >
-            pwsh
+            command -v pwsh &>/dev/null && pwsh
             -NoProfile
             -NoLogo
             -NonInteractive
@@ -25,16 +25,13 @@
                     Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
                 }
             }
-            '
-          stdin: true
-          stdout: true
-          stderr: true
+            ' || true
 
 - ifmacos:
     - shell:
         - description: Install PowerShell modules
           command: >
-            pwsh
+            command -v pwsh &>/dev/null && pwsh
             -NoProfile
             -NoLogo
             -NonInteractive
@@ -50,7 +47,4 @@
                     Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
                 }
             }
-            '
-          stdin: true
-          stdout: true
-          stderr: true
+            ' || true
