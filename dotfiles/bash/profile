@@ -27,6 +27,13 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 #: }}}
 
+#: Homebrew {{{
+
+[[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] &&
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+#: }}}
+
 #: GnuPG home {{{
 
 export GNUPGHOME="$HOME/.config/gnupg"
