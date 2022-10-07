@@ -1,0 +1,14 @@
+# apt
+
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+
+- shell:
+    - description: Update packages
+      command: sudo apt update && sudo apt -y upgrade
+    - description: Install `aptitude`
+      command: sudo apt install -y aptitude
+    - description: Install list of packages from file
+      command: sudo apt install -y <./dotfiles/apt/packages
