@@ -1,0 +1,50 @@
+# PowerShell
+
+- link:
+    ~/.config/powershell/Microsoft.PowerShell_profile.ps1: dotfiles/powershell/Microsoft.PowerShell_profile.ps1
+    ~/.config/powershell/PoshThemes: dotfiles/powershell/PoshThemes
+    ~/.config/powershell/Modules/UserModules: dotfiles/powershell/Modules/UserModules/*
+
+- ifanylinux:
+    - shell:
+        - description: Install PowerShell modules
+          command: >
+            command -v pwsh &>/dev/null && pwsh
+            -NoProfile
+            -NoLogo
+            -NonInteractive
+            -Command '
+            @(
+                "posh-git",
+                "PsFzf",
+                "PSReadline",
+                "Terminal-Icons",
+                "z"
+            ) | ForEach-Object {
+                if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                    Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+                }
+            }
+            ' || true
+
+- ifmacos:
+    - shell:
+        - description: Install PowerShell modules
+          command: >
+            command -v pwsh &>/dev/null && pwsh
+            -NoProfile
+            -NoLogo
+            -NonInteractive
+            -Command '
+            @(
+                "posh-git",
+                "PsFzf",
+                "PSReadline",
+                "Terminal-Icons",
+                "z"
+            ) | ForEach-Object {
+                if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                    Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+                }
+            }
+            ' || true

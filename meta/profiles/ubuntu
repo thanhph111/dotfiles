@@ -7,7 +7,7 @@ git
 kitty
 nano
 oh-my-posh
-powershell
+pwsh
 python
 readline
 ripgrep
