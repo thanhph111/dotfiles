@@ -1,0 +1,74 @@
+tap "homebrew/bundle"
+tap "homebrew/core"
+# Record and share terminal sessions
+brew "asciinema"
+# Official Amazon AWS command-line interface
+brew "awscli"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Fancy interface to the Python interpreter
+brew "bpython"
+# Diff that understands syntax
+brew "difftastic"
+# Modern replacement for 'ls'
+brew "exa"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
+# Blazing fast terminal-ui for git written in rust
+brew "gitui"
+# Colorize logfiles and command output
+brew "grc"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick"
+# JSON output from a shell
+brew "jo"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Interactive cheatsheet tool for the command-line
+brew "navi"
+# Platform built on V8 to build network applications
+brew "node"
+# Command-line collection runner for Postman
+brew "newman"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
+# Python dependency management tool
+brew "pipenv"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# Python package management tool
+brew "poetry"
+# Python version management
+brew "pyenv"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Command-line deletion tool focused on safety, ergonomics, and performance
+brew "rm-improved"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Simplified and community-driven man pages
+brew "tldr"
+# Download YouTube videos from the command-line
+brew "youtube-dl"
+# Process YAML documents from the CLI
+brew "yq"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
