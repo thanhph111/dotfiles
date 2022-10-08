@@ -5,13 +5,11 @@
     ~/.Brewfile: dotfiles/homebrew/Brewfile
 
 - shell:
-    # - description: Install Homebrew
-    #   command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    #   stdin: true
-    #   stdout: true
-    #   stderr: true
-    - description: Install all Homebrew packages and macOS apps
-      command: command -v brew >/dev/null 2>&1 && brew bundle --global --verbose --no-lock
+    - description: Install Homebrew
+      command: NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       stdin: true
-      stdout: true
-      stderr: true
+    - description: Install all Homebrew packages and macOS apps
+      command: |
+        test -d /usr/local && eval "$(/usr/local/bin/brew shellenv)"
+        test -d /opt/homebrew && eval "$(/opt/homebrew/bin/brew shellenv)"
+        command -v brew >/dev/null 2>&1 && brew bundle --global --verbose --no-lock || true
