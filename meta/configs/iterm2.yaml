@@ -2,4 +2,4 @@
 
 - link:
     ~/.config/iterm2: dotfiles/iterm2/*.itermcolors
-    ~/Library/Application Support/iTerm2/Scripts: dotfiles/iterm2/*.py
+    ~/Library/Application Support/iTerm2/Scripts/AutoLaunch/auto_theme.py: dotfiles/iterm2/auto_theme.py
