@@ -5,6 +5,10 @@
 import iterm2
 
 
+DARK_THEME_NAME = "Multiplex Dark"
+LIGHT_THEME_NAME = "Multiplex Light"
+
+
 async def main(connection):
     async with iterm2.VariableMonitor(
         connection, iterm2.VariableScopes.APP, "effectiveTheme", None
@@ -15,21 +19,18 @@ async def main(connection):
 
             # Themes have space-delimited attributes, one of which will be light or dark
             parts = theme.split(" ")
-            if "dark" in parts:
-                preset = await iterm2.ColorPreset.async_get(
-                    connection, "Multiplex Dark"
-                )
+            theme_name = DARK_THEME_NAME if "dark" in parts else LIGHT_THEME_NAME
+            try:
+                preset = await iterm2.ColorPreset.async_get(connection, theme_name)
+            except iterm2.colorpresets.ListPresetsException:
+                pass
             else:
-                preset = await iterm2.ColorPreset.async_get(
-                    connection, "Multiplex Light"
-                )
-
-            # Update the list of all profiles and iterate over them.
-            profiles = await iterm2.PartialProfile.async_query(connection)
-            for partial in profiles:
-                # Fetch the full profile and then set the color preset in it.
-                profile = await partial.async_get_full_profile()
-                await profile.async_set_color_preset(preset)
+                # Update the list of all profiles and iterate over them.
+                profiles = await iterm2.PartialProfile.async_query(connection)
+                for partial in profiles:
+                    # Fetch the full profile and then set the color preset in it.
+                    profile = await partial.async_get_full_profile()
+                    await profile.async_set_color_preset(preset)
 
 
 iterm2.run_forever(main)
