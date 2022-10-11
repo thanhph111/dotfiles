@@ -1,4 +1,5 @@
 # iTerm2
 
 - link:
-    ~/.config/iterm2: dotfiles/iterm2/*
+    ~/.config/iterm2: dotfiles/iterm2/*.itermcolors
+    ~/Library/Application Support/iTerm2/Scripts: dotfiles/iterm2/*.py
