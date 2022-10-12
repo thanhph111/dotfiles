@@ -12,6 +12,17 @@ local function scheme_for_appearance(appearance)
     end
 end
 
+wezterm.on(
+    "window-config-reloaded",
+    function(window, pane)
+        wezterm.run_child_process {
+            "bash",
+            "-c",
+            "for pid in $(pgrep vim); do kill -SIGUSR1 $pid; done"
+        }
+    end
+)
+
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 13,
