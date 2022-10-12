@@ -6,7 +6,7 @@ DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
 
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
-    font_size = 13,
+    font_size = 10,
     line_height = 1.0,
     default_cursor_style = "SteadyBar",
     check_for_updates = false,
@@ -30,7 +30,6 @@ local config = {
 
 if wezterm.target_triple:find "windows%-msvc" then
     config.font = wezterm.font("FiraCode NF", { weight = 500 })
-    config.font_size = 10
     config.initial_rows = 35
     config.color_scheme = DEFAULT_DARK_THEME_NAME
     config.default_prog = { "powershell.exe", "-NoLogo" }
@@ -57,6 +56,7 @@ else
     config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 
     if wezterm.target_triple:find "apple%-darwin" then
+        config.font_size = 13
         config.window_decorations = "RESIZE"
     end
 end
