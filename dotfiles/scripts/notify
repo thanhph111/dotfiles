@@ -13,6 +13,10 @@ command_exists() {
     command -v "$@" >/dev/null 2>&1
 }
 
+send_osc9_notification() {
+    printf '\x1b]9;%s\e\\' "$1"
+}
+
 send_osc99_notification() {
     if [[ -z "$title" ]]; then
         printf '\x1b]99;;%s\x1b\\' "$1"
@@ -22,11 +26,27 @@ send_osc99_notification() {
     fi
 }
 
-#: Always use OSC99 in kitty and WezTerm for the best customization
-if [[ "$TERM" == xterm-kitty ]] || [[ "$TERM_PROGRAM" == WezTerm ]]; then
+send_osc777_notification() {
+    printf '\x1b]777;notify;%s;%s\x1b\\' "$2" "$1"
+}
+
+#: Use OSC99 in kitty for the best customization
+if [[ "$TERM" == xterm-kitty ]]; then
+    echo 123
     message=${message:-'New notification from kitty!'}
     title="${title:-Notification}"
     send_osc99_notification "$message" "$title"
+    exit 0
+fi
+
+#: Use OSC777 or OSC9 in WezTerm
+if [[ "$TERM_PROGRAM" == WezTerm ]]; then
+    message=${message:-'New notification from WezTerm!'}
+    if [[ -z "$title" ]]; then
+        send_osc9_notification "$message"
+    else
+        send_osc777_notification "$message" "$title"
+    fi
     exit 0
 fi
 
