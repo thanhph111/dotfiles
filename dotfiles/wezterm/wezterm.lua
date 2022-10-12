@@ -28,7 +28,7 @@ local config = {
     default_cwd = string.format("%s/Desktop", wezterm.home_dir),
 }
 
-if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+if wezterm.target_triple:find "windows%-msvc" then
     config.font = wezterm.font("FiraCode NF", { weight = 500 })
     config.font_size = 10
     config.initial_rows = 35
@@ -56,7 +56,7 @@ else
 
     config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 
-    if wezterm.target_triple == "x86_64-apple-darwin" then
+    if wezterm.target_triple:find "apple%-darwin" then
         config.window_decorations = "RESIZE"
     end
 end
