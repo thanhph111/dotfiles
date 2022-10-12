@@ -17,7 +17,7 @@ local config = {
         bottom = "0.5cell"
     },
     initial_cols = 122,
-    initial_rows = 37,
+    initial_rows = 35,
     use_resize_increments = true,
 
     use_fancy_tab_bar = false,
@@ -30,7 +30,6 @@ local config = {
 
 if wezterm.target_triple:find "windows%-msvc" then
     config.font = wezterm.font("FiraCode NF", { weight = 500 })
-    config.initial_rows = 35
     config.color_scheme = DEFAULT_DARK_THEME_NAME
     config.default_prog = { "powershell.exe", "-NoLogo" }
 else
@@ -57,6 +56,7 @@ else
 
     if wezterm.target_triple:find "apple%-darwin" then
         config.font_size = 13
+        config.initial_rows = 37
         config.window_decorations = "RESIZE"
     end
 end
