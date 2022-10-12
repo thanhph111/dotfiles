@@ -4,25 +4,6 @@ local wezterm = require "wezterm"
 DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
 DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
 
-local function scheme_for_appearance(appearance)
-    if appearance:find "Light" then
-        return DEFAULT_LIGHT_THEME_NAME
-    else
-        return DEFAULT_DARK_THEME_NAME
-    end
-end
-
-wezterm.on(
-    "window-config-reloaded",
-    function(window, pane)
-        wezterm.run_child_process {
-            "bash",
-            "-c",
-            "for pid in $(pgrep vim); do kill -SIGUSR1 $pid; done"
-        }
-    end
-)
-
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 13,
@@ -45,8 +26,40 @@ local config = {
 
     enable_scroll_bar = false,
     default_cwd = string.format("%s/Desktop", wezterm.home_dir),
-    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
-    window_decorations = "RESIZE",
 }
+
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+    config.font = wezterm.font("FiraCode NF", { weight = 500 })
+    config.font_size = 10
+    config.initial_rows = 35
+    config.color_scheme = DEFAULT_DARK_THEME_NAME
+    config.default_prog = { "powershell.exe", "-NoLogo" }
+else
+    local function scheme_for_appearance(appearance)
+        if appearance:find "Light" then
+            return DEFAULT_LIGHT_THEME_NAME
+        else
+            return DEFAULT_DARK_THEME_NAME
+        end
+    end
+
+    wezterm.on(
+        "window-config-reloaded",
+        function(window, pane)
+            wezterm.run_child_process {
+                "bash",
+                "-c",
+                "for pid in $(pgrep vim); do kill -SIGUSR1 $pid; done"
+            }
+        end
+    )
+
+    config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
+
+    if wezterm.target_triple == "x86_64-apple-darwin" then
+        config.window_decorations = "RESIZE"
+    end
+end
+
 
 return config
