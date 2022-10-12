@@ -1,4 +1,4 @@
-homebrew
+# homebrew
 alacritty
 aws
 bash
@@ -11,6 +11,7 @@ nano
 oh-my-posh
 pwsh
 python
+npm
 ripgrep
 scripts
 ssh
