@@ -1,5 +1,16 @@
 -- https://wezfurlong.org/wezterm/index.html
-local wezterm = require "wezterm";
+local wezterm = require "wezterm"
+
+DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
+DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
+
+local function scheme_for_appearance(appearance)
+    if appearance:find "Light" then
+        return DEFAULT_LIGHT_THEME_NAME
+    else
+        return DEFAULT_DARK_THEME_NAME
+    end
+end
 
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
@@ -23,7 +34,7 @@ local config = {
 
     enable_scroll_bar = false,
     default_cwd = string.format("%s/Desktop", wezterm.home_dir),
-    color_scheme = "Multiplex Light",
+    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
     window_decorations = "RESIZE",
 }
 
