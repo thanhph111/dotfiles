@@ -710,6 +710,20 @@ inoremap (<CR> (<CR>)<c-o><s-o>
 ": Hot reload $MYVIMRC
 autocmd MyAutocmdGroup BufWritePost .vimrc,_vimrc source $MYVIMRC
 
+": Change the background mode based on macOS's `Appearance` setting
+": Limitation: Vim won't execute the callback until its buffers are focused
+function! ChangeBackground()
+    if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
+        set background=dark
+    else
+        set background=light
+    endif
+endfunction
+": Initialize the colorscheme for the first run
+call ChangeBackground()
+": Change the color scheme if we receive a SigUSR1: `kill -SIGUSR1 $pid`
+autocmd MyAutocmdGroup SigUSR1 * call ChangeBackground()
+
 ": }}}
 
 ": Keybindings {{{
