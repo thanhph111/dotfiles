@@ -4,6 +4,14 @@ local wezterm = require "wezterm"
 DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
 DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
 
+local function scheme_for_appearance(appearance)
+    if appearance:find "Light" then
+        return DEFAULT_LIGHT_THEME_NAME
+    else
+        return DEFAULT_DARK_THEME_NAME
+    end
+end
+
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 10,
@@ -24,23 +32,15 @@ local config = {
     hide_tab_bar_if_only_one_tab = true,
     tab_bar_at_bottom = true,
 
+    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
     enable_scroll_bar = false,
     default_cwd = string.format("%s/Desktop", wezterm.home_dir),
 }
 
 if wezterm.target_triple:find "windows%-msvc" then
     config.font = wezterm.font("FiraCode NF", { weight = 500 })
-    config.color_scheme = DEFAULT_DARK_THEME_NAME
     config.default_prog = { "powershell.exe", "-NoLogo" }
 else
-    local function scheme_for_appearance(appearance)
-        if appearance:find "Light" then
-            return DEFAULT_LIGHT_THEME_NAME
-        else
-            return DEFAULT_DARK_THEME_NAME
-        end
-    end
-
     wezterm.on(
         "window-config-reloaded",
         function(window, pane)
@@ -52,14 +52,11 @@ else
         end
     )
 
-    config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
-
     if wezterm.target_triple:find "apple%-darwin" then
         config.font_size = 13
         config.initial_rows = 37
         config.window_decorations = "RESIZE"
     end
 end
-
 
 return config
