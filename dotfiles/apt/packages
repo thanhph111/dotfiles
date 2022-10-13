@@ -1,7 +1,12 @@
 apt-transport-https
 build-essential
 chrome-gnome-shell
+dconf-editor
 flatpak
+gnome-shell-extensions
+gnome-sushi
+gnome-tweaks
 gpick
 openssh-server
+steam
 synaptic
