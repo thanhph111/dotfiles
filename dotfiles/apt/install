@@ -60,6 +60,20 @@ sudo aptitude update && sudo aptitude install -y apt-transport-https code
 
 #: }}}
 
+#: PowerShell {{{
+
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft Product feed
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" |
+    sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Install PowerShell
+sudo aptitude update && sudo aptitude install -y powershell
+
+#: }}}
+
 #: Docker {{{
 
 #: Reference: https://docs.docker.com/engine/install/ubuntu/
