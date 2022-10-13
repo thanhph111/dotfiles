@@ -315,7 +315,8 @@ command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
 #: Prompt (Oh My Posh/Starship) {{{
 
 if command_exists oh-my-posh && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
-    export POSH_THEME="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"
+    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"}"
+    export POSH_THEME
     eval "$(oh-my-posh init zsh)"
 elif command_exists starship && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
     export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"

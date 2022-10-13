@@ -528,7 +528,8 @@ fi
 }
 #: And then set the prompt
 if command_exists oh-my-posh; then
-    export POSH_THEME=~/.config/oh-my-posh/multiplex.toml
+    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"}"
+    export POSH_THEME
     eval "$(oh-my-posh init bash)"
 else
     #: Colored prompt in case no powerline is used: `user@host:dir`
