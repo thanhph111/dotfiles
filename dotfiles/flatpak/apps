@@ -3,9 +3,11 @@ com.getpostman.Postman
 com.github.johnfactotum.Foliate
 com.rafaelmardojai.SharePreview
 com.spotify.Client
+com.valvesoftware.Steam
 org.gimp.GIMP
 org.gnome.FontManager
 org.gnome.TextEditor
 org.gnome.gitlab.somas.Apostrophe
 org.gustavoperedo.FontDownloader
 org.inkscape.Inkscape
+org.wezfurlong.wezterm
