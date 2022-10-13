@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+set -e
+
+#: 1Password {{{
+
+#: Reference: https://support.1password.com/install-linux/#debian-or-ubuntu
+
+#: Add the key for the 1Password apt repository
+curl -sS https://downloads.1password.com/linux/keys/1password.asc |
+    sudo gpg --dearmor --yes --output /usr/share/keyrings/1password-archive-keyring.gpg
+
+#: Add the 1Password apt repository
+echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' |
+    sudo tee /etc/apt/sources.list.d/1password.list
+
+#: Add the debsig-verify policy
+sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol |
+    sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+curl -sS https://downloads.1password.com/linux/keys/1password.asc |
+    sudo gpg --dearmor --yes --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+#: Install 1Password and 1Password CLI
+sudo aptitude update && sudo aptitude install -y 1password 1password-cli
+
+#: }}}
+
+#: Google Chrome {{{
+
+#: Reference: https://www.ubuntuupdates.org/ppa/google_chrome
+
+#: Setup key
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
+    sudo apt-key add -
+
+#: Setup repository
+echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" |
+    sudo tee /etc/apt/sources.list.d/google-chrome.list
+
+#: Install Google Chrome
+sudo aptitude update && sudo aptitude install -y google-chrome-stable
+
+#: }}}
+
+#: Visual Studio Code {{{
+
+#: Reference: https://code.visualstudio.com/docs/setup/linux
+
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc |
+    gpg --dearmor >packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+rm -f packages.microsoft.gpg
+
+echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |
+    sudo tee /etc/apt/sources.list.d/vscode.list
+
+sudo aptitude update && sudo aptitude install -y apt-transport-https code
+
+#: }}}
+
+#: Docker {{{
+
+#: Reference: https://docs.docker.com/engine/install/ubuntu/
+
+#: Add Docker’s official GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+    sudo gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
+
+#: Set up the repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |
+    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+#: Install Docker
+sudo aptitude update &&
+    sudo aptitude install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+#: Add user to docker group: https://docs.docker.com/engine/install/linux-postinstall/
+sudo usermod -aG docker "$USER"
+
+#: }}}
