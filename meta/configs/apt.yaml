@@ -11,6 +11,6 @@
     - description: Install `aptitude`
       command: sudo apt install -y aptitude
     - description: Install list of packages from file
-      command: sudo aptitude install -y <./dotfiles/apt/packages
+      command: sudo aptitude install -y $(cat ./dotfiles/apt/packages)
     - description: Install other packages with sophisticated steps
       command: ./dotfiles/apt/install
