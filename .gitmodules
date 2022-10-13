@@ -6,5 +6,5 @@
 [submodule "ifplatform"]
 	path = plugins/ifplatform
 	url = https://github.com/ssbanerje/dotbot-ifplatform.git
-    ignore = dirty
-    shallow = true
+	ignore = dirty
+	shallow = true
