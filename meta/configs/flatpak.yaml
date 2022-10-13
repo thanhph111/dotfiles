@@ -1,0 +1,12 @@
+# apt
+
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+
+- shell:
+    - description: Add the Flathub repository
+      command: flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    - description: Install Flatpak apps
+      command: flatpak install -y flathub $(cat ./dotfiles/flatpak/apps | xargs)
