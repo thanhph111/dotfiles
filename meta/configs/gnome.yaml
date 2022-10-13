@@ -1,0 +1,7 @@
+# GNOME
+
+- shell:
+    - description: Install GNOME Shell Extensions
+      # Generate from `gnome-extensions list --user --enabled >./dotfiles/gnome/extensions`
+      # TODO: Find a way to automate this
+      command: ':'
