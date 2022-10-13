@@ -1,2 +1,6 @@
 build-essential
+chrome-gnome-shell
 flatpak
+gpick
+openssh-server
+synaptic
