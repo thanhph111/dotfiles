@@ -40,6 +40,8 @@ brew "jq"
 brew "lazygit"
 # Interactive cheatsheet tool for the command-line
 brew "navi"
+# Linux networking base tools
+brew "net-tools"
 # Platform built on V8 to build network applications
 brew "node"
 # Command-line collection runner for Postman
@@ -62,6 +64,8 @@ brew "rm-improved"
 brew "starship"
 # Simplified and community-driven man pages
 brew "tldr"
+# Access X11 clipboards from the command-line
+brew "xclip"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
 # Process YAML documents from the CLI
