@@ -1,0 +1,12 @@
+# Scoop
+
+- shell:
+    # Install Scoop with a script from the Scoop repository imported using submodule
+    # Do this for safety only as this will be run in a privileged shell
+    - description: Install Scoop
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -File .\dotfiles\scoop\installer\install.ps1 -RunAsAdmin -ScoopDir %USERPROFILE%\.scoop -ScoopCacheDir %USERPROFILE%\.cache\scoop

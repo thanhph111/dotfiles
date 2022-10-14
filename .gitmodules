@@ -8,3 +8,6 @@
 	url = https://github.com/ssbanerje/dotbot-ifplatform.git
 	ignore = dirty
 	shallow = true
+[submodule "scoop-installer"]
+	path = dotfiles/scoop/installer
+	url = git@github.com:ScoopInstaller/Install.git
