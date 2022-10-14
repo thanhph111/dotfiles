@@ -64,6 +64,29 @@ Set-PSReadLineOption -ContinuationPrompt '...'
 Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineOption -PredictionSource History
 
+#: Adjust some colors for better visibility on white background
+#: The issue https://github.com/PowerShell/PSReadLine/issues/464 might be a better solution
+Set-PSReadLineOption -Colors @{
+    "Command"                = "$([char]0x1b)[94m"
+    "Comment"                = "$([char]0x1b)[90m"
+    "ContinuationPrompt"     = "$([char]0x1b)[37m"
+    "Default"                = "$([char]0x1b)[37m"
+    "Emphasis"               = "$([char]0x1b)[36m"
+    "Error"                  = "$([char]0x1b)[91m"
+    "InlinePrediction"       = "$([char]0x1b)[37;2m"
+    "Keyword"                = "$([char]0x1b)[95m"
+    "ListPrediction"         = "$([char]0x1b)[33m"
+    "ListPredictionSelected" = "$([char]0x1b)[97;47;5m"
+    "Member"                 = "$([char]0x1b)[37;2m"
+    "Number"                 = "$([char]0x1b)[34m"
+    "Operator"               = "$([char]0x1b)[35m"
+    "Parameter"              = "$([char]0x1b)[90m"
+    "Selection"              = "$([char]0x1b)[30;47m"
+    "String"                 = "$([char]0x1b)[36m"
+    "Type"                   = "$([char]0x1b)[31m"
+    "Variable"               = "$([char]0x1b)[32m"
+}
+
 #region Change keymaps in PSReadLine
 
 #: Tab behavior, choose one of these
