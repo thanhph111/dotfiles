@@ -107,6 +107,8 @@ brew "jorgelbg/tap/pinentry-touchid"
 cask "1password"
 # Command-line helper for the 1Password password manager
 cask "1password-cli"
+# GPU-accelerated terminal emulator
+cask "alacritty"
 # Application uninstaller
 cask "appcleaner"
 # Audio utility
@@ -152,6 +154,8 @@ cask "iina"
 cask "imageoptim"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
+# JetBrains tools manager
+cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
 # Blocks all Keyboard and TouchBar input
@@ -194,10 +198,11 @@ cask "textmate"
 cask "visual-studio-code"
 # Rust-based terminal
 cask "warp"
+# GPU-accelerated cross-platform terminal emulator and multiplexer
+cask "wezterm"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
 mas "Amphetamine", id: 937984704
-mas "Boop", id: 1518425043
 mas "Color Picker", id: 1545870783
 mas "Dark Reader for Safari", id: 1438243180
 mas "Developer", id: 640199958
