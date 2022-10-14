@@ -1,5 +1,6 @@
 # Scoop
 
+# This can easily fail, may have to be rerun many times
 - shell:
     # Install Scoop with a script from the Scoop repository imported using submodule
     # Do this for safety only as this will be run in a privileged shell
@@ -10,3 +11,8 @@
         -NoLogo
         -NonInteractive
         -File .\dotfiles\scoop\installer\install.ps1 -RunAsAdmin -ScoopDir %USERPROFILE%\.scoop -ScoopCacheDir %USERPROFILE%\.cache\scoop
+    - Description: Add Scoop bucket
+      command: '%USERPROFILE%\.scoop\shims\scoop.cmd bucket add main'
+    # Wait for the import/export feature to be more mature, then use that instead
+    - Description: Install Scoop apps
+      command: '%USERPROFILE%\.scoop\shims\scoop.cmd install pyenv poetry'
