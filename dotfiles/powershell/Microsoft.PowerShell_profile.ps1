@@ -7,51 +7,6 @@
 #: Print the message when starting PowerShell
 'Welcome back!'
 
-#region Oh My Posh
-
-#: Use this only if installing using `Install-Module oh-my-posh`
-# Import-Module oh-my-posh
-
-#: Use a theme
-$env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
-oh-my-posh init pwsh | Invoke-Expression
-
-#: Enable-PoshTransientPrompt
-Enable-PoshTooltips
-
-#: Enable Git auto-completion
-#: This must be done after Oh My Posh initialization
-$env:POSH_GIT_ENABLED = $true
-
-#: Send an OSC99 escape sequence to the terminal to let it know of the current directory
-#: Only benefits the Windows Terminal
-#: This set an environment variable and the Oh My Posh theme have to print it out
-if ($env:WT_SESSION) {
-    function Set-Osc99 {
-        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)\"
-    }
-    #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
-    New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
-}
-
-#endregion
-
-#region Terminal-Icons
-
-#: This will slow down the startup time, about 400ms
-Import-Module Terminal-Icons
-
-#endregion
-
-#region PSFzf
-
-#: Looking for filepaths
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+p'
-#: Looking for history commands
-Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
-
-#endregion
-
 #region PSReadLine
 
 #: Use Emacs mode
@@ -137,6 +92,55 @@ Set-PSReadLineOption -AddToHistoryHandler {
     #: Don't save to history commands which has less than 4 characters or starts with space or end with semicolon
     return $line.Length -gt 3 -and $line[0] -ne ' ' -and $line[0] -ne ';'
 }
+
+#endregion
+
+#endregion
+
+#region Tools
+
+#region Oh My Posh
+
+#: Use this only if installing using `Install-Module oh-my-posh`
+# Import-Module oh-my-posh
+
+#: Use a theme
+$env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
+oh-my-posh init pwsh | Invoke-Expression
+
+#: Enable-PoshTransientPrompt
+Enable-PoshTooltips
+
+#: Enable Git auto-completion
+#: This must be done after Oh My Posh initialization
+$env:POSH_GIT_ENABLED = $true
+
+#: Send an OSC99 escape sequence to the terminal to let it know of the current directory
+#: Only benefits the Windows Terminal
+#: This set an environment variable and the Oh My Posh theme have to print it out
+if ($env:WT_SESSION) {
+    function Set-Osc99 {
+        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)\"
+    }
+    #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
+    New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
+}
+
+#endregion
+
+#region Terminal-Icons
+
+#: This will slow down the startup time, about 400ms
+Import-Module Terminal-Icons
+
+#endregion
+
+#region PSFzf
+
+#: Looking for filepaths
+Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+p'
+#: Looking for history commands
+Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
 
 #endregion
 
