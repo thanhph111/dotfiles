@@ -1,0 +1,24 @@
+# Windows
+
+- shell:
+    - description: Set XDG environment variables
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "
+        [Environment]::SetEnvironmentVariable(\"XDG_CONFIG_HOME\", \"$env:USERPROFILE\.config\", \"User\");
+        [Environment]::SetEnvironmentVariable(\"XDG_CACHE_HOME\", \"$env:USERPROFILE\.cache\", \"User\");
+        [Environment]::SetEnvironmentVariable(\"XDG_STATE_HOME\", \"$env:USERPROFILE\.local\state\", \"User\");
+        [Environment]::SetEnvironmentVariable(\"XDG_DATA_HOME\", \"$env:USERPROFILE\.local\share\", \"User\");
+        "
+
+- shell:
+    - description: Hide some directories in Home
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "Get-ChildItem -Path ~ -Filter .* | ForEach-Object { $_.Attributes += \"Hidden\" }"
