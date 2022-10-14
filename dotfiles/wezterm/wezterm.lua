@@ -1,5 +1,6 @@
 -- https://wezfurlong.org/wezterm/index.html
 local wezterm = require "wezterm"
+local action = wezterm.action
 
 DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
 DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
@@ -29,6 +30,17 @@ local config = {
         DEFAULT_DARK_THEME_NAME,
     enable_scroll_bar = false,
     default_cwd = string.format("%s/Desktop", wezterm.home_dir),
+
+    keys = {
+        {
+            key = "k",
+            mods = "CMD",
+            action = action.Multiple {
+                action.ClearScrollback "ScrollbackAndViewport",
+                action.SendKey { key = "L", mods = "CTRL" },
+            },
+        },
+    }
 }
 
 if wezterm.target_triple:find "windows%-msvc" then
