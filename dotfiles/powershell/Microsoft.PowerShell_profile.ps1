@@ -186,6 +186,21 @@ if (Test-CommandExists oh-my-posh) {
         #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
         New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
     }
+
+    #: Send an OSC7 escape sequence to the terminal to let it know of the current directory
+    #: Only benefits the WezTerm terminal
+    #: This set an environment variable and the Oh My Posh theme have to print it out
+    if (($env:OS -eq 'Windows_NT') -and ($env:TERM_PROGRAM -eq 'WezTerm')) {
+        function Set-Osc7 {
+            $currentLocation = $executionContext.SessionState.Path.CurrentLocation
+            if ($currentLocation.Provider.Name -eq 'FileSystem') {
+                $directoryUri = "file://${env:COMPUTERNAME}/$($currentLocation.ProviderPath -replace '\\', '/')"
+                $env:OMP_SUFFIX = "$([char]27)]7;${directoryUri}$([char]27)\"
+            }
+        }
+        #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
+        New-Alias -Name Set-PoshContext -Value Set-Osc7 -Scope Global -Force
+    }
 }
 
 #endregion
