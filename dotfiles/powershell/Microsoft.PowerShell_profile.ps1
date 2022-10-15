@@ -66,8 +66,8 @@ function Test-CommandParameterExists {
 
 function Write-AllPoshThemes {
     function Get-PoshThemes {
-        if ($env:POSH_THEME_PATH) {
-            return Get-ChildItem $env:POSH_THEME_PATH
+        if ($env:POSH_THEMES_PATH) {
+            return Get-ChildItem $env:POSH_THEMES_PATH
         }
         if ((Test-CommandExists brew) -and (brew --prefix oh-my-posh)) {
             return Get-ChildItem "$(brew --prefix oh-my-posh)/themes/"
