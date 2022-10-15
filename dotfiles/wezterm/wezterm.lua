@@ -29,7 +29,7 @@ local config = {
         DEFAULT_LIGHT_THEME_NAME or
         DEFAULT_DARK_THEME_NAME,
     enable_scroll_bar = false,
-    default_cwd = string.format("%s/Desktop", wezterm.home_dir),
+    default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
 
     keys = {
         {
