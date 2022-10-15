@@ -64,6 +64,24 @@ function Test-CommandParameterExists {
     }
 }
 
+function Write-AllPoshThemes {
+    function Get-PoshThemes {
+        if ($env:POSH_THEME_PATH) {
+            return Get-ChildItem $env:POSH_THEME_PATH
+        }
+        if ((Test-CommandExists brew) -and (brew --prefix oh-my-posh)) {
+            return Get-ChildItem "$(brew --prefix oh-my-posh)/themes/"
+        }
+        return @()
+    }
+    foreach ($file in Get-PoshThemes) {
+        $env:POSH_THEME = $file.ToString()
+        $themeName = $file.Name
+        Write-Host ($themeName + ' ' + '-' * ([Console]::WindowWidth - $themeName.Length - 1))
+        prompt
+    }
+}
+
 #endregion
 
 #region PSReadLine
