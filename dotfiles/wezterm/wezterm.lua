@@ -60,7 +60,7 @@ local config = {
             mods = "CMD",
             action = action.Multiple {
                 action.ClearScrollback "ScrollbackAndViewport",
-                action.SendKey { key = "L", mods = "CTRL" },
+                action.SendKey { key = "l", mods = "CTRL" },
             },
         },
         {
