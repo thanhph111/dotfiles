@@ -4,6 +4,31 @@ local action = wezterm.action
 
 DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
 DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
+SYSTEM_THEME_NAME = wezterm.gui.get_appearance():find "Light" and
+    DEFAULT_LIGHT_THEME_NAME or
+    DEFAULT_DARK_THEME_NAME
+
+THEMES = {
+    SYSTEM_THEME_NAME,
+    DEFAULT_DARK_THEME_NAME,
+    DEFAULT_LIGHT_THEME_NAME,
+}
+
+-- Cycle through the themes
+wezterm.on(
+    "switch-theme",
+    function()
+        local current_theme_index = wezterm.GLOBAL.current_theme_index or 1
+        local next_theme_index = current_theme_index % #THEMES + 1
+        wezterm.GLOBAL.current_theme_index = next_theme_index
+        wezterm.reload_configuration()
+    end
+)
+
+-- Get the current theme based on the current theme index in the global storage
+local function get_current_theme()
+    return THEMES[wezterm.GLOBAL.current_theme_index or 1]
+end
 
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
@@ -25,9 +50,7 @@ local config = {
     hide_tab_bar_if_only_one_tab = true,
     tab_bar_at_bottom = true,
 
-    color_scheme = wezterm.gui.get_appearance():find "Light" and
-        DEFAULT_LIGHT_THEME_NAME or
-        DEFAULT_DARK_THEME_NAME,
+    color_scheme = get_current_theme(),
     enable_scroll_bar = false,
     default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
 
@@ -40,6 +63,11 @@ local config = {
                 action.SendKey { key = "L", mods = "CTRL" },
             },
         },
+        {
+            key = "s",
+            mods = "CTRL|SHIFT",
+            action = action.EmitEvent("switch-theme"),
+        }
     }
 }
 
