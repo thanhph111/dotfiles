@@ -7,6 +7,65 @@
 #: Print the message when starting PowerShell
 'Welcome back!'
 
+#region Functions
+
+function Test-CommandExists {
+    param (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]
+        $Command
+    )
+
+    $oldPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'stop'
+    try {
+        if (Get-Command $Command) {
+            $true
+        }
+    } catch {
+        $false
+    } finally {
+        $ErrorActionPreference = $oldPreference
+    }
+}
+
+function Test-ModuleExists {
+    param (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]
+        $Module
+    )
+
+    if (Get-Module $Module -ListAvailable) {
+        $true
+    } else {
+        $false
+    }
+}
+
+function Test-CommandParameterExists {
+    param (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]
+        $Command,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string]
+        $Parameter
+    )
+
+    if (-not (Test-CommandExists $Command)) {
+        return $false
+    }
+
+    if ((Get-Command $Command).Parameters.Keys -contains $Parameter) {
+        $true
+    } else {
+        $false
+    }
+}
+
+#endregion
+
 #region PSReadLine
 
 #: Use Emacs mode
@@ -16,30 +75,32 @@ Set-PSReadLineOption -EditMode Emacs
 Set-PSReadLineOption -ContinuationPrompt '...'
 
 #: Prediction on type
-Set-PSReadLineOption -PredictionViewStyle ListView
-Set-PSReadLineOption -PredictionSource History
+if (Test-CommandParameterExists Set-PSReadLineOption PredictionSource) {
+    Set-PSReadLineOption -PredictionViewStyle ListView
+    Set-PSReadLineOption -PredictionSource History
+}
 
 #: Adjust some colors for better visibility on white background
 #: The issue https://github.com/PowerShell/PSReadLine/issues/464 might be a better solution
 Set-PSReadLineOption -Colors @{
-    "Command"                = "$([char]27)[94m"
-    "Comment"                = "$([char]27)[90m"
-    "ContinuationPrompt"     = "$([char]27)[37m"
-    "Default"                = "$([char]27)[37m"
-    "Emphasis"               = "$([char]27)[36m"
-    "Error"                  = "$([char]27)[91m"
-    "InlinePrediction"       = "$([char]27)[37;2m"
-    "Keyword"                = "$([char]27)[35m"
-    "ListPrediction"         = "$([char]27)[33m"
-    "ListPredictionSelected" = "$([char]27)[97;47;5m"
-    "Member"                 = "$([char]27)[37;2m"
-    "Number"                 = "$([char]27)[34m"
-    "Operator"               = "$([char]27)[33m"
-    "Parameter"              = "$([char]27)[95m"
-    "Selection"              = "$([char]27)[30;47m"
-    "String"                 = "$([char]27)[36m"
-    "Type"                   = "$([char]27)[31m"
-    "Variable"               = "$([char]27)[32m"
+    'Command'                = "$([char]27)[94m"
+    'Comment'                = "$([char]27)[90m"
+    'ContinuationPrompt'     = "$([char]27)[37m"
+    'Default'                = "$([char]27)[37m"
+    'Emphasis'               = "$([char]27)[36m"
+    'Error'                  = "$([char]27)[91m"
+    'InlinePrediction'       = "$([char]27)[37;2m"
+    'Keyword'                = "$([char]27)[35m"
+    'ListPrediction'         = "$([char]27)[33m"
+    'ListPredictionSelected' = "$([char]27)[97;47;5m"
+    'Member'                 = "$([char]27)[37;2m"
+    'Number'                 = "$([char]27)[34m"
+    'Operator'               = "$([char]27)[33m"
+    'Parameter'              = "$([char]27)[95m"
+    'Selection'              = "$([char]27)[30;47m"
+    'String'                 = "$([char]27)[36m"
+    'Type'                   = "$([char]27)[31m"
+    'Variable'               = "$([char]27)[32m"
 }
 
 #region Change keymaps in PSReadLine
@@ -101,46 +162,51 @@ Set-PSReadLineOption -AddToHistoryHandler {
 
 #region Oh My Posh
 
-#: Use this only if installing using `Install-Module oh-my-posh`
-# Import-Module oh-my-posh
+if (Test-CommandExists oh-my-posh) {
+    #: Use a theme
+    $env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
+    oh-my-posh init pwsh | Invoke-Expression
 
-#: Use a theme
-$env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
-oh-my-posh init pwsh | Invoke-Expression
+    #: Enable-PoshTransientPrompt
+    Enable-PoshTooltips
 
-#: Enable-PoshTransientPrompt
-Enable-PoshTooltips
+    #: Enable Git auto-completion
+    #: This must be done after Oh My Posh initialization
+    $env:POSH_GIT_ENABLED = $true
 
-#: Enable Git auto-completion
-#: This must be done after Oh My Posh initialization
-$env:POSH_GIT_ENABLED = $true
-
-#: Send an OSC99 escape sequence to the terminal to let it know of the current directory
-#: Only benefits the Windows Terminal
-#: This set an environment variable and the Oh My Posh theme have to print it out
-if ($env:WT_SESSION) {
-    function Set-Osc99 {
-        $env:OMP_SUFFIX = "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)\"
+    #: Send an OSC99 escape sequence to the terminal to let it know of the current directory
+    #: Only benefits the Windows Terminal
+    #: This set an environment variable and the Oh My Posh theme have to print it out
+    if ($env:WT_SESSION) {
+        function Set-Osc99 {
+            $env:OMP_SUFFIX = (
+                "$([char]27)]9;9;`"$($executionContext.SessionState.Path.CurrentLocation)`"$([char]27)\"
+            )
+        }
+        #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
+        New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
     }
-    #: This overrides the `Set-PoshContext` and Oh My Posh uses it in the `prompt` function
-    New-Alias -Name Set-PoshContext -Value Set-Osc99 -Scope Global -Force
 }
 
 #endregion
 
 #region Terminal-Icons
 
-#: This will slow down the startup time, about 400ms
-Import-Module Terminal-Icons
+if (Test-ModuleExists Terminal-Icons) {
+    #: This will slow down the startup time, about 400ms
+    Import-Module Terminal-Icons
+}
 
 #endregion
 
 #region PSFzf
 
-#: Looking for filepaths
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+p'
-#: Looking for history commands
-Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
+if (Test-CommandExists Set-PsFzfOption) {
+    #: Looking for filepaths
+    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+p'
+    #: Looking for history commands
+    Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
+}
 
 #endregion
 
