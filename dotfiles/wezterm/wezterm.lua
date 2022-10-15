@@ -71,6 +71,7 @@ local config = {
     }
 }
 
+-- Windows specific configurations
 if wezterm.target_triple:find "windows%-msvc" then
     config.font = wezterm.font("FiraCode NF", { weight = 500 })
     config.default_prog = { "powershell.exe", "-NoLogo" }
@@ -90,10 +91,15 @@ wezterm.on(
     end
 )
 
+-- macOS specific configurations
 if wezterm.target_triple:find "apple%-darwin" then
     config.window_decorations = "RESIZE"
     config.font_size = 13
     config.initial_rows = 37
+
+    return config
 end
+
+-- Linux specific configurations
 
 return config
