@@ -4,15 +4,16 @@ local action = wezterm.action
 
 DEFAULT_DARK_THEME_NAME = "Multiplex Dark"
 DEFAULT_LIGHT_THEME_NAME = "Multiplex Light"
-SYSTEM_THEME_NAME = wezterm.gui.get_appearance():find "Light" and
-    DEFAULT_LIGHT_THEME_NAME or
-    DEFAULT_DARK_THEME_NAME
 
-THEMES = {
-    SYSTEM_THEME_NAME,
-    DEFAULT_DARK_THEME_NAME,
-    DEFAULT_LIGHT_THEME_NAME,
-}
+if wezterm.gui.get_appearance():find "Light" then
+    SYSTEM_THEME_NAME = DEFAULT_LIGHT_THEME_NAME
+    INVERSE_SYSTEM_THEME_NAME = DEFAULT_DARK_THEME_NAME
+else
+    SYSTEM_THEME_NAME = DEFAULT_DARK_THEME_NAME
+    INVERSE_SYSTEM_THEME_NAME = DEFAULT_LIGHT_THEME_NAME
+end
+
+THEMES = { SYSTEM_THEME_NAME, INVERSE_SYSTEM_THEME_NAME }
 
 -- Cycle through the themes
 wezterm.on(
