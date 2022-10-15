@@ -1,0 +1,5 @@
+# macOS
+
+- shell:
+    - description: Press `Cmd + Ctrl` and click anywhere on a window to move it
+      command: defaults write -g NSWindowShouldDragOnGesture -bool true
