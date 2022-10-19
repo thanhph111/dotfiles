@@ -4,6 +4,9 @@
 #:   Terminal-Icons
 #:   z
 
+#: Use this to profile the startup time of your PowerShell session
+# Set-PSDebug -Trace 1
+
 #: Print the message when starting PowerShell
 'Welcome back!'
 
