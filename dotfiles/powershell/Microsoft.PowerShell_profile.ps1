@@ -85,6 +85,17 @@ function Write-AllPoshThemes {
     }
 }
 
+function Measure-BootTime {
+    $number = 4
+    $totalMilliSeconds = 0
+    1..$number | ForEach-Object {
+        $bootTime = (Measure-Command { powershell.exe -c 'exit' }).TotalMilliseconds
+        Write-Output "Boot time ${_}: $bootTime ms"
+        $totalMilliSeconds += $bootTime
+    }
+    Write-Output "Average boot time: $([math]::Round($totalMilliSeconds / $number)) ms"
+}
+
 #endregion
 
 #region PSReadLine
