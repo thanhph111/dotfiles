@@ -85,11 +85,28 @@ function Write-AllPoshThemes {
     }
 }
 
-function Measure-BootTime {
+function Measure-BootTimeShell {
+    param(
+        [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+        [string]
+        $Shell = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+    )
+
     $number = 4
     $totalMilliSeconds = 0
+
+    if (!(Test-CommandExists $Shell)) {
+        Write-Error "Command '$Shell' not found"
+        return
+    }
+
+    $scriptBlock = { & $Shell -i -c 'exit' }
+    if ((Split-Path $Shell -Leaf -ErrorAction SilentlyContinue) -match 'powershell') {
+        $scriptBlock = { & $Shell -Command 'exit' }
+    }
+
     1..$number | ForEach-Object {
-        $bootTime = (Measure-Command { powershell.exe -c 'exit' }).TotalMilliseconds
+        $bootTime = (Measure-Command $scriptBlock).TotalMilliseconds
         Write-Output "Boot time ${_}: $bootTime ms"
         $totalMilliSeconds += $bootTime
     }
