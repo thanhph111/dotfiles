@@ -31,6 +31,28 @@ local function get_current_theme()
     return THEMES[wezterm.GLOBAL.current_theme_index or 1]
 end
 
+-- Set Vim background color based on the current theme when the config is loaded
+wezterm.on(
+    "window-config-reloaded",
+    function(window, pane)
+        local process_name = pane:get_foreground_process_name()
+        if not process_name then
+            return
+        end
+
+        local executable = process_name:gsub("(.*[/\\])(.*)", "%2")
+        if not executable:match "vim[.$]?" then
+            return
+        end
+
+        if get_current_theme() == DEFAULT_DARK_THEME_NAME then
+            pane:send_text(":set background=dark\n")
+        else
+            pane:send_text(":set background=light\n")
+        end
+    end
+)
+
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 10,
@@ -79,28 +101,6 @@ if wezterm.target_triple:find "windows%-msvc" then
 
     return config
 end
-
--- Set Vim background color based on the current theme when the config is loaded
-wezterm.on(
-    "window-config-reloaded",
-    function(window, pane)
-        local process_name = pane:get_foreground_process_name()
-        if not process_name then
-            return
-        end
-
-        local executable = process_name:gsub("(.*[/\\])(.*)", "%2")
-        if not executable:match "vim[.$]?" then
-            return
-        end
-
-        if get_current_theme() == DEFAULT_DARK_THEME_NAME then
-            pane:send_text(":set background=dark\n")
-        else
-            pane:send_text(":set background=light\n")
-        end
-    end
-)
 
 -- macOS specific configurations
 if wezterm.target_triple:find "apple%-darwin" then
