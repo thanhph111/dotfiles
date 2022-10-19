@@ -15,6 +15,11 @@ end
 
 THEMES = { SYSTEM_THEME_NAME, INVERSE_SYSTEM_THEME_NAME }
 
+-- Get the current theme based on the current theme index in the global storage
+local function get_current_theme()
+    return THEMES[wezterm.GLOBAL.current_theme_index or 1]
+end
+
 -- Cycle through the themes
 wezterm.on(
     "switch-theme",
@@ -25,11 +30,6 @@ wezterm.on(
         wezterm.reload_configuration()
     end
 )
-
--- Get the current theme based on the current theme index in the global storage
-local function get_current_theme()
-    return THEMES[wezterm.GLOBAL.current_theme_index or 1]
-end
 
 -- Set Vim background color based on the current theme when the config is loaded
 wezterm.on(
