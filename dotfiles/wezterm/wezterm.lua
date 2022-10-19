@@ -80,15 +80,25 @@ if wezterm.target_triple:find "windows%-msvc" then
     return config
 end
 
--- Send SIGUSR1 to every Vim processes to trigger a check on system theme
+-- Set Vim background color based on the current theme when the config is loaded
 wezterm.on(
     "window-config-reloaded",
     function(window, pane)
-        wezterm.run_child_process {
-            "bash",
-            "-c",
-            "for pid in $(pgrep vim); do kill -SIGUSR1 $pid; done"
-        }
+        local process_name = pane:get_foreground_process_name()
+        if not process_name then
+            return
+        end
+
+        local executable = process_name:gsub("(.*[/\\])(.*)", "%2")
+        if not executable:match "vim[.$]?" then
+            return
+        end
+
+        if get_current_theme() == DEFAULT_DARK_THEME_NAME then
+            pane:send_text(":set background=dark\n")
+        else
+            pane:send_text(":set background=light\n")
+        end
     end
 )
 
