@@ -41,7 +41,7 @@ wezterm.on(
         end
 
         local executable = process_name:gsub("(.*[/\\])(.*)", "%2")
-        if not executable:match "vim[.$]?" then
+        if not (executable == "vim" or executable:find("^vim%.")) then
             return
         end
 
