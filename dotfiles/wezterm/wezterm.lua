@@ -34,21 +34,21 @@ wezterm.on(
 -- Set Vim background color based on the current theme when the config is loaded
 wezterm.on(
     "window-config-reloaded",
-    function(window, pane)
+    function(_, pane)
         local process_name = pane:get_foreground_process_name()
         if not process_name then
             return
         end
 
         local executable = process_name:gsub("(.*[/\\])(.*)", "%2")
-        if not (executable == "vim" or executable:find("^vim%.")) then
+        if not (executable == "vim" or executable:find "^vim%.") then
             return
         end
 
         if get_current_theme() == DEFAULT_DARK_THEME_NAME then
-            pane:send_text(":set background=dark\n")
+            pane:send_text ":set background=dark\n"
         else
-            pane:send_text(":set background=light\n")
+            pane:send_text ":set background=light\n"
         end
     end
 )
@@ -89,7 +89,7 @@ local config = {
         {
             key = "s",
             mods = "CTRL|SHIFT",
-            action = action.EmitEvent("switch-theme"),
+            action = action.EmitEvent "switch-theme",
         }
     }
 }
