@@ -117,3 +117,10 @@ export POWERSHELL_UPDATECHECK=Off
 export POWERSHELL_TELEMETRY_OPTOUT=1
 
 #: }}}
+
+#: npm {{{
+
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+#: }}}

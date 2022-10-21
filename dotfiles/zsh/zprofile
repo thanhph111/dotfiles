@@ -52,3 +52,10 @@ export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
 export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 
 #: }}}
+
+#: npm {{{
+
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+#: }}}

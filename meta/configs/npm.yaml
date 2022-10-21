@@ -1,4 +1,4 @@
 # npm
 
 - link:
-    ~/.npmrc: dotfiles/npm/npmrc
+    ~/.config/npm/config: dotfiles/npm/npmrc
