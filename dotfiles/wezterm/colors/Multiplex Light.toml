@@ -3,29 +3,29 @@ name = "Multiplex Light"
 
 [colors]
 ansi = [
-    "#181A1B",
-    "#A91409",
-    "#38803A",
-    "#CC7A00",
-    "#0A6AB6",
-    "#522E92",
-    "#37AAB9",
+    "#181a1b",
+    "#a91409",
+    "#38803a",
+    "#cc7a00",
+    "#0a6ab6",
+    "#522e92",
+    "#37aab9",
     "#788187",
 ]
 
 brights = [
-    "#555B5E",
-    "#FF3078",
-    "#ADDD1E",
-    "#FFEC16",
-    "#0287C3",
-    "#D10AFF",
-    "#4AE3F7",
-    "#DCDFE4",
+    "#555b5e",
+    "#ff3078",
+    "#addd1e",
+    "#ffec16",
+    "#0287c3",
+    "#d10aff",
+    "#4ae3f7",
+    "#dcdfe4",
 ]
 
-foreground = "#0E1019"
-background = "#F3F3F3"
+foreground = "#0e1019"
+background = "#f3f3f3"
 
 selection_fg = "none"
 selection_bg = "rgba(50% 50% 50% 25%)"
@@ -43,7 +43,7 @@ background = "#444"
 
 [colors.tab_bar.active_tab]
 fg_color = "#000"
-bg_color = "#EAEAEB"
+bg_color = "#eaeaeb"
 intensity = "Bold"
 underline = "None"
 italic = false
@@ -51,7 +51,7 @@ strikethrough = false
 
 [colors.tab_bar.inactive_tab]
 fg_color = "#444"
-bg_color = "#CDCED1"
+bg_color = "#cdced1"
 intensity = "Normal"
 underline = "None"
 italic = false

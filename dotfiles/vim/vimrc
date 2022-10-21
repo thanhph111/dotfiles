@@ -30,22 +30,22 @@ set termguicolors
 
 ": But I like the ordinal terminal colors
 let g:terminal_ansi_colors = [
-    \ '#181A1B',
-    \ '#A91409',
-    \ '#38803A',
-    \ '#CC7A00',
-    \ '#0A6AB6',
-    \ '#522E92',
-    \ '#37AAB9',
+    \ '#181a1b',
+    \ '#a91409',
+    \ '#38803a',
+    \ '#cc7a00',
+    \ '#0a6ab6',
+    \ '#522e92',
+    \ '#37aab9',
     \ '#788187',
-    \ '#555B5E',
-    \ '#FF3078',
-    \ '#ADDD1E',
-    \ '#FFEC16',
-    \ '#0287C3',
-    \ '#D10AFF',
-    \ '#4AE3F7',
-    \ '#DCDFE4',
+    \ '#555b5e',
+    \ '#ff3078',
+    \ '#addd1e',
+    \ '#ffec16',
+    \ '#0287c3',
+    \ '#d10aff',
+    \ '#4ae3f7',
+    \ '#dcdfe4',
 \ ]
 
 ": Allow backspacing over everything in insert mode.
@@ -108,26 +108,26 @@ set nolangremap
 
 ": Tell Vim find the color scheme for the dark theme
 ": This is my theme:
-":     foreground           #FFFAF4
-":     background           #0E1019
+":     foreground           #fffaf4
+":     background           #0e1019
 ":     selection_foreground #181c27
-":     selection_background #FFFFFF
-":     color0               #181A1B
-":     color8               #555B5E
-":     color1               #A91409
-":     color9               #FF3078
-":     color2               #38803A
-":     color10              #ADDD1E
-":     color3               #CC7A00
-":     color11              #FFEC16
-":     color4               #0A6AB6
-":     color12              #0287C3
-":     color5               #522E92
-":     color13              #D10AFF
-":     color6               #37AAB9
-":     color14              #4AE3F7
+":     selection_background #ffffff
+":     color0               #181a1b
+":     color8               #555b5e
+":     color1               #a91409
+":     color9               #ff3078
+":     color2               #38803a
+":     color10              #addd1e
+":     color3               #cc7a00
+":     color11              #ffec16
+":     color4               #0a6ab6
+":     color12              #0287c3
+":     color5               #522e92
+":     color13              #d10aff
+":     color6               #37aab9
+":     color14              #4ae3f7
 ":     color7               #788187
-":     color15              #DCDFE4
+":     color15              #dcdfe4
 set background=dark
 
 ": Auto change directory to a file location
@@ -586,21 +586,21 @@ imap <C-@> <C-Space>
 
 ": Most for whitespaces
 highlight NonText    cterm=NONE ctermfg=DarkGray ctermbg=NONE
-    \                           guifg=#5C5D61    guibg=NONE
+    \                           guifg=#5c5d61    guibg=NONE
 highlight SpecialKey cterm=NONE ctermfg=DarkGray ctermbg=NONE
-    \                           guifg=#3C3E44    guibg=NONE
+    \                           guifg=#3c3e44    guibg=NONE
 
 ": Cursor line and number
 highlight CursorLine   cterm=NONE ctermbg=Black
     \                             guibg=#181b26
 highlight CursorLineNr cterm=bold ctermfg=DarkYellow
-    \                             guifg=#CC7A00
+    \                             guifg=#cc7a00
 
 ": Diff view
 highlight DiffAdd    cterm=bold ctermfg=NONE  ctermbg=22
     \                           guifg=NONE    guibg=#162620
 highlight DiffDelete cterm=bold ctermfg=52    ctermbg=52
-    \                           guifg=#2D1116 guibg=#2D1116
+    \                           guifg=#2d1116 guibg=#2d1116
 highlight DiffChange cterm=bold ctermfg=NONE  ctermbg=130
     \                           guifg=NONE    guibg=#342514
 highlight DiffText   cterm=NONE ctermfg=NONE  ctermbg=DarkYellow
@@ -612,13 +612,13 @@ highlight VertSplit cterm=NONE ctermfg=White ctermbg=NONE
 
 ": Popup menu
 highlight Pmenu      cterm=NONE ctermfg=White ctermbg=DarkBlue
-    \                           guifg=White   guibg=#0A6AB6
+    \                           guifg=White   guibg=#0a6ab6
 highlight PmenuSel   cterm=bold ctermfg=White ctermbg=Blue
-    \                           guifg=White   guibg=#0287C3
+    \                           guifg=White   guibg=#0287c3
 highlight PmenuSbar  cterm=NONE ctermfg=NONE  ctermbg=DarkCyan
-    \                           guifg=NONE    guibg=#37AAB9
+    \                           guifg=NONE    guibg=#37aab9
 highlight PmenuThumb cterm=NONE ctermfg=NONE  ctermbg=Cyan
-    \                           guifg=NONE    guibg=#4AE3F7
+    \                           guifg=NONE    guibg=#4ae3f7
 
 ": Keyword highlighting
 highlight Error cterm=bold ctermfg=White ctermbg=DarkRed
@@ -642,7 +642,7 @@ highlight WarningMsg cterm=bold ctermfg=DarkYellow ctermbg=NONE
 ": Wildmenu uses StatusLine color for FB and BG colors
 ": This set colors for selection
 highlight WildMenu cterm=bold ctermfg=DarkYellow ctermbg=White
-    \                         guifg=#CC7A00      guibg=White
+    \                         guifg=#cc7a00      guibg=White
 
 ": Set color for a column (81) and fill all background from another column (120)
 ": Reference: https://stackoverflow.com/a/13731714

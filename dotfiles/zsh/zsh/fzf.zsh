@@ -40,7 +40,7 @@ fg:#981748,\
 fg+:#e31b61:bold,\
 bg:-1,\
 bg+:-1,\
-hl:#0571A3:bold,\
+hl:#0571a3:bold,\
 hl+:#00a5ed:bold,\
 info:3,\
 prompt:4,\

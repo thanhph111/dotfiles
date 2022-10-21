@@ -113,8 +113,8 @@ draw_bold_text_with_bright_colors: false
 
 colors:
   primary:
-    background: "#0E1019"
-    foreground: "#FFFAF4"
+    background: "#0e1019"
+    foreground: "#fffaf4"
 
   cursor:
     text: CellBackground
@@ -188,29 +188,29 @@ colors:
   # affected cell, or hexadecimal colors like #ff00ff.
   selection:
     text: CellForeground
-    background: "#3E4047"
+    background: "#3e4047"
 
   # Normal colors
   normal:
-    black: "#181A1B"
-    red: "#A91409"
-    green: "#38803A"
-    yellow: "#CC7A00"
-    blue: "#0A6AB6"
-    magenta: "#522E92"
-    cyan: "#37AAB9"
+    black: "#181a1b"
+    red: "#a91409"
+    green: "#38803a"
+    yellow: "#cc7a00"
+    blue: "#0a6ab6"
+    magenta: "#522e92"
+    cyan: "#37aab9"
     white: "#788187"
 
   # Bright colors
   bright:
-    black: "#555B5E"
-    red: "#FF3078"
-    green: "#ADDD1E"
-    yellow: "#FFEC16"
-    blue: "#0287C3"
-    magenta: "#D10AFF"
-    cyan: "#4AE3F7"
-    white: "#DCDFE4"
+    black: "#555b5e"
+    red: "#ff3078"
+    green: "#addd1e"
+    yellow: "#ffec16"
+    blue: "#0287c3"
+    magenta: "#d10aff"
+    cyan: "#4ae3f7"
+    white: "#dcdfe4"
 
   transparent_background_colors: false
 
