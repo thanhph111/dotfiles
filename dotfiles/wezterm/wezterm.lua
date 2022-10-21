@@ -20,6 +20,23 @@ local function get_current_theme()
     return THEMES[wezterm.GLOBAL.current_theme_index or 1]
 end
 
+local function get_window_background_gradient()
+    local theme = get_current_theme()
+    if theme == DEFAULT_DARK_THEME_NAME then
+        return {
+            colors = { "#0f0c29", "#302b63", "#24243e" },
+            orientation = { Radial = { cx = 0.8, cy = 0.8, radius = 1.5 } }
+        }
+    end
+    if theme == DEFAULT_LIGHT_THEME_NAME then
+        return {
+            colors = { "#ffefba", "#ffffff" },
+            orientation = { Radial = { cx = 0.8, cy = 0.8, radius = 1.5 } }
+        }
+    end
+    return nil
+end
+
 -- Cycle through the themes
 wezterm.on(
     "switch-theme",
@@ -74,6 +91,7 @@ local config = {
     tab_bar_at_bottom = true,
 
     color_scheme = get_current_theme(),
+    window_background_gradient = get_window_background_gradient(),
     enable_scroll_bar = false,
     default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
 
