@@ -1,4 +1,4 @@
--- https://wezfurlong.org/wezterm/index.html
+-- https://wezfurlong.org/wezterm/
 local wezterm = require "wezterm"
 local action = wezterm.action
 
@@ -108,7 +108,15 @@ local config = {
             key = "s",
             mods = "CTRL|SHIFT",
             action = action.EmitEvent "switch-theme",
-        }
+        },
+        {
+            key = "F1",
+            action = wezterm.action_callback(
+                function()
+                    wezterm.open_with "https://wezfurlong.org/wezterm/"
+                end
+            )
+        },
     }
 }
 
