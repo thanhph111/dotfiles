@@ -24,8 +24,9 @@ local function get_window_background_gradient()
     local theme = get_current_theme()
     if theme == DEFAULT_DARK_THEME_NAME then
         return {
-            colors = { "#0f0c29", "#302b63", "#24243e" },
-            orientation = { Radial = { cx = 0.8, cy = 0.8, radius = 1.5 } }
+            colors = { "#0e101a", "#121432" },
+            orientation = { Linear = { angle = 45.0 } },
+            noise = 100,
         }
     end
     if theme == DEFAULT_LIGHT_THEME_NAME then
