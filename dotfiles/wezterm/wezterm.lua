@@ -94,6 +94,7 @@ local config = {
     color_scheme = get_current_theme(),
     window_background_gradient = get_window_background_gradient(),
     enable_scroll_bar = false,
+    window_decorations = "RESIZE",
     default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
 
     keys = {
@@ -131,7 +132,6 @@ end
 
 -- macOS specific configurations
 if wezterm.target_triple:find "apple%-darwin" then
-    config.window_decorations = "RESIZE"
     config.font_size = 13
     config.initial_rows = 37
 
@@ -139,5 +139,6 @@ if wezterm.target_triple:find "apple%-darwin" then
 end
 
 -- Linux specific configurations
+config.window_decorations = nil
 
 return config
