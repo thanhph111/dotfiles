@@ -124,6 +124,14 @@ function Measure-BootTimeShell {
     Write-Output "Average boot time: $([math]::Round($totalMilliSeconds / $number)) ms"
 }
 
+# Import user modules
+Import-Module -DisableNameChecking (
+    @(
+        (Get-Module (Join-Path $PSScriptRoot Modules\UserModules\*) -ListAvailable).RootModule
+        $USER_MODULES
+    ) | Select-Object -Unique
+)
+
 #endregion
 
 #region PSReadLine
