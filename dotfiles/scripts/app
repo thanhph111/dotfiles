@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Any, NamedTuple
 
 
+DEFAULT_PATH = Path.home() / ".local/bin"
+
+
 class Response(NamedTuple):
     body: str
     headers: Message
@@ -99,6 +102,22 @@ def download(url: str, filepath: Path) -> None:
         file.write(data)
 
 
+def unarchive(filepath: Path, destination: Path) -> None:
+    print(f"Unarchiving {filepath} to {destination}")
+    if filepath.suffix == ".zip":
+        import zipfile
+
+        with zipfile.ZipFile(filepath) as file:
+            file.extractall(destination)
+    elif filepath.suffix in (".tar", ".tar.gz", ".tgz", ".txz"):
+        import tarfile
+
+        with tarfile.open(filepath) as file:
+            file.extractall(destination)
+    else:
+        raise ValueError(f"Unknown archive type: {filepath}")
+
+
 class Downloader(ABC):
     @abstractmethod
     def download(
@@ -174,6 +193,62 @@ class WezTerm(App):
 
     def uninstall(self) -> None:
         self.executable_path.unlink()
+
+
+class Kitty(App):
+    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+        self.executable = executable or "kitty"
+        self.install_directory = install_directory or Path.home() / ".local/kitty.app"
+
+    def install(self, version: str = None) -> None:
+        architecture = "x86_64"
+        github = GitHub("kovidgoyal", "kitty")
+        if version == "nightly":
+            tag = version = "nightly"
+        else:
+            latest_version = request(
+                "https://sw.kovidgoyal.net/kitty/current-version.txt"
+            )
+            if latest_version.error:
+                raise Exception(latest_version.body)
+            tag = "v" + (version := latest_version.body)
+
+        archive_filename = f"kitty-{version}-{architecture}.txz"
+        archive_file = self.install_directory.parent / archive_filename
+        download(f"{github.download_url}/{tag}/{archive_filename}", archive_file)
+
+        unarchive(archive_file, self.install_directory)
+        archive_file.unlink()
+
+        (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
+        (DEFAULT_PATH / self.executable).symlink_to(
+            self.install_directory / "bin/kitty"
+        )
+
+        application_directory = Path.home() / ".local/share/applications"
+        application_directory.mkdir(parents=True, exist_ok=True)
+        install_share_directory = self.install_directory / "share"
+        for desktop_filename in {"kitty.desktop", "kitty-open.desktop"}:
+            exec_file = self.install_directory / "bin/kitty"
+            icon_file = install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
+            (application_directory / desktop_filename).write_text(
+                (install_share_directory / "applications" / desktop_filename)
+                .read_text()
+                .replace("Exec=kitty", f"Exec={exec_file}")
+                .replace("Icon=kitty", f"Icon={icon_file}")
+            )
+
+    def update(self, version: str = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        import shutil
+
+        (DEFAULT_PATH / self.executable).unlink()
+        shutil.rmtree(self.install_directory)
+
+        (Path.home() / ".local/share/applications/kitty.desktop").unlink()
+        (Path.home() / ".local/share/applications/kitty-open.desktop").unlink()
 
 
 APPS = {app_class.__name__.lower(): app_class for app_class in App.__subclasses__()}
