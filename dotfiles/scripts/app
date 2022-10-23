@@ -93,29 +93,29 @@ def request(
     return response
 
 
-def download(url: str, filepath: Path) -> None:
+def download(url: str, file_path: Path) -> None:
     from urllib import request
 
-    print(f"Downloading {url} to {filepath}")
-    with request.urlopen(url) as response, open(filepath, "wb") as file:
+    print(f"Downloading {url} to {file_path}")
+    with request.urlopen(url) as response, open(file_path, "wb") as file:
         data = response.read()
         file.write(data)
 
 
-def unarchive(filepath: Path, destination: Path) -> None:
-    print(f"Unarchiving {filepath} to {destination}")
-    if filepath.suffix == ".zip":
+def unarchive(file_path: Path, destination: Path) -> None:
+    print(f"Unarchiving {file_path} to {destination}")
+    if file_path.suffix == ".zip":
         import zipfile
 
-        with zipfile.ZipFile(filepath) as file:
+        with zipfile.ZipFile(file_path) as file:
             file.extractall(destination)
-    elif filepath.suffix in (".tar", ".tar.gz", ".tgz", ".txz"):
+    elif file_path.suffix in (".tar", ".tar.gz", ".tgz", ".txz"):
         import tarfile
 
-        with tarfile.open(filepath) as file:
+        with tarfile.open(file_path) as file:
             file.extractall(destination)
     else:
-        raise ValueError(f"Unknown archive type: {filepath}")
+        raise ValueError(f"Unknown archive type: {file_path}")
 
 
 class Downloader(ABC):
@@ -213,9 +213,9 @@ class Kitty(App):
                 raise Exception(latest_version.body)
             tag = "v" + (version := latest_version.body)
 
-        archive_filename = f"kitty-{version}-{architecture}.txz"
-        archive_file = self.install_directory.parent / archive_filename
-        download(f"{github.download_url}/{tag}/{archive_filename}", archive_file)
+        archive_file_name = f"kitty-{version}-{architecture}.txz"
+        archive_file = self.install_directory.parent / archive_file_name
+        download(f"{github.download_url}/{tag}/{archive_file_name}", archive_file)
 
         unarchive(archive_file, self.install_directory)
         archive_file.unlink()
@@ -228,11 +228,11 @@ class Kitty(App):
         application_directory = Path.home() / ".local/share/applications"
         application_directory.mkdir(parents=True, exist_ok=True)
         install_share_directory = self.install_directory / "share"
-        for desktop_filename in {"kitty.desktop", "kitty-open.desktop"}:
+        for desktop_file_name in {"kitty.desktop", "kitty-open.desktop"}:
             exec_file = self.install_directory / "bin/kitty"
             icon_file = install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
-            (application_directory / desktop_filename).write_text(
-                (install_share_directory / "applications" / desktop_filename)
+            (application_directory / desktop_file_name).write_text(
+                (install_share_directory / "applications" / desktop_file_name)
                 .read_text()
                 .replace("Exec=kitty", f"Exec={exec_file}")
                 .replace("Icon=kitty", f"Icon={icon_file}")
