@@ -163,7 +163,8 @@ local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 10,
     line_height = 1.0,
-    default_cursor_style = "SteadyBar",
+    default_cursor_style = "BlinkingBar",
+    cursor_thickness = "2px",
     check_for_updates = false,
     window_padding = {
         left = "1cell",
