@@ -71,6 +71,94 @@ wezterm.on(
     end
 )
 
+local HAFL_LEFT_CIRCLE = utf8.char(0xe0b6)
+local HAFL_RIGHT_CIRCLE = utf8.char(0xe0b4)
+local UPPER_LEFT_TRIANGLE = utf8.char(0xe0bc)
+local SEPARATOR = utf8.char(0xe0bb)
+
+wezterm.on(
+    "format-tab-title",
+    function(tab, tabs, panes, config, hover, max_width)
+        local tab_bar_background = "#444444"
+
+        local inactive_foreground = "#444444"
+        local inactive_background = "#999999"
+        local active_foreground = inactive_foreground
+        local active_background = "#eeeeee"
+
+        local index_buble_foreground = "white"
+        local index_buble_background = "#696969"
+
+        -- Current tab color
+        local current_tab_foreground = inactive_foreground
+        local current_tab_background = inactive_background
+        if tab.is_active then
+            current_tab_background = active_background
+            current_tab_foreground = active_foreground
+        end
+
+        -- Next tab color
+        local next_tab_background = inactive_background
+        local next_tab = tabs[tab.tab_index + 2]
+        if next_tab and next_tab.is_active then
+            next_tab_background = active_background
+        end
+
+        -- Tab title
+        local tab_index = tostring(tab.tab_index + 1)
+        local tab_title = wezterm.truncate_right(
+            tab.active_pane.title, max_width - 7 - #tab_index
+        )
+        tab_title = tab_title .. "… "
+
+        -- Separator
+        local separator = {
+            { Foreground = { Color = active_background } },
+            { Background = { Color = current_tab_background } },
+            { Text = SEPARATOR },
+        }
+        if not next_tab then
+            separator = {
+                { Foreground = { Color = current_tab_background } },
+                { Background = { Color = tab_bar_background } },
+                { Text = UPPER_LEFT_TRIANGLE },
+            }
+        end
+        if tab.is_active or (next_tab and next_tab.is_active) then
+            local background = next_tab_background
+            if not next_tab then
+                background = tab_bar_background
+            end
+            separator = {
+                { Foreground = { Color = current_tab_background } },
+                { Background = { Color = background } },
+                { Text = UPPER_LEFT_TRIANGLE },
+            }
+        end
+
+        return {
+            { Foreground = { Color = index_buble_background } },
+            { Background = { Color = current_tab_background } },
+            { Text = " " .. HAFL_LEFT_CIRCLE },
+
+            { Foreground = { Color = index_buble_foreground } },
+            { Background = { Color = index_buble_background } },
+            { Text = tab_index },
+
+            { Foreground = { Color = index_buble_background } },
+            { Background = { Color = current_tab_background } },
+            { Text = HAFL_RIGHT_CIRCLE .. " " },
+
+            { Foreground = { Color = current_tab_foreground } },
+            { Attribute = { Intensity = "Bold" } },
+            { Text = tab_title },
+
+            table.unpack(separator)
+        }
+    end
+)
+
+
 local config = {
     font = wezterm.font("FiraCode Nerd Font", { weight = 500 }),
     font_size = 10,
@@ -96,6 +184,16 @@ local config = {
     enable_scroll_bar = false,
     window_decorations = "RESIZE",
     default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
+
+    colors = {
+        tab_bar = {
+            new_tab = {
+                fg_color = "#999999",
+                bg_color = "#444444",
+            },
+            background = "#444444",
+        }
+    },
 
     keys = {
         {

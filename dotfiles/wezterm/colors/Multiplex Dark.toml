@@ -37,30 +37,3 @@ cursor_border = "#52ad70"
 scrollbar_thumb = "#222222"
 split = "#444444"
 dead_key_cursor = "orange"
-
-[colors.tab_bar]
-background = "#444"
-
-[colors.tab_bar.active_tab]
-fg_color = "#000"
-bg_color = "#eee"
-intensity = "Bold"
-underline = "None"
-italic = false
-strikethrough = false
-
-[colors.tab_bar.inactive_tab]
-fg_color = "#444"
-bg_color = "#999"
-
-[colors.tab_bar.new_tab]
-fg_color = "#444"
-bg_color = "#999"
-
-[colors.tab_bar.inactive_tab_hover]
-fg_color = "#444"
-bg_color = "#999"
-
-[colors.tab_bar.new_tab_hover]
-fg_color = "#444"
-bg_color = "#999"
