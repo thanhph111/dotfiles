@@ -164,6 +164,7 @@ local config = {
     font_size = 10,
     line_height = 1.0,
     default_cursor_style = "BlinkingBar",
+    cursor_thickness = "1pt",
     check_for_updates = false,
     window_padding = {
         left = "1cell",
@@ -232,7 +233,6 @@ end
 if wezterm.target_triple:find "apple%-darwin" then
     config.font_size = 13
     config.initial_rows = 37
-    config.cursor_thickness = "2px"
 
     return config
 end
