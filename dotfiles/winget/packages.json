@@ -22,15 +22,6 @@
                     "PackageIdentifier": "Git.Git"
                 },
                 {
-                    "PackageIdentifier": "GitHub.GitHubDesktop"
-                },
-                {
-                    "PackageIdentifier": "GitHub.cli"
-                },
-                {
-                    "PackageIdentifier": "GnuPG.Gpg4win"
-                },
-                {
                     "PackageIdentifier": "Google.Chrome"
                 },
                 {
@@ -58,13 +49,7 @@
                     "PackageIdentifier": "Valve.Steam"
                 },
                 {
-                    "PackageIdentifier": "VideoLAN.VLC"
-                },
-                {
                     "PackageIdentifier": "qBittorrent.qBittorrent"
-                },
-                {
-                    "PackageIdentifier": "vim.vim"
                 },
                 {
                     "PackageIdentifier": "wez.wezterm"
