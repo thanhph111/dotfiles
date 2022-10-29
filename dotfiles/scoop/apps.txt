@@ -1,0 +1,6 @@
+pyenv
+poetry
+oh-my-posh
+vim
+gh
+gpg

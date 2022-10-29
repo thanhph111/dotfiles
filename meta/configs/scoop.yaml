@@ -15,4 +15,4 @@
       command: '%USERPROFILE%\.scoop\shims\scoop.cmd bucket add main'
     # Wait for the import/export feature to be more mature, then use that instead
     - Description: Install Scoop apps
-      command: '%USERPROFILE%\.scoop\shims\scoop.cmd install pyenv poetry oh-my-posh'
+      command: for /F "tokens=*" %a in (.\dotfiles\scoop\apps.txt) do %USERPROFILE%\.scoop\shims\scoop.cmd install %a
