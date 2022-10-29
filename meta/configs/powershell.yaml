@@ -2,7 +2,6 @@
 
 - link:
     ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: dotfiles/powershell/Microsoft.PowerShell_profile.ps1
-    ~/Documents/WindowsPowerShell/PoshThemes: dotfiles/powershell/PoshThemes
     ~/Documents/WindowsPowerShell/Modules/UserModules: dotfiles/powershell/Modules/UserModules/*
 
 - shell:
