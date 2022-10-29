@@ -7,10 +7,10 @@
                     "PackageIdentifier": "AgileBits.1Password"
                 },
                 {
-                    "PackageIdentifier": "BlenderFoundation.Blender"
+                    "PackageIdentifier": "Armin2208.WindowsAutoNightMode"
                 },
                 {
-                    "PackageIdentifier": "DebaucheeOpenSourceGroup.Barrier"
+                    "PackageIdentifier": "BlenderFoundation.Blender"
                 },
                 {
                     "PackageIdentifier": "Discord.Discord"
@@ -32,9 +32,6 @@
                 },
                 {
                     "PackageIdentifier": "Microsoft.PowerToys"
-                },
-                {
-                    "PackageIdentifier": "Microsoft.Teams"
                 },
                 {
                     "PackageIdentifier": "Microsoft.VisualStudioCode"
