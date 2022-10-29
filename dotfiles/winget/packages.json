@@ -22,6 +22,9 @@
                     "PackageIdentifier": "Git.Git"
                 },
                 {
+                    "PackageIdentifier": "GnuPG.Gpg4win"
+                },
+                {
                     "PackageIdentifier": "Google.Chrome"
                 },
                 {
