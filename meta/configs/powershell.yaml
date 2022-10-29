@@ -13,6 +13,7 @@
         -NoLogo
         -NonInteractive
         -Command "
+        Install-PackageProvider -Name NuGet -Force;
         @(
         'posh-git',
         'PsFzf',
