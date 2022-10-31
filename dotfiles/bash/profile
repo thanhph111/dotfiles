@@ -8,7 +8,7 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
-#: Environment varaibles for applications respecting XDG specifications {{{
+#: Environment variables for applications respecting XDG specifications {{{
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -68,7 +68,7 @@ export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 
 #: }}}
 
-#: Pyenv{{{
+#: Pyenv {{{
 
 command -v pyenv &>/dev/null && {
     export PYENV_ROOT="$HOME/.pyenv"
