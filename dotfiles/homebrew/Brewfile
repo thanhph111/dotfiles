@@ -59,6 +59,8 @@ brew "lazygit"
 brew "less"
 # Mac App Store command-line interface
 brew "mas"
+# Remote terminal application
+brew "mosh"
 # Interactive cheatsheet tool for the command-line
 brew "navi"
 # Platform built on V8 to build network applications
@@ -77,8 +79,6 @@ brew "pipx"
 brew "poetry"
 # Object-relational database system
 brew "postgresql@14"
-# Protocol buffers (Google's data interchange format)
-brew "protobuf"
 # Python version management
 brew "pyenv"
 # Search tool like grep and The Silver Searcher
@@ -122,6 +122,8 @@ cask "bettertouchtool"
 cask "blender"
 # Server and cloud storage browser
 cask "cyberduck"
+# Voice and text chat software
+cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Collaborative team software
@@ -193,12 +195,16 @@ cask "syntax-highlight"
 cask "tabby"
 # General-purpose text editor
 cask "textmate"
+# Open-source BitTorrent client
+cask "transmission"
 # Open-source code editor
 cask "visual-studio-code"
 # Rust-based terminal
 cask "warp"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
+# Video communication and virtual meeting platform
+cask "zoom"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
 mas "Amphetamine", id: 937984704
