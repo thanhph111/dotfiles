@@ -1,6 +1,7 @@
 bat
-pyenv
-poetry
-oh-my-posh
-vim
+fzf
 gh
+oh-my-posh
+poetry
+pyenv
+vim
