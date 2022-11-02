@@ -12,7 +12,7 @@
         -NoLogo
         -NonInteractive
         -Command "
-        Install-PackageProvider -Name NuGet -Force;
+        if (-not (Get-PackageProvider NuGet -ErrorAction SilentlyContinue)) { Install-PackageProvider -Name NuGet -Force };
         @(
         'posh-git',
         'PsFzf',
@@ -20,5 +20,5 @@
         'Terminal-Icons',
         'z'
         ) | ForEach-Object {
-        if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) { Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force } }
+        if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) { Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force -AllowClobber } }
         "
