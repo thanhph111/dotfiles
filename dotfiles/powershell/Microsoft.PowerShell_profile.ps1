@@ -125,12 +125,10 @@ function Measure-BootTimeShell {
 }
 
 # Import user modules
-Import-Module -DisableNameChecking (
-    @(
-        (Get-Module (Join-Path $PSScriptRoot Modules\UserModules\*) -ListAvailable).RootModule
-        $USER_MODULES
-    ) | Select-Object -Unique
-)
+@(
+    (Get-Module (Join-Path $PSScriptRoot Modules\UserModules\*) -ListAvailable).RootModule
+    $USER_MODULES
+) | Select-Object -Unique | Import-Module -DisableNameChecking
 
 #endregion
 
