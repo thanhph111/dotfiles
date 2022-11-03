@@ -291,6 +291,15 @@ if (Test-CommandExists Set-PsFzfOption) {
 
 #endregion
 
+#region GitHub CLI
+
+if (Test-CommandExists gh) {
+    #: Completion
+    Invoke-Expression -Command $(gh completion -s powershell | Out-String)
+}
+
+#endregion
+
 #endregion
 
 #region Old Windows profile
