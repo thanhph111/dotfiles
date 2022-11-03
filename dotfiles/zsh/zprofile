@@ -59,3 +59,9 @@ export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 
 #: }}}
+
+#: Rust {{{
+
+export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+
+#: }}}
