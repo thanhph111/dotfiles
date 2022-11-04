@@ -2,7 +2,6 @@
 
 - link:
     ~/.config/powershell/Microsoft.PowerShell_profile.ps1: dotfiles/powershell/Microsoft.PowerShell_profile.ps1
-    ~/.config/powershell/PoshThemes: dotfiles/powershell/PoshThemes
     ~/.config/powershell/Modules/UserModules: dotfiles/powershell/Modules/UserModules/*
 
 - ifanylinux:
