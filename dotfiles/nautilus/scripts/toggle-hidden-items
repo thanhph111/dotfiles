@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+OLDSTATE="$(gsettings get org.gtk.Settings.FileChooser show-hidden)"
+
+if [[ "$OLDSTATE" = "false" ]]; then
+    gsettings set org.gtk.Settings.FileChooser show-hidden true
+else
+    gsettings set org.gtk.Settings.FileChooser show-hidden false
+fi

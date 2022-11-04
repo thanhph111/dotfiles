@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if gnome-extensions info hidetopbar@mathieu.bidon.ca |
+    grep -q 'State: ENABLED'; then
+    gnome-extensions disable hidetopbar@mathieu.bidon.ca
+else
+    gnome-extensions enable hidetopbar@mathieu.bidon.ca
+fi

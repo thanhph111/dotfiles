@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+selected_color="$(gpick -o -s --no-newline)"
+
+[[ -z "$selected_color" ]] ||
+    echo -n "$selected_color" | xclip -selection clipboard

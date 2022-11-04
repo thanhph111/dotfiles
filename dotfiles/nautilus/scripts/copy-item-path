@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+readlink -f "$1" --no-newline | xclip -selection clipboard
