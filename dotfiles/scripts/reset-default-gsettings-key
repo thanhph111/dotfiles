@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+#: Reset key that match default value
+#: Reference: https://askubuntu.com/q/196896
+
+for schema in $(gsettings list-schemas | sort); do
+    for key in $(gsettings list-keys "$schema" | sort); do
+        type="$(gsettings range "$schema" "$key" | tr '\n' ' ')"
+        default="$(XDG_CONFIG_HOME=/tmp/ gsettings get "$schema" "$key" |
+            tr '\n' ' ')"
+        value="$(gsettings get "$schema" "$key" | tr '\n' ' ')"
+        if [ "$value" = "$default" ]; then
+            echo "$schema :: $key :: $type :: $default :: $value"
+            gsettings reset "$schema" "$key"
+        fi
+    done
+done
