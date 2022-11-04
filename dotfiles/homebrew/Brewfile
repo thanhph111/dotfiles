@@ -91,6 +91,8 @@ brew "starship"
 brew "tldr"
 # Internet file retriever
 brew "wget"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
 # Process YAML documents from the CLI
