@@ -64,8 +64,12 @@ brew "rm-improved"
 brew "starship"
 # Simplified and community-driven man pages
 brew "tldr"
+# Vi 'workalike' with many additional features
+brew "vim"
 # Access X11 clipboards from the command-line
 brew "xclip"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
 # Process YAML documents from the CLI
