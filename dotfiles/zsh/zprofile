@@ -7,12 +7,6 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 #: }}}
 
-#: GnuPG home {{{
-
-export GNUPGHOME="$HOME/.config/gnupg"
-
-#: }}}
-
 #: Homebrew {{{
 
 if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -22,6 +16,12 @@ elif [[ -x /usr/local/bin/brew ]]; then
 elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+
+#: }}}
+
+#: GnuPG {{{
+
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
 #: }}}
 

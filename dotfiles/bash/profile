@@ -39,9 +39,9 @@ fi
 
 #: }}}
 
-#: GnuPG home {{{
+#: GnuPG {{{
 
-export GNUPGHOME="$HOME/.config/gnupg"
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
 #: }}}
 
