@@ -8,10 +8,10 @@ set -e
 
 #: Add the key for the 1Password apt repository
 curl -S https://downloads.1password.com/linux/keys/1password.asc |
-    sudo gpg --dearmor --yes --output /usr/share/keyrings/1password-archive-keyring.gpg
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/1password.gpg
 
 #: Add the 1Password apt repository
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' |
+echo 'deb [arch=amd64] https://downloads.1password.com/linux/debian/amd64 stable main' |
     sudo tee /etc/apt/sources.list.d/1password.list
 
 #: Add the debsig-verify policy
@@ -33,7 +33,7 @@ sudo aptitude update && sudo aptitude install -y 1password 1password-cli
 
 #: Setup key
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
-    sudo apt-key add -
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/google-chrome.gpg
 
 #: Setup repository
 echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" |
@@ -49,11 +49,9 @@ sudo aptitude update && sudo aptitude install -y google-chrome-stable
 #: Reference: https://code.visualstudio.com/docs/setup/linux
 
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc |
-    gpg --dearmor >packages.microsoft.gpg
-sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-rm -f packages.microsoft.gpg
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
 
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" |
     sudo tee /etc/apt/sources.list.d/vscode.list
 
 sudo aptitude update && sudo aptitude install -y code
@@ -63,7 +61,8 @@ sudo aptitude update && sudo aptitude install -y code
 #: PowerShell {{{
 
 # Import the public repository GPG keys
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+curl https://packages.microsoft.com/keys/microsoft.asc |
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
 
 # Register the Microsoft Product feed
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" |
@@ -79,12 +78,11 @@ sudo aptitude update && sudo aptitude install -y powershell
 #: Reference: https://docs.docker.com/engine/install/ubuntu/
 
 #: Add Docker’s official GPG key
-sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-    sudo gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
+    sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/docker.gpg
 
 #: Set up the repository
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |
+echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |
     sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
 #: Install Docker
