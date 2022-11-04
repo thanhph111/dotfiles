@@ -1,6 +1,7 @@
 apt-transport-https
 build-essential
 chrome-gnome-shell
+curl
 dconf-editor
 flatpak
 gnome-shell-extensions
