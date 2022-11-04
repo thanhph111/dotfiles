@@ -5,6 +5,7 @@ curl
 dconf-editor
 flatpak
 gnome-shell-extensions
+gnome-shell-extension-manager
 gnome-sushi
 gnome-tweaks
 gpick
