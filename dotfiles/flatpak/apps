@@ -6,7 +6,6 @@ com.spotify.Client
 com.valvesoftware.Steam
 org.gimp.GIMP
 org.gnome.FontManager
-org.gnome.TextEditor
 org.gnome.gitlab.somas.Apostrophe
 org.gustavoperedo.FontDownloader
 org.inkscape.Inkscape
