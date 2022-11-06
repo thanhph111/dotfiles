@@ -17,16 +17,6 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 #: }}}
 
-#: Executable search paths {{{
-
-#: Set PATH so it includes user's private bin if it exists
-[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
-
-#: Set PATH so it includes user's private bin if it exists
-[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
-
-#: }}}
-
 #: Homebrew {{{
 
 if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -148,5 +138,15 @@ export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
 
 #: Change history file location
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+
+#: }}}
+
+#: Executable search paths, should be at the end to be prepended {{{
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
 #: }}}
