@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+DEFAULT_DARK_THEME="dark"
+DEFAULT_LIGHT_THEME="light"
+DEFAULT_KITTY_DARK_THEME="$HOME/.config/kitty/themes/Multiplex_Dark.conf"
+DEFAULT_KITTY_LIGHT_THEME="$HOME/.config/kitty/themes/Multiplex_Light.conf"
+
+#: Get the current theme
+theme="$1"
+[[ -z "$theme" ]] && exit 1
+if [[ "$theme" == "dark" ]]; then
+    theme="$DEFAULT_DARK_THEME"
+    kitty_theme="$DEFAULT_KITTY_DARK_THEME"
+    vim_background=dark
+elif [[ "$theme" == "light" ]]; then
+    theme="$DEFAULT_LIGHT_THEME"
+    kitty_theme="$DEFAULT_KITTY_LIGHT_THEME"
+    vim_background=light
+else
+    exit 1
+fi
+
+#: Switch Google Chrome theme {{{
+
+switch_chrome_theme() {
+    system_chrome_desktop_file=/usr/share/applications/google-chrome.desktop
+    user_chrome_desktop_file=~/.local/share/applications/google-chrome.desktop
+
+    [[ ! -f "$system_chrome_desktop_file" ]] && return 1
+
+    cp "$system_chrome_desktop_file" "$user_chrome_desktop_file"
+    [[ $theme = "$DEFAULT_DARK_THEME" ]] &&
+        sed -i \
+            '/^Exec=/ s/$/ --enable-features=WebUIDarkMode --force-dark-mode/' \
+            "$user_chrome_desktop_file"
+    update-desktop-database ~/.local/share/applications
+}
+
+switch_chrome_theme
+
+#: }}}
+
+#: Switch kitty theme {{{
+
+switch_kitty_theme() {
+    #: kitty must enable remote control and listen on a socket
+    #: kitty --listen-on unix:/tmp/kitty -o allow_remote_control=yes
+    kitty='kitty @ --to unix:/tmp/kitty'
+
+    $kitty set-colors --all "$kitty_theme"
+    echo "include $kitty_theme" >~/.config/kitty/current-theme.conf
+
+    $kitty ls |
+        jq -c '.[].tabs | .[].windows' | while read -r line; do
+        program=$(
+            echo "$line" | jq -r '.[].foreground_processes | .[].cmdline[0]'
+        )
+        if [[ "$program" = vim ]]; then
+            pid=$(echo "$line" | jq '.[].pid')
+            $kitty send_text \
+                --match "pid:$pid" ":set background=$vim_background\n"
+        fi
+    done
+}
+
+command -v jq &>/dev/null && command -v kitty &>/dev/null &&
+    switch_kitty_theme
+
+#: }}}
