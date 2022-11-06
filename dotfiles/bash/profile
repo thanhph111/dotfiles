@@ -123,8 +123,9 @@ export POWERSHELL_TELEMETRY_OPTOUT=1
 
 #: }}}
 
-#: npm {{{
+#: Node.js {{{
 
+export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 
