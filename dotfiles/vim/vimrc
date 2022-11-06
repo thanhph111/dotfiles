@@ -713,11 +713,19 @@ autocmd MyAutocmdGroup BufWritePost .vimrc,_vimrc source $MYVIMRC
 ": Change the background mode based on macOS's `Appearance` setting
 ": Limitation: Vim won't execute the callback until its buffers are focused
 function! ChangeBackground()
-    if has("macunix") &&
-        \ !(system("defaults read -g AppleInterfaceStyle") =~ '^Dark')
-        set background=light
-    else
+    if (
+        \ has("macunix") &&
+        \ system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
+    \ ) || (
+        \ has("unix") &&
+        \ executable("/bin/gsettings") &&
+        \ system(
+            \ "/bin/gsettings get org.gnome.desktop.interface color-scheme"
+        \ ) =~ 'prefer-dark'
+    \ )
         set background=dark
+    else
+        set background=light
     endif
 endfunction
 ": Initialize the colorscheme for the first run
