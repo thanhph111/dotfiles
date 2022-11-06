@@ -49,6 +49,8 @@ switch_kitty_theme() {
 
     $kitty set-colors --all "$kitty_theme"
     echo "include $kitty_theme" >~/.config/kitty/current-theme.conf
+    #: kitty reload by SIGUSR1
+    pkill -USR1 kitty
 
     $kitty ls |
         jq -c '.[].tabs | .[].windows' | while read -r line; do
