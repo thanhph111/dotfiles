@@ -93,3 +93,13 @@ sudo aptitude update &&
 sudo usermod -aG docker "$USER"
 
 #: }}}
+
+#: IBus Bamboo {{{
+
+sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
+sudo aptitude update && sudo aptitude install -y ibus-bamboo
+env DCONF_PROFILE=ibus \
+    dconf write /desktop/ibus/general/preload-engines "['BambooUs', 'Bamboo']" &&
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'Bamboo')]"
+
+#: }}}
