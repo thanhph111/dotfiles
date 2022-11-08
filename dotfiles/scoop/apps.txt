@@ -1,6 +1,7 @@
 bat
 fzf
 gh
+gpg
 oh-my-posh
 poetry
 pyenv
