@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+#: Join the paths with spaces, wrapping with single quotes
+echo -n "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" |
+    sed "s/^/'/; s/$/'/" |
+    tr '\n' ' ' |
+    xclip -selection clipboard

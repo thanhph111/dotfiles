@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+while IFS= read -r file_path; do
+    echo "Processing $file_path"
+    ffmpeg \
+        -i "$file_path" \
+        -c:v libx264 \
+        -crf 23 \
+        -preset medium \
+        -c:a aac \
+        -b:a 128k \
+        -nostdin \
+        "${file_path%.*}.mp4"
+done <<<"$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"

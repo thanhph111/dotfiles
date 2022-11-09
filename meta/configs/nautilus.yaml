@@ -1,4 +1,4 @@
 # Nautilus
 
 - link:
-    ~/.config/nautilus/scripts: dotfiles/nautilus/scripts/*
+    ~/.local/share/nautilus/scripts: dotfiles/nautilus/scripts/*
