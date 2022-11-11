@@ -38,6 +38,8 @@ brew "jo"
 brew "jq"
 # Simple terminal UI for git commands
 brew "lazygit"
+# Remote terminal application
+brew "mosh"
 # Interactive cheatsheet tool for the command-line
 brew "navi"
 # Linux networking base tools
