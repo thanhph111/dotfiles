@@ -66,6 +66,8 @@ brew "rm-improved"
 brew "starship"
 # Simplified and community-driven man pages
 brew "tldr"
+# Upgrade all the things
+brew "topgrade"
 # Vi 'workalike' with many additional features
 brew "vim"
 # Access X11 clipboards from the command-line
