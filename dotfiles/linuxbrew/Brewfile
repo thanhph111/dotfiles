@@ -64,6 +64,10 @@ brew "rclone"
 brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
+# Safe, concurrent, practical language
+brew "rust"
+# Format Rust code
+brew "rustfmt"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Simplified and community-driven man pages
