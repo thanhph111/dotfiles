@@ -1,1 +1,2 @@
 --working-directory ~/Desktop
+--listen-on unix:/tmp/kitty
