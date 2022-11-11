@@ -1,4 +1,5 @@
 apt-transport-https
+baobab
 build-essential
 chrome-gnome-shell
 curl
