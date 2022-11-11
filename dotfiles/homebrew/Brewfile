@@ -89,6 +89,8 @@ brew "rm-improved"
 brew "starship"
 # Simplified and community-driven man pages
 brew "tldr"
+# Upgrade all the things
+brew "topgrade"
 # Internet file retriever
 brew "wget"
 # Check your $HOME for unwanted files and directories
