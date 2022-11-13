@@ -5,4 +5,5 @@ gpg
 oh-my-posh
 poetry
 pyenv
+topgrade
 vim
