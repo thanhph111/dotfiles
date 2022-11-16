@@ -13,5 +13,6 @@ gnome-shell-extensions
 gnome-sushi
 gnome-tweaks
 gpick
+libfuse2
 openssh-server
 synaptic
