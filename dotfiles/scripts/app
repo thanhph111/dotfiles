@@ -8,7 +8,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, NamedTuple
 
-
 DEFAULT_PATH = Path.home() / ".local/bin"
 
 
@@ -144,16 +143,24 @@ class GitHub(Downloader):
         response = request(f"{self.api_url}/{version}")
         if response.error:
             raise Exception(response.body)
+
+        version = response.json()["tag_name"]
         browser_download_urls: list[str] = [
             asset["browser_download_url"] for asset in response.json()["assets"]
         ]
+
         browser_download_url = next(
-            url
-            for url in browser_download_urls
-            if re.search(
-                file_pattern, url.lstrip(f"{self.api_url}/download/{version}/")
-            )
+            (
+                url
+                for url in browser_download_urls
+                if re.search(
+                    file_pattern, url.removeprefix(f"{self.download_url}/{version}/")
+                )
+            ),
+            None,
         )
+        if not browser_download_url:
+            raise Exception(f"Could not find {file_pattern} in {browser_download_urls}")
         download(browser_download_url, output_file)
 
 
