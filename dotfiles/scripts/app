@@ -258,6 +258,24 @@ class Kitty(App):
         (Path.home() / ".local/share/applications/kitty-open.desktop").unlink()
 
 
+class Zap(App):
+    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+        self.executable = executable or "zap"
+        self.install_directory = install_directory or Path.home() / ".local/bin"
+        self.executable_path = self.install_directory / self.executable
+
+    def install(self, version: str = None) -> None:
+        github = GitHub("srevinsaju", "zap")
+        github.download("^zap-amd64$", self.executable_path, version)
+        self.executable_path.chmod(0o755)
+
+    def update(self, version: str = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        self.executable_path.unlink()
+
+
 APPS = {app_class.__name__.lower(): app_class for app_class in App.__subclasses__()}
 
 
