@@ -202,6 +202,8 @@ cask "spotify"
 cask "syntax-highlight"
 # Terminal emulator, SSH and serial client
 cask "tabby"
+# Messaging app with a focus on speed and security
+cask "telegram"
 # General-purpose text editor
 cask "textmate"
 # Open-source BitTorrent client
