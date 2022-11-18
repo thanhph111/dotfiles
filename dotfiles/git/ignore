@@ -87,4 +87,7 @@ $RECYCLE.BIN/
 #: Temporary folder at every project root
 /tmp
 
+#: Visual Studio Code folder
+/.vscode
+
 #: }}}
