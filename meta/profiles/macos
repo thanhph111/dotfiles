@@ -1,4 +1,5 @@
 homebrew
+
 alacritty
 aws
 bash
@@ -7,17 +8,18 @@ gh
 git
 iterm2
 kitty
+macos
 nano
+npm
 oh-my-posh
 pwsh
 python
-npm
 ripgrep
 scripts
 ssh
 starship
+topgrade
 vim
 warp
 wezterm
 zsh
-macos

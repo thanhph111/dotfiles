@@ -1,6 +1,7 @@
 apt
 linuxbrew
 flatpak
+
 bash
 bpython
 gh
@@ -9,15 +10,16 @@ gnome
 kitty
 nano
 nautilus
+npm
 oh-my-posh
 pwsh
 python
-npm
 readline
 ripgrep
 scripts
 ssh
 starship
+topgrade
 vim
 wezterm
 zsh
