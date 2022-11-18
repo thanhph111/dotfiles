@@ -5,7 +5,7 @@ assume_yes = true
 disable = ["pip3", "pipx", "vim"]
 
 # Ignore failures for these steps
-ignore_failures = ["powershell"]
+ignore_failures = ["powershell", "containers"]
 
 # Do not ask to retry failed steps (default: false)
 no_retry = true
