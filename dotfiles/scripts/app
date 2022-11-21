@@ -205,7 +205,7 @@ class WezTerm(App):
 class Kitty(App):
     def __init__(self, executable: str = None, install_directory: Path = None) -> None:
         self.executable = executable or "kitty"
-        self.install_directory = install_directory or Path.home() / ".local/kitty.app"
+        self.install_directory = install_directory or Path.home() / ".local/apps/kitty"
 
     def install(self, version: str = None) -> None:
         architecture = "x86_64"
