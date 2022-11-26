@@ -1,5 +1,6 @@
 apt-transport-https
 baobab
+barrier
 build-essential
 chrome-gnome-shell
 curl
