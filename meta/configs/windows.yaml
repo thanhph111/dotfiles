@@ -22,3 +22,15 @@
         -NoLogo
         -NonInteractive
         -Command "Get-ChildItem -Path ~ -Filter .* | ForEach-Object { $_.Attributes += \"Hidden\" }"
+
+- shell:
+    - description: Set natural scrolling for mouses
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "
+        $mouseDevices = Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Enum\HID\*\*\Device Parameters' FlipFlopWheel -ErrorAction SilentlyContinue;
+        foreach ($device in $mouseDevices) { Set-ItemProperty $device.PSPath FlipFlopWheel 1 }
+        "
