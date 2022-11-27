@@ -34,3 +34,19 @@
         $mouseDevices = Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Enum\HID\*\*\Device Parameters' FlipFlopWheel -ErrorAction SilentlyContinue;
         foreach ($device in $mouseDevices) { Set-ItemProperty $device.PSPath FlipFlopWheel 1 }
         "
+
+- shell:
+    - description: Set up OpenSSH server and client
+    # Test using: ssh computername\username@localhost
+      command: >
+        powershell.exe
+        -NoProfile
+        -NoLogo
+        -NonInteractive
+        -Command "
+        Add-WindowsCapability -Online -Name OpenSSH.Client;
+        Add-WindowsCapability -Online -Name OpenSSH.Server;
+        Start-Service sshd;
+        Set-Service -Name sshd -StartupType 'Automatic';
+        New-ItemProperty -Path 'HKLM:\SOFTWARE\OpenSSH' -Name DefaultShell -Value 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -PropertyType String -Force
+        "
