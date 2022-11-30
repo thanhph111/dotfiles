@@ -8,6 +8,8 @@ brew "awscli"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
+# Yet another cross-platform graphical process/system monitor
+brew "bottom"
 # Fancy interface to the Python interpreter
 brew "bpython"
 # Diff that understands syntax
@@ -56,6 +58,8 @@ brew "pipenv"
 brew "pipx"
 # Python package management tool
 brew "poetry"
+# Modern replacement for ps written by Rust
+brew "procs"
 # Python version management
 brew "pyenv"
 # Rsync for cloud storage
@@ -74,6 +78,8 @@ brew "starship"
 brew "tldr"
 # Upgrade all the things
 brew "topgrade"
+# Lightweight BitTorrent client
+brew "transmission-cli"
 # Vi 'workalike' with many additional features
 brew "vim"
 # Access X11 clipboards from the command-line
