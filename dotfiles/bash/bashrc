@@ -253,6 +253,10 @@ stty -ixon
 #: Avoid running commands immediately when pasting from clipboard
 bind 'set enable-bracketed-paste'
 
+#: TODO: Move other settings from `.inputrc` here
+#: Show menu on first TAB
+bind "set show-all-if-ambiguous on"
+
 #: Check the window size after each command and, if necessary, update the
 #: values of LINES and COLUMNS.
 shopt -s checkwinsize
