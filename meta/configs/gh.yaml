@@ -5,4 +5,4 @@
 
 - shell:
     - description: Install GitHub CLI extensions
-      command: cat ./dotfiles/gh/extensions | xargs gh extension install 2>/dev/null || true
+      command: cat ./dotfiles/gh/extensions | xargs -L1 gh extension install 2>/dev/null || true
