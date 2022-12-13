@@ -110,7 +110,7 @@ brew "wget"
 brew "xdg-ninja"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
-# Process YAML documents from the CLI
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
