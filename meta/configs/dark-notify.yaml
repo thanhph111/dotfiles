@@ -1,0 +1,6 @@
+# dark-notify
+
+- ifmacos:
+    - shell:
+        - description: Install PowerShell modules
+          command: ./dotfiles/dark-notify/install

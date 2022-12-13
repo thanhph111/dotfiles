@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! DARKNOTIFY_PATH="$(which dark-notify)"; then
+    echo "dark-notify not found"
+    exit 1
+fi
+
+if ! SWITCH_THEME_SCRIPT_PATH="$(which switch-theme)"; then
+    echo "switch-theme not found"
+    exit 1
+fi
+if ! HOMEBREW_PREFIX="$(brew --prefix)"; then
+    echo "brew not found"
+    exit 1
+fi
+HOMEBREW_PREFIX="$(brew --prefix)"
+
+cache_directory="${XDG_CACHE_HOME:-$HOME/.cache}/dark-notify"
+mkdir -p "$cache_directory"
+
+PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:$HOME/.local/bin:/:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin"
+ERROR_PATH="$cache_directory/stderr.log"
+OUTPUT_PATH="$cache_directory/stdout.log"
+
+PLIST_PATH="$HOME/Library/LaunchAgents/ke.bou.dark-mode-notify.plist"
+
+PATH="$PATH" \
+    DARKNOTIFY_PATH="$DARKNOTIFY_PATH" \
+    SWITCH_THEME_SCRIPT_PATH="$SWITCH_THEME_SCRIPT_PATH" \
+    ERROR_PATH="$ERROR_PATH" \
+    OUTPUT_PATH="$OUTPUT_PATH" \
+    eval "cat <<EOF
+$(<"$(dirname "${BASH_SOURCE[@]}")"/ke.bou.dark-mode-notify.plist.template)
+EOF
+" >"$PLIST_PATH"
+
+launchctl load -w "$PLIST_PATH"

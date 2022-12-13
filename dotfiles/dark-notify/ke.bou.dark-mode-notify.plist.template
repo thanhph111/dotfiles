@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>EnvironmentVariables</key>
+        <dict>
+            <key>PATH</key>
+            <string>$PATH</string>
+        </dict>
+        <key>Label</key>
+        <string>ke.bou.dark-mode-notify</string>
+        <key>KeepAlive</key>
+        <true />
+        <key>StandardErrorPath</key>
+        <string>$ERROR_PATH</string>
+        <key>StandardOutPath</key>
+        <string>$OUTPUT_PATH</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>$DARKNOTIFY_PATH</string>
+            <string>-c</string>
+            <string>$SWITCH_THEME_SCRIPT_PATH</string>
+        </array>
+    </dict>
+</plist>
