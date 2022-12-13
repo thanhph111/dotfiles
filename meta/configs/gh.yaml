@@ -2,3 +2,7 @@
 
 - link:
     ~/.config/gh: dotfiles/gh/*
+
+- shell:
+    - description: Install GitHub CLI extensions
+      command: cat ./dotfiles/gh/extensions | xargs gh extension install 2>/dev/null || true
