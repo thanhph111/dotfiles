@@ -62,6 +62,8 @@ brew "lazygit"
 brew "less"
 # Mac App Store command-line interface
 brew "mas"
+# CLI tool for saving complete web pages as a single HTML file
+brew "monolith"
 # Remote terminal application
 brew "mosh"
 # Interactive cheatsheet tool for the command-line
@@ -72,6 +74,8 @@ brew "node"
 brew "newman"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
+# Swiss-army knife of markup format conversion
+brew "pandoc"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Python dependency management tool
