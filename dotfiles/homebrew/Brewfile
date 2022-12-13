@@ -16,6 +16,8 @@ brew "bash-completion@2"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
+# Yet another cross-platform graphical process/system monitor
+brew "bottom"
 # Fancy interface to the Python interpreter
 brew "bpython"
 # GNU File, Shell, and Text utilities
@@ -80,6 +82,8 @@ brew "pipx"
 brew "poetry"
 # Object-relational database system
 brew "postgresql@14"
+# Modern replacement for ps written by Rust
+brew "procs"
 # Python version management
 brew "pyenv"
 # Search tool like grep and The Silver Searcher
