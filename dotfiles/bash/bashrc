@@ -228,10 +228,6 @@ alias pip=pip3
 #: Set default editor
 export VISUAL=vim
 
-#: Force UTF-8 usage
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
 #: Disable bash deprecation warning on macOS
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
