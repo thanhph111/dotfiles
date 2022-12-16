@@ -90,4 +90,8 @@ $RECYCLE.BIN/
 #: Visual Studio Code folder
 /.vscode
 
+#: JetBrains
+/.idea
+/.fleet
+
 #: }}}
