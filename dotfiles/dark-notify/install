@@ -25,6 +25,7 @@ ERROR_PATH="$cache_directory/stderr.log"
 OUTPUT_PATH="$cache_directory/stdout.log"
 
 PLIST_PATH="$HOME/Library/LaunchAgents/ke.bou.dark-mode-notify.plist"
+mkdir -p "$(dirname "$PLIST_PATH")"
 
 PATH="$PATH" \
     DARKNOTIFY_PATH="$DARKNOTIFY_PATH" \
