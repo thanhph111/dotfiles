@@ -102,8 +102,8 @@ brew "rust"
 brew "rustfmt"
 # Cross-shell prompt for astronauts
 brew "starship"
-# Simplified and community-driven man pages
-brew "tldr"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
 # Upgrade all the things
 brew "topgrade"
 # Internet file retriever
