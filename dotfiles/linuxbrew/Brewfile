@@ -14,6 +14,8 @@ brew "bottom"
 brew "bpython"
 # Diff that understands syntax
 brew "difftastic"
+# CLI utility to build and manage a PKI CA
+brew "easy-rsa"
 # Modern replacement for 'ls'
 brew "exa"
 # Simple, fast and user-friendly alternative to find
@@ -88,7 +90,7 @@ brew "xclip"
 brew "xdg-ninja"
 # Download YouTube videos from the command-line
 brew "youtube-dl"
-# Process YAML documents from the CLI
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
 # UNIX shell (command interpreter)
 brew "zsh"
