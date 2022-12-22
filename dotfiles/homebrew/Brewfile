@@ -42,6 +42,8 @@ brew "git-lfs"
 brew "gitui"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
 # Colorize logfiles and command output
 brew "grc"
 # Tools and libraries to manipulate images in many formats
