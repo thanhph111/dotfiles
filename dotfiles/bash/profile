@@ -148,6 +148,18 @@ alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 
 #: }}}
 
+#: IPython {{{
+
+export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
+
+#: }}}
+
+#: IPython {{{
+
+export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+
+#: }}}
+
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
