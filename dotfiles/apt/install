@@ -103,3 +103,18 @@ env DCONF_PROFILE=ibus \
     gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'Bamboo')]"
 
 #: }}}
+
+#: Cloudflare Warp {{{
+
+#: Reference: https://pkg.cloudflareclient.com/install
+
+#: Setup key
+curl https://pkg.cloudflareclient.com/pubkey.gpg |
+    sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-warp.gpg
+
+#: Setup repository
+echo "deb [arch=amd64] https://pkg.cloudflareclient.com/ bullseye main" |
+    sudo tee /etc/apt/sources.list.d/cloudflare-warp.list
+
+#: Install Cloudflare Warp
+sudo aptitude update && sudo aptitude install -y cloudflare-warp
