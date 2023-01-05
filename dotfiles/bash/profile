@@ -26,11 +26,11 @@ export LC_ALL=en_US.UTF-8
 
 #: Homebrew {{{
 
-if [[ -x /opt/homebrew/bin/brew ]]; then
+if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -x /usr/local/bin/brew ]]; then
+elif [ -x /usr/local/bin/brew ]; then
     eval "$(/usr/local/bin/brew shellenv)"
-elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
@@ -67,13 +67,13 @@ export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 #: Rust {{{
 
 export CARGO_HOME="$XDG_CACHE_HOME/cargo"
-[[ -r "$CARGO_HOME/env" ]] && . "$CARGO_HOME/env"
+[ -r "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
 
 #: }}}
 
 #: Pyenv {{{
 
-command -v pyenv &>/dev/null && {
+command -v pyenv 2>&1 && {
     export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
     eval "$(pyenv init -)"
 }
