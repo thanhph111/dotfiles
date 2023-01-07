@@ -25,6 +25,9 @@
                     "PackageIdentifier": "Google.Chrome"
                 },
                 {
+                    "PackageIdentifier": "KDE.KDEConnect"
+                },
+                {
                     "PackageIdentifier": "Microsoft.OneDrive"
                 },
                 {
