@@ -6,7 +6,7 @@ On _Windows_, we don't have _Git_ and _Python_ preinstalled. Fortunately, _winge
 
 ```powershell
 winget install --exact --id=Python.Python.3.10
-winget install --exact --id=Git.Git
+winget install --exact --interactive --id=Git.Git
 ```
 
 _Windows_ also packed an _OpenSSH_ client (from _Windows Server_ 2019 or _Windows_ 10 build 1809), which is enough to set up an SSH key for _GitHub_ and clone the repository.
