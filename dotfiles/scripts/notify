@@ -10,7 +10,7 @@ title="$2"
 icon="$3"
 
 command_exists() {
-    command -v "$@" >/dev/null 2>&1
+    command -v "$@" &>/dev/null
 }
 
 send_osc9_notification() {
