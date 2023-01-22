@@ -71,8 +71,8 @@ wezterm.on(
     end
 )
 
-local HAFL_LEFT_CIRCLE = utf8.char(0xe0b6)
-local HAFL_RIGHT_CIRCLE = utf8.char(0xe0b4)
+local HALF_LEFT_CIRCLE = utf8.char(0xe0b6)
+local HALF_RIGHT_CIRCLE = utf8.char(0xe0b4)
 local UPPER_LEFT_TRIANGLE = utf8.char(0xe0bc)
 local SEPARATOR = utf8.char(0xe0bb)
 
@@ -139,7 +139,7 @@ wezterm.on(
         return {
             { Foreground = { Color = index_buble_background } },
             { Background = { Color = current_tab_background } },
-            { Text = " " .. HAFL_LEFT_CIRCLE },
+            { Text = " " .. HALF_LEFT_CIRCLE },
 
             { Foreground = { Color = index_buble_foreground } },
             { Background = { Color = index_buble_background } },
@@ -147,7 +147,7 @@ wezterm.on(
 
             { Foreground = { Color = index_buble_background } },
             { Background = { Color = current_tab_background } },
-            { Text = HAFL_RIGHT_CIRCLE .. " " },
+            { Text = HALF_RIGHT_CIRCLE .. " " },
 
             { Foreground = { Color = current_tab_foreground } },
             { Attribute = { Intensity = "Bold" } },
