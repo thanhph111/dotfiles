@@ -13,6 +13,9 @@
                     "PackageIdentifier": "BlenderFoundation.Blender"
                 },
                 {
+                    "PackageIdentifier": "Cloudflare.Warp"
+                },
+                {
                     "PackageIdentifier": "Discord.Discord"
                 },
                 {
