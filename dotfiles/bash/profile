@@ -71,6 +71,12 @@ export CARGO_HOME="$XDG_CACHE_HOME/cargo"
 
 #: }}}
 
+#: Go {{{
+
+export GOPATH="$XDG_DATA_HOME/go"
+
+#: }}}
+
 #: Pyenv {{{
 
 command -v pyenv >/dev/null 2>&1 && {
