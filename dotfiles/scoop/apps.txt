@@ -2,9 +2,11 @@
 bat
 fzf
 gh
+go
 gpg
 oh-my-posh
 poetry
 pyenv
+rustup
 topgrade
 vim
