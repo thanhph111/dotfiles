@@ -12,6 +12,7 @@
         [Environment]::SetEnvironmentVariable(\"XDG_CACHE_HOME\", \"$env:USERPROFILE\.cache\", \"User\");
         [Environment]::SetEnvironmentVariable(\"XDG_STATE_HOME\", \"$env:USERPROFILE\.local\state\", \"User\");
         [Environment]::SetEnvironmentVariable(\"XDG_DATA_HOME\", \"$env:USERPROFILE\.local\share\", \"User\");
+        [Environment]::SetEnvironmentVariable(\"GOPATH\", \"$env:USERPROFILE\.local\share\go\", \"User\");
         "
 
 - shell:
