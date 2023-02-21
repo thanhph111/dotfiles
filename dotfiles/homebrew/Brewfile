@@ -28,6 +28,8 @@ brew "exa"
 brew "fd"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
+# Collection of GNU find, xargs, and locate
+brew "findutils"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -38,6 +40,8 @@ brew "git"
 brew "git-lfs"
 # Blazing fast terminal-ui for git written in rust
 brew "gitui"
+# GNU implementation of the famous stream editor
+brew "gnu-sed"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
