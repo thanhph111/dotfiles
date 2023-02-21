@@ -31,6 +31,8 @@ brew "git"
 brew "git-lfs"
 # Blazing fast terminal-ui for git written in rust
 brew "gitui"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
 # Colorize logfiles and command output
 brew "grc"
 # Tools and libraries to manipulate images in many formats
