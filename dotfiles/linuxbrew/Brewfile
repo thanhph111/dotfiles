@@ -1,5 +1,4 @@
 tap "homebrew/bundle"
-tap "homebrew/core"
 # Record and share terminal sessions
 brew "asciinema"
 # Official Amazon AWS command-line interface
