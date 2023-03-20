@@ -13,6 +13,9 @@
                     "PackageIdentifier": "BlenderFoundation.Blender"
                 },
                 {
+                    "PackageIdentifier": "calibre.calibre"
+                },
+                {
                     "PackageIdentifier": "Cloudflare.Warp"
                 },
                 {
