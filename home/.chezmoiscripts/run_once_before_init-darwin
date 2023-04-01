@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+command -v pwsh &>/dev/null && pwsh \
+    -NoProfile \
+    -NoLogo \
+    -NonInteractive \
+    -Command '
+        @(
+            "posh-git",
+            "PsFzf",
+            "PSReadline",
+            "Terminal-Icons",
+            "z"
+        ) | ForEach-Object {
+            if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+            }
+        }
+    ' || true

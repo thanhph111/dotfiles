@@ -1,0 +1,30 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+if [[ "$CHEZMOI_OSID" != linux-ubuntu ]]; then
+    exit 0
+fi
+
+case "$CHEZMOI_ARCH" in
+arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
+amd64) HOMEBREW_PREFIX="/usr/local" ;;
+esac
+
+BREW_BIN="$HOMEBREW_PREFIX/bin/brew"
+
+[[ -x "$BREW_BIN" ]] || {
+    url=https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    /bin/bash -c "$(curl -fsSL $url)"
+    if [[ -x "$BREW_BIN" ]]; then
+        eval "$("$BREW_BIN" shellenv)"
+    else
+        echo 'Failed to install Homebrew'
+        exit 1
+    fi
+}
+
+exec "$BREW_BIN" bundle \
+    --verbose \
+    --no-lock \
+    --file "$CHEZMOI_SOURCE_DIR/private_dot_Brewfile_linux"
