@@ -1,0 +1,515 @@
+#: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
+#: vim: set colorcolumn=81 nospell:
+
+#: Reference: https://git.julian.maurice.name/jajm/dotfiles
+
+#: Create config directory
+export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+export ZSH_CONFIG_DIR="$USER_CONFIG_DIR/zsh"
+mkdir -p "$ZSH_CONFIG_DIR"
+
+#: Create cache directory
+export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+export ZSH_CACHE_DIR="$USER_CACHE_DIR/zsh"
+mkdir -p "$ZSH_CACHE_DIR"
+
+{{ if eq .osid "darwin" -}}
+#: Change Oh My Zsh install path
+[[ -d ~/Documents/Projects/External/oh-my-zsh ]] &&
+    ZSH=~/Documents/Projects/External/oh-my-zsh
+{{- end }}
+
+#: Set Oh My Zsh installation directory to check if it's already installed later
+[[ -z "$ZSH" ]] && [[ -d "$HOME/.oh-my-zsh" ]] && export ZSH="$HOME/.oh-my-zsh"
+
+#: Functions <<<
+
+#: Check if a command exists
+command_exists() {
+    type "$1" &>/dev/null
+}
+
+#: Import a shell script
+include() {
+    [[ -r "$1" ]] && source "$1"
+}
+
+#: >>>
+
+#: Oh My Zsh <<<
+
+#: Reference:
+#: https://github.com/ohmyzsh/ohmyzsh/blob/master/templates/zshrc.zsh-template
+
+ZSH_CUSTOM="$USER_CONFIG_DIR/oh-my-zsh/custom"
+
+#: Hyphen-insensitive completion
+HYPHEN_INSENSITIVE="true"
+
+#: Check update every 2 weeks (14 days) and remind me to update
+zstyle ':omz:update' frequency 13
+zstyle ':omz:update' mode reminder
+
+#: Disable auto-setting terminal title
+DISABLE_AUTO_TITLE="true"
+
+#: fzf
+command_exists brew && {
+    export FZF_BASE="$(brew --prefix)/opt/fzf"
+    export DISABLE_FZF_AUTO_COMPLETION="false"
+    export DISABLE_FZF_KEY_BINDINGS="false"
+}
+
+#: Plugins
+plugins=(
+    git
+    macos
+    dotenv
+    # fzf
+)
+
+#: Redirect `.zcompdump`
+export ZSH_COMPDUMP="$ZSH_CACHE_DIR/completion"
+
+#: Brew autocompletion
+if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+include "$ZSH/oh-my-zsh.sh"
+
+#: >>>
+
+#: Environment variables <<<
+
+#: Set the default editor to Vim
+command_exists vim && export VISUAL=vim
+
+#: Load Python startup file (usually for disabling history)
+[[ -f "$USER_CONFIG_DIR/python/startup" ]] && export PYTHONSTARTUP="$USER_CONFIG_DIR/python/startup"
+
+#: Change location of `less` history file
+[[ -e "$USER_CACHE_DIR/less" ]] || mkdir -p "$USER_CACHE_DIR/less"
+export LESSHISTFILE="$USER_CACHE_DIR/less/history"
+
+#: Ignore from completion
+export FIGNORE='.DS_Store'
+
+#: Let me kill less of words
+#: Don't consider '/', '-', '.', '=' is parts of words
+WORDCHARS='*?_[]~&;!#$%^(){}<>'
+
+#: To use GPG in macOS (need confirmation)
+export GPG_TTY=$(tty)
+
+#: >>>
+
+#: System-wide setting <<<
+
+#: Auto push previouse directory to stack, `popd` to get back
+setopt AUTO_PUSHD
+
+#: >>>
+
+#: Aliases <<<
+
+#: Enable color support of `ls` and also add handy aliases
+alias ls='ls --color=always'
+alias grep='grep --color=always'
+alias fgrep='fgrep --color=always'
+alias egrep='egrep --color=always'
+
+#: Some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lt='du -sh * | sort -h'
+alias lsdir='ls -ld */'
+alias lsfile='ls -flp | grep -v /'
+alias set_kitty_dark='echo "include themes/Multiplex_Dark.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
+alias set_kitty_light='echo "include themes/Multiplex_Light.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
+
+#: Other aliases
+alias python=python3
+alias pip=pip3
+alias gpg-reset='gpgconf --kill all'
+#: Disable `rm` to prevent accidentally removing unrecoverable files
+rm() {
+    echo "rm: Refusing to remove '$@'"
+    echo "rm: Use 'rip' to remove"
+    return 1
+}
+alias mute-spotify-ads='(&>/dev/null env mute-spotify-ads &)'
+alias npm-exec='PATH=$(npm bin):$PATH'
+checksum() {
+    echo "$1  $(realpath $2)" | shasum -c
+}
+
+#: >>>
+
+#: History <<<
+
+#: Change location of history file
+HISTFILE="$ZSH_CACHE_DIR/history"
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+
+#: Let Oh My Zsh handle the rest if it exists
+[[ -z "$ZSH" ]] && {
+    #: Can't still understand this but added to check later
+    #: Record timestamp of command in HISTFILE
+    setopt EXTENDED_HISTORY
+    #: Delete duplicates first when HISTFILE size exceeds HISTSIZE
+    setopt HIST_EXPIRE_DUPS_FIRST
+    setopt HIST_FIND_NO_DUPS
+    setopt HIST_IGNORE_ALL_DUPS
+    #: Ignore duplicated commands history list
+    setopt HIST_IGNORE_DUPS
+    #: Ignore commands that start with space
+    setopt HIST_IGNORE_SPACE
+    setopt HIST_SAVE_NO_DUPS
+    #: Show command with history expansion to user before running it
+    setopt HIST_VERIFY
+    #: Add commands to HISTFILE in order of execution
+    setopt INC_APPEND_HISTORY
+    #: Share command history data
+    # setopt SHARE_HISTORY
+}
+
+#: >>>
+
+#: Keybindings <<<
+
+#: Use Alt + left/right to move by words
+bindkey "\e[1;3D" backward-word
+bindkey "\e[1;3C" forward-word
+#: Use Alt + delete to delete forward word
+bindkey "\e[3;3~" kill-word
+
+#: Let Oh My Zsh handle the rest if it exists
+[[ -z "$ZSH" ]] && {
+    #: Use up and down arrows for prefix history command searching
+    bindkey '^[[A' up-line-or-search
+    bindkey '^[[B' down-line-or-search
+
+    #: Use Cmd-delete or Cmd-fn-delete to delete to the beginning/end of line
+    #: Cannot find a keybinding for Cmd-delete
+    # bindkey '' backward-kill-line
+    bindkey '\e[3;9~' kill-line
+
+    #: Enable Shift-Tab to reverse in menu complete
+    bindkey '\e[Z' reverse-menu-complete
+
+    #: Ctrl-x Ctrl-e to open editor mode
+    autoload -U edit-command-line
+    zle -N edit-command-line
+    bindkey '^x^e' edit-command-line
+}
+
+#: >>>
+
+#: Completion <<<
+
+#: Let Oh My Zsh handle this if it exists
+[[ -z "$ZSH" ]] && {
+    #: Case insensitive completion
+    zstyle ':completion:*' matcher-list \
+        'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+        'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
+        'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
+        'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+
+    #: Change location of `.zcompcache` folder
+    zstyle ':completion:*' cache-path "$USER_CACHE_DIR/zsh/completions"
+
+    #: Force single tab completion
+    setopt nolistambiguous
+
+    #: Complete hidden files and folders
+    setopt globdots
+
+    #: Add a folder for user completions
+    [ -d "$ZSH_CONFIG_DIR/completions" ] && FPATH="$ZSH_CONFIG_DIR/completions:${FPATH}"
+
+    #: Partial completion suggestions
+    zstyle ':completion:*' list-suffixeszstyle ':completion:*' expand prefix suffix
+    zstyle ':completion:*' menu select
+}
+
+#: >>>
+
+#: Tools <<<
+
+#: Homebrew <<<
+
+command_exists brew && {
+    #: Do not clean old version
+    export HOMEBREW_NO_CLEANUP_FORMULAE=oh-my-posh
+
+    #: Do not show cleanup hint
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    #: Opt out Google Analytics
+    export HOMEBREW_NO_ANALYTICS=1
+
+    #: Forbid redirects from secure HTTPS to insecure HTTP
+    HOMEBREW_NO_INSECURE_REDIRECT=1
+
+    #: Require all casks to have a checksum
+    HOMEBREW_CASK_OPTS=--require-sha
+}
+
+#: >>>
+
+#: pinentry-mac <<<
+
+#: Follow this tutorial:
+#: https://github.com/jorgelbg/pinentry-touchid/issues/3#issuecomment-915440261
+command_exists pinentry-mac && alias pinentry=pinentry-touchid
+
+#: >>>
+
+#: 1password CLI <<<
+
+# eval "$(op completion zsh)"
+
+#: >>>
+
+#: Java <<<
+
+#: Install OpenJDK first: `brew install openjdk` (newest version)
+command_exists brew && {
+    export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
+    export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+}
+
+#: >>>
+
+{{ if eq .osid "darwin" -}}
+#: JetBrains Toolbox scripts <<<
+
+[[ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ]] &&
+    export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:$PATH"
+
+#: >>>
+{{- end }}
+
+#: Pip <<<
+
+#: Autocompletion
+#: This is really slow
+# eval "$(pip completion --zsh)"
+
+#: >>>
+
+#: Pyenv <<<
+
+#: If you've called it in `.zprofile` no need to call it again as it's very slow
+# eval "$(pyenv init -)"
+alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
+
+#: >>>
+
+#: Poetry <<<
+
+command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
+
+#: >>>
+
+#: Prompt (Oh My Posh/Starship) <<<
+
+if command_exists oh-my-posh && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
+    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"}"
+    export POSH_THEME
+    eval "$(oh-my-posh init zsh)"
+elif command_exists starship && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
+    export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"
+    eval "$(starship init zsh)"
+elif [[ -n "$ZSH" ]]; then
+    ZSH_THEME="robbyrussell"
+else
+    export PS1="$ "
+fi
+
+#: >>>
+
+#: Podman <<<
+
+command_exists podman && {
+    alias docker=podman
+    eval "$(podman completion zsh)"
+}
+command_exists podman-compose && alias docker-compose=podman-compose
+
+#: >>>
+
+#: Ripgrep <<<
+
+[[ -f "$USER_CONFIG_DIR/ripgrep/config" ]] && export RIPGREP_CONFIG_PATH="$USER_CONFIG_DIR/ripgrep/config"
+
+#: >>>
+
+#: GVM <<<
+
+include "$HOME/.gvm/scripts/gvm"
+
+#: >>>
+
+#: grc <<<
+
+#: Wrap some default commands with color
+#: I don't use it as it modifies `env` command
+# include "$(brew --prefix)/etc/grc.zsh"
+
+#: Wrap other commands with color
+command_exists grc && {
+    command_exists go && alias go='grc go'
+}
+
+#: >>>
+
+#: bat <<<
+
+if command_exists batman; then
+    alias man=batman
+else
+    #: Colored man pages
+    #: termcap
+    #:     ks: make the keypad send commands
+    #:     ke: make the keypad send digits
+    #:     vb: emit visual bell
+    #:     mb: start blink
+    #:     md: start bold
+    #:     me: turn off bold, blink and underline
+    #:     so: start standout (reverse video)
+    #:     se: stop standout
+    #:     us: start underline
+    #:     ue: stop underline
+    man() {
+        env \
+            LESS_TERMCAP_md=$(
+                tput bold
+                tput setaf 4
+            ) \
+            LESS_TERMCAP_me=$(tput sgr0) \
+            LESS_TERMCAP_mb=$(tput blink) \
+            LESS_TERMCAP_us=$(tput setaf 2) \
+            LESS_TERMCAP_ue=$(tput sgr0) \
+            LESS_TERMCAP_so=$(tput smso) \
+            LESS_TERMCAP_se=$(tput rmso) \
+            PAGER="${commands[less]:-$PAGER}" \
+            man "$@"
+    }
+fi
+
+#: >>>
+
+# #: Oh My Zsh <<<
+
+# #: Reference:
+# #: https://github.com/ohmyzsh/ohmyzsh/blob/master/templates/zshrc.zsh-template
+
+# ZSH_CUSTOM="$USER_CONFIG_DIR/oh-my-zsh/custom"
+
+# #: Hyphen-insensitive completion
+# HYPHEN_INSENSITIVE="true"
+
+# #: Check update every 2 weeks (14 days) and remind me to update
+# zstyle ':omz:update' frequency 13
+# zstyle ':omz:update' mode reminder
+
+# #: Disable auto-setting terminal title
+# DISABLE_AUTO_TITLE="true"
+
+# #: fzf
+# export FZF_BASE="$(brew --prefix)/opt/fzf"
+# export DISABLE_FZF_AUTO_COMPLETION="false"
+# export DISABLE_FZF_KEY_BINDINGS="false"
+
+# #: Plugins
+# plugins=(
+#     git
+#     macos
+#     fzf
+# )
+
+# #: Redirect `.zcompdump`
+# export ZSH_COMPDUMP="$ZSH_CACHE_DIR/completion"
+
+# include "$ZSH/oh-my-zsh.sh"
+
+# #: >>>
+
+#: Fzf <<<
+
+include "$ZSH_CONFIG_DIR/fzf.zsh"
+
+#: >>>
+
+#: kitty <<<
+
+#: Shell integration
+if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
+    export KITTY_SHELL_INTEGRATION="no-rc no-title"
+    autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+    kitty-integration
+    unfunction kitty-integration
+fi
+
+#: kitty features
+command_exists kitty && {
+    alias ssh-kitty='kitty +kitten ssh'
+    alias diff-kitty='kitty +kitten diff'
+}
+
+#: >>>
+
+#: Zsh plugins <<<
+
+[[ $OSTYPE == darwin* ]] && command_exists brew && {
+    #: Fish-like autosuggestions 'zsh-autosuggestions'
+    include "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    #: Fish shell like syntax highlighting 'zsh-syntax-highlighting'
+    include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+}
+
+#: >>>
+
+#: >>>
+
+#: Miscellaneous <<<
+
+#: Something related to setting colors I don't know
+autoload -U colors && colors
+
+#: Unset history on Visual Studio Code terminal
+[[ $TERM_PROGRAM = "vscode" ]] && unset HISTFILE
+
+#: >>>
+
+#: Source all other function files in my directory
+[[ -d ~/.config/zsh/functions ]] &&
+    for file in ~/.config/zsh/functions/*; do include "$file" &>/dev/null; done
+
+#: Build completion
+#: If wanna run `compinit` only every 24 hours, see:
+#: https://gist.github.com/ctechols/ca1035271ad134841284
+#: Don't have to run if Oh My Zsh is installed
+if [[ -z "$ZSH" ]]; then
+    autoload -Uz compinit && compinit -d "$ZSH_CACHE_DIR/completion"
+fi
+
+#: Execute a custom command without exiting like using `-c`
+#: We can do like this `zsh -is eval echo 123`
+#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
+if [[ $1 == eval ]]; then
+    "$@"
+    set --
+fi
+
+#: Fetch Pac-man
+piccel ~/.local/bin/pac-man.json

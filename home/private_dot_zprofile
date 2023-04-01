@@ -1,0 +1,126 @@
+#: Environment variables for applications respecting XDG specifications {{{
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+#: }}}
+
+#: Force UTF-8 usage {{{
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+#: }}}
+
+#: Homebrew {{{
+
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+#: }}}
+
+#: GnuPG {{{
+
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+
+#: }}}
+
+#: Pyenv {{{
+
+type pyenv &>/dev/null && {
+    export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
+    eval "$(pyenv init -)"
+}
+
+#: }}}
+
+#: PowerShell {{{
+
+export POWERSHELL_UPDATECHECK=Off
+export POWERSHELL_TELEMETRY_OPTOUT=1
+
+#: }}}
+
+#: AWS {{{
+
+#: Workaround to move AWS config to XDG_CONFIG_HOME until this issue is fixed:
+#: https://github.com/aws/aws-sdk/issues/30
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
+export AWS_CLI_HISTORY_FILE="$XDG_CONFIG_HOME/aws/history"
+export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
+#: For some reason Terraform doesn't like the `AWS_WEB_IDENTITY_TOKEN_FILE`
+#: variable, causing it to throw this: `WebIdentityErr: role ARN is not set`
+#: so you'd better not export it if not necessary.
+# export AWS_WEB_IDENTITY_TOKEN_FILE="$XDG_CONFIG_HOME/aws/token"
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
+
+#: }}}
+
+#: Node.js {{{
+
+export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+#: }}}
+
+#: Rust {{{
+
+export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+
+#: }}}
+
+#: Go {{{
+
+export GOPATH="$XDG_DATA_HOME/go"
+
+#: }}}
+
+#: Docker {{{
+
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+
+#: }}}
+
+#: terminfo {{{
+
+export TERMINFO="$XDG_DATA_HOME/terminfo"
+export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+
+#: }}}
+
+#: Wget {{{
+
+#: Change history file location
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+
+#: }}}
+
+#: IPython {{{
+
+export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
+
+#: }}}
+
+#: IPython {{{
+
+export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+
+#: }}}
+
+#: Executable search paths, should be at the end to be prepended {{{
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
+
+#: }}}
