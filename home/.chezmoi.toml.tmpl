@@ -1,0 +1,62 @@
+{{/* true if this machine is used for gft */}}
+{{- $gft := false -}}
+
+{{/* true if this machine does not have a screen and keyboard */}}
+{{- $headless := false -}}
+
+{{/* true if this machine should have personal secrets */}}
+{{- $personal := false -}}
+
+{{- $osID := .chezmoi.os -}}
+{{- if (and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id")) -}}
+{{-     $osID = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{- end -}}
+
+{{/* Detect GitHub codespaces, VSCode remote containers, Docker containers,
+Multipass VMs, and Vagrant boxes */}}
+{{- $username := .chezmoi.username -}}
+{{- if or
+        (env "CODESPACES")
+        (env "REMOTE_CONTAINERS_IPC")
+        (eq $username "root" "ubuntu" "vagrant" "vscode")
+-}}
+{{-     $headless = true -}}
+{{- end -}}
+
+{{- $hostname := .chezmoi.hostname -}}
+{{/* Work around unreliable hostname on darwin */}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-     $computerName := output "scutil" "--get" "ComputerName" | trim -}}
+{{-     $hostname := $computerName -}}
+{{- end -}}
+
+{{- if hasPrefix "VNPC" $hostname -}}
+{{-     $gft = true -}}
+{{- else if eq $username "thanhph111" -}}
+{{-     $personal = true -}}
+{{- else if stdinIsATTY -}}
+{{-     $headless = promptBoolOnce . "headless" "headless" -}}
+{{- else -}}
+{{-     $headless = true -}}
+{{- end -}}
+
+{{- $email := "thanhph111@gmail.com" -}}
+{{- if $gft -}}
+{{-     $email = "thanh.phanhuu@gft.com" -}}
+{{- end -}}
+
+[data]
+    email = {{ $email | quote }}
+    gft = {{ $gft }}
+    headless = {{ $headless }}
+    personal = {{ $personal }}
+    osid = {{ $osID | quote }}
+
+[diff]
+    exclude = ["scripts"]
+
+[status]
+    exclude = ["scripts"]
+
+[scriptEnv]
+    CHEZMOI_OSID = {{ $osID | quote }}
