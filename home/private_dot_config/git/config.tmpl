@@ -1,0 +1,115 @@
+#: vim: set autoindent noexpandtab tabstop=4 shiftwidth=4:
+#: vim: set list nospell filetype=gitconfig:
+
+[core]
+	editor = $VISUAL
+	pager = bat
+	# excludesFile = ~/.gitignore
+	# autocrlf = true
+
+{{- if eq .osid "windows" }}
+	longpaths = true
+	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+
+[gpg]
+	program = {{ .chezmoi.homeDir }}/.scoop/apps/gpg/current/bin/gpg.exe
+{{- end }}
+
+[user]
+	name = Thanh Phan
+	email = thanhph111@gmail.com
+	signingkey = DC49B16FF2563A32
+
+[includeIf "gitdir:~/Documents/Projects/Work/**"]
+	path = ~/.config/git/config-work
+
+[fetch]
+	prune = true
+
+[pull]
+	ff = only
+
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
+
+[init]
+	defaultBranch = "main"
+
+[pager]
+	difftool = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[diff]
+	tool = difftastic
+	guitool = kitty.gui
+	# external = difft
+
+[difftool]
+	prompt = false
+	trustExitCode = true
+
+[difftool "kitty"]
+	cmd = kitty +kitten diff $LOCAL $REMOTE
+
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
+
+[difftool "kitty.gui"]
+	cmd = kitty --override window_padding_width=0 kitty +kitten diff $LOCAL $REMOTE
+
+[alias]
+	# difftool = difftool --no-symlinks --dir-diff
+	difftool-kitty = difftool --tool=kitty
+
+	hide = update-index --skip-worktree
+	unhide = update-index --no-skip-worktree
+	ls-hidden = ! git ls-files -v | \
+		grep '^S' | \
+		cut -c3-
+
+	graph = log \
+	--graph \
+	--abbrev-commit \
+	--decorate \
+	--date-order \
+	--date=human \
+	--format=format:'%C(auto)%h%C(reset) - %C(bold)%s%C(reset) %C(auto)%d%C(reset)%n\
+          %C(blue)%G?%C(reset) %C(cyan)%GT%C(reset) %C(magenta)%GS%C(reset)%n\
+          %C(bold dim)Commit:%C(reset) %C(dim)%cd%C(reset) %C(yellow)(%cr)%C(reset) %C(brightgreen)%cl%C(reset)%n\
+          %C(bold dim)Author:%C(reset) %C(dim)%ad%C(reset) %C(yellow)(%ar)%C(reset) %C(green)%al%C(reset)%n'
+
+	# rm-orphan-branch = ! "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"
+	rm-orphan-branch = ! "\
+		git fetch -p && \
+			for branch in $(\
+				git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | \
+					awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'\
+			); do \
+				git branch -D $branch; \
+			done\
+	"
+
+	stash-rename = ! "\
+		_() { \
+			rev=$(git rev-parse $1) && git stash drop $1 || \
+				exit 1; \
+			git stash store -m \"$2\" $rev; \
+		}; \
+		_\
+	"
+
+# '%C(blue)█%C(reset)\
+# %C(bold blue)█%C(reset)\
+# %C(blue dim)█%C(reset)\
+# %C(bold blue dim)█%C(reset)\
+# %C(cyan)█%C(reset)\
+# %C(bold cyan)█%C(reset)\
+# %C(bold cyan dim)█%C(reset)\
