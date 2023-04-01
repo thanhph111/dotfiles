@@ -1,0 +1,868 @@
+": vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0:
+": vim: set colorcolumn=81 nospell:
+
+": This `.vimrc` is intended to be used with the non-plugin flavor of Vim.
+": I don't really remember what features it requires, so let's complile Vim with
+": most popular features enabled and you will be fine.
+": I'm using Kitty terminal and Fira Code Retina Nerd Font and it's awesome.
+
+": Let don't play with GUI
+if has('gui_running')
+    finish
+endif
+
+": Allow to run modelines with 5 top and bottom lines
+set modelines=5
+
+": Create a Autocmds holder for all the autocmds
+": Reference: https://vi.stackexchange.com/q/9455
+augroup MyAutocmdGroup
+    autocmd!
+augroup END
+
+": General {{{
+
+": Enter the current millennium
+set nocompatible
+
+": Use true color
+set termguicolors
+
+": But I like the ordinal terminal colors
+let g:terminal_ansi_colors = [
+    \ '#181a1b',
+    \ '#a91409',
+    \ '#38803a',
+    \ '#cc7a00',
+    \ '#0a6ab6',
+    \ '#522e92',
+    \ '#37aab9',
+    \ '#788187',
+    \ '#555b5e',
+    \ '#ff3078',
+    \ '#addd1e',
+    \ '#ffec16',
+    \ '#0287c3',
+    \ '#d10aff',
+    \ '#4ae3f7',
+    \ '#dcdfe4',
+\ ]
+
+": Allow backspacing over everything in insert mode.
+set backspace=indent,eol,start
+
+": Keep 200 lines of command line history
+set history=200
+
+": Show the cursor position all the time
+set ruler
+
+": Display incomplete commands
+set showcmd
+
+": Display completion matches in a status line
+set wildmenu
+set wildmode=longest:full
+set wildignorecase
+set wildignore+=*.DS_Store,*.class,*.hg,*.o,*.obj,*.pyc,*.svn,*.swp
+set wildignore+=.git,composer.lock,package-lock.json
+
+": Time out for key codes
+set ttimeout
+": Wait up to 100ms after `<Esc>` for special key
+set ttimeoutlen=100
+
+": Keep 3 lines below or above the cursor
+set scrolloff=3
+
+": Don't recognize octal numbers for `<Ctrl-A>` and `<Ctrl-X>`
+set nrformats-=octal
+
+": Set line number as relative position
+set number
+set relativenumber
+
+": Do incremental searching when it's possible to timeout
+set incsearch
+
+": No time for case sensitive
+set ignorecase
+
+": Highlight search matches
+set hlsearch
+
+": Allow to interact with mouse
+set mouse=a
+
+": Enable file type detection
+filetype plugin indent on
+
+": Switch syntax highlighting
+syntax on
+
+": I like highlighting strings inside C comments.
+let c_comment_strings=1
+
+": Prevent the langmap option applies to characters that result from a mapping
+set nolangremap
+
+": Tell Vim find the color scheme for the dark theme
+": This is my theme:
+":     foreground           #fffaf4
+":     background           #0e1019
+":     selection_foreground #181c27
+":     selection_background #ffffff
+":     color0               #181a1b
+":     color8               #555b5e
+":     color1               #a91409
+":     color9               #ff3078
+":     color2               #38803a
+":     color10              #addd1e
+":     color3               #cc7a00
+":     color11              #ffec16
+":     color4               #0a6ab6
+":     color12              #0287c3
+":     color5               #522e92
+":     color13              #d10aff
+":     color6               #37aab9
+":     color14              #4ae3f7
+":     color7               #788187
+":     color15              #dcdfe4
+set background=dark
+
+": Auto change directory to a file location
+": Because I usually use Vim to edit scattered files, this may help
+": Set this also change CWD by using `cd` in netrw
+set autochdir
+
+": Auto indent when starting a new line
+set autoindent
+set smartindent
+
+": Set tab width and auto expand tabs to space
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+": Disable showing whitespaces by default
+set nolist
+
+": Set whitespace characters
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<,space:·
+
+": Hide end of buffer symbol
+set fillchars+=eob:\ "
+
+": Disable intro
+set shortmess+=I
+
+": Always show the status line
+set laststatus=2
+
+": Don't show current mode indicator as we customize status line
+set noshowmode
+
+": Set title for filename
+set title
+": This used the same rules for 'statusline'
+set titlestring=%t\ ✤\ VIM
+
+": Wrap Vim's execution of all commands
+": Minimum content to clear the screen before executing a command
+":     #!/bin/bash
+":     clear
+":     shift
+":     eval $@
+if filereadable("~/.vim/shell.sh")
+    set shell=~/.vim/shell.sh
+endif
+
+": Splitting will open windows on the right or below instead of the opposite
+set splitright
+set splitbelow
+
+": Automatically read a file when it's changed outside of Vim
+": Sometime we still have to use `:e` to reload the file
+set autoread
+
+": Allow wrapping of long lines
+set wrap
+
+": Wrap long lines at a character in 'breakat' rather than at the last
+": character that fits on the screen.
+set linebreak
+
+": Every wrapped line will continue visually indented
+set breakindent
+
+": Change the default vertical split character, avoid spaces between lines
+set fillchars+=vert:\┃  ": Use this for thinner line: `\│`
+" set fillchars+=vert:\█
+
+": Set this to always use system clipboard
+" set clipboard=unnamedplus
+
+": Don't truncate the line if it's not fit
+set display=lastline
+
+": Allow use bash aliases in external commands
+": TODO: Split the bash aliases to `~/.bash_aliases` and use this to retrieve
+": Reference: https://stackoverflow.com/a/18901595
+if filereadable("~/.bash_aliases")
+    let $BASH_ENV = "~/.bash_aliases"
+endif
+
+": Go to end of previous line or beginning of next line by arrows or `<H>`/`<L>`
+": Reference: https://stackoverflow.com/a/63097471
+set whichwrap+=<,h
+set whichwrap+=>,l
+set whichwrap+=[,]
+
+": Search recursively
+": Provides tab-completion for all file-related tasks
+": Be careful if you are standing on a big CWD like '/' or '~'
+set path+=**
+
+": Set main encoding displayed
+set encoding=utf-8
+
+": Set main encoding written to files
+set fileencoding=utf-8
+
+": Use a line cursor within insert mode and a block cursor everywhere else
+": I have set my terminal to beam cursor
+": Cursor settings:
+":     1 -> Blinking block
+":     2 -> Solid block
+":     3 -> Blinking underline
+":     4 -> Solid underline
+":     5 -> Blinking beam
+":     6 -> Solid beam
+let &t_SI = "\e[5 q"  ": INSERT mode
+let &t_SR = "\e[3 q"  ": REPLACE mode
+let &t_EI = "\e[1 q"  ": NORMAL mode (ELSE)
+": The cursor is still beam when opening, let's cheat a bit
+autocmd MyAutocmdGroup VimEnter * silent execute '!echo -e "' . &t_EI . '"'
+": Restore the cursor when exiting
+autocmd MyAutocmdGroup VimLeave * silent execute '!echo -ne "' . &t_SI . '"'
+": Undercurl support
+try
+    let &t_Cs = "\e[4:3m"
+    let &t_Ce = "\e[4:0m"
+catch
+endtry
+": Vim hardcodes background color erase even if the terminfo file does not
+": contain bce. This causes incorrect background rendering when using a color
+": theme with a background color.
+let &t_ut=''
+
+": Allow overflow buffer
+set hidden
+
+": Spell check
+set spell
+set spelllang=en_us
+
+": Set timeout for key press, allow using some keybinding with escape key
+": Reference: https://www.johnhawthorn.com/2012/09/vi-escape-delays/
+set timeoutlen=1000
+set ttimeoutlen=0
+
+": }}}
+
+": Tab line {{{
+
+function MyTabLine()
+    let s = ''
+    for i in range(tabpagenr('$'))
+        ": Select the highlighting
+        if i + 1 == tabpagenr()
+            let tab_none = '%#Tab_Active_Tab_None#'
+            let text_tab = '%#Tab_Active_Text_Tab#'
+            let close_tab = '%#Tab_Active_Close_Tab#'
+            let text_close = '%#Tab_Active_Text_Close#'
+            let close_none = '%#Tab_Active_Close_None#'
+        else
+            let tab_none = '%#Tab_InActive_Tab_None#'
+            let text_tab = '%#Tab_InActive_Text_Tab#'
+            let close_tab = '%#Tab_InActive_Close_Tab#'
+            let text_close = '%#Tab_InActive_Text_Close#'
+            let close_none = '%#Tab_InActive_Close_None#'
+        endif
+        "
+        let bufferList = tabpagebuflist(i + 1)
+        let winNumber = tabpagewinnr(i + 1)
+        let tabName = bufname(bufferList[winNumber - 1])
+        ": Set the tab page number (for mouse clicks)
+        let s .= '%' . (i + 1) . 'T'
+        ": Set the tab name
+        let s .= tab_none . ''
+        let s .= text_tab
+        let s .= ' ' . (i + 1)
+        let s .= (tabName != '' ? ('  ' . tabName) : '') . ' '
+        let s .= '%T'
+        ": Set the close button
+        let s .= '%' . (i + 1) . 'X'
+        let s .= close_tab . ''
+        let s .= text_close . ''
+        let s .= close_none . ''
+        let s .= '%X'
+        let s .= '%* '
+    endfor
+    return s
+endfunction
+set tabline=%!MyTabLine()
+
+highlight TabLineFill cterm=NONE ctermfg=NONE ctermbg=NONE
+    \                            guifg=NONE   guibg=NONE
+
+highlight Tab_Active_Tab_None   cterm=NONE ctermfg=DarkGreen ctermbg=NONE
+    \                                      guifg=DarkGreen   guibg=NONE
+highlight Tab_Active_Text_Tab   cterm=NONE ctermfg=White     ctermbg=DarkGreen
+    \                                      guifg=White       guibg=DarkGreen
+highlight Tab_Active_Close_Tab  cterm=NONE ctermfg=DarkRed   ctermbg=DarkGreen
+    \                                      guifg=DarkRed     guibg=DarkGreen
+highlight Tab_Active_Text_Close cterm=NONE ctermfg=White     ctermbg=DarkRed
+    \                                      guifg=White       guibg=DarkRed
+highlight Tab_Active_Close_None cterm=NONE ctermfg=DarkRed   ctermbg=NONE
+    \                                      guifg=DarkRed     guibg=NONE
+
+highlight Tab_InActive_Tab_None   cterm=NONE ctermfg=White     ctermbg=NONE
+    \                                        guifg=White       guibg=NONE
+highlight Tab_InActive_Text_Tab   cterm=NONE ctermfg=Black     ctermbg=White
+    \                                        guifg=Black       guibg=White
+highlight Tab_InActive_Close_Tab  cterm=NONE ctermfg=DarkRed   ctermbg=White
+    \                                        guifg=DarkRed     guibg=White
+highlight Tab_InActive_Text_Close cterm=NONE ctermfg=White     ctermbg=DarkRed
+    \                                        guifg=White       guibg=DarkRed
+highlight Tab_InActive_Close_None cterm=NONE ctermfg=DarkRed   ctermbg=NONE
+    \                                        guifg=DarkRed     guibg=NONE
+
+": }}}
+
+": Status line {{{
+
+": Reference: https://gist.github.com/meskarune/57b613907ebd1df67eb7bdb83c6e6641
+
+let g:currentmode={
+    \ 'n'      : 'Normal',
+    \ 'no'     : 'Normal·Operator Pending',
+    \ 'v'      : 'Visual',
+    \ 'V'      : 'V·Line',
+    \ "\<C-V>" : 'V·Block',
+    \ 's'      : 'Select',
+    \ 'S'      : 'S·Line',
+    \ '^S'     : 'S·Block',
+    \ 'i'      : 'Insert',
+    \ 'R'      : 'Replace',
+    \ 'Rv'     : 'V·Replace',
+    \ 'c'      : 'Command',
+    \ 'cv'     : 'Vim Ex',
+    \ 'ce'     : 'Ex',
+    \ 'r'      : 'Prompt',
+    \ 'rm'     : 'More',
+    \ 'r?'     : 'Confirm',
+    \ '!'      : 'Shell',
+    \ 't'      : 'Terminal'
+\}
+
+function! GitBranch()
+    return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+endfunction
+
+function! StatuslineGit()
+    let l:branchname = GitBranch()
+    return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+endfunction
+
+set statusline=
+set statusline+=%#Status_01_None#
+set statusline+=%0*\ %n
+set statusline+=%0*\ \ "
+set statusline+=%0*%{toupper(g:currentmode[mode()])}\ "
+set statusline+=%#Status_01_02#
+set statusline+=%#Status_Text_02#\ %<%t%h%w%m%r\ "
+set statusline+=%#Status_02_03#
+set statusline+=%#Status_Text_03#\ %Y\ "
+set statusline+=%#Status_03_03#%=
+set statusline+=%#Status_Text_03#\ %{''.toupper(&fenc!=''?&fenc:&enc).''}
+set statusline+=%#Status_Text_03#\ \ %{toupper(&ff)}\ "
+set statusline+=%#Status_02_03#
+set statusline+=%#Status_Text_02#\ %l:%c%V\ \ %L\ "
+set statusline+=%#Status_01_02#
+set statusline+=%#Status_Text_01#\ %03p%%\ "
+set statusline+=%#Status_01_None#
+set statusline+=%*
+set statusline+=
+" set statusline+=%{StatuslineGit()}
+
+highlight Status_01_None cterm=NONE ctermfg=White    ctermbg=NONE
+    \                               guifg=White      guibg=NONE
+highlight Status_Text_01 cterm=NONE ctermfg=Black    ctermbg=White
+    \                               guifg=Black      guibg=White
+highlight Status_01_02   cterm=NONE ctermfg=White    ctermbg=DarkGray
+    \                               guifg=White      guibg=#5c6070
+highlight Status_Text_02 cterm=NONE ctermfg=White    ctermbg=DarkGray
+    \                               guifg=White      guibg=#5c6070
+highlight Status_02_03   cterm=NONE ctermfg=DarkGray ctermbg=237
+    \                               guifg=#5c6070    guibg=#2c3040
+highlight Status_Text_03 cterm=NONE ctermfg=White    ctermbg=237
+    \                               guifg=White      guibg=#2c3040
+highlight Status_03_03   cterm=NONE ctermfg=237      ctermbg=237
+    \                               guifg=#2c3040    guibg=#2c3040
+
+": Vim will reset `stl` to '^' if `stl` and `stlnc` are the same
+": Because we've set them to invisible, we don't have to worry about this
+" set fillchars+=stl:\ ,stlnc:\ "
+
+": Don't reverse but bold
+highlight StatusLine       cterm=bold ctermfg=Black    ctermbg=White
+    \                                 guifg=Black      guibg=White
+highlight StatusLineNC     cterm=NONE ctermfg=DarkGray ctermbg=White
+    \                                 guifg=DarkGray   guibg=White
+highlight StatusLineTerm   cterm=bold ctermfg=Black    ctermbg=White
+    \                                 guifg=Black      guibg=White
+highlight StatusLineTermNC cterm=NONE ctermfg=DarkGray ctermbg=White
+    \                                 guifg=DarkGray   guibg=White
+
+": Indicator for modes
+function InsertStatusColor()
+    highlight StatusLine cterm=bold ctermfg=DarkGreen ctermbg=White
+        \                           guifg=DarkGreen   guibg=White
+endfunction
+function CommandStatusColor()
+    highlight StatusLine cterm=bold ctermfg=DarkBlue ctermbg=White
+        \                           guifg=DarkBlue   guibg=White
+    redraw
+endfunction
+function ResetStatusColor()
+    highlight StatusLine cterm=bold ctermfg=Black ctermbg=White
+        \                           guifg=Black   guibg=White
+endfunction
+autocmd MyAutocmdGroup InsertEnter * :call InsertStatusColor()
+autocmd MyAutocmdGroup InsertLeave * :call ResetStatusColor()
+autocmd MyAutocmdGroup CmdlineEnter * :call CommandStatusColor()
+autocmd MyAutocmdGroup CmdlineLeave * :call ResetStatusColor()
+
+": }}}
+
+": Vim files {{{
+
+": Reference: https://stackoverflow.com/a/9528322
+": Save your backup files to a less annoying place than the current directory.
+": If you have `.vim-backup` folder in the current directory, it'll use that.
+": Otherwise it saves it to `~/.cache/vim/backup` or `.`.
+if isdirectory($HOME . '/.cache/vim/backup') == 0
+    :silent !mkdir -p ~/.cache/vim/backup >/dev/null 2>&1
+endif
+set backupdir-=.
+set backupdir+=.
+set backupdir-=~/
+set backupdir^=~/.cache/vim/backup/
+set backupdir^=./.vim-backup/
+set backup
+
+": Save your swap files to a less annoying place than the current directory.
+": If you have `.vim-swap` in the current directory, it'll use that.
+": Otherwise it saves it to `~/.cache/vim/swap`, `~/tmp` or `.`.
+if isdirectory($HOME . '/.cache/vim/swap') == 0
+    :silent !mkdir -p ~/.cache/vim/swap >/dev/null 2>&1
+endif
+set directory=./.vim-swap//
+set directory+=~/.cache/vim/swap//
+set directory+=~/tmp//
+set directory+=.
+
+": `viminfo` stores the state of your previous editing session
+set viminfo+=n~/.cache/vim/viminfo
+
+if exists("+undofile")
+    ": `undofile` - This allows you to use undos after exiting and restarting
+    ": This, like swap and backup files, uses `.vim-undo`, then
+    ": `~/.cache/vim/undo`
+    ": This is only present in 7.3+. Read more: `:help undo-persistence`
+    if isdirectory($HOME . '/.cache/vim/undo') == 0
+        :silent !mkdir -p ~/.cache/vim/undo > /dev/null 2>&1
+    endif
+    set undodir=./.vim-undo//
+    set undodir+=~/.cache/vim/undo//
+    set undofile
+endif
+
+": `.netrwhist` stores the history all the directories that were modified
+let g:netrw_home = '~/.cache/vim'
+
+": }}}
+
+": Fold text {{{
+
+": Never automatically fold
+set foldlevelstart=99
+
+": Does it lose the ability to fold by syntax?
+" set foldmethod=marker
+
+": Fill characters for folding
+set fillchars+=fold:=
+": The rest is used for testing
+set fillchars+=foldopen:b,foldclose:c,foldsep:d
+
+function MyFoldText()
+    let line = getline(v:foldstart)
+    let level_points = repeat(" ", v:foldlevel)[:-2]
+    let sub = substitute(line, '/\*\|\*/\|{{{\d*', level_points, 'g')  " }}}
+    return  sub . ' <=<< ' . (v:foldend - v:foldstart + 1) . ' lines' . ' >>'
+endfunction
+set foldtext=MyFoldText()
+
+": Highlight fold text
+highlight Folded     cterm=bold ctermfg=DarkGray ctermbg=NONE
+    \                           guifg=#5c6070    guibg=NONE
+": Invisible fold column
+highlight FoldColumn cterm=NONE ctermfg=NONE     ctermbg=NONE
+    \                           guifg=NONE       guibg=NONE
+
+": }}}
+
+": Netrw {{{
+
+autocmd MyAutocmdGroup FileType netrw
+    \ highlight CursorLine cterm=bold ctermfg=NONE ctermbg=NONE
+    \                                 guifg=NONE   guibg=NONE
+
+highlight netrwMarkFile cterm=bold ctermfg=DarkRed ctermbg=NONE
+    \                              guifg=DarkRed   guibg=NONE
+
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
+let g:netrw_preview = 1
+let g:netrw_winsize = 30
+let g:netrw_altv = 1
+
+": }}}
+
+": Autocomplete {{{
+
+set omnifunc=syntaxcomplete#Complete
+set completeopt=longest,menuone,noinsert
+
+": Set this to add dictionary words to the autocomplete list
+" set complete+=kspell
+
+": `<Tab>` to accept
+": This doesn't work
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+": `<C-Space>` to toggle default menu
+inoremap <expr> <C-Space> pumvisible() \|\| &omnifunc == '' ?
+    \ "\<lt>C-n>" :
+    \ "\<lt>C-x>\<lt>C-o><c-r>=pumvisible() ?" .
+    \ "\"\\<lt>c-n>\\<lt>c-p>\\<lt>c-n>\" :" .
+    \ "\" \\<lt>bs>\\<lt>C-n>\"\<CR>"
+imap <C-@> <C-Space>
+
+": }}}
+
+": Highlight {{{
+
+": Colors for 'cterm'
+":     NUMBER  COLOR NAME
+":     0       Black
+":     1       DarkRed
+":     2       DarkGreen
+":     3       DarkYellow
+":     4       DarkBlue
+":     5       DarkMagenta
+":     6       DarkCyan
+":     7       Gray
+":     8       DarkGray
+":     9       Red
+":     10      Green
+":     11      Yellow
+":     12      Blue
+":     13      Magenta
+":     14      Cyan
+":     15      White
+
+": Most for whitespaces
+highlight NonText    cterm=NONE ctermfg=DarkGray ctermbg=NONE
+    \                           guifg=#5c5d61    guibg=NONE
+highlight SpecialKey cterm=NONE ctermfg=DarkGray ctermbg=NONE
+    \                           guifg=#3c3e44    guibg=NONE
+
+": Cursor line and number
+highlight CursorLine   cterm=NONE ctermbg=Black
+    \                             guibg=#181b26
+highlight CursorLineNr cterm=bold ctermfg=DarkYellow
+    \                             guifg=#cc7a00
+
+": Diff view
+highlight DiffAdd    cterm=bold ctermfg=NONE  ctermbg=22
+    \                           guifg=NONE    guibg=#162620
+highlight DiffDelete cterm=bold ctermfg=52    ctermbg=52
+    \                           guifg=#2d1116 guibg=#2d1116
+highlight DiffChange cterm=bold ctermfg=NONE  ctermbg=130
+    \                           guifg=NONE    guibg=#342514
+highlight DiffText   cterm=NONE ctermfg=NONE  ctermbg=DarkYellow
+    \                           guifg=NONE    guibg=#473012
+
+": Vertical split line
+highlight VertSplit cterm=NONE ctermfg=White ctermbg=NONE
+    \                          guifg=White   guibg=NONE
+
+": Popup menu
+highlight Pmenu      cterm=NONE ctermfg=White ctermbg=DarkBlue
+    \                           guifg=White   guibg=#0a6ab6
+highlight PmenuSel   cterm=bold ctermfg=White ctermbg=Blue
+    \                           guifg=White   guibg=#0287c3
+highlight PmenuSbar  cterm=NONE ctermfg=NONE  ctermbg=DarkCyan
+    \                           guifg=NONE    guibg=#37aab9
+highlight PmenuThumb cterm=NONE ctermfg=NONE  ctermbg=Cyan
+    \                           guifg=NONE    guibg=#4ae3f7
+
+": Keyword highlighting
+highlight Error cterm=bold ctermfg=White ctermbg=DarkRed
+    \                      guifg=White   guibg=DarkRed
+highlight Todo  cterm=bold ctermfg=White ctermbg=DarkYellow
+    \                      guifg=White   guibg=DarkYellow
+
+": Visual mode selection
+highlight Visual    cterm=NONE guifg=NONE      guibg=#2f3240
+    \
+": Visual mode selection when vim is "Not Owning the Selection"
+highlight VisualNOS cterm=NONE ctermfg=DarkRed ctermbg=NONE
+    \                          guifg=DarkRed   guibg=NONE
+
+": Error and Warning message
+highlight ErrorMsg   cterm=bold ctermfg=DarkRed    ctermbg=NONE
+    \                           guifg=DarkRed      guibg=NONE
+highlight WarningMsg cterm=bold ctermfg=DarkYellow ctermbg=NONE
+    \                           guifg=DarkYellow   guibg=NONE
+
+": Wildmenu uses StatusLine color for FB and BG colors
+": This set colors for selection
+highlight WildMenu cterm=bold ctermfg=DarkYellow ctermbg=White
+    \                         guifg=#cc7a00      guibg=White
+
+": Set color for a column (81) and fill all background from another column (120)
+": Reference: https://stackoverflow.com/a/13731714
+" let &colorcolumn="81,".join(range(120,999),",")
+highlight ColorColumn ctermbg=Black
+    \                 guibg=#141721
+
+": }}}
+
+": Autocommands {{{
+
+": Institutive moving line
+": Reference: https://stackoverflow.com/a/21000307
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
+
+": Set current line only in insert mode
+autocmd MyAutocmdGroup InsertEnter * set cursorline
+autocmd MyAutocmdGroup InsertLeave * set nocursorline
+
+": Auto-trim trailing whitespaces and fix EOL on save
+": Don't turn off 'fixeol' if you want to keep last trailing newline
+": Reference: https://unix.stackexchange.com/a/75438
+": Reference: https://stackoverflow.com/a/7501902
+function! <SID>FixTrailingWhitespacesAndEol()
+    let l = line(".")
+    let c = col(".")
+    silent! %s/\s\+$//e
+    " %s#\($\n\s*\)\+\%$##
+    silent! 0;/^\%(\n*.\)\@!/,$d
+    call cursor(l, c)
+endfun
+autocmd MyAutocmdGroup BufWritePre * :call <SID>FixTrailingWhitespacesAndEol()
+
+": When editing a file, always jump to the last known cursor position
+autocmd MyAutocmdGroup BufReadPost *
+    \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+    \ |   exe "normal! g`\""
+    \ | endif
+
+": Ask for creating a new file with path if it doesn't exist when writing
+autocmd MyAutocmdGroup BufWritePre *
+    \ call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+function! s:auto_mkdir(dir, force)
+    if !isdirectory(a:dir) && (
+        \ a:force ||
+        \ input(
+            \ "'" . a:dir . "' does not exist. Create? [y/N]"
+        \ ) =~? '^y\%[es]$'
+    \ )
+        call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    endif
+endfunction
+
+": Make command mode case insensitive
+": Reference: https://vi.stackexchange.com/a/16511
+autocmd MyAutocmdGroup CmdLineEnter :set nosmartcase ignorecase
+autocmd MyAutocmdGroup CmdLineLeave :set smartcase noignorecase
+
+": Auto close brackets when adding a new line after them
+inoremap {<CR> {<CR>}<c-o><s-o>
+inoremap [<CR> [<CR>]<c-o><s-o>
+inoremap (<CR> (<CR>)<c-o><s-o>
+
+": Hot reload $MYVIMRC
+autocmd MyAutocmdGroup BufWritePost .vimrc,_vimrc source $MYVIMRC
+
+": Change the background mode based on macOS's `Appearance` setting
+": Limitation: Vim won't execute the callback until its buffers are focused
+function! ChangeBackground()
+    if (
+        \ has("macunix") &&
+        \ system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
+    \ ) || (
+        \ has("unix") &&
+        \ executable("/bin/gsettings") &&
+        \ system(
+            \ "/bin/gsettings get org.gnome.desktop.interface color-scheme"
+        \ ) =~ 'prefer-dark'
+    \ ) || (
+        \ has("win32") &&
+        \ system(
+            \ "for /f \"tokens=2*\" %a in (
+                \ 'reg query
+    \ HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize
+    \ /v AppsUseLightTheme'
+            \ ) do echo %~b"
+        \ ) =~ '0x0'
+    \)
+        set background=dark
+    else
+        set background=light
+    endif
+endfunction
+": Initialize the colorscheme for the first run
+call ChangeBackground()
+": Change the color scheme if we receive a SigUSR1: `kill -SIGUSR1 $pid`
+autocmd MyAutocmdGroup SigUSR1 * call ChangeBackground()
+
+": }}}
+
+": Keybindings {{{
+
+": `Ctrl-C` is annoying, map it to `<Esc>`
+imap <C-c> <Esc>
+
+": Don't use Ex mode, use `Q` for formatting
+map Q gq
+
+": `Ctrl-L` in insert mode to fix latest spelling mistake
+": Reference: https://stackoverflow.com/a/16481737
+imap <c-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+
+": `CTRL-U` in insert mode deletes a lot. Use `CTRL-G` u to first break undo,
+": so we can undo `CTRL-U` after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+": Difference between the current buffer and the file it was loaded from
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+    \ | wincmd p | diffthis
+nnoremap <Leader>do :DiffOrig<CR>
+nnoremap <Leader>dc :only<CR>diffoff<CR>
+
+": Difference between the current buffer and the file it was loaded from
+": https://stackoverflow.com/q/749297#comment33988378_22360650
+command! DiffSaved w !vim - -c ":vnew % | windo diffthis"
+
+": `<F2>` to toggle spell check
+": https://github.com/nickjj/dotfiles/blob/master/.vimrc
+map <F2> :setlocal spell!<CR>
+
+": `<F3>` to toggle `hlsearch`
+nnoremap <F3> :set hlsearch!<CR>
+
+": `<F4>` to toggle `wrap`
+nnoremap <F4> :set wrap!<CR>
+
+": `<F5>` to toggle relative numbers
+noremap <F5> :set number!<CR>
+inoremap <F5> <C-o>:set number!<CR>
+cnoremap <F5> <C-o>:set number!<CR>
+
+": `<F6>` to toggle relative numbers
+noremap <F6> :set relativenumber!<CR>
+inoremap <F6> <C-o>:set relativenumber!<CR>
+cnoremap <F6> <C-o>:set relativenumber!<CR>
+
+": `<F7>` to toggle visually showing all whitespace characters
+noremap <F7> :set list!<CR>
+inoremap <F7> <C-o>:set list!<CR>
+cnoremap <F7> <C-c>:set list!<CR>
+
+": `:W!` sudo saves the file
+": Reference: https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim
+command! -bang W execute 'w !sudo tee % >/dev/null' <bar> edit!
+
+": When in command mode, do as the Emacs do
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+execute "set <A-b>=\eb"
+cnoremap <A-b> <S-Left>
+execute "set <A-f>=\ef"
+cnoremap <A-f> <S-Right>
+
+": When in insert mode, do as the Emacs do
+inoremap <C-a> <Home>
+inoremap <C-e> <End>
+inoremap <C-b> <Left>
+inoremap <C-n> <Down>
+inoremap <C-p> <Up>
+inoremap <C-f> <Right>
+execute "set <A-b>=\eb"
+inoremap <A-b> <S-Left>
+execute "set <A-f>=\ef"
+inoremap <A-f> <S-Right>
+
+": Reference: https://github.com/taufik-nurrohman/vim/blob/main/.vim/vimrc
+": Preserve visual block selection after indent/outdent
+vnoremap > >gv^
+vnoremap < <gv^
+
+": Navigate between split(s) with `<CTRL+LEFT/DOWN/UP/RIGHT>`
+nnoremap <C-Left> <C-w>h
+nnoremap <C-Down> <C-w>j
+nnoremap <C-Up> <C-w>k
+nnoremap <C-Right> <C-w>l
+
+": Navigate between split(s) with `<CTRL+H/J/K/L>`
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+": Navigate to other split(s) from terminal with `<CTRL+LEFT/DOWN/UP/RIGHT>`
+tnoremap <C-Left> <C-w>h
+tnoremap <C-Down> <C-w>j
+tnoremap <C-Up> <C-w>k
+tnoremap <C-Right> <C-w>l
+
+": New tab with `<\t>`
+nnoremap <silent> <Leader>t :tabnew<CR>
+
+": <\yp> to yank the current buffer's full path to the clipboard
+nnoremap <Leader>yp :let @+ = expand("%:p")<CR>
+
+": <\yt> to yank the current buffer's name (tail) to the clipboard
+nnoremap <Leader>yt :let @+ = expand("%:t")<CR>
+
+": <\yh> to yank the current buffer's directory (head))  to the clipboard
+nnoremap <Leader>yh :let @+ = expand("%:p:h")<CR>
+
+": }}}
+
+": Plugins {{{
+
+": }}}
+
+": Source local `.vimrc`
+if filereadable("~/.vimrc.local")
+    source ~/.vimrc.local
+endif
