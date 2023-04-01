@@ -5,9 +5,7 @@
         <key>EnvironmentVariables</key>
         <dict>
             <key>PATH</key>
-            <string>
-            {{- env "PATH" -}}
-            </string>
+            <string>/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:{{ .chezmoi.homeDir }}/.local/bin:{{ output "brew" "--prefix" | trim }}/bin:{{ output "brew" "--prefix" | trim }}/sbin</string>
         </dict>
         <key>Label</key>
         <string>ke.bou.dark-mode-notify</string>
