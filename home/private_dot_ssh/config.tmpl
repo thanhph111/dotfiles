@@ -1,0 +1,26 @@
+#: vim: set nospell filetype=sshconfig:
+
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IgnoreUnknown UseKeychain
+
+{{- if eq .chezmoi.os "darwin" }}
+    IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+{{- else }}
+    IdentityFile ~/.ssh/keys/thanhph111
+{{- end }}
+
+# Connect 'Cloud9' instances via 'Visual Studio Code'
+Host "Cloud9 - *"
+    User ec2-user
+    ProxyCommand sh -c "~/.ssh/ssm-proxy %h %p"
+
+#: Example for a 'Cloud9' host configuration
+# Host "Cloud9 - Something"
+#: Specify the instance ID here
+#     HostName i-something
+
+{{ if .gft -}}
+{{-     onepasswordRead "op://GFT/SSH config/notesPlain" -}}
+{{- end }}
