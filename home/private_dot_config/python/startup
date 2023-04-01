@@ -1,0 +1,6 @@
+#: vim: set filetype=python:
+
+import readline
+
+#: Disable the `.python_history` file
+readline.write_history_file = lambda *args: None
