@@ -1,0 +1,26 @@
+// Documentation: https://zed.dev/docs/configuring-zed
+{
+    "buffer_font_size": 13,
+    "buffer_font_family": "JetBrainsMono Nerd Font",
+    "theme": "Andromeda",
+    "terminal": {
+        "font_family": "FiraCode Nerd Font",
+        "font_size": 12,
+        "blinking": "on",
+        "shell": {
+            "with_arguments": {
+                "program": "/bin/zsh",
+                "args": [
+                    "-is",
+                    "exec unset HISTFILE"
+                ]
+            }
+        },
+        "env": {
+            "POSH_THEME": "/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json"
+        }
+    },
+    "experiments": {
+        "experimental_themes": true
+    }
+}
