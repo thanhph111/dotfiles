@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+#
+# dlvhdr/gh-dash
+# vilmibm/gh-screensaver
+
+if ! command -v gh &>/dev/null; then
+    echo "gh is not installed"
+    exit 1
+fi
+
+extensions=(
+    "vilmibm/gh-screensaver"
+    "dlvhdr/gh-dash"
+)
+
+for extension in "${extensions[@]}"; do
+    gh extension install "$extension" 2>/dev/null || true
+done
