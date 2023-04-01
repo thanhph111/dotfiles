@@ -1,0 +1,41 @@
+*
+
+{{/* General */}}
+!wezterm
+
+{{/* Linux and macOS */}}
+{{ if eq .chezmoi.os "linux" "darwin" }}
+!bash
+!bpython
+!gh
+!git
+!kitty
+!lazygit
+!nano
+!npm
+!oh-my-posh
+!powershell
+!python
+!ripgrep
+!starship
+!zsh
+
+!topgrade.toml
+{{ end }}
+
+{{/* Linux */}}
+{{ if eq .chezmoi.os "linux" }}
+{{ end }}
+
+{{/* macOS */}}
+{{ if eq .chezmoi.os "darwin" }}
+!aws
+!alacritty
+!iterm2
+!raycast
+!zed
+{{ end }}
+
+{{/* Windows */}}
+{{ if eq .chezmoi.os "windows" }}
+{{ end }}
