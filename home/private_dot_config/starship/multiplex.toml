@@ -1,0 +1,64 @@
+#: https://starship.rs/config
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+# continuation_prompt = "[▶▶ ](dimmed blue)"
+format = """
+[](red)\
+[ $time ](fg:bright-white bg:red)\
+[](fg:red bg:yellow)\
+[ $username  [$hostname](bold fg:bright-white bg:yellow)  $shell( $env_var) ](fg:bright-white bg:yellow)\
+[](fg:yellow bg:blue)\
+[ $directory ](fg:bright-white bg:blue)\
+[](fg:blue)\
+\n\
+[▶ ](blue)\
+"""
+
+[character]
+success_symbol = "[➜](bold green)"
+
+[hostname]
+disabled = false
+ssh_only = false
+format = "$hostname"
+trim_at = ".gft.com"
+
+[username]
+disabled = false
+show_always = true
+format = "$user"
+
+[shell]
+disabled = false
+bash_indicator = "Bash"
+zsh_indicator = "Zsh"
+fish_indicator = "Fish"
+powershell_indicator = "Powershell"
+unknown_indicator = "Unknown"
+format = "$indicator"
+
+[env_var]
+variable = "HISTFILE"
+format = "$env_value"
+# default = "~/.zsh_history"
+
+[directory]
+truncate_to_repo = false
+format = "$path( $read_only)"
+read_only = "\uf023"
+[directory.substitutions]
+"~/Desktop/Projects" = "\uf1d8 "
+"~" = "\uf015"
+"C\\:" = "\uf992 "
+"/" = " \u203a "
+"\\" = " \u203a "
+
+[time]
+disabled = false
+use_12hr = true
+time_format = "%T"
+format = "$time(bg:red)"
+
+[package]
+disabled = true
