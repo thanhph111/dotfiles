@@ -1,0 +1,177 @@
+#: ~/.profile: executed by the command interpreter for login shells. This file
+#: is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+
+#: Environment variables for applications respecting XDG specifications {{{
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+#: }}}
+
+#: Force UTF-8 usage {{{
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+#: }}}
+
+#: Homebrew {{{
+
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+#: }}}
+
+#: GnuPG {{{
+
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+
+#: }}}
+
+#: Kvantum {{{
+
+#: Use Kvantum to override Qt style
+export QT_STYLE_OVERRIDE=kvantum
+
+#: }}}
+
+#: AWS {{{
+
+#: Workaround to move AWS config to XDG_CONFIG_HOME until this issue is fixed:
+#: https://github.com/aws/aws-sdk/issues/30
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
+export AWS_CLI_HISTORY_FILE="$XDG_CONFIG_HOME/aws/history"
+export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
+#: For some reason Terraform doesn't like the `AWS_WEB_IDENTITY_TOKEN_FILE`
+#: variable, causing it to throw this: `WebIdentityErr: role ARN is not set`
+#: so you'd better not export it if not necessary.
+# export AWS_WEB_IDENTITY_TOKEN_FILE="$XDG_CONFIG_HOME/aws/token"
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
+
+#: }}}
+
+#: Rust {{{
+
+export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+[ -r "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
+
+#: }}}
+
+#: Go {{{
+
+export GOPATH="$XDG_DATA_HOME/go"
+
+#: }}}
+
+#: Pyenv {{{
+
+command -v pyenv >/dev/null 2>&1 && {
+    export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
+    eval "$(pyenv init -)"
+}
+
+#: }}}
+
+#: IBus Bamboo {{{
+
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+#: For Qt4 application
+export QT4_IM_MODULE=ibus
+#: For Clutter/OpenGL application
+export CLUTTER_IM_MODULE=ibus
+export GLFW_IM_MODULE=ibus
+
+#: }}}
+
+#: Bash {{{
+
+[ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+
+#: }}}
+
+#: macOS {{{
+
+#: Disable macOS deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+#: }}}
+
+#: GNU Readline {{{
+
+#: Change initialization file location, not sure if it works
+export INPUTRC="$HOME/.config/readline/inputrc"
+
+#: }}}
+
+#: PowerShell {{{
+
+export POWERSHELL_UPDATECHECK=Off
+export POWERSHELL_TELEMETRY_OPTOUT=1
+
+#: }}}
+
+#: Node.js {{{
+
+export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+#: }}}
+
+#: Docker {{{
+
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+
+#: }}}
+
+#: terminfo {{{
+
+export TERMINFO="$XDG_DATA_HOME/terminfo"
+export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+
+#: }}}
+
+#: Wget {{{
+
+#: Change history file location
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+
+#: }}}
+
+#: IPython {{{
+
+export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
+
+#: }}}
+
+#: IPython {{{
+
+export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
+
+#: }}}
+
+#: Executable search paths, should be at the end to be prepended {{{
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+
+#: Set PATH so it includes user's private bin if it exists
+[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
+
+#: }}}
