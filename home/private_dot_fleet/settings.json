@@ -1,0 +1,31 @@
+{
+    "theme": "sync-with-os",
+    "terminal.fontFamily": "JetBrainsMono Nerd Font",
+    "terminal.lineSpacing": 1.25,
+    "git.autoFetch": false,
+    "git.push.confirm": false,
+    "terminal.fontSize": 12.0,
+    "terminal.clearTerminalOnCmdK": true,
+    "editor.renderWhitespace": "All",
+    "editor.showVisualGuides": true,
+    "editor.softWrapEnabled": true,
+    "editor.honorCamelHumps": false,
+    "files.openFileMode": "doubleClick",
+    "editor.fontSize": 12.0,
+    "editor.lineSpacing": 1.5,
+    "goto_panel.showShortcuts": true,
+    "launchTerminalOnOpen": false,
+    "terminal.profiles": [
+        {
+            "program": "/bin/zsh",
+            "args": [
+                "-is",
+                "eval",
+                "export POSH_THEME=/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json; unset HISTFILE"
+            ],
+            "name": "Light Zsh"
+        },
+    ],
+    "fus.sendAllowed": false,
+    "keymap": "macos-vscode"
+}
