@@ -1,0 +1,775 @@
+#: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
+#: vim: set colorcolumn=81 nospell:
+
+#: Documentation: https://sw.kovidgoyal.net/kitty/conf/
+
+#: Font <<<
+
+#: To get a full list of supported fonts use the `kitty list-fonts` command.
+# font_family      JetBrains Mono Medium
+# bold_font        JetBrains Mono ExtraBold
+# italic_font      JetBrains Mono Medium Italic
+# bold_italic_font JetBrains Mono ExtraBold Italic
+# font_size        10.0
+font_family      Fira Code Retina
+bold_font        Fira Code SemiBold
+italic_font      Fira Code
+bold_italic_font Fira Code SemiBold
+{{ if eq .osid "darwin" -}}
+font_size        13.0
+{{- else -}}
+font_size        10.0
+{{- end }}
+
+#: Don't render ligatures when the cursor is over them
+disable_ligatures cursor
+
+#: Adjust font baseline
+{{ if eq .osid "darwin" -}}
+modify_font baseline 1
+modify_font cell_height -3px
+modify_font baseline 2
+{{- else -}}
+modify_font baseline 0
+modify_font underline_position 1
+{{- end }}
+
+#: Switch to Fira Code variants
+# font_features FiraCodeNerdFontComplete-Retina +cv01 +cv02 +ss03 +ss04
+
+#: Map the specified unicode codepoints to a particular font.
+# symbol_map U+2665 Fira Code Retina Nerd Font Complete Mono
+
+#: >>>
+
+#: Cursor customization <<<
+
+#: Cursor color
+# cursor #91805a
+#: Reverse video cursor color
+cursor none
+
+#: Choose the color of text under the cursor
+# cursor_text_color background
+
+#: The cursor shape can be one of (block, beam, underline)
+cursor_shape block
+
+#: Never stop blinking cursor
+cursor_stop_blinking_after 0
+
+#: >>>
+
+#: Scrollback <<<
+
+#: Number of lines of history to keep in memory for scrolling back
+#: Negative numbers are (effectively) infinite scrollback
+# scrollback_lines 2000
+
+#: Program with which to view scrollback in a new window
+scrollback_pager less -r -~ +G -I --use-backslash -j.5 +INPUT_LINE_NUMBER
+# scrollback_pager fzf --pointer='→ ' --marker='◉ ' --bind 'ctrl-t:toggle-all,ctrl-y:execute(echo -n {+} | xclip -selection clipboard)' --color='fg:-1,fg+:#e31b61:bold,bg:-1,bg+:-1,hl:#0571a3:bold,hl+:#00a5ed:bold,info:3,prompt:4,pointer:13,marker:10,spinner:10,gutter:-1,preview-fg:15,preview-bg:-1,query:15,disabled:8,border:8,header:15' --exact --no-sort --tac --multi --cycle --ansi
+
+#: >>>
+
+#: Mouse <<<
+
+#: Hide mouse cursor after the specified number of seconds of the mouse not
+#: being used
+# mouse_hide_wait 3.0
+
+#: The color and style for highlighting URLs on mouse-over
+url_color #dcdfe4
+#: The `url_style` can be one of: none, single, double, curly
+url_style dashed
+
+#: Copy to clipboard or a private buffer on select
+#: Possibilities: clipboard, no
+#: This enables primary-selection-like in some OS such as macOS
+copy_on_select 0
+
+#: Actions to take when pasting text into the terminal
+#: Possibilities: quote-urls-at-prompt, confirm, filter
+paste_actions quote-urls-at-prompt
+
+#: Characters considered part of a word when double clicking
+# select_by_word_characters :@-./_~?&=%+#
+
+#: Mouse actions <<<
+
+#: Clear all mouse actions
+clear_all_mouse_actions yes
+
+#: Move the cursor
+mouse_map alt+left            press       ungrabbed         mouse_handle_click prompt
+mouse_map shift+alt+left      press       grabbed,ungrabbed mouse_handle_click prompt
+
+#: Prevent the event from being sent to the program that grabbed the mouse
+mouse_map ctrl+left           press       grabbed           discard_event
+#: Then the corresponding release event is used to open a URL
+mouse_map ctrl+left           release     grabbed,ungrabbed mouse_handle_click link
+#: Same as above but for the macOS
+mouse_map cmd+left            press       grabbed           discard_event
+mouse_map cmd+left            release     grabbed,ungrabbed mouse_handle_click link
+
+#: Paste from the clipboard
+mouse_map middle              release     ungrabbed         paste_from_clipboard
+#: Paste from the selection, mimic the X11 primary selection on macOS
+mouse_map shift+middle        press       grabbed           discard_event
+mouse_map shift+middle        release     grabbed,ungrabbed paste_from_buffer 0
+
+#: Open command output with pager
+mouse_map ctrl+shift+left     press       ungrabbed         mouse_show_command_output
+
+#: Double click to select a word
+mouse_map left                doublepress ungrabbed         mouse_selection word
+mouse_map shift+left          doublepress grabbed,ungrabbed mouse_selection word
+
+#: Drag to select text
+mouse_map left                press       ungrabbed         mouse_selection normal
+mouse_map shift+left          press       grabbed,ungrabbed mouse_selection normal
+
+#: Right click to extend selection from begin or end boundary
+mouse_map right               press       ungrabbed         mouse_selection extend
+mouse_map shift+right         press       grabbed,ungrabbed mouse_selection extend
+
+#: Select rectangle of text
+mouse_map ctrl+alt+left       press       ungrabbed         mouse_selection rectangle
+mouse_map ctrl+shift+alt+left press       grabbed,ungrabbed mouse_selection rectangle
+
+#: Select the entire line, limit to the screen buffers
+mouse_map left                triplepress ungrabbed         mouse_selection line
+mouse_map shift+left          triplepress grabbed,ungrabbed mouse_selection line
+
+#: Select from the mouse position to the end of line, limit to the screen buffers
+mouse_map ctrl+alt+left       triplepress ungrabbed         mouse_selection line_from_point
+mouse_map ctrl+shift+alt+left triplepress grabbed,ungrabbed mouse_selection line_from_point
+
+#: >>>
+
+#: >>>
+
+#: Performance tuning <<<
+
+#: Kitty is so fast that makes vim flicker when scrolling, must slow it down
+input_delay 50
+
+#: >>>
+
+#: Terminal bell <<<
+
+#: Number of seconds the bell flashes, disabled
+visual_bell_duration 0.0
+
+#: Use audio bell instead
+enable_audio_bell yes
+
+#: Flash color for visual bell if it's used
+# visual_bell_color #0a6ab6
+
+#: >>>
+
+#: Window layout <<<
+
+#: Unit of this config is point. 8pt = 11px on my Dell P2419H: 1920x1080 in 24in
+#: Use this to check pixel perfect: `printf %b '\e[41m' '\e[8]' '\e[H\e[J'`
+#: Because the tab margin is set to 0 and we want to resize windows to snap in
+#: steps, we must pad with a multiple of character width and height
+#: 8px = 5.8pt for left and right side, 8.5px = 6.2pt for the top and bottom
+window_padding_width 6.2 5.8
+window_margin_width 0
+
+remember_window_size  no
+
+resize_in_steps yes
+
+#: The "c" suffix isn't precise enough, so we need to calculate pixels manually
+#: Each character in font size 10 of Fira Code gets a 8x17px dimension
+#: As we pad the left and right window with 5.8pt, we need to add 8px to them
+#: As we pad the top and bottom window with 6.2pt, we need to add 8.5px to them
+#: Recheck with: xwininfo
+#: 120 is standards line width of some language, so I take it with a padding of
+#: 2 characters
+#: 122 columns * 8px + 8px + 8px = 992px
+initial_window_width  992
+#: Choose number of rows to be nearest golden ratio to the window width
+#: 35 rows * 17px + 8.5px + 8.5px = 612px
+initial_window_height 612
+
+window_resize_step_cells 1
+window_resize_step_lines 1
+
+#: Set windows border color
+# active_border_color green
+
+#: Confirm if closing OS windows with more than one window with running programs
+confirm_os_window_close -1
+
+# Set default first layout
+enabled_layouts splits, all
+
+#: Hide the window decorations with `yes`, have to restart after quitting
+#: completely to take effect. On macOS, use `titlebar-only` for better look.
+{{ if eq .osid "darwin" -}}
+hide_window_decorations titlebar-only
+{{ else -}}
+hide_window_decorations no
+{{- end }}
+
+#: >>>
+
+#: Tab bar <<<
+
+#: On GNOME, windows is not corner-rounded, I put tab bar bottom to for easy
+#: recognizable with Vim tab bar, in macOS I put it at top to not be trimmed
+tab_bar_edge bottom
+
+tab_bar_margin_width  0.0
+tab_bar_margin_height 0.0 0.0
+
+tab_bar_style       powerline
+tab_powerline_style slanted
+
+tab_activity_symbol " "
+
+tab_title_template {fmt.fg.dimgray}\uE0B6{fmt.fg.white}{fmt.bg.dimgray}{index}{fmt.fg.dimgray}{fmt.bg.tab}\uE0B4{fmt.fg.default} {title}
+
+#: >>>
+
+#: Color scheme <<<
+
+foreground           #fffaf4
+background           #0e1019
+selection_foreground #181c27
+selection_background #ffffff
+
+#: Black
+color0               #181a1b
+color8               #555b5e
+
+#: Red
+color1               #a91409
+color9               #ff3078
+
+#: Green
+color2               #38803a
+color10              #addd1e
+
+#: Yellow
+color3               #cc7a00
+color11              #ffec16
+
+#: Blue
+color4               #0a6ab6
+color12              #0287c3
+
+#: Magenta
+color5               #522e92
+color13              #d10aff
+
+#: Cyan
+color6               #37aab9
+color14              #4ae3f7
+
+#: White
+color7               #788187
+color15              #dcdfe4
+
+#: Reverse video for selection
+selection_foreground none
+selection_background #3e4047
+
+#: Tab bar
+active_tab_foreground   #000
+active_tab_background   #eee
+active_tab_font_style   bold
+
+inactive_tab_foreground #444
+inactive_tab_background #999
+inactive_tab_font_style normal
+
+tab_bar_background      #444
+
+# Override with this color profile
+include current-theme.conf
+
+#: >>>
+
+#: Advanced <<<
+
+# shell .
+
+editor vim
+
+#: Set some environment variables in case `term kitty` fails to do it
+#: Preserve this to not break some terminal apps
+#: Also add this to `sudo visudo`: `Defaults env_keep += "TERM TERMINFO"`
+# env TERM=xterm-kitty
+# env TERMINFO="$HOME/.local/kitty.app/share/terminfo/x/xterm-kitty"
+env LESSHISTFILE=/tmp/.lesshst
+
+#: Allow programs running in kitty to read and write from the clipboard. You can
+#: control exactly which actions are allowed. The set of possible actions is:
+#: write-clipboard read-clipboard write-primary read-primary. You can
+#: additionally specify no-append to disable kitty's protocol extension for
+#: clipboard concatenation. The default is to allow writing to the clipboard and
+#: primary selection with concatenation enabled. Note that enabling the read
+#: functionality is a security risk as it means that any program, even one
+#: running on a remote server via SSH can read your clipboard.
+# clipboard_control write-clipboard write-primary
+
+{{ if eq .osid "darwin" -}}
+#: Control where kitty finds the programs to run. The default search order is:
+#: First search the system wide PATH, then ~/.local/bin and ~/bin. If still not
+#: found, the PATH defined in the login shell after sourcing all its startup
+#: files is tried. Finally, if present, the PATH specified by the env option is #: tried.
+{{     if eq .chezmoi.arch "arm64" -}}
+exe_search_path /opt/homebrew/bin
+{{     else -}}
+exe_search_path /usr/local/bin
+{{     end -}}
+{{- end }}
+
+#: Disable periodically check kitty update
+update_check_interval 0
+
+#: Disable the shell integration to be set in each shell
+shell_integration disabled
+
+#: Allow other programs to control kitty
+allow_remote_control yes
+
+#: Make title bar same color with background in macOS
+#: Available values: system, background or colors
+macos_titlebar_color background
+
+#: Use the Option key as an Alt key in macOS
+macos_option_as_alt yes
+
+#: kitty quit when all the top-level windows are closed on macOS
+# macos_quit_when_last_window_closed yes
+
+#: Show or hide the window title in the macOS window or menu-bar
+#: Available values: window, menubar, all, none
+macos_show_window_title_in window
+
+#: Allow custom mouse cursor for macOS
+macos_custom_beam_cursor no
+
+#: Use system color space
+macos_colorspace default
+
+macos_thicken_font 0.5
+
+# startup_session default.session
+
+#: >>>
+
+#: Keyboard shortcuts <<<
+
+#: General <<<
+
+#: Set `kitty_mod`
+kitty_mod ctrl+shift
+
+#: Clear all shortcuts
+clear_all_shortcuts yes
+
+#: Action aliases
+action_alias launch_overlay launch --type=overlay --cwd=current
+action_alias launch_tab launch --type=tab --cwd=current
+action_alias launch_window launch --type=window --cwd=current
+action_alias kitten_hints kitten hints --hints-offset=0 --hints-foreground-color=black --hints-background-color=yellow --hints-text-color=red
+
+#: Kitten aliases
+# kitten_alias hints hints --hints-offset=0 --hints-foreground-color=black --hints-background-color=yellow --hints-text-color=red
+
+#: >>>
+
+#: Font sizes <<<
+
+#: Increase font size (zoom in)
+map ctrl+equal change_font_size all +1.0
+# map ctrl+plus change_font_size all +1.0
+map ctrl+kp_add change_font_size all +1.0
+map cmd+equal change_font_size all +1.0
+
+#: Decrease font size (zoom out)
+map ctrl+minus change_font_size all -1.0
+map ctrl+kp_subtract change_font_size all -1.0
+map cmd+minus change_font_size all -1.0
+
+#: Reset font size
+map ctrl+0 change_font_size all 0
+map cmd+0 change_font_size all 0
+
+#: >>>
+
+#: Tab management <<<
+
+#: Next tab
+map ctrl+page_down next_tab
+map cmd+opt+right next_tab
+
+#: Previous tab
+map ctrl+page_up previous_tab
+map cmd+opt+left previous_tab
+
+#: Go to MRU (most recent used) tab
+map ctrl+tab goto_tab -1
+map ctrl+shift+tab goto_tab -1
+
+#: New tab
+map ctrl+shift+t new_tab_with_cwd !neighbor
+map cmd+t new_tab_with_cwd !neighbor
+
+#: Close tab
+map ctrl+shift+w close_tab
+map cmd+w close_tab
+
+#: Move tab forward
+map ctrl+shift+page_down move_tab_forward
+# map cmd+opt+shift+right move_tab_forward
+
+#: Move tab backward
+map ctrl+shift+page_up move_tab_backward
+# map cmd+opt+shift+left move_tab_backward
+
+#: Set tab title
+map ctrl+shift+f2 set_tab_title
+
+#: Go to tab
+map ctrl+1 goto_tab 1
+map ctrl+2 goto_tab 2
+map ctrl+3 goto_tab 3
+map ctrl+4 goto_tab 4
+map ctrl+5 goto_tab 5
+map ctrl+6 goto_tab 6
+map ctrl+7 goto_tab 7
+map ctrl+8 goto_tab 8
+map ctrl+9 goto_tab 9
+map cmd+1 goto_tab 1
+map cmd+2 goto_tab 2
+map cmd+3 goto_tab 3
+map cmd+4 goto_tab 4
+map cmd+5 goto_tab 5
+map cmd+6 goto_tab 6
+map cmd+7 goto_tab 7
+map cmd+8 goto_tab 8
+map cmd+9 goto_tab 9
+
+#: >>>
+
+#: Window management <<<
+
+# map kitty_mod+y launch mutt
+# map ctrl+alt+enter launch --cwd=current
+# map ctrl+enter launch --allow-remote-control some_program
+# map ctrl+n launch --location=neighbor some_program
+# map ctrl+f launch --location=first some_program
+
+#: New OS window
+map ctrl+shift+n new_os_window
+map cmd+n new_os_window
+
+#: Close OS window
+map ctrl+shift+q close_os_window
+# map cmd+q close_os_window
+
+#: Close window
+map ctrl+alt+shift+w close_window
+map cmd+opt+w close_window
+
+#: Next window
+map ctrl+alt+page_down next_window
+
+#: Previous window
+map ctrl+alt+page_up previous_window
+
+#: Go to MRU (most recent used) window
+map ctrl+alt+tab nth_window -1
+map ctrl+alt+shift+tab nth_window -1
+map cmd+opt+tab nth_window -1
+map cmd+opt+shift+tab nth_window -1
+
+#: Move window forward
+map ctrl+alt+shift+page_up move_window_forward
+
+#: Move window backward
+map ctrl+alt+shift+page_down move_window_backward
+
+#: Move window to top
+map ctrl+shift+alt+home move_window_to_top
+
+#: Move window to end
+map ctrl+shift+alt+end move_window_to_bottom
+
+#: Focus window
+map ctrl+alt+1 first_window
+map ctrl+alt+2 second_window
+map ctrl+alt+3 third_window
+map ctrl+alt+4 fourth_window
+map ctrl+alt+5 fifth_window
+map ctrl+alt+6 sixth_window
+map ctrl+alt+7 seventh_window
+map ctrl+alt+8 eighth_window
+map ctrl+alt+9 ninth_window
+map ctrl+alt+0 tenth_window
+
+#: Navigate window
+map ctrl+alt+up neighboring_window up
+map ctrl+alt+down neighboring_window down
+map ctrl+alt+right neighboring_window right
+map ctrl+alt+left neighboring_window left
+# map cmd+opt+up neighboring_window up
+# map cmd+opt+down neighboring_window down
+# map cmd+opt+right neighboring_window right
+# map cmd+opt+left neighboring_window left
+
+#: New window
+map ctrl+alt+shift+t new_window_with_cwd
+map cmd+opt+t new_window_with_cwd
+map ctrl+alt+\ launch --location=vsplit --cwd=current
+map ctrl+alt+shift+\ launch --location=hsplit --cwd=current
+
+#: Move window
+map ctrl+alt+shift+up move_window up
+map ctrl+alt+shift+down move_window down
+map ctrl+alt+shift+right move_window right
+map ctrl+alt+shift+left move_window left
+# map cmd+opt+shift+up move_window up
+# map cmd+opt+shift+down move_window down
+# map cmd+opt+shift+right move_window right
+# map cmd+opt+shift+left move_window left
+
+#: Start resizing window
+map ctrl+shift+l>r start_resizing_window
+
+#: Show window numbers (Focus window)
+map ctrl+shift+l>f focus_visible_window
+
+#: Swap windows
+map ctrl+shift+l>w swap_with_window
+
+#: Layouts
+map ctrl+shift+l>l next_layout
+map ctrl+shift+l>s goto_layout stack
+map ctrl+shift+l>t goto_layout tall
+map ctrl+shift+l>g goto_layout grid
+map ctrl+shift+l>p goto_layout splits
+map ctrl+shift+l>h goto_layout horizontal
+map ctrl+shift+l>v goto_layout vertical
+
+#: >>>
+
+#: Scrolling <<<
+
+#: Scroll line up
+map alt+up scroll_line_up
+
+#: Scroll line down
+map alt+down scroll_line_down
+
+#: Scroll page up
+map alt+page_up scroll_page_up
+
+#: Scroll page down
+map alt+page_down scroll_page_down
+
+#: Scroll to top
+map alt+home scroll_home
+
+#: Scroll to bottom
+map alt+end scroll_end
+
+#: >>>
+
+#: Clipboard <<<
+
+#: Copy to clipboard
+map ctrl+shift+c copy_to_clipboard
+map cmd+c copy_to_clipboard
+
+#: Paste from clipboard
+map ctrl+shift+v paste_from_clipboard
+map cmd+v paste_from_clipboard
+
+#: Paste from selection
+map ctrl+shift+insert paste_from_selection
+
+#: Pass selection to program
+# map ctrl+shift+o pass_selection_to_program
+# map kitty_mod+o  pass_selection_to_program firefox
+# map kitty_mod+y  new_window less @selection
+
+#: >>>
+
+#: Scrollback <<<
+
+#: Browse scrollback buffer in `less`
+map ctrl+shift+f>h show_scrollback
+
+#: Browse scrollback buffer in `fzf`
+map ctrl+shift+f>f launch --type=overlay --stdin-source=@screen_scrollback --stdin-add-formatting fzf --pointer='→ ' --marker='◉ ' --bind 'ctrl-t:toggle-all,ctrl-y:execute(echo -n {+} | xclip -selection clipboard)' --color='fg:-1,fg+:#e31b61:bold,bg:-1,bg+:-1,hl:#0571a3:bold,hl+:#00a5ed:bold,info:3,prompt:4,pointer:13,marker:10,spinner:10,gutter:-1,preview-fg:15,preview-bg:-1,query:15,disabled:8,border:8,header:15' --exact --no-sort --tac --multi --cycle --ansi
+
+#: Scroll to prompts
+map ctrl+shift+x scroll_to_prompt 1
+map ctrl+shift+z scroll_to_prompt -1
+map ctrl+shift+h show_last_command_output
+
+#: >>>
+
+#: Select and act on visible text <<<
+
+#: Open <<<
+
+#: Go to URL
+map ctrl+shift+g>u kitten_hints --type url
+
+#: Go to selected path
+map ctrl+shift+g>p kitten_hints --type path
+
+#: Go to the selected file at the selected line
+map ctrl+shift+g>n kitten_hints --type linenum
+
+#: Go to the selected hyperlink
+map ctrl+shift+g>y kitten_hints --type hyperlink
+
+#: Go to the Visual Studio line
+map ctrl+shift+g>c kitten_hints --type linenum --linenum-action=background code -g {path}:{line}:0
+
+#: >>>
+
+#: Copy <<<
+
+#: Paste selected path
+map ctrl+shift+y>p kitten_hints --type path --program @
+
+#: Paste selected line
+map ctrl+shift+y>l kitten_hints --type line --program @ --hints-text-color=white
+
+#: Paste selected word
+map ctrl+shift+y>w kitten_hints --type word --program @ --hints-text-color=white
+
+#: Paste selected hash
+map ctrl+shift+y>h kitten_hints --type hash --program @
+
+#: >>>
+
+#: Paste <<<
+
+#: Paste selected path
+map ctrl+shift+p>p kitten_hints --type path --program -
+
+#: Paste selected line
+map ctrl+shift+p>l kitten_hints --type line --program - --hints-text-color=white
+
+#: Paste selected word
+map ctrl+shift+p>w kitten_hints --type word --program - --hints-text-color=white
+
+#: Paste selected hash
+map ctrl+shift+p>h kitten_hints --type hash --program -
+
+#: >>>
+
+#: >>>
+
+#: Marker <<<
+
+#: Marker colors
+mark1_foreground black
+mark1_background green
+mark2_foreground black
+mark2_background yellow
+mark3_foreground white
+mark3_background red
+
+#: Manipulate markers
+map ctrl+shift+m>m create_marker
+map ctrl+shift+m>x delete_marker
+map ctrl+shift+\>m toggle_marker regex 1 \\bINFO\\b 2 \\bWARNING\\b 3 \\bERROR\\b
+map ctrl+shift+a scroll_to_mark prev
+map ctrl+shift+s scroll_to_mark next
+
+#: Predefined markers
+map ctrl+shift+m>1 toggle_marker regex 1 \\bINFO\\b
+map ctrl+shift+m>2 toggle_marker regex 2 \\bWARNING\\b
+map ctrl+shift+m>3 toggle_marker regex 3 \\bERROR\\b
+
+#: >>>
+
+#: Miscellaneous <<<
+
+#: Show kitty documentation
+map f1 show_kitty_doc conf
+
+#: Toggle fullscreen
+map f11 toggle_fullscreen
+map cmd+ctrl+f toggle_fullscreen
+
+#: Toggle macOS secure keyboard entry
+map cmd+opt+s toggle_macos_secure_keyboard_entry
+
+#: Unicode input
+map ctrl+shift+u kitten unicode_input
+map cmd+ctrl+space kitten unicode_input
+
+#: Reset the terminal
+map ctrl+shift+delete clear_terminal reset active
+
+#: Clear up to cursor line
+map cmd+k clear_terminal to_cursor active
+
+#: Reload kitty.conf
+map ctrl+shift+f5 load_config_file
+map cmd+control+, load_config_file
+
+#: Debug kitty configuration
+map ctrl+shift+f6 debug_config
+map cmd+opt+, debug_config
+
+#: Send arbitrary text on key presses
+# map ctrl+alt+a send_text all Special text
+# map ctrl+alt+a send_text normal Word\x1b[H
+# map ctrl+alt+a send_text application Word\x1bOH
+
+#: Profiles (or sessions)
+map ctrl+shift+k>p>1 launch_tab pwsh -NoLogo
+
+#: Config Vim
+#: Do this cause a glitch in the first time of session (testing)
+map ctrl+shift+k>c>v combine ; launch_tab vim -c ':edit $MYVIMRC' ; remote_control set-spacing padding=0
+# map ctrl+shift+k>c>v launch_tab vim -c ':edit $MYVIMRC'
+#: Config Bash
+map ctrl+shift+k>c>b launch_tab vim -c ':edit ~/.bashrc'
+#: Config Zsh
+map ctrl+shift+k>c>z launch_tab vim -c ':edit ~/.zshrc'
+#: Config Kitty
+map ctrl+shift+, launch_window kitty +edit-config
+map cmd+, launch_window kitty +edit-config
+map ctrl+shift+k>c>k launch_tab kitty +edit-config
+
+#: Open Theme editor
+map ctrl+shift+k>t launch --type=overlay kitty +kitten themes
+
+#: Open Vim
+map ctrl+shift+k>o>v launch_tab vim
+#: Open Nano
+map ctrl+shift+k>o>n launch_tab nano
+#: Open the kitty command shell
+map ctrl+shift+escape kitty_shell window
+map ctrl+shift+k>o>k kitty_shell tab
+
+#: Toggle padding
+map ctrl+shift+\>p>[ remote_control set-spacing padding=0
+map ctrl+shift+\>p>] remote_control set-spacing padding=default
+#: Toggle ligatures
+map ctrl+shift+\>l>[ remote_control disable-ligatures always
+map ctrl+shift+\>l>] remote_control disable-ligatures never
+
+#: Find `map` or `mouse_map` commands in `kitty.conf`
+map ctrl+shift+f>? launch_overlay ${SHELL} -il -c 'rg "^\s*(map|mouse_map)\s+.*" ~/.config/kitty/kitty.conf | fzf --header="Find mapping in kitty.conf"'
+
+#: >>>
+
+#: >>>
