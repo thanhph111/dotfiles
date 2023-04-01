@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+#: Download stream from Teams records
+#: Steps:
+#:     1. Find a URL name 'videomanifest?provider=...' in Network tab in Developer tool
+#:     2. Copy that link and test in a video player such as IINA
+#:     3. Paste it as the first argument in this command
+#: If it stuck, try to save it in MKV first
+
+if ! command -v ffmpeg &>/dev/null; then
+    echo "'ffmpeg' is not found"
+fi
+
+ffmpeg -i "$1" -c copy "${2-output.mp4}"
+# ffmepg -i "$1" -c copy -bsf:a aac_adtstoasc "${2-output.mkv}"

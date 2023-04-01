@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+#: This script is used to send a notification to the user
+
+#: Usage: notify <message> [title] [icon]
+#: Example: notify "Hello World" "Hello" "dialog-information"
+
+message="$1"
+title="$2"
+icon="$3"
+
+command_exists() {
+    command -v "$@" &>/dev/null
+}
+
+send_osc9_notification() {
+    printf '\x1b]9;%s\e\\' "$1"
+}
+
+send_osc99_notification() {
+    if [[ -z "$title" ]]; then
+        printf '\x1b]99;;%s\x1b\\' "$1"
+    else
+        printf '\x1b]99;i=1:d=0;%s\x1b\\' "$2"
+        printf '\x1b]99;i=1:d=1:p=body;%s\x1b\\' "$1"
+    fi
+}
+
+send_osc777_notification() {
+    printf '\x1b]777;notify;%s;%s\x1b\\' "$2" "$1"
+}
+
+#: Use OSC99 in kitty for the best customization
+if [[ "$TERM" == xterm-kitty ]]; then
+    echo 123
+    message=${message:-'New notification from kitty!'}
+    title="${title:-Notification}"
+    send_osc99_notification "$message" "$title"
+    exit 0
+fi
+
+#: Use OSC777 or OSC9 in WezTerm
+if [[ "$TERM_PROGRAM" == WezTerm ]]; then
+    message=${message:-'New notification from WezTerm!'}
+    if [[ -z "$title" ]]; then
+        send_osc9_notification "$message"
+    else
+        send_osc777_notification "$message" "$title"
+    fi
+    exit 0
+fi
+
+#: If iTerm2 is present, and title is not provided, go for OSC9
+[[ "$TERM_PROGRAM" == iTerm.app ]] && [[ -z "$title" ]] && {
+    message=${message:-'New notification from iTerm2!'}
+    printf '\x1b]9;%s\x1b\\' "$message"
+    exit 0
+}
+
+#: Try each utility in turn until one is found
+message=${message:-'A new notification!'}
+title="${title:-Notification}"
+icon="${icon:-dialog-information}"
+
+if command_exists notify-send; then
+    if [[ -z "$title" ]]; then
+        notify-send -i "$icon" "$message"
+    else
+        notify-send -i "$icon" "$title" "$message"
+    fi
+elif command_exists terminal-notifier; then
+    if [[ -z "$title" ]]; then
+        terminal-notifier -message "$message"
+    else
+        terminal-notifier -message "$message" -title "$title"
+    fi
+elif command_exists osascript; then
+    if [[ -z "$title" ]]; then
+        osascript -e "display notification \"$message\""
+    else
+        osascript -e "display notification \"$message\" with title \"$title\""
+    fi
+else
+    #: Send an OSC99 for the last attempt, hope the terminal supports it
+    send_osc99_notification "$message" "$title"
+fi
+
+#: Add a bell if all above attempts fail
+printf '\a'

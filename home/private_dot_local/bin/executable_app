@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+from abc import ABC, abstractmethod
+from email.message import Message
+from enum import Enum
+from pathlib import Path
+from typing import Any, NamedTuple
+
+DEFAULT_PATH = Path.home() / ".local/bin"
+
+
+class Response(NamedTuple):
+    body: str
+    headers: Message
+    status: int
+    error: bool = False
+
+    def json(self) -> Any:
+        try:
+            output = json.loads(self.body)
+        except json.JSONDecodeError:
+            output = ""
+        return output
+
+
+class Method(Enum):
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+
+
+def request(
+    url: str,
+    method: Method = Method.GET,
+    headers: dict = None,
+    data: dict = None,
+    data_as_json: bool = True,
+    params: dict = None,
+) -> Response:
+    """https://github.com/bowmanjd/pysimpleurl"""
+
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    if not url.casefold().startswith("http"):
+        raise urllib.error.URLError("Incorrect and possibly insecure protocol in URL")
+    request_data = None
+    headers = headers or {}
+    data = data or {}
+    params = params or {}
+    headers = {"Accept": "application/json", **headers}
+
+    if method is Method.GET:
+        params = {**params, **data}
+        data = None
+
+    if params:
+        url += "?" + urllib.parse.urlencode(params, doseq=True, safe="/")
+
+    if data:
+        if data_as_json:
+            request_data = json.dumps(data).encode()
+            headers["Content-Type"] = "application/json; charset=UTF-8"
+        else:
+            request_data = urllib.parse.urlencode(data).encode()
+
+    http_request = urllib.request.Request(
+        url=url, data=request_data, headers=headers, method=method.value
+    )
+
+    try:
+        with urllib.request.urlopen(http_request) as http_response:
+            response = Response(
+                headers=http_response.headers,
+                status=http_response.status,
+                body=http_response.read().decode(
+                    http_response.headers.get_content_charset("utf-8")
+                ),
+            )
+    except urllib.error.HTTPError as exception:
+        response = Response(
+            body=str(exception.reason),
+            headers=exception.headers,
+            status=exception.code,
+            error=True,
+        )
+
+    return response
+
+
+def download(url: str, file_path: Path) -> None:
+    from urllib import request
+
+    print(f"Downloading {url} to {file_path}")
+    with request.urlopen(url) as response, open(file_path, "wb") as file:
+        data = response.read()
+        file.write(data)
+
+
+def unarchive(file_path: Path, destination: Path) -> None:
+    print(f"Unarchiving {file_path} to {destination}")
+    if file_path.suffix == ".zip":
+        import zipfile
+
+        with zipfile.ZipFile(file_path) as file:
+            file.extractall(destination)
+    elif file_path.suffix in (".tar", ".tar.gz", ".tgz", ".txz"):
+        import tarfile
+
+        with tarfile.open(file_path) as file:
+            file.extractall(destination)
+    else:
+        raise ValueError(f"Unknown archive type: {file_path}")
+
+
+class Downloader(ABC):
+    @abstractmethod
+    def download(
+        self, file_pattern: str, output_file: Path, version: str = None
+    ) -> None:
+        pass
+
+
+class GitHub(Downloader):
+    def __init__(self, owner: str, repo: str) -> None:
+        self.owner = owner
+        self.repo = repo
+        self.api_url = f"https://api.github.com/repos/{self.owner}/{self.repo}/releases"
+        self.download_url = (
+            f"https://github.com/{self.owner}/{self.repo}/releases/download"
+        )
+
+    def download(
+        self, file_pattern: str, output_file: Path, version: str = None
+    ) -> None:
+        import re
+
+        version = version or "latest"
+        response = request(f"{self.api_url}/{version}")
+        if response.error:
+            raise Exception(response.body)
+
+        version = response.json()["tag_name"]
+        browser_download_urls: list[str] = [
+            asset["browser_download_url"] for asset in response.json()["assets"]
+        ]
+
+        browser_download_url = next(
+            (
+                url
+                for url in browser_download_urls
+                if re.search(
+                    file_pattern, url.removeprefix(f"{self.download_url}/{version}/")
+                )
+            ),
+            None,
+        )
+        if not browser_download_url:
+            raise Exception(f"Could not find {file_pattern} in {browser_download_urls}")
+        download(browser_download_url, output_file)
+
+
+class App(ABC):
+    @abstractmethod
+    def install(self, version: str = None) -> None:
+        pass
+
+    @abstractmethod
+    def update(self, version: str = None) -> None:
+        pass
+
+    @abstractmethod
+    def uninstall(self) -> None:
+        pass
+
+
+class WezTerm(App):
+    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+        self.executable = executable or "wezterm"
+        self.install_directory = install_directory or Path.home() / ".local/bin"
+        self.executable_path = self.install_directory / self.executable
+
+    def install(self, version: str = None) -> None:
+        github = GitHub("wez", "wezterm")
+        if version == "nightly":
+            download(
+                f"{github.download_url}/nightly/WezTerm-nightly-Ubuntu18.04.AppImage",
+                self.executable_path,
+            )
+        else:
+            github.download(".AppImage$", self.executable_path, version)
+        self.executable_path.chmod(0o755)
+
+    def update(self, version: str = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        self.executable_path.unlink()
+
+
+class Kitty(App):
+    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+        self.executable = executable or "kitty"
+        self.install_directory = install_directory or Path.home() / ".local/apps/kitty"
+
+    def install(self, version: str = None) -> None:
+        architecture = "x86_64"
+        github = GitHub("kovidgoyal", "kitty")
+        if version == "nightly":
+            tag = version = "nightly"
+        else:
+            latest_version = request(
+                "https://sw.kovidgoyal.net/kitty/current-version.txt"
+            )
+            if latest_version.error:
+                raise Exception(latest_version.body)
+            tag = "v" + (version := latest_version.body)
+
+        archive_file_name = f"kitty-{version}-{architecture}.txz"
+        archive_file = self.install_directory.parent / archive_file_name
+        download(f"{github.download_url}/{tag}/{archive_file_name}", archive_file)
+
+        unarchive(archive_file, self.install_directory)
+        archive_file.unlink()
+
+        (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
+        (DEFAULT_PATH / self.executable).symlink_to(
+            self.install_directory / "bin/kitty"
+        )
+
+        application_directory = Path.home() / ".local/share/applications"
+        application_directory.mkdir(parents=True, exist_ok=True)
+        install_share_directory = self.install_directory / "share"
+        for desktop_file_name in {"kitty.desktop", "kitty-open.desktop"}:
+            exec_file = self.install_directory / "bin/kitty"
+            icon_file = install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
+            (application_directory / desktop_file_name).write_text(
+                (install_share_directory / "applications" / desktop_file_name)
+                .read_text()
+                .replace("Exec=kitty", f"Exec={exec_file}")
+                .replace("Icon=kitty", f"Icon={icon_file}")
+            )
+
+    def update(self, version: str = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        import shutil
+
+        (DEFAULT_PATH / self.executable).unlink()
+        shutil.rmtree(self.install_directory)
+
+        (Path.home() / ".local/share/applications/kitty.desktop").unlink()
+        (Path.home() / ".local/share/applications/kitty-open.desktop").unlink()
+
+
+class Zap(App):
+    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+        self.executable = executable or "zap"
+        self.install_directory = install_directory or Path.home() / ".local/bin"
+        self.executable_path = self.install_directory / self.executable
+
+    def install(self, version: str = None) -> None:
+        github = GitHub("srevinsaju", "zap")
+        github.download("^zap-amd64$", self.executable_path, version)
+        self.executable_path.chmod(0o755)
+
+    def update(self, version: str = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        self.executable_path.unlink()
+
+
+APPS = {app_class.__name__.lower(): app_class for app_class in App.__subclasses__()}
+
+
+def get_parser() -> argparse.ArgumentParser:
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(help="sub-command help", dest="command")
+    subparsers.required = True
+
+    install_parser = subparsers.add_parser("install", help="install help")
+    install_parser.add_argument("app", choices=APPS.keys(), help="app to install")
+    install_parser.add_argument("--version", help="version to install")
+    install_parser.set_defaults(
+        func=lambda args: APPS[args.app]().install(args.version)
+    )
+
+    update_parser = subparsers.add_parser("update", help="update help")
+    update_parser.add_argument("app", choices=APPS.keys(), help="app to update")
+    update_parser.add_argument("--version", help="version to update")
+    update_parser.set_defaults(func=lambda args: APPS[args.app]().update(args.version))
+
+    uninstall_parser = subparsers.add_parser("uninstall", help="uninstall help")
+    uninstall_parser.add_argument("app", choices=APPS.keys(), help="app to uninstall")
+    uninstall_parser.set_defaults(func=lambda args: APPS[args.app]().uninstall())
+
+    return parser
+
+
+def main() -> None:
+    import sys
+
+    parser = get_parser()
+    args = parser.parse_args(sys.argv[1:])
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

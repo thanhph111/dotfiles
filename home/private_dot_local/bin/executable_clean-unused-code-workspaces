@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# This script is used to clean the VSCode workspaces that don't exist
+# Reference: https://gist.github.com/3v1n0/8e27c06ca88159fdc140533608edbe37
+
+# CONFIG_PATH=~/.config/Code
+CONFIG_PATH="$HOME/Library/Application Support/Code"
+
+get_folder_attribute() {
+    python3 \
+        -c 'import sys, json; print(json.load(open(sys.argv[1], "r"))["folder"])' \
+        "$1" 2>/dev/null |
+        sed 's#^file://##;s/+/ /g;s/%\(..\)/\\x\1/g;'
+}
+
+for i in "$CONFIG_PATH"/User/workspaceStorage/*; do
+    if [[ -f "$i"/workspace.json ]]; then
+        folder="$(get_folder_attribute "$i"/workspace.json)"
+
+        if [[ -n "$folder" ]] && [[ ! -d "$folder" ]]; then
+            echo -n "Removing workspace $(basename "$i")"
+            echo " for deleted folder $folder of size $(du -sh "$i" | cut -f1)"
+            /usr/bin/env rm -rfv "$i"
+        fi
+    fi
+done

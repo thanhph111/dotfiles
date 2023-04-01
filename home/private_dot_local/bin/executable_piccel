@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from enum import Enum
+from typing import Iterable
+
+
+@dataclass
+class Rgb:
+    red: int
+    green: int
+    blue: int
+
+    @classmethod
+    def from_hex(cls, hex_code: str):
+        return cls(*bytes.fromhex(hex_code.lstrip("#")))
+
+
+def format_cell(text: str, foreground: Rgb = None, background: Rgb = None) -> None:
+    foreground_sequence = "\033[38;2;{};{};{}m"
+    background_sequence = "\033[48;2;{};{};{}m"
+    reset_sequence = "\033[0m"
+    cell = ""
+    if foreground:
+        cell += foreground_sequence.format(
+            foreground.red, foreground.green, foreground.blue
+        )
+    if background:
+        cell += background_sequence.format(
+            background.red, background.green, background.blue
+        )
+    cell += text
+    cell += reset_sequence
+    return cell
+
+
+class StandardSize(Enum):
+    SMALL = 8
+    MEDIUM = 16
+
+
+@dataclass
+class Sprite:
+    width: int
+    height: int
+    sprite: Iterable[Iterable[str]]
+
+    def horizontal_add(self, other: Sprite) -> Sprite:
+        assert self.height == other.height
+        return Sprite(
+            self.width + other.width,
+            self.height,
+            (row1 + row2 for row1, row2 in zip(self.sprite, other.sprite)),
+        )
+
+    def vertical_add(self, other: Sprite) -> Sprite:
+        return Sprite(
+            max(self.width, other.width),
+            self.height + other.height,
+            self.sprite + other.sprite,
+        )
+
+    def __str__(self) -> str:
+        return "\n".join("".join(row) for row in self.sprite)
+
+
+@dataclass
+class Frame:
+    frame: tuple[tuple[str]]
+
+    def to_sprite(self, size: StandardSize) -> Sprite:
+        if size == StandardSize.SMALL:
+            return self._to_8x8_sprite()
+        elif size == StandardSize.MEDIUM:
+            return self._to_16x16_sprite()
+        else:
+            raise ValueError(f"Unknown size: {size}")
+
+    def _to_8x8_sprite(self) -> Sprite:
+        upper_half_block = "▀"
+        lower_half_block = "▄"
+        sprite = []
+        for upper_row, lower_row in zip(self.frame[::2], self.frame[1::2]):
+            row = []
+            for upper_color, lower_color in zip(upper_row, lower_row):
+                if upper_color and lower_color:
+                    cell = format_cell(
+                        upper_half_block,
+                        foreground=Rgb.from_hex(upper_color),
+                        background=Rgb.from_hex(lower_color),
+                    )
+                elif upper_color:
+                    cell = format_cell(
+                        upper_half_block, foreground=Rgb.from_hex(upper_color)
+                    )
+                elif lower_color:
+                    cell = format_cell(
+                        lower_half_block, foreground=Rgb.from_hex(lower_color)
+                    )
+                else:
+                    cell = " "
+                row.append(cell)
+            sprite.append(row)
+        return Sprite(
+            width=StandardSize.SMALL.value,
+            height=StandardSize.SMALL.value,
+            sprite=sprite,
+        )
+
+    def _to_16x16_sprite(self) -> Sprite:
+        sprite = []
+        for color_row in self.frame:
+            row = []
+            for color in color_row:
+                cell = format_cell(
+                    " ",
+                    foreground=None,
+                    background=Rgb.from_hex(color) if color else None,
+                )
+                row.append(cell)
+                row.append(cell)
+            sprite.append(row)
+        return Sprite(
+            width=StandardSize.MEDIUM.value,
+            height=StandardSize.MEDIUM.value,
+            sprite=sprite,
+        )
+
+
+@dataclass
+class Character:
+    name: str
+    frame: Frame
+    display_name: str = None
+    description: str = None
+
+
+@dataclass
+class Collection:
+    characters: Iterable[Character]
+
+    def from_file(path: str) -> Collection:
+        with open(path) as file:
+            data = json.load(file)
+        return Collection(
+            Character(
+                name=character["name"],
+                display_name=character["display_name"],
+                description=character["description"],
+                frame=Frame(character["frame"]),
+            )
+            for character in data["characters"]
+        )
+
+    def __iter__(self) -> Iterable[Character]:
+        return iter(self.characters)
+
+    def __next__(self) -> Character:
+        return next(self.characters)
+
+    def get_character_by_name(self, name: str) -> Character:
+        character = next(
+            (character for character in self.characters if character.name == name),
+            None,
+        )
+        if character is None:
+            raise KeyError(f"Character {name} not found")
+        return character
+
+
+if __name__ == "__main__":
+    import sys
+    from functools import reduce
+
+    collection = Collection.from_file(sys.argv[1])
+
+    space = Frame([(None,) * 2] * 8)
+    frames = [space]
+    collection.characters = list(collection.characters)
+    for ghost in collection.characters[:4]:
+        frames.append(ghost.frame)
+        frames.append(space)
+
+    # dot = Frame(
+    #     (
+    #         *[(None, None, None, None, None, None, None)] * 3,
+    #         *[(None, None, None, "#ffff00", "#ffff00", None, None)] * 2,
+    #         *[(None, None, None, None, None, None, None)] * 3,
+    #     )
+    # )
+    # frames.extend((space,) * 2)
+    # pac_man = collection.get_character_by_name("pac-man")
+    # frames.append(pac_man.frame)
+    # frames.extend((space,))
+    # frames.extend((dot,) * 3)
+
+    sprite = reduce(
+        lambda sprite1, sprite2: sprite1.horizontal_add(sprite2),
+        (frame.to_sprite(StandardSize.SMALL) for frame in frames),
+    )
+    print(sprite)
+    print()

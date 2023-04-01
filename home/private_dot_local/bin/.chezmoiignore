@@ -1,0 +1,13 @@
+{{/* Linux */}}
+{{ if eq .chezmoi.os "linux" }}
+{{ end }}
+
+{{/* macOS */}}
+{{ if eq .chezmoi.os "darwin" }}
+app
+{{ end }}
+
+{{/* Windows */}}
+{{ if eq .chezmoi.os "windows" }}
+*
+{{ end }}

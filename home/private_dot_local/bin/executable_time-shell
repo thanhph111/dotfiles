@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Measure a shell booting
+
+shell=${1-$SHELL}
+
+for _ in $(seq 1 4); do
+    /usr/bin/time "$shell" -i -c exit
+done
