@@ -1,0 +1,39 @@
+[metadata]
+name = "Multiplex Dark"
+
+[colors]
+ansi = [
+    "#181a1b",
+    "#a91409",
+    "#38803a",
+    "#cc7a00",
+    "#0a6ab6",
+    "#522e92",
+    "#37aab9",
+    "#788187",
+]
+
+brights = [
+    "#555b5e",
+    "#ff3078",
+    "#addd1e",
+    "#ffec16",
+    "#0287c3",
+    "#d10aff",
+    "#4ae3f7",
+    "#dcdfe4",
+]
+
+foreground = "#fffaf4"
+background = "#0e1019"
+
+selection_fg = "none"
+selection_bg = "rgba(50% 50% 50% 25%)"
+
+cursor_bg = "#91805a"
+cursor_fg = "black"
+cursor_border = "#52ad70"
+
+scrollbar_thumb = "#222222"
+split = "#444444"
+dead_key_cursor = "orange"

@@ -1,0 +1,70 @@
+[metadata]
+name = "Multiplex Light"
+
+[colors]
+ansi = [
+    "#181a1b",
+    "#a91409",
+    "#38803a",
+    "#cc7a00",
+    "#0a6ab6",
+    "#522e92",
+    "#37aab9",
+    "#788187",
+]
+
+brights = [
+    "#555b5e",
+    "#ff3078",
+    "#addd1e",
+    "#ffec16",
+    "#0287c3",
+    "#d10aff",
+    "#4ae3f7",
+    "#dcdfe4",
+]
+
+foreground = "#0e1019"
+background = "#f3f3f3"
+
+selection_fg = "none"
+selection_bg = "rgba(50% 50% 50% 25%)"
+
+cursor_bg = "#91805a"
+cursor_fg = "black"
+cursor_border = "#52ad70"
+
+scrollbar_thumb = "rgba(50% 50% 50% 30%)"
+split = "#444444"
+dead_key_cursor = "orange"
+
+[colors.tab_bar]
+background = "#444"
+
+[colors.tab_bar.active_tab]
+fg_color = "#000"
+bg_color = "#eaeaeb"
+intensity = "Bold"
+underline = "None"
+italic = false
+strikethrough = false
+
+[colors.tab_bar.inactive_tab]
+fg_color = "#444"
+bg_color = "#cdced1"
+intensity = "Normal"
+underline = "None"
+italic = false
+strikethrough = false
+
+[colors.tab_bar.inactive_tab_hover]
+fg_color = "#444"
+bg_color = "#999"
+
+[colors.tab_bar.new_tab]
+fg_color = "#444"
+bg_color = "#999"
+
+[colors.tab_bar.new_tab_hover]
+fg_color = "#444"
+bg_color = "#999"
