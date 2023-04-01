@@ -1,0 +1,35 @@
+*
+
+{{/* General */}}
+!.vimrc
+!.ssh
+
+{{/* Linux and macOS */}}
+{{ if eq .chezmoi.os "linux" "darwin" }}
+!.cache
+!.config
+!.local
+
+!.Brewfile
+!.bashrc
+!.profile
+!.zprofile
+!.zshrc
+{{ end }}
+
+{{/* Linux */}}
+{{ if eq .chezmoi.os "linux" }}
+{{ end }}
+
+{{/* macOS */}}
+{{ if eq .chezmoi.os "darwin" }}
+!.fleet
+!.warp
+!Library
+{{ end }}
+
+{{/* Windows */}}
+{{ if eq .chezmoi.os "windows" }}
+!Documents
+!AppData
+{{ end }}
