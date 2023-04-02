@@ -1,10 +1,8 @@
+{{- if eq .chezmoi.os "darwin" -}}
+
 #! /usr/bin/env bash
 
 set -euo pipefail
-
-if [[ "$CHEZMOI_OSID" != darwin ]]; then
-    exit 0
-fi
 
 # Press `Cmd + Ctrl` and click anywhere on a window to move it
 if [[ $(defaults read -g NSWindowShouldDragOnGesture) != 1 ]]; then
@@ -31,3 +29,5 @@ if [[ $(defaults read com.apple.finder NewWindowTarget) != "PfHm" ]]; then
     defaults write com.apple.finder NewWindowTargetPath -string "file://$HOME/"
     killall Finder
 fi
+
+{{- end -}}
