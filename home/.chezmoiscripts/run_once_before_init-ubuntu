@@ -27,4 +27,4 @@ BREW_BIN="$HOMEBREW_PREFIX/bin/brew"
 exec "$BREW_BIN" bundle \
     --verbose \
     --no-lock \
-    --file "$CHEZMOI_SOURCE_DIR/private_dot_Brewfile_linux"
+    --file "$CHEZMOI_SOURCE_DIR/.Brewfile_linux"
