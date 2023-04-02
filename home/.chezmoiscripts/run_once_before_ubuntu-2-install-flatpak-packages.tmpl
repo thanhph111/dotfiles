@@ -1,0 +1,26 @@
+{{- if eq .osid "linux-ubuntu" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+#: Add the Flathub repository
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+#: Install Flatpak apps
+
+packages=(
+    com.calibre_ebook.calibre
+    com.discordapp.Discord
+    com.getpostman.Postman
+    com.github.johnfactotum.Foliate
+    com.spotify.Client
+    com.valvesoftware.Steam
+    org.gimp.GIMP
+    org.gnome.FontManager
+    org.inkscape.Inkscape
+)
+
+flatpak install -y flathub "${packages[@]}"
+
+{{- end -}}
