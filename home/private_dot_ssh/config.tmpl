@@ -2,8 +2,8 @@
 
 Host *
     AddKeysToAgent yes
-    UseKeychain yes
     IgnoreUnknown UseKeychain
+    UseKeychain yes
 
 {{- if eq .chezmoi.os "darwin" }}
     IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
