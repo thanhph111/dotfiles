@@ -4,7 +4,13 @@ set -euo pipefail
 
 case "$CHEZMOI_ARCH" in
 arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
-amd64) HOMEBREW_PREFIX="/usr/local" ;;
+amd64)
+    if [[ "$CHEZMOI_OS" == darwin ]]; then
+        HOMEBREW_PREFIX="/usr/local"
+    else
+        HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+    fi
+    ;;
 esac
 
 BREW_BIN="$HOMEBREW_PREFIX/bin/brew"
