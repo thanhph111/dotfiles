@@ -1,0 +1,169 @@
+{{- if eq .osid "linux-ubuntu" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+#: Update installed packages {{{
+
+sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove
+
+#: }}}
+
+#: Install `aptitude` {{{
+
+sudo apt install -y aptitude
+
+#: }}}
+
+#: Install some official packages {{{
+
+packages=(
+    apt-transport-https
+    baobab
+    barrier
+    build-essential
+    chrome-gnome-shell
+    curl
+    dconf-editor
+    devhelp
+    flatpak
+    gir1.2-gda-5.0
+    gir1.2-gsound-1.0
+    gnome-shell-extension-manager
+    gnome-shell-extensions
+    gnome-sushi
+    gnome-tweaks
+    gpick
+    libfuse2
+    openssh-server
+    synaptic
+)
+sudo aptitude install -y "${packages[@]}"
+
+#: }}}
+
+#: Install other packages with sophisticated steps {{{
+
+#: 1Password {{{
+
+#: Reference: https://support.1password.com/install-linux/#debian-or-ubuntu
+
+#: Add the key for the 1Password apt repository
+curl -S https://downloads.1password.com/linux/keys/1password.asc |
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/1password.gpg
+
+#: Add the 1Password apt repository
+echo 'deb [arch=amd64] https://downloads.1password.com/linux/debian/amd64 stable main' |
+    sudo tee /etc/apt/sources.list.d/1password.list
+
+#: Add the debsig-verify policy
+sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+curl -S https://downloads.1password.com/linux/debian/debsig/1password.pol |
+    sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+curl -S https://downloads.1password.com/linux/keys/1password.asc |
+    sudo gpg --dearmor --yes --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+#: Install 1Password and 1Password CLI
+sudo aptitude update && sudo aptitude install -y 1password 1password-cli
+
+#: }}}
+
+#: Google Chrome {{{
+
+#: Reference: https://www.ubuntuupdates.org/ppa/google_chrome
+
+#: Setup key
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/google-chrome.gpg
+
+#: Setup repository
+echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" |
+    sudo tee /etc/apt/sources.list.d/google-chrome.list
+
+#: Install Google Chrome
+sudo aptitude update && sudo aptitude install -y google-chrome-stable
+
+#: }}}
+
+#: Visual Studio Code {{{
+
+#: Reference: https://code.visualstudio.com/docs/setup/linux
+
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc |
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
+
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" |
+    sudo tee /etc/apt/sources.list.d/vscode.list
+
+sudo aptitude update && sudo aptitude install -y code
+
+#: }}}
+
+#: PowerShell {{{
+
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc |
+    sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
+
+# Register the Microsoft Product feed
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" |
+    sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Install PowerShell
+sudo aptitude update && sudo aptitude install -y powershell
+
+#: }}}
+
+#: Docker {{{
+
+#: Reference: https://docs.docker.com/engine/install/ubuntu/
+
+#: Add Docker’s official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+    sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/docker.gpg
+
+#: Set up the repository
+echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |
+    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+#: Install Docker
+sudo aptitude update &&
+    sudo aptitude install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+#: Add user to docker group: https://docs.docker.com/engine/install/linux-postinstall/
+sudo usermod -aG docker "$USER"
+
+#: }}}
+
+#: IBus Bamboo {{{
+
+sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
+sudo aptitude update && sudo aptitude install -y ibus-bamboo
+env DCONF_PROFILE=ibus \
+    dconf write /desktop/ibus/general/preload-engines "['BambooUs', 'Bamboo']" &&
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'Bamboo')]"
+
+#: }}}
+
+#: Cloudflare Warp {{{
+
+#: Reference: https://pkg.cloudflareclient.com/install
+
+#: Setup key
+curl https://pkg.cloudflareclient.com/pubkey.gpg |
+    sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-warp.gpg
+
+#: Setup repository
+echo "deb [arch=amd64] https://pkg.cloudflareclient.com/ bullseye main" |
+    sudo tee /etc/apt/sources.list.d/cloudflare-warp.list
+
+#: Install Cloudflare Warp
+sudo aptitude update && sudo aptitude install -y cloudflare-warp
+
+#: }}}
+
+#: }}}
+
+{{- end -}}
