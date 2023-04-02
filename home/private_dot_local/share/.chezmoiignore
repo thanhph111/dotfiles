@@ -1,0 +1,21 @@
+*
+
+{{/* General */}}
+
+{{/* Linux and macOS */}}
+{{ if eq .chezmoi.os "linux" "darwin" }}
+!gnupg
+{{ end }}
+
+{{/* Linux */}}
+{{ if eq .chezmoi.os "linux" }}
+!nautilus
+{{ end }}
+
+{{/* macOS */}}
+{{ if eq .chezmoi.os "darwin" }}
+{{ end }}
+
+{{/* Windows */}}
+{{ if eq .chezmoi.os "windows" }}
+{{ end }}
