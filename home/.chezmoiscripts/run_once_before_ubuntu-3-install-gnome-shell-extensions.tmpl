@@ -32,7 +32,7 @@ packages=(
 )
 
 echo 'This is a list of GNOME Shell Extensions to be installed:'
-echo "${packages[@]}"
+printf '%s\n' "${packages[@]}"
 echo 'Please install them manually.'
 
 {{- end -}}
