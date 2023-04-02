@@ -2,32 +2,20 @@
 
 set -euo pipefail
 
-if [[ "$CHEZMOI_OSID" != darwin ]]; then
-    exit 0
-fi
-
-# Press `Cmd + Ctrl` and click anywhere on a window to move it
-if [[ $(defaults read -g NSWindowShouldDragOnGesture) != 1 ]]; then
-    defaults write -g NSWindowShouldDragOnGesture -bool true
-fi
-
-# Set Launchpad grid layout to 9x5
-change=0
-if [[ $(defaults read com.apple.dock springboard-columns) != 9 ]]; then
-    defaults write com.apple.dock springboard-columns -int 9
-    change=1
-fi
-if [[ $(defaults read com.apple.dock springboard-rows) != 5 ]]; then
-    defaults write com.apple.dock springboard-rows -int 5
-    change=1
-fi
-if [[ $change == 1 ]]; then
-    killall Dock
-fi
-
-# Set the default Finder location to $HOME
-if [[ $(defaults read com.apple.finder NewWindowTarget) != "PfHm" ]]; then
-    defaults write com.apple.finder NewWindowTarget -string "PfHm"
-    defaults write com.apple.finder NewWindowTargetPath -string "file://$HOME/"
-    killall Finder
-fi
+command -v pwsh &>/dev/null && pwsh \
+    -NoProfile \
+    -NoLogo \
+    -NonInteractive \
+    -Command '
+        @(
+            "posh-git",
+            "PsFzf",
+            "PSReadline",
+            "Terminal-Icons",
+            "z"
+        ) | ForEach-Object {
+            if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
+                Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
+            }
+        }
+    ' || true

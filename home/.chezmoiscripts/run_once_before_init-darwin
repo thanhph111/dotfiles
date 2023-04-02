@@ -2,20 +2,29 @@
 
 set -euo pipefail
 
-command -v pwsh &>/dev/null && pwsh \
-    -NoProfile \
-    -NoLogo \
-    -NonInteractive \
-    -Command '
-        @(
-            "posh-git",
-            "PsFzf",
-            "PSReadline",
-            "Terminal-Icons",
-            "z"
-        ) | ForEach-Object {
-            if (-not (Get-InstalledModule $_ -ErrorAction SilentlyContinue)) {
-                Install-Module $_ -Repository PSGallery -Scope CurrentUser -Force
-            }
-        }
-    ' || true
+if [[ "$CHEZMOI_OSID" != darwin ]]; then
+    exit 0
+fi
+
+case "$CHEZMOI_ARCH" in
+arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
+amd64) HOMEBREW_PREFIX="/usr/local" ;;
+esac
+
+BREW_BIN="$HOMEBREW_PREFIX/bin/brew"
+
+[[ -x "$BREW_BIN" ]] || {
+    url=https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    /bin/bash -c "$(curl -fsSL $url)"
+    if [[ -x "$BREW_BIN" ]]; then
+        eval "$("$BREW_BIN" shellenv)"
+    else
+        echo 'Failed to install Homebrew'
+        exit 1
+    fi
+}
+
+exec "$BREW_BIN" bundle \
+    --verbose \
+    --no-lock \
+    --file "$CHEZMOI_SOURCE_DIR/private_dot_Brewfile_darwin"
