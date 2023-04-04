@@ -38,4 +38,12 @@
 
 {{/* Windows */}}
 {{ if eq .chezmoi.os "windows" }}
+!.alacritty
+!.gh
+!.git
+!.oh-my-posh
+!.python
+!.ssh
+!.vim
+!.wezterm
 {{ end }}

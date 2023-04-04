@@ -32,4 +32,5 @@
 {{ if eq .chezmoi.os "windows" }}
 !Documents
 !AppData
+!.config
 {{ end }}
