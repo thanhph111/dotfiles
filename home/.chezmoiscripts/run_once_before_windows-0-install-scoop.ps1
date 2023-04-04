@@ -1,0 +1,25 @@
+$installerScript = 'https://raw.githubusercontent.com/ScoopInstaller/Install/6ed4f1fb984e7addcb211d7dce8accf96317f486/install.ps1'
+
+Invoke-Expression "& {$(Invoke-RestMethod -Uri $installerScript)} -RunAsAdmin -ScoopDir $HOME\.scoop -ScoopCacheDir $HOME\.cache\scoop"
+
+$scoop = "$HOME\.scoop\shims\scoop.cmd"
+
+&$scoop bucket add main
+
+$packages = @(
+    '1password-cli'
+    'bat'
+    'fzf'
+    'gh'
+    'go'
+    'gpg'
+    'oh-my-posh'
+    'poetry'
+    'pyenv'
+    'rustup'
+    'topgrade'
+    'vim'
+
+)
+
+$packages | ForEach-Object { &$scoop install $_ }
