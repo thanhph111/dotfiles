@@ -1,4 +1,18 @@
-{{- if eq .chezmoi.os "windows" -}}
+# {{- if eq .chezmoi.os "windows" -}}
+
+# Self-elevate the script
+if (
+    -Not (
+        [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
+    ).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')
+) {
+    if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
+        $CommandLine = "-NoExit -NoProfile -NoLogo -File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
+        Start-Process -Wait -FilePath PowerShell.exe -Verb Runas -ArgumentList $CommandLine
+        Exit
+    }
+}
+
 
 # Set XDG environment variables
 [Environment]::SetEnvironmentVariable('XDG_CONFIG_HOME', "$env:USERPROFILE\.config", 'User')
@@ -24,4 +38,4 @@ Start-Service sshd;
 Set-Service -Name sshd -StartupType 'Automatic';
 New-ItemProperty -Path 'HKLM:\SOFTWARE\OpenSSH' -Name DefaultShell -Value 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -PropertyType String -Force
 
-{{- end -}}
+# {{- end -}}
