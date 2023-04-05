@@ -60,3 +60,7 @@ Multipass VMs, and Vagrant boxes */}}
 
 [scriptEnv]
     CHEZMOI_OSID = {{ $osID | quote }}
+
+[interpreters.ps1]
+    command = "powershell"
+    args = ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass"]
