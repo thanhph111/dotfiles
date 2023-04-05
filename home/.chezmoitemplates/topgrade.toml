@@ -31,7 +31,7 @@ skip_notify = true
 #arguments = "--rebase --autostash"
 
 [composer]
-self_update = true
+self_update = false
 
 # Commands to run before anything
 [pre_commands]
@@ -49,6 +49,7 @@ autoremove = true
 
 
 [windows]
+enable_winget=true
 # Manually select Windows updates
 #accept_all_updates = false
 #open_remotes_in_new_terminal = true
