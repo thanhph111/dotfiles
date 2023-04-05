@@ -1,0 +1,72 @@
+{
+    "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+    "Sources": [
+        {
+            "Packages": [
+                {
+                    "PackageIdentifier": "AgileBits.1Password"
+                },
+                {
+                    "PackageIdentifier": "Armin2208.WindowsAutoNightMode"
+                },
+                {
+                    "PackageIdentifier": "BlenderFoundation.Blender"
+                },
+                {
+                    "PackageIdentifier": "calibre.calibre"
+                },
+                {
+                    "PackageIdentifier": "Cloudflare.Warp"
+                },
+                {
+                    "PackageIdentifier": "Discord.Discord"
+                },
+                {
+                    "PackageIdentifier": "Fork.Fork"
+                },
+                {
+                    "PackageIdentifier": "Git.Git"
+                },
+                {
+                    "PackageIdentifier": "Google.Chrome"
+                },
+                {
+                    "PackageIdentifier": "KDE.KDEConnect"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.OneDrive"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.PowerToys"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.VisualStudioCode"
+                },
+                {
+                    "PackageIdentifier": "Microsoft.WindowsTerminal"
+                },
+                {
+                    "PackageIdentifier": "qBittorrent.qBittorrent"
+                },
+                {
+                    "PackageIdentifier": "QL-Win.QuickLook"
+                },
+                {
+                    "PackageIdentifier": "Spotify.Spotify"
+                },
+                {
+                    "PackageIdentifier": "Valve.Steam"
+                },
+                {
+                    "PackageIdentifier": "wez.wezterm"
+                }
+            ],
+            "SourceDetails": {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type": "Microsoft.PreIndexed.Package"
+            }
+        }
+    ]
+}
