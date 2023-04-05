@@ -1,3 +1,5 @@
+{{- if eq .chezmoi.os "windows" -}}
+
 $installerScript = 'https://raw.githubusercontent.com/ScoopInstaller/Install/6ed4f1fb984e7addcb211d7dce8accf96317f486/install.ps1'
 
 Invoke-Expression "& {$(Invoke-RestMethod -Uri $installerScript)} -RunAsAdmin -ScoopDir $HOME\.scoop -ScoopCacheDir $HOME\.cache\scoop"
@@ -23,3 +25,5 @@ $packages = @(
 )
 
 $packages | ForEach-Object { &$scoop install $_ }
+
+{{- end -}}

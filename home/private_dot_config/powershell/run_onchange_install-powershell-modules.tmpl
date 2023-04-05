@@ -1,3 +1,5 @@
+{{- if eq .chezmoi.os "darwin" "linux" -}}
+
 #! /usr/bin/env bash
 
 set -euo pipefail
@@ -19,3 +21,5 @@ command -v pwsh &>/dev/null && pwsh \
             }
         }
     ' || true
+
+{{- end -}}

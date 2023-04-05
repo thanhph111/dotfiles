@@ -1,4 +1,8 @@
+{{- if eq .chezmoi.os "darwin" -}}
+
 #!/usr/bin/env bash
 
 launchctl unload -w "$(pwd)/ke.bou.dark-mode-notify.plist"
 launchctl load -w "$(pwd)/ke.bou.dark-mode-notify.plist"
+
+{{- end -}}
