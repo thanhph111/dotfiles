@@ -1,12 +1,13 @@
-{{/* true if this machine is used for gft */}}
-{{- $gft := false -}}
+{{/* Codename for specific machine */}}
+{{- $codename := "" -}}
 
-{{/* true if this machine does not have a screen and keyboard */}}
+{{/* 1Password vault to use */}}
+{{- $vault := "" -}}
+
+{{/* Machine does not have a screen and keyboard */}}
 {{- $headless := false -}}
 
-{{/* true if this machine should have personal secrets */}}
-{{- $personal := false -}}
-
+{{/* More specific Linux distros */}}
 {{- $osID := .chezmoi.os -}}
 {{- if (and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id")) -}}
 {{-     $osID = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
@@ -21,6 +22,10 @@ Multipass VMs, and Vagrant boxes */}}
         (eq $username "root" "ubuntu" "vagrant" "vscode")
 -}}
 {{-     $headless = true -}}
+{{- else if stdinIsATTY -}}
+{{-     $headless = promptBoolOnce . "headless" "headless" -}}
+{{- else -}}
+{{-     $headless = true -}}
 {{- end -}}
 
 {{- $hostname := .chezmoi.hostname -}}
@@ -30,26 +35,25 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $hostname := $computerName -}}
 {{- end -}}
 
+{{/* Resolve codename and 1Password vault */}}
 {{- if hasPrefix "VNPC" $hostname -}}
-{{-     $gft = true -}}
-{{- else if eq $username "thanhph111" -}}
-{{-     $personal = true -}}
-{{- else if stdinIsATTY -}}
-{{-     $headless = promptBoolOnce . "headless" "headless" -}}
-{{- else -}}
-{{-     $headless = true -}}
-{{- end -}}
-
-{{- $email := "thanhph111@gmail.com" -}}
-{{- if $gft -}}
-{{-     $email = "thanh.phanhuu@gft.com" -}}
+{{-     $codename = "GFT" -}}
+{{-     $vault = "GFT" -}}
+{{- else if eq $hostname "T-X" }}
+{{-     $codename = "T-X" -}}
+{{-     $vault = "Personal" -}}
+{{- else if eq $hostname "Arwen" }}
+{{-     $codename = "Arwen" -}}
+{{-     $vault = "Personal" -}}
+{{- else if eq $hostname "Madison" }}
+{{-     $codename = "Madison" -}}
+{{-     $vault = "Personal" -}}
 {{- end -}}
 
 [data]
-    email = {{ $email | quote }}
-    gft = {{ $gft }}
+    codename = {{ $codename | quote }}
+    vault = {{ $vault | quote }}
     headless = {{ $headless }}
-    personal = {{ $personal }}
     osid = {{ $osID | quote }}
 
 [diff]
