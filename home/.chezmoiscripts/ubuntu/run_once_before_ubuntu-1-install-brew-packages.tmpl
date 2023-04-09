@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.os "darwin" -}}
+{{- if eq .osid "linux-ubuntu" -}}
 {{- template
     "install-brew-packages"
     (joinPath .chezmoi.sourceDir ".Brewfiles" (lower .codename))
