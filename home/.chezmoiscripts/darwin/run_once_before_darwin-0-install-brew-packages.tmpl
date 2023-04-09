@@ -1,6 +1,6 @@
 {{- if eq .chezmoi.os "darwin" -}}
 {{- template
     "install-brew-packages"
-    (joinPath .chezmoi.sourceDir ".Brewfile_darwin")
+    (joinPath .chezmoi.sourceDir ".Brewfiles" (lower .codename))
 -}}
 {{- end -}}

@@ -1,0 +1,262 @@
+tap "cormacrelf/tap"
+tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
+tap "jorgelbg/tap"
+tap "kovetskiy/mark"
+# Record and share terminal sessions
+brew "asciinema"
+# Official Amazon AWS command-line interface
+brew "awscli"
+# Bourne-Again SHell, a UNIX command interpreter
+brew "bash"
+# Programmable completion for Bash 4.2+
+brew "bash-completion@2"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Yet another cross-platform graphical process/system monitor
+brew "bottom"
+# Fancy interface to the Python interpreter
+brew "bpython"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Diff that understands syntax
+brew "difftastic"
+# Modern replacement for 'ls'
+brew "exa"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Collection of GNU find, xargs, and locate
+brew "findutils"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
+# Blazing fast terminal-ui for git written in rust
+brew "gitui"
+# GNU implementation of the famous stream editor
+brew "gnu-sed"
+# GNU Pretty Good Privacy (PGP) package
+brew "gnupg"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Colorize logfiles and command output
+brew "grc"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick"
+# JSON output from a shell
+brew "jo"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Development kit for the Java programming language
+brew "openjdk"
+# Open-source distributed event streaming platform
+brew "kafka"
+# Generic command-line non-JVM Apache Kafka producer and consumer
+brew "kcat"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Pager program similar to more
+brew "less"
+# Mac App Store command-line interface
+brew "mas"
+# CLI tool for saving complete web pages as a single HTML file
+brew "monolith"
+# Remote terminal application
+brew "mosh"
+# Interactive cheatsheet tool for the command-line
+brew "navi"
+# Platform built on V8 to build network applications
+brew "node"
+# Command-line collection runner for Postman
+brew "newman"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
+# SSL/TLS VPN implementing OSI layer 2 or 3 secure network extension
+brew "openvpn"
+# Swiss-army knife of markup format conversion
+brew "pandoc"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
+# Python dependency management tool
+brew "pipenv"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# Python package management tool
+brew "poetry"
+# Object-relational database system
+brew "postgresql@14"
+# Modern replacement for ps written by Rust
+brew "procs"
+# Python version management
+brew "pyenv"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Command-line deletion tool focused on safety, ergonomics, and performance
+brew "rm-improved"
+# Safe, concurrent, practical language
+brew "rust"
+# Format Rust code
+brew "rustfmt"
+# Cross-shell prompt for astronauts
+brew "starship"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
+# Upgrade all the things
+brew "topgrade"
+# Internet file retriever
+brew "wget"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
+# Download YouTube videos from the command-line
+brew "youtube-dl"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Watcher for macOS 10.14+ light/dark mode changes
+brew "cormacrelf/tap/dark-notify"
+# Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
+# the macOS keychain.
+brew "jorgelbg/tap/pinentry-touchid"
+# Sync your markdown files with Confluence pages.
+brew "kovetskiy/mark/mark"
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
+# Command-line helper for the 1Password password manager
+cask "1password-cli"
+# GPU-accelerated terminal emulator
+cask "alacritty"
+# Application uninstaller
+cask "appcleaner"
+# Audio utility
+cask "background-music"
+# Open-source KVM software
+cask "barrier"
+# Cross platform SQL editor and database management app
+cask "beekeeper-studio"
+# Tool to customize input devices and automate computer systems
+cask "bettertouchtool"
+# 3D creation suite
+cask "blender"
+# E-books management software
+cask "calibre"
+# Free app that makes your Internet safer
+cask "cloudflare-warp"
+# Server and cloud storage browser
+cask "cyberduck"
+# Voice and text chat software
+cask "discord"
+# App to build and share containerized applications and microservices
+cask "docker"
+# Draw.io is free online diagram software
+cask "drawio"
+# Collaborative team software
+cask "figma"
+# Web browser
+cask "firefox"
+# Free monospaced font with programming ligatures
+cask "font-fira-code"
+# Developer targeted fonts with a high number of glyphs
+cask "font-fira-code-nerd-font"
+# Typeface made for developers
+cask "font-jetbrains-mono"
+# Developer targeted fonts with a high number of glyphs
+cask "font-jetbrains-mono-nerd-font"
+# Serif font "New York" by Apple
+cask "font-new-york"
+# Monospaced variant of "San Francisco" by Apple
+cask "font-sf-mono"
+# Sans-serif variant of "San Francisco" by Apple
+cask "font-sf-pro"
+# GIT client
+cask "fork"
+# Web browser
+cask "google-chrome"
+# Utility to hide menu bar items
+cask "hiddenbar"
+# Free and open-source media player
+cask "iina"
+# Tool to optimize images to a smaller size
+cask "imageoptim"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# JetBrains tools manager
+cask "jetbrains-toolbox"
+# File archiver
+cask "keka"
+# Blocks all Keyboard and TouchBar input
+cask "keyboardcleantool"
+# Open-source keystroke visualizer
+cask "keycastr"
+# GPU-based terminal emulator
+cask "kitty"
+# App to write, plan, collaborate, and get organized
+cask "notion"
+# Collaboration platform for API development
+cask "postman"
+# Command-line shell and scripting language
+cask "powershell"
+# HTTP client that helps testing and describing APIs
+cask "rapidapi"
+# Control your tools with a few keystrokes
+cask "raycast"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Store SSH keys in the Secure Enclave
+cask "secretive"
+# Screenshot measurement and annotation tool
+cask "shottr"
+# Team communication and collaboration software
+cask "slack"
+# Communicate and share information between devices
+cask "soduto"
+# Music streaming service
+cask "spotify"
+# Quicklook extension for source files
+cask "syntax-highlight"
+# Terminal emulator, SSH and serial client
+cask "tabby"
+# Messaging app with a focus on speed and security
+cask "telegram"
+# General-purpose text editor
+cask "textmate"
+# Open-source BitTorrent client
+cask "transmission"
+# Open-source code editor
+cask "visual-studio-code"
+# Rust-based terminal
+cask "warp"
+# GPU-accelerated cross-platform terminal emulator and multiplexer
+cask "wezterm"
+mas "1Password for Safari", id: 1569813296
+mas "AdBlock Pro", id: 1018301773
+mas "Amphetamine", id: 937984704
+mas "Color Picker", id: 1545870783
+mas "Dark Reader for Safari", id: 1438243180
+mas "Developer", id: 640199958
+mas "Dropover", id: 1355679052
+mas "Equinox", id: 1591510203
+mas "Gifski", id: 1351639930
+mas "Keynote", id: 409183694
+mas "Notion Web Clipper", id: 1559269364
+mas "Numbers", id: 409203825
+mas "One Thing", id: 1604176982
+mas "OwlOCR", id: 1499181666
+mas "Pages", id: 409201541
+mas "Pasty", id: 1544620654
+mas "Shazam", id: 897118787
+mas "Tomito", id: 1526042938
+mas "Vectornator", id: 1219074514
+mas "Velja", id: 1607635845

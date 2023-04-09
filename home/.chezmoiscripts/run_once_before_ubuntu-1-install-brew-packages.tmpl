@@ -1,6 +1,0 @@
-{{- if eq .osid "linux-ubuntu" -}}
-{{- template
-    "install-brew-packages"
-    (joinPath .chezmoi.sourceDir ".Brewfile_linux")
--}}
-{{- end -}}
