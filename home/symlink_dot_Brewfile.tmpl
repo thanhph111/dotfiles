@@ -1,1 +1,1 @@
-{{ joinPath .chezmoi.sourceDir (print ".Brewfile_" .chezmoi.os) }}
+{{ joinPath .chezmoi.sourceDir ".Brewfiles" (lower .codename) }}
