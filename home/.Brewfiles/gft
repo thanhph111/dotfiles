@@ -160,7 +160,7 @@ cask "cyberduck"
 cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
-# Draw.io is free online diagram software
+# Online diagram software
 cask "drawio"
 # Collaborative team software
 cask "figma"
