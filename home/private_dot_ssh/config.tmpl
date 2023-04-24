@@ -21,6 +21,6 @@ Host "Cloud9 - *"
 #: Specify the instance ID here
 #     HostName i-something
 
-{{- if eq .codename "GFT" -}}
+{{ if eq .codename "GFT" -}}
 {{-     onepasswordRead (print "op://" .vault "/SSH config/notesPlain") -}}
 {{- end -}}
