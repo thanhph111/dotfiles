@@ -3,6 +3,7 @@ tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "jorgelbg/tap"
 tap "kovetskiy/mark"
+tap "shaunsingh/sfmono-nerd-font-ligaturized"
 # Record and share terminal sessions
 brew "asciinema"
 # Official Amazon AWS command-line interface
@@ -176,6 +177,8 @@ cask "font-jetbrains-mono-nerd-font"
 cask "font-new-york"
 # Monospaced variant of "San Francisco" by Apple
 cask "font-sf-mono"
+# SFMono with Nerd Font Glyphs and Fira Code Ligatures
+cask "font-sf-mono-nerd-font-ligaturized"
 # Sans-serif variant of "San Francisco" by Apple
 cask "font-sf-pro"
 # GIT client
