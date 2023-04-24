@@ -164,8 +164,6 @@ cask "docker"
 cask "drawio"
 # Collaborative team software
 cask "figma"
-# Web browser
-cask "firefox"
 # Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Developer targeted fonts with a high number of glyphs
