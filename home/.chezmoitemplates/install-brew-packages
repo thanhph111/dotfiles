@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+#: Remove soft limit
+ulimit -n "$(ulimit -Hn)"
+
 case "$CHEZMOI_ARCH" in
 arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
 amd64)
