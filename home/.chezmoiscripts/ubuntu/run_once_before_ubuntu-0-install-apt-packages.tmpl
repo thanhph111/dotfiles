@@ -6,7 +6,7 @@
 set -euo pipefail
 
 #: Remove soft limit
-ulimit -n unlimited
+ulimit -n "$(ulimit -Hn)"
 
 #: Update installed packages <<<
 
