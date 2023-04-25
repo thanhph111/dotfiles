@@ -5,6 +5,9 @@
 
 set -euo pipefail
 
+#: Remove soft limit
+ulimit -n unlimited
+
 #: Update installed packages <<<
 
 sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove
