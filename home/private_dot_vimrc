@@ -510,7 +510,8 @@ set fillchars+=foldopen:b,foldclose:c,foldsep:d
 function MyFoldText()
     let line = getline(v:foldstart)
     let level_points = repeat(" ", v:foldlevel)[:-2]
-    let sub = substitute(line, '/\*\|\*/\|{{{\d*', level_points, 'g')  " }}}
+    let pattern = '/\*\|\*/\|' . split(&foldmarker, ',')[0] . '\d*'
+    let sub = substitute(line,  pattern, level_points, 'g')
     return  sub . ' <=<< ' . (v:foldend - v:foldstart + 1) . ' lines' . ' >>'
 endfunction
 set foldtext=MyFoldText()
