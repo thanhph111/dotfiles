@@ -25,7 +25,7 @@ brights = [
 ]
 
 foreground = "#0e1019"
-background = "#f3f3f3"
+background = "#f6f6f6"
 
 selection_fg = "none"
 selection_bg = "rgba(50% 50% 50% 25%)"
