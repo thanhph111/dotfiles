@@ -36,7 +36,9 @@ switch_chrome_theme() {
     update-desktop-database ~/.local/share/applications
 }
 
-switch_chrome_theme
+#: From version 114, Google Chrome reflects the GTK theme
+#: https://crbug.com/998903
+# switch_chrome_theme
 
 #: }}}
 
