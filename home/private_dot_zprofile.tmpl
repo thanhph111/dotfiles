@@ -82,6 +82,10 @@ export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 #: Rust <<<
 
 export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+[ -r "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
+export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
+export PATH="$CARGO_HOME/bin:$PATH"
+
 
 #: >>>
 
