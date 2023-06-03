@@ -98,6 +98,10 @@ brew "poetry"
 brew "postgresql@14"
 # Modern replacement for ps written by Rust
 brew "procs"
+# Go support for Google's protocol buffers
+brew "protoc-gen-go"
+# Protoc plugin that generates code for gRPC-Go clients
+brew "protoc-gen-go-grpc"
 # Python version management
 brew "pyenv"
 # Search tool like grep and The Silver Searcher
