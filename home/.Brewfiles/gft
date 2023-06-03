@@ -159,8 +159,6 @@ cask "calibre"
 cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
-# Voice and text chat software
-cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Online diagram software
