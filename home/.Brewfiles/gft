@@ -24,6 +24,8 @@ brew "bpython"
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
+# Secure runtime for JavaScript and TypeScript
+brew "deno"
 # Diff that understands syntax
 brew "difftastic"
 # Modern replacement for 'ls'
