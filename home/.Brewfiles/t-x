@@ -71,10 +71,8 @@ brew "rclone"
 brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
-# Safe, concurrent, practical language
-brew "rust"
-# Format Rust code
-brew "rustfmt"
+# Rust toolchain installer
+brew "rustup-init"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Very fast implementation of tldr in Rust
