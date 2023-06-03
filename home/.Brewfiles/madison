@@ -191,6 +191,8 @@ cask "keyboardcleantool"
 cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
+# Speech recognition tool
+cask "macwhisper"
 # App to write, plan, collaborate, and get organized
 cask "notion"
 # Customize and maintain app icons
