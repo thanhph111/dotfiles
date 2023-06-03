@@ -19,10 +19,6 @@ export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
 mkdir -p "$BASH_CACHE_DIR"
 
-#: Overwrite with local pre-config
-[[ -r "$BASH_CONFIG_DIR/local.pre.bash" ]] &&
-    . "$BASH_CONFIG_DIR/local.pre.bash"
-
 #: Functions <<<
 
 #: Check if a command exists
@@ -269,9 +265,18 @@ shopt -s globstar 2>/dev/null
 
 #: Enable programmable completion features
 ! shopt -oq posix && include /etc/bash_completion
+
 #: Use `bash-completion@2` if available
-command_exists brew &&
-    include "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+command_exists brew && {
+    HOMEBREW_PREFIX="$(brew --prefix)"
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+        . "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    else
+        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            [[ -r "${COMPLETION}" ]] && . "${COMPLETION}"
+        done
+    fi
+}
 
 #: Colorful things <<<
 
