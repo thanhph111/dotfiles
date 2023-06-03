@@ -84,7 +84,7 @@ code_workspace() {
             fi
         done
     }
-    workspace=$(get_code_workspaces | fzf --preview 'tree -C {}')
+    workspace=$(get_code_workspaces | fzf --keep-right --preview 'exa --tree {}')
     [ -n "$workspace" ] && code --new-window "$workspace"
 }
 
