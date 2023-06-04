@@ -31,6 +31,27 @@ include() {
     [[ -r "$1" ]] && . "$1" || true
 }
 
+#: Check termcap name
+is_termcap_name() {
+    #: This uses XTerm Device-Control functions
+    #: https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h2-Device-Control-functions
+    #: In this case, we send `DCS + q Pt ST` and the terminal responds with
+    #:`DCS 1 + r Pt = TN ST` with `Pt` is the `TN` hexadecimal encoded
+    printf '\eP+q544e\e\\'
+    read -rs -t 0.05 -d '\' code
+    [[ "$(echo ${code:10:-1} | xxd -r -p)" == "$1" ]]
+}
+
+#: Check if the terminal is kitty
+is_kitty() {
+    is_termcap_name xterm-kitty
+}
+
+#: Check if the terminal is WezTerm
+is_wezterm() {
+    is_termcap_name WezTerm
+}
+
 #: Add function to existing trapped signals
 #: https://stackoverflow.com/a/7287873
 #: - 1st arg:  code to add
