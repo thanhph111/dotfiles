@@ -2,6 +2,7 @@ tap "cormacrelf/tap"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "jorgelbg/tap"
+tap "shaunsingh/sfmono-nerd-font-ligaturized"
 # Record and share terminal sessions
 brew "asciinema"
 # Official Amazon AWS command-line interface
@@ -18,8 +19,12 @@ brew "bat-extras"
 brew "bottom"
 # Fancy interface to the Python interpreter
 brew "bpython"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
+# Secure runtime for JavaScript and TypeScript
+brew "deno"
 # Diff that understands syntax
 brew "difftastic"
 # Modern replacement for 'ls'
@@ -42,6 +47,8 @@ brew "git-lfs"
 brew "gitui"
 # GNU implementation of the famous stream editor
 brew "gnu-sed"
+# GNU version of the tar archiving utility
+brew "gnu-tar"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
@@ -94,16 +101,18 @@ brew "poetry"
 brew "postgresql@14"
 # Modern replacement for ps written by Rust
 brew "procs"
+# Go support for Google's protocol buffers
+brew "protoc-gen-go"
+# Protoc plugin that generates code for gRPC-Go clients
+brew "protoc-gen-go-grpc"
 # Python version management
 brew "pyenv"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
-# Safe, concurrent, practical language
-brew "rust"
-# Format Rust code
-brew "rustfmt"
+# Rust toolchain installer
+brew "rustup-init"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Very fast implementation of tldr in Rust
@@ -145,6 +154,10 @@ cask "beekeeper-studio"
 cask "bettertouchtool"
 # 3D creation suite
 cask "blender"
+# E-books management software
+cask "calibre"
+# Free app that makes your Internet safer
+cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
 # Voice and text chat software
@@ -167,6 +180,8 @@ cask "font-jetbrains-mono-nerd-font"
 cask "font-new-york"
 # Monospaced variant of "San Francisco" by Apple
 cask "font-sf-mono"
+# SFMono with Nerd Font Glyphs and Fira Code Ligatures
+cask "font-sf-mono-nerd-font-ligaturized"
 # Sans-serif variant of "San Francisco" by Apple
 cask "font-sf-pro"
 # GIT client
