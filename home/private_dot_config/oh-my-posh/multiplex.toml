@@ -60,10 +60,8 @@ zsh = "Zsh"
 background = "p:yellow"
 foreground = "p:lightWhite"
 style = "powerline"
-template = "{{ if .Env.NO_HISTORY }}\uf708{{ end }} "
+template = "{{ if not .Env.HISTFILE }}\uf708{{ end }} "
 type = "text"
-[blocks.segments.properties]
-var_name = "NO_HISTORY"
 
 [[blocks.segments]]
 background = "p:blue"
