@@ -11,4 +11,5 @@ fi
 
 brewfile="${1:-$HOME/.Brewfile}"
 
-brew bundle dump --force --describe --file="$brewfile"
+brew bundle dump --force --describe --file="$brewfile" \
+    --formula --cask --tap --mas
