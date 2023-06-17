@@ -114,8 +114,6 @@ cask "1password"
 cask "1password-cli"
 # Application uninstaller
 cask "appcleaner"
-# Audio utility
-cask "background-music"
 # Cross platform SQL editor and database management app
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
