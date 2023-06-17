@@ -50,6 +50,8 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $vault = "Personal" -}}
 {{- end -}}
 
+umask = 0o77
+
 [data]
     codename = {{ $codename | quote }}
     vault = {{ $vault | quote }}
