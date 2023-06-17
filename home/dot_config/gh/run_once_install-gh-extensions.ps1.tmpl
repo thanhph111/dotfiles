@@ -1,6 +1,6 @@
 {{- if eq .chezmoi.os "windows" -}}
 
-$extensionsFile = "$env:CHEZMOI_SOURCE_DIR\private_dot_config\gh\.extensions"
+$extensionsFile = "$env:CHEZMOI_SOURCE_DIR\dot_config\gh\.extensions"
 
 $extensions = Get-Content -Path $extensionsFile
 

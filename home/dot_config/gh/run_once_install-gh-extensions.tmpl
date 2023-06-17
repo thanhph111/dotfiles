@@ -11,6 +11,6 @@ fi
 
 while read -r extension; do
     gh extension install "$extension" 2>/dev/null || true
-done < "$CHEZMOI_SOURCE_DIR/private_dot_config/gh/.extensions"
+done < "$CHEZMOI_SOURCE_DIR/dot_config/gh/.extensions"
 
 {{- end -}}
