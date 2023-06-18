@@ -7,6 +7,9 @@
 {{/* Machine does not have a screen and keyboard */}}
 {{- $headless := false -}}
 
+{{/* Machine is a client */}}
+{{- $client := false -}}
+
 {{/* More specific Linux distros */}}
 {{- $osID := .chezmoi.os -}}
 {{- if (and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id")) -}}
@@ -39,6 +42,7 @@ Multipass VMs, and Vagrant boxes */}}
 {{- if hasPrefix "VNPC" $hostname -}}
 {{-     $codename = "GFT" -}}
 {{-     $vault = "GFT" -}}
+{{-     $client = true -}}
 {{- else if eq $hostname "T-X" }}
 {{-     $codename = "T-X" -}}
 {{-     $vault = "Personal" -}}
@@ -48,6 +52,7 @@ Multipass VMs, and Vagrant boxes */}}
 {{- else if eq $hostname "Madison" }}
 {{-     $codename = "Madison" -}}
 {{-     $vault = "Personal" -}}
+{{-     $client = true -}}
 {{- end -}}
 
 umask = 0o77
@@ -59,6 +64,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     vault = {{ $vault | quote }}
     headless = {{ $headless }}
     osid = {{ $osID | quote }}
+    client = {{ $client | quote }}
 
 [diff]
     exclude = ["scripts"]
