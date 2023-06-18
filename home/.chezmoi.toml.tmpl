@@ -73,13 +73,15 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     exclude = ["scripts"]
 
 [scriptEnv]
+    CHEZMOI_OSID = {{ $osID | quote }}
+    {{ if ne .chezmoi.os "windows" -}}
     PATH = """\
         /opt/homebrew/bin:\
         /usr/local/bin:\
         /home/linuxbrew/.linuxbrew/bin:\
         {{ env "PATH" }}\
     """
-    CHEZMOI_OSID = {{ $osID | quote }}
+    {{- end }}
 
 [interpreters.ps1]
     command = "powershell"
