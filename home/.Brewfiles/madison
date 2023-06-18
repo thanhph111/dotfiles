@@ -170,6 +170,8 @@ cask "keycastr"
 cask "kitty"
 # App to write, plan, collaborate, and get organized
 cask "notion"
+# Cloud storage client
+cask "onedrive"
 # Customize and maintain app icons
 cask "pictogram"
 # Collaboration platform for API development
@@ -217,4 +219,3 @@ mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
 mas "Vectornator", id: 1219074514
-mas "Velja", id: 1607635845
