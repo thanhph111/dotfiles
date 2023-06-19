@@ -22,8 +22,8 @@ Host "Cloud9 - *"
 #     HostName i-something
 
 {{ if .client -}}
-{{-     onepasswordRead (print "op://Personal/SSH servers/notesPlain") -}}
-{{- end -}}
+{{-     onepasswordRead "op://Personal/SSH servers/notesPlain" -}}
+{{- end }}
 
 {{ if eq .codename "GFT" -}}
 {{-     onepasswordRead (print "op://" .vault "/SSH config/notesPlain") -}}
