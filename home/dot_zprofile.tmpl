@@ -32,6 +32,8 @@ elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+type brew &>/dev/null && brew_prefix="$(brew --prefix)"
+
 #: >>>
 
 #: GnuPG <<<
@@ -92,6 +94,17 @@ export PATH="$CARGO_HOME/bin:$PATH"
 #: Go <<<
 
 export GOPATH="$XDG_DATA_HOME/go"
+
+#: >>>
+
+#: Java <<<
+
+#: To add a new Java version, for example, 11, run:
+#: jenv add "$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home"
+type jenv &>/dev/null && {
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+}
 
 #: >>>
 

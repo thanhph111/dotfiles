@@ -279,16 +279,6 @@ command_exists pinentry-mac && alias pinentry=pinentry-touchid
 
 #: >>>
 
-#: Java <<<
-
-#: Install OpenJDK first: `brew install openjdk` (newest version)
-command_exists brew && {
-    export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
-    export CPPFLAGS="-I$(brew --prefix)/opt/openjdk/include"
-}
-
-#: >>>
-
 {{ if eq .osid "darwin" -}}
 #: JetBrains Toolbox scripts <<<
 
