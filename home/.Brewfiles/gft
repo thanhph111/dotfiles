@@ -66,8 +66,6 @@ brew "node"
 brew "newman"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
-# Swiss-army knife of markup format conversion
-brew "pandoc"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Python dependency management tool
@@ -187,8 +185,6 @@ cask "secretive"
 cask "shottr"
 # Team communication and collaboration software
 cask "slack"
-# Communicate and share information between devices
-cask "soduto"
 # Music streaming service
 cask "spotify"
 # Quicklook extension for source files
@@ -213,5 +209,4 @@ mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
 mas "PDFgear", id: 1615523079
-mas "Vectornator", id: 1219074514
 mas "Velja", id: 1607635845
