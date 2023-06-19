@@ -25,7 +25,6 @@
 {{/* macOS */}}
 {{ if eq .chezmoi.os "darwin" }}
 !.fleet
-!.warp
 !Library
 {{ end }}
 
