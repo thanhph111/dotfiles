@@ -504,10 +504,11 @@ if [[ -z "$ZSH" ]]; then
 fi
 
 #: Execute a custom command without exiting like using `-c`
-#: We can do like this `zsh -is eval echo 123`
+#: So we can do like this `zsh -is eval 'echo 123; return'`
 #: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
 if [[ $1 == eval ]]; then
-    "$@"
+    #: We can do `"$@"` but it'll break as some programs append extra arguments
+    eval "$2"
     set --
 fi
 
