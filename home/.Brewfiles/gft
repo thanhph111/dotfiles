@@ -123,8 +123,6 @@ cask "appcleaner"
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
-# 3D creation suite
-cask "blender"
 # E-books management software
 cask "calibre"
 # Free app that makes your Internet safer
@@ -133,12 +131,8 @@ cask "cloudflare-warp"
 cask "cyberduck"
 # App to build and share containerized applications and microservices
 cask "docker"
-# Online diagram software
-cask "drawio"
 # Collaborative team software
 cask "figma"
-# Hybrid IDE and text editor
-cask "fleet"
 # Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Developer targeted fonts with a high number of glyphs
@@ -211,7 +205,6 @@ mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
 mas "Color Picker", id: 1545870783
 mas "Dark Reader for Safari", id: 1438243180
-mas "Developer", id: 640199958
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
@@ -220,6 +213,5 @@ mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
 mas "PDFgear", id: 1615523079
-mas "Shazam", id: 897118787
 mas "Vectornator", id: 1219074514
 mas "Velja", id: 1607635845
