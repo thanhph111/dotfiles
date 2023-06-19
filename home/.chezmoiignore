@@ -1,6 +1,7 @@
 *
 
 {{/* General */}}
+!Documents
 !.vimrc
 !.ssh
 
@@ -30,7 +31,6 @@
 
 {{/* Windows */}}
 {{ if eq .chezmoi.os "windows" }}
-!Documents
 !AppData
 !.config
 {{ end }}

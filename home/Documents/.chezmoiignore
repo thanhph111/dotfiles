@@ -1,0 +1,3 @@
+{{ if eq .chezmoi.os "linux" "darwin" }}
+WindowsPowerShell
+{{ end }}
