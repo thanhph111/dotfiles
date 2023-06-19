@@ -284,7 +284,7 @@ command_exists pinentry-mac && alias pinentry=pinentry-touchid
 #: Install OpenJDK first: `brew install openjdk` (newest version)
 command_exists brew && {
     export PATH="$(brew --prefix)/opt/openjdk/bin:$PATH"
-    export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+    export CPPFLAGS="-I$(brew --prefix)/opt/openjdk/include"
 }
 
 #: >>>
