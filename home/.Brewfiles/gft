@@ -4,10 +4,6 @@ tap "homebrew/cask-fonts"
 tap "jorgelbg/tap"
 tap "kovetskiy/mark"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
-# Record and share terminal sessions
-brew "asciinema"
-# Official Amazon AWS command-line interface
-brew "awscli"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Programmable completion for Bash 4.2+
@@ -16,24 +12,16 @@ brew "bash-completion@2"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
-# Yet another cross-platform graphical process/system monitor
-brew "bottom"
 # Fancy interface to the Python interpreter
 brew "bpython"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
-# Secure runtime for JavaScript and TypeScript
-brew "deno"
-# Diff that understands syntax
-brew "difftastic"
 # Modern replacement for 'ls'
 brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Play, record, convert, and stream audio and video
-brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
 brew "findutils"
 # Command-line fuzzy finder written in Go
@@ -42,8 +30,6 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
-# Git extension for versioning large files
-brew "git-lfs"
 # Blazing fast terminal-ui for git written in rust
 brew "gitui"
 # GNU implementation of the famous stream editor
@@ -62,10 +48,6 @@ brew "imagemagick"
 brew "jo"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Development kit for the Java programming language
-brew "openjdk"
-# Open-source distributed event streaming platform
-brew "kafka"
 # Generic command-line non-JVM Apache Kafka producer and consumer
 brew "kcat"
 # Simple terminal UI for git commands
@@ -74,8 +56,6 @@ brew "lazygit"
 brew "less"
 # Mac App Store command-line interface
 brew "mas"
-# CLI tool for saving complete web pages as a single HTML file
-brew "monolith"
 # Remote terminal application
 brew "mosh"
 # Interactive cheatsheet tool for the command-line
@@ -86,8 +66,6 @@ brew "node"
 brew "newman"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
-# SSL/TLS VPN implementing OSI layer 2 or 3 secure network extension
-brew "openvpn"
 # Swiss-army knife of markup format conversion
 brew "pandoc"
 # Pinentry for GPG on Mac
@@ -98,8 +76,6 @@ brew "pipenv"
 brew "pipx"
 # Python package management tool
 brew "poetry"
-# Object-relational database system
-brew "postgresql@14"
 # Modern replacement for ps written by Rust
 brew "procs"
 # Go support for Google's protocol buffers
@@ -114,8 +90,6 @@ brew "ripgrep"
 brew "rm-improved"
 # Rust toolchain installer
 brew "rustup-init"
-# Cross-shell prompt for astronauts
-brew "starship"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
 # Upgrade all the things
@@ -143,14 +117,8 @@ brew "kovetskiy/mark/mark"
 cask "1password"
 # Command-line helper for the 1Password password manager
 cask "1password-cli"
-# GPU-accelerated terminal emulator
-cask "alacritty"
 # Application uninstaller
 cask "appcleaner"
-# Audio utility
-cask "background-music"
-# Open-source KVM software
-cask "barrier"
 # Cross platform SQL editor and database management app
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
@@ -169,6 +137,8 @@ cask "docker"
 cask "drawio"
 # Collaborative team software
 cask "figma"
+# Hybrid IDE and text editor
+cask "fleet"
 # Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Developer targeted fonts with a high number of glyphs
@@ -193,12 +163,10 @@ cask "google-chrome"
 cask "hiddenbar"
 # Free and open-source media player
 cask "iina"
-# Tool to optimize images to a smaller size
-cask "imageoptim"
+# Java IDE by JetBrains
+cask "intellij-idea"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
-# JetBrains tools manager
-cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
 # Blocks all Keyboard and TouchBar input
@@ -231,36 +199,27 @@ cask "soduto"
 cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
-# Terminal emulator, SSH and serial client
-cask "tabby"
 # General-purpose text editor
 cask "textmate"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
 cask "visual-studio-code"
-# Rust-based terminal
-cask "warp"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
-mas "Amphetamine", id: 937984704
 mas "Color Picker", id: 1545870783
 mas "Dark Reader for Safari", id: 1438243180
 mas "Developer", id: 640199958
 mas "Dropover", id: 1355679052
-mas "Equinox", id: 1591510203
-mas "Gifski", id: 1351639930
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
-mas "One Thing", id: 1604176982
 mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
 mas "PDFgear", id: 1615523079
 mas "Shazam", id: 897118787
-mas "Tomito", id: 1526042938
 mas "Vectornator", id: 1219074514
 mas "Velja", id: 1607635845
