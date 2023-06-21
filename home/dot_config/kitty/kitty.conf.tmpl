@@ -297,7 +297,12 @@ include current-theme.conf
 
 #: Advanced <<<
 
-# shell .
+{{ if eq .chezmoi.os "linux" -}}
+shell bash -is eval 'piccel ~/.local/bin/pac-man.json'
+{{- else -}}
+shell zsh -ils eval 'piccel ~/.local/bin/pac-man.json'
+{{- end }}
+
 
 editor vim
 
