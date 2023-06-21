@@ -10,6 +10,10 @@ if ! command -v brew >/dev/null; then
 fi
 
 brewfile="${1:-$HOME/.Brewfile}"
+args=(--formula --tap)
 
-brew bundle dump --force --describe --file="$brewfile" \
-    --formula --cask --tap --mas
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    args+=(--cask --mas)
+fi
+
+echo brew bundle dump --force --describe --file="$brewfile" "${args[@]}"
