@@ -233,11 +233,23 @@ end
 if wezterm.target_triple:find "apple%-darwin" then
     config.font_size = 13
     config.initial_rows = 37
+    config.default_prog = {
+        "zsh",
+        "-ils",
+        "eval",
+        "piccel ~/.local/bin/pac-man.json"
+    }
 
     return config
 end
 
 -- Linux specific configurations
 config.window_decorations = nil
+config.default_prog = {
+    "bash",
+    "-is",
+    "eval",
+    "piccel ~/.local/bin/pac-man.json"
+}
 
 return config
