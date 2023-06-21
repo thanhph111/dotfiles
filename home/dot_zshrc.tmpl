@@ -145,6 +145,8 @@ checksum() {
     echo "$1  $(realpath $2)" | shasum -c
 }
 
+alias zshout='zsh -is eval "unset HISTFILE"'
+
 #: >>>
 
 #: History <<<
