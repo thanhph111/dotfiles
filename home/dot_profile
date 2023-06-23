@@ -69,7 +69,6 @@ export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 export CARGO_HOME="$XDG_CACHE_HOME/cargo"
 [ -r "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
 export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
-export PATH="$CARGO_HOME/bin:$PATH"
 
 #: }}}
 
