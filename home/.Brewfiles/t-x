@@ -11,6 +11,8 @@ brew "bat-extras"
 brew "bottom"
 # Fancy interface to the Python interpreter
 brew "bpython"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
 # Diff that understands syntax
 brew "difftastic"
 # CLI utility to build and manage a PKI CA
