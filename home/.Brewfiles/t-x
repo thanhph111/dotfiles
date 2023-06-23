@@ -19,8 +19,6 @@ brew "easy-rsa"
 brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Play, record, convert, and stream audio and video
-brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -35,8 +33,6 @@ brew "gitui"
 brew "go"
 # Colorize logfiles and command output
 brew "grc"
-# Tools and libraries to manipulate images in many formats
-brew "imagemagick"
 # JSON output from a shell
 brew "jo"
 # Lightweight and flexible command-line JSON processor
