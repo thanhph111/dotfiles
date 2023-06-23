@@ -101,12 +101,6 @@ export GLFW_IM_MODULE=ibus
 
 #: }}}
 
-#: Bash {{{
-
-[ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
-
-#: }}}
-
 #: macOS {{{
 
 #: Disable macOS deprecation warning
@@ -174,3 +168,6 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
 #: }}}
+
+#: Source `.bashrc`
+[ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
