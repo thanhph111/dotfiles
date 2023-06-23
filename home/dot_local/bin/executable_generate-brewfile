@@ -16,4 +16,4 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     args+=(--cask --mas)
 fi
 
-echo brew bundle dump --force --describe --file="$brewfile" "${args[@]}"
+brew bundle dump --force --describe --file="$brewfile" "${args[@]}"
