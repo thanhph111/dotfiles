@@ -172,9 +172,6 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
-[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
-
-#: Set PATH so it includes user's private bin if it exists
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
 #: }}}
