@@ -9,6 +9,9 @@
 #: If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
+[[ -z "$HOME" ]] && return
+
 #: Create config directory
 export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
