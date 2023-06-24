@@ -10,12 +10,12 @@
 [[ $- != *i* ]] && return
 
 #: Create config directory
-export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-~/.config}"
+export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
 [[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CONFIG_DIR"
 
 #: Create cache directory
-export USER_CACHE_DIR="${XDG_CACHE_HOME:-~/.cache}"
+export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
 [[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CACHE_DIR"
 
@@ -479,8 +479,8 @@ command_exists gh && eval "$(gh completion -s bash)"
 
 #: Poetry <<<
 
-[[ -d "~/.poetry/bin" ]] && {
-    export PATH="$PATH:~/.poetry/bin"
+[[ -d "$HOME/.poetry/bin" ]] && {
+    export PATH="$PATH:$HOME/.poetry/bin"
 }
 
 command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
@@ -505,8 +505,8 @@ fi
 #: Ripgrep <<<
 
 #: Config file
-[[ -f "~/.config/ripgrep/config" ]] &&
-    export RIPGREP_CONFIG_PATH="~/.config/ripgrep/config"
+[[ -f "$HOME/.config/ripgrep/config" ]] &&
+    export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 
 #: >>>
 
