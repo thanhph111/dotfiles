@@ -12,12 +12,12 @@
 #: Create config directory
 export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
-mkdir -p "$BASH_CONFIG_DIR"
+[[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CONFIG_DIR"
 
 #: Create cache directory
 export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
-mkdir -p "$BASH_CACHE_DIR"
+[[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CACHE_DIR"
 
 #: Functions <<<
 
@@ -103,7 +103,7 @@ remove_history() {
 
 #: Get directory size
 dsize() {
-    [ "$1" != "" ] && dir=$1 || dir=$(pwd)
+    [[ "$1" != "" ]] && dir=$1 || dir=$(pwd)
     du -hs "$dir"
 }
 
@@ -138,7 +138,7 @@ update_kitty() {
 
 #: Update Oh My Posh
 update_oh_my_posh() {
-    [ "$1" == "" ] && tag='latest/download' || tag="download/v$1"
+    [[ "$1" == "" ]] && tag='latest/download' || tag="download/v$1"
     url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/$tag/posh-linux-amd64"
     sudo wget "$url" -O /usr/local/bin/oh-my-posh
     sudo chmod +x /usr/local/bin/oh-my-posh
@@ -187,11 +187,11 @@ alias update_pyenv='pyenv update'
 alias man='MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS)) man'
 
 #: Enable color support of `ls` and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
+if [[ -x /usr/bin/dircolors ]]; then
     if [[ -r ~/.dircolors ]]; then
-        eval "$(dircolors -b ~/.dircolors)"
+        eval "$(/usr/bin/dircolors -b ~/.dircolors)"
     else
-        eval "$(dircolors -b)"
+        eval "$(/usr/bin/dircolors -b)"
     fi
 fi
 alias ls='ls --color=auto --hyperlink=auto'
@@ -258,10 +258,12 @@ FIGNORE="${FIGNORE}:\
 .uuid"
 
 #: Make `less` more friendly for non-text input files, see `lesspipe(1)`
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+[[ -x /usr/bin/lesspipe ]] &&
+    [[ -x /usr/bin/env ]] &&
+        eval "$(/usr/bin/env -i SHELL=/bin/sh /usr/bin/lesspipe)"
 
 #: Disable the XON/XOFF feature for forward-search-history (C-s)
-stty -ixon
+[[ -x /usr/bin/stty ]] && /usr/bin/stty -ixon
 
 #: Avoid running commands immediately when pasting from clipboard
 bind 'set enable-bracketed-paste'
@@ -303,53 +305,55 @@ command_exists brew && {
 
 #: Color the man page
 #: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
-LESS_TERMCAP_mb="$(
-    tput bold
-    tput setaf 2
-)"
-LESS_TERMCAP_md="$(
-    tput bold
-    tput setaf 6
-)"
-LESS_TERMCAP_me="$(tput sgr0)"
-LESS_TERMCAP_so="$(
-    tput bold
-    tput setaf 3
-    tput setab 4
-)"
-LESS_TERMCAP_se="$(
-    tput rmso
-    tput sgr0
-)"
-LESS_TERMCAP_us="$(
-    tput smul
-    tput bold
-    tput setaf 7
-)"
-LESS_TERMCAP_ue="$(
-    tput rmul
-    tput sgr0
-)"
-LESS_TERMCAP_mr="$(tput rev)"
-LESS_TERMCAP_mh="$(tput dim)"
-LESS_TERMCAP_ZN="$(tput ssubm)"
-LESS_TERMCAP_ZV="$(tput rsubm)"
-LESS_TERMCAP_ZO="$(tput ssupm)"
-LESS_TERMCAP_ZW="$(tput rsupm)"
-export LESS_TERMCAP_mb
-export LESS_TERMCAP_md
-export LESS_TERMCAP_me
-export LESS_TERMCAP_so
-export LESS_TERMCAP_se
-export LESS_TERMCAP_us
-export LESS_TERMCAP_ue
-export LESS_TERMCAP_mr
-export LESS_TERMCAP_mh
-export LESS_TERMCAP_ZN
-export LESS_TERMCAP_ZV
-export LESS_TERMCAP_ZO
-export LESS_TERMCAP_ZW
-export GROFF_NO_SGR=1
+command_exists tput && {
+    LESS_TERMCAP_mb="$(
+        tput bold
+        tput setaf 2
+    )"
+    LESS_TERMCAP_md="$(
+        tput bold
+        tput setaf 6
+    )"
+    LESS_TERMCAP_me="$(tput sgr0)"
+    LESS_TERMCAP_so="$(
+        tput bold
+        tput setaf 3
+        tput setab 4
+    )"
+    LESS_TERMCAP_se="$(
+        tput rmso
+        tput sgr0
+    )"
+    LESS_TERMCAP_us="$(
+        tput smul
+        tput bold
+        tput setaf 7
+    )"
+    LESS_TERMCAP_ue="$(
+        tput rmul
+        tput sgr0
+    )"
+    LESS_TERMCAP_mr="$(tput rev)"
+    LESS_TERMCAP_mh="$(tput dim)"
+    LESS_TERMCAP_ZN="$(tput ssubm)"
+    LESS_TERMCAP_ZV="$(tput rsubm)"
+    LESS_TERMCAP_ZO="$(tput ssupm)"
+    LESS_TERMCAP_ZW="$(tput rsupm)"
+    export LESS_TERMCAP_mb
+    export LESS_TERMCAP_md
+    export LESS_TERMCAP_me
+    export LESS_TERMCAP_so
+    export LESS_TERMCAP_se
+    export LESS_TERMCAP_us
+    export LESS_TERMCAP_ue
+    export LESS_TERMCAP_mr
+    export LESS_TERMCAP_mh
+    export LESS_TERMCAP_ZN
+    export LESS_TERMCAP_ZV
+    export LESS_TERMCAP_ZO
+    export LESS_TERMCAP_ZW
+    export GROFF_NO_SGR=1
+}
 
 #: Colored GCC warnings and errors
 export GCC_COLORS="\
@@ -400,15 +404,15 @@ clean_history() {
 HISTFILE="$BASH_CACHE_DIR/history"
 #: Also append each line to history file for safe keeping
 #: If the last command fails, it won't be added to history file
-if [ -z "$PROMPT_COMMAND" ]; then
+if [[ -z "$PROMPT_COMMAND" ]]; then
     PROMPT_COMMAND="status=\$?; \
     HISTFILE=~/.cache/bash/history; \
-    [ \$status -eq 0 ] && history -a; \
+    [[ \$status -eq 0 ]] && history -a; \
     unset HISTFILE"
 else
     PROMPT_COMMAND="status=\$?; \
     HISTFILE=~/.cache/bash/history; \
-    [ \$status -eq 0 ] && history -a; \
+    [[ \$status -eq 0 ]] && history -a; \
     unset HISTFILE; \
     $PROMPT_COMMAND"
 fi
@@ -501,7 +505,7 @@ fi
 #: Ripgrep <<<
 
 #: Config file
-[ -f "$HOME/.config/ripgrep/config" ] &&
+[[ -f "$HOME/.config/ripgrep/config" ]] &&
     export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 
 #: >>>
