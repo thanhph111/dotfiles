@@ -305,7 +305,7 @@ command_exists brew && {
 
 #: Color the man page
 #: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
-command_exists tput && {
+[[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]] && command_exists tput && {
     LESS_TERMCAP_mb="$(
         tput bold
         tput setaf 2
