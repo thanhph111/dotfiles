@@ -1,4 +1,3 @@
-tap "cormacrelf/tap"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "jorgelbg/tap"
@@ -160,8 +159,6 @@ cask "keycastr"
 cask "kitty"
 # App to write, plan, collaborate, and get organized
 cask "notion"
-# Cloud storage client
-cask "onedrive"
 # Customize and maintain app icons
 cask "pictogram"
 # Collaboration platform for API development
@@ -204,6 +201,7 @@ mas "Equinox", id: 1591510203
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
+mas "OneDrive", id: 823766827
 mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
 mas "Pasty", id: 1544620654
