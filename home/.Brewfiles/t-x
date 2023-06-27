@@ -1,4 +1,5 @@
 tap "homebrew/bundle"
+tap "homebrew/linux-fonts"
 # Record and share terminal sessions
 brew "asciinema"
 # Official Amazon AWS command-line interface
@@ -95,3 +96,11 @@ brew "zsh"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Fira Code
+brew "homebrew/linux-fonts/font-fira-code"
+# Developer targeted fonts with a high number of glyphs
+brew "homebrew/linux-fonts/font-fira-code-nerd-font"
+# Typeface made for developers
+brew "homebrew/linux-fonts/font-jetbrains-mono"
+# Developer targeted fonts with a high number of glyphs
+brew "homebrew/linux-fonts/font-jetbrains-mono-nerd-font"

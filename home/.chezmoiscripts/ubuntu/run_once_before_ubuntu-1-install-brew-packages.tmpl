@@ -3,4 +3,7 @@
     "install-brew-packages"
     (joinPath .chezmoi.sourceDir ".Brewfiles" (lower .codename))
 -}}
+
+# Link Homebrew fonts
+ln -fs "$(brew --prefix)/share/fonts" ~/.local/share/fonts/homebrew
 {{- end -}}
