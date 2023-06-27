@@ -538,10 +538,11 @@ fi
 #: Miscellaneous <<<
 
 #: Unset history on Visual Studio Code terminal
-[[ $TERM_PROGRAM = "vscode" ]] && {
+[[ "$TERM_PROGRAM" = vscode ]] && {
     unset HISTFILE
-    unset PROMPT_COMMAND
+    command_exists code && . "$(code --locate-shell-integration-path bash)"
 }
+
 #: And then set the prompt
 if command_exists oh-my-posh; then
     POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"}"

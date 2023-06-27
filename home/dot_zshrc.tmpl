@@ -479,7 +479,10 @@ command_exists kitty && {
 autoload -U colors && colors
 
 #: Unset history on Visual Studio Code terminal
-[[ $TERM_PROGRAM = "vscode" ]] && unset HISTFILE
+[[ "$TERM_PROGRAM" = vscode ]] && {
+    unset HISTFILE
+    command_exists code && . "$(code --locate-shell-integration-path zsh)"
+}
 
 #: >>>
 
