@@ -314,11 +314,11 @@ command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
 
 #: Prompt (Oh My Posh/Starship) <<<
 
-if command_exists oh-my-posh && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
+if command_exists oh-my-posh && [[ "$TERM_PROGRAM" != Apple_Terminal ]]; then
     POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"}"
     export POSH_THEME
     eval "$(oh-my-posh init zsh)"
-elif command_exists starship && [[ $TERM_PROGRAM != "Apple_Terminal" ]]; then
+elif command_exists starship && [[ "$TERM_PROGRAM" != Apple_Terminal ]]; then
     export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"
     eval "$(starship init zsh)"
 elif [[ -n "$ZSH" ]]; then
@@ -462,7 +462,7 @@ command_exists kitty && {
 
 #: Zsh plugins <<<
 
-[[ $OSTYPE == darwin* ]] && command_exists brew && {
+[[ "$OSTYPE" == darwin* ]] && command_exists brew && {
     #: Fish-like autosuggestions 'zsh-autosuggestions'
     include "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     #: Fish shell like syntax highlighting 'zsh-syntax-highlighting'
@@ -501,7 +501,7 @@ fi
 #: Execute a custom command without exiting like using `-c`
 #: So we can do like this `zsh -is eval 'echo 123; return'`
 #: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
-if [[ $1 == eval ]]; then
+if [[ "$1" == eval ]]; then
     #: We can do `"$@"` but it'll break as some programs append extra arguments
     eval "$2"
     set --
