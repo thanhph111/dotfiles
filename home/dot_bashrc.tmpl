@@ -122,26 +122,6 @@ detach() {
     ("$@" &>/dev/null &)
 }
 
-#: Force Google Chrome to use dark theme, only run after update
-force_dark_chrome() {
-    sudo sed \
-        -i '/^Exec=/ s/$/ --enable-features=WebUIDarkMode --force-dark-mode/' \
-        /usr/share/applications/google-chrome.desktop
-}
-
-#: Kitty update
-update_kitty() {
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-}
-
-#: Update Oh My Posh
-update_oh_my_posh() {
-    [[ "$1" == "" ]] && tag='latest/download' || tag="download/v$1"
-    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/$tag/posh-linux-amd64"
-    sudo wget "$url" -O /usr/local/bin/oh-my-posh
-    sudo chmod +x /usr/local/bin/oh-my-posh
-}
-
 #: Add an `alert` for long running commands, use like so:
 #:     sleep 3; alert
 #: This function relies on an external script
