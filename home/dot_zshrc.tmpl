@@ -31,8 +31,12 @@ command_exists() {
 
 #: Import a shell script
 include() {
-    [[ -r "$1" ]] && source "$1"
+    [[ -r "$1" ]] && . "$1" || true
 }
+
+#: Source all other function files in my directory
+[[ -d "$ZSH_CONFIG_DIR"/functions ]] &&
+    for file in "$ZSH_CONFIG_DIR"/functions/*; do include "$file"; done
 
 #: >>>
 
@@ -485,10 +489,6 @@ autoload -U colors && colors
 }
 
 #: >>>
-
-#: Source all other function files in my directory
-[[ -d ~/.config/zsh/functions ]] &&
-    for file in ~/.config/zsh/functions/*; do include "$file" &>/dev/null; done
 
 #: Build completion
 #: If wanna run `compinit` only every 24 hours, see:
