@@ -10,12 +10,12 @@
 #: Create config directory
 export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 export BASH_CONFIG_DIR="$USER_CONFIG_DIR/bash"
-[[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CONFIG_DIR"
+[[ -x /bin/mkdir ]] && /bin/mkdir -p "$BASH_CONFIG_DIR"
 
 #: Create cache directory
 export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
-[[ -x /usr/bin/mkdir ]] && /usr/bin/mkdir -p "$BASH_CACHE_DIR"
+[[ -x /bin/mkdir ]] && /bin/mkdir -p "$BASH_CACHE_DIR"
 
 #: Functions <<<
 
@@ -165,11 +165,11 @@ alias update_pyenv='pyenv update'
 alias man='MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS)) man'
 
 #: Enable color support of `ls` and also add handy aliases
-if [[ -x /usr/bin/dircolors ]]; then
+if [[ -x /bin/dircolors ]]; then
     if [[ -r ~/.dircolors ]]; then
-        eval "$(/usr/bin/dircolors -b ~/.dircolors)"
+        eval "$(/bin/dircolors -b ~/.dircolors)"
     else
-        eval "$(/usr/bin/dircolors -b)"
+        eval "$(/bin/dircolors -b)"
     fi
 fi
 alias ls='ls --color=auto --hyperlink=auto'
@@ -236,12 +236,11 @@ FIGNORE="${FIGNORE}:\
 .uuid"
 
 #: Make `less` more friendly for non-text input files, see `lesspipe(1)`
-[[ -x /usr/bin/lesspipe ]] &&
-    [[ -x /usr/bin/env ]] &&
-        eval "$(/usr/bin/env -i SHELL=/bin/sh /usr/bin/lesspipe)"
+[[ -x /bin/lesspipe ]] &&
+    [[ -x /bin/env ]] && eval "$(/bin/env -i SHELL=/bin/sh /bin/lesspipe)"
 
 #: Disable the XON/XOFF feature for forward-search-history (C-s)
-[[ -x /usr/bin/stty ]] && /usr/bin/stty -ixon
+[[ -x /bin/stty ]] && /bin/stty -ixon
 
 #: Avoid running commands immediately when pasting from clipboard
 bind 'set enable-bracketed-paste'
@@ -526,7 +525,7 @@ else
     #: Colored prompt in case no powerline is used: `user@host:dir`
     [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]] &&
         debian_chroot=$(cat /etc/debian_chroot)
-    [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null &&
+    [[ -x /bin/tput ]] && tput setaf 1 >&/dev/null &&
         PS1="${debian_chroot:+($debian_chroot)}\
 \[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
     [[ "$TERM" =~ (xterm.*|rxvt.*) ]] &&
