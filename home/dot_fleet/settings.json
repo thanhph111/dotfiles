@@ -21,10 +21,12 @@
             "args": [
                 "-is",
                 "eval",
-                "export POSH_THEME=/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json; unset HISTFILE"
+                "export POSH_THEME=$(brew --prefix)/share/oh-my-posh/themes/probua.minimal.omp.json",
+                "eval",
+                "unset HISTFILE"
             ],
             "name": "Light Zsh"
-        },
+        }
     ],
     "fus.sendAllowed": false,
     "keymap": "macos-vscode"
