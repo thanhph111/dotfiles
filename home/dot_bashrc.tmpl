@@ -545,9 +545,11 @@ add_trap clean_history EXIT
 #: >>>
 
 #: Execute a custom command without exiting like using `-c`
-#: So we can do like this `bash -is eval 'echo 123; return'`
-if [[ "$1" == eval ]]; then
-    #: We can do `"$@"` but it'll break as some programs append extra arguments
-    eval "$2"
-    set --
-fi
+#: So we can do like this `bash -is eval 'echo 123' eval return`
+#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
+#: We can do `eval "$@"` but it'll break as some programs append extra arguments
+while [[ "$1" == eval ]]; do
+    shift
+    eval "$1"
+    shift
+done
