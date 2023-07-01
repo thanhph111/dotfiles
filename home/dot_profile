@@ -156,7 +156,7 @@ export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
 #: Wget {{{
 
 #: Change history file location
-alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+alias wget='wget --hsts-file=$XDG_DATA_HOME/wget-hsts'
 
 #: }}}
 
