@@ -172,6 +172,17 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 
 #: }}}
 
+#: Java {{{
+
+#: To add a new Java version, for example, 11, run:
+#: jenv add "$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home"
+type jenv &>/dev/null && {
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+}
+
+#: }}}
+
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
