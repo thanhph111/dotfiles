@@ -10,4 +10,6 @@ app
 {{/* Windows */}}
 {{ if eq .chezmoi.os "windows" }}
 *
+!piccel
+!pac-man.json
 {{ end }}

@@ -21,6 +21,12 @@ if (
 [Environment]::SetEnvironmentVariable('XDG_DATA_HOME', "$env:USERPROFILE\.local\share", 'User')
 [Environment]::SetEnvironmentVariable('GOPATH', "$env:USERPROFILE\.local\share\go", 'User')
 
+# Append `~/.local/bin` to `PATH` if it's not already there
+$path = [Environment]::GetEnvironmentVariable('PATH', 'User')
+if (-Not $path.Contains("$env:USERPROFILE\.local\bin")) {
+    [Environment]::SetEnvironmentVariable('PATH', "$path;$env:USERPROFILE\.local\bin", 'User')
+}
+
 # Hide files and folders starting with a dot in Home directory
 Get-ChildItem -Path "$HOME" -Filter '.*' | ForEach-Object { $_.Attributes += 'Hidden' }
 
