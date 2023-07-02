@@ -56,6 +56,9 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $codename = "Madison" -}}
 {{-     $vault = "Personal" -}}
 {{-     $client = true -}}
+{{- else -}}
+{{-     writeToStdout "Unknown host\n" -}}
+{{-     exit 1 -}}
 {{- end -}}
 
 umask = 0o77
