@@ -222,6 +222,7 @@ class Kitty(App):
 
         archive_file_name = f"kitty-{version}-{architecture}.txz"
         archive_file = self.install_directory.parent / archive_file_name
+        self.install_directory.parent.mkdir(parents=True, exist_ok=True)
         download(f"{github.download_url}/{tag}/{archive_file_name}", archive_file)
 
         unarchive(archive_file, self.install_directory)
@@ -253,6 +254,8 @@ class Kitty(App):
 
         (DEFAULT_PATH / self.executable).unlink()
         shutil.rmtree(self.install_directory)
+        if not list(self.install_directory.parent.iterdir()):
+            self.install_directory.parent.rmdir()
 
         (Path.home() / ".local/share/applications/kitty.desktop").unlink()
         (Path.home() / ".local/share/applications/kitty-open.desktop").unlink()
