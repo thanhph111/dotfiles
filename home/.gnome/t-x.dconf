@@ -1,0 +1,121 @@
+[org/gnome/desktop/wm/keybindings]
+move-to-monitor-down=@as []
+move-to-monitor-left=@as []
+move-to-monitor-right=@as []
+move-to-monitor-up=@as []
+move-to-workspace-1=@as []
+move-to-workspace-down=@as []
+move-to-workspace-last=@as []
+move-to-workspace-left=@as []
+move-to-workspace-right=@as []
+move-to-workspace-up=@as []
+switch-group=['<Super>Above_Tab']
+switch-group-backward=['<Shift><Super>Above_Tab']
+switch-panels=@as []
+switch-panels-backward=@as []
+switch-to-workspace-down=@as []
+switch-to-workspace-last=@as []
+switch-to-workspace-left=@as []
+switch-to-workspace-right=@as []
+switch-to-workspace-up=@as []
+
+[org/gnome/shell/extensions/auto-move-windows]
+application-list=['com.spotify.Client.desktop:2']
+
+[org/gnome/shell/extensions/blur-my-shell/appfolder]
+style-dialogs=2
+
+[org/gnome/shell/extensions/blur-my-shell/applications]
+blur=false
+
+[org/gnome/shell/extensions/blur-my-shell/dash-to-dock]
+style-dash-to-dock=0
+
+[org/gnome/shell/extensions/blur-my-shell/panel]
+brightness=0.8
+customize=true
+sigma=200
+
+[org/gnome/shell/extensions/caffeine]
+enable-fullscreen=false
+indicator-position-max=3
+
+[org/gnome/shell/extensions/dash-to-dock]
+click-action='minimize'
+dash-max-icon-size=44
+dock-fixed=false
+dock-position='BOTTOM'
+extend-height=false
+middle-click-action='previews'
+scroll-action='cycle-windows'
+show-apps-at-top=true
+show-mounts=false
+
+[org/gnome/shell/extensions/hidetopbar]
+enable-active-window=false
+mouse-sensitive=true
+mouse-sensitive-fullscreen-window=false
+
+[org/gnome/shell/extensions/nightthemeswitcher/commands]
+enabled=true
+sunrise='switch-theme light'
+sunset='switch-theme dark'
+
+[org/gnome/shell/extensions/nightthemeswitcher/cursor-variants]
+day='DMZ-Black'
+enabled=true
+night='DMZ-White'
+
+[org/gnome/shell/extensions/nightthemeswitcher/gtk-variants]
+day='Yaru'
+enabled=true
+night='Yaru-dark'
+
+[org/gnome/shell/extensions/nightthemeswitcher/icon-variants]
+day='Yaru'
+enabled=false
+night='Yaru-bark'
+
+[org/gnome/shell/extensions/nightthemeswitcher/shell-variants]
+day='Yaru'
+enabled=true
+night='Yaru-dark'
+
+[org/gnome/shell/extensions/nightthemeswitcher/time]
+location=(10.8, 106.7)
+nightthemeswitcher-ondemand-keybinding=['<Control><Super>t']
+
+[org/gnome/shell/extensions/pano]
+history-length=100
+send-notification-on-copy=false
+
+[org/gnome/shell/extensions/rounded-window-corners]
+black-list=['com.github.amezin.ddterm']
+border-color=(0.65, 0.65, 0.73, 0.16)
+border-width=-1
+focused-shadow={'vertical_offset': 4, 'horizontal_offset': 0, 'blur_offset': 28, 'spread_radius': 4, 'opacity': 60}
+global-rounded-corner-settings={'padding': <{'left': <uint32 2>, 'right': <uint32 2>, 'top': <uint32 2>, 'bottom': <uint32 2>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 10>, 'smoothing': <uint32 0>, 'enabled': <true>}
+settings-version=uint32 5
+
+[org/gnome/shell/extensions/user-theme]
+name='Yaru'
+
+[com/github/amezin/ddterm]
+background-color='rgb(23,20,33)'
+background-opacity=1.0
+command='custom-command'
+cursor-shape='ibeam'
+custom-command="bash -is eval 'unset PROMPT_COMMAND; unset HISTFILE; eval \"$(oh-my-posh init bash)\"; cd ~/Desktop; history -s topgrade'"
+custom-font='FiraCode Nerd Font Medium 10'
+ddterm-toggle-hotkey=['<Control><Super>grave']
+foreground-color='rgb(208,207,204)'
+notebook-border=false
+palette=['rgb(24,26,27)', 'rgb(169,20,9)', 'rgb(56,128,58)', 'rgb(204,122,0)', 'rgb(10,106,182)', 'rgb(82,46,146)', 'rgb(55,170,185)', 'rgb(120,129,135)', 'rgb(85,91,94)', 'rgb(255,48,120)', 'rgb(173,221,30)', 'rgb(255,236,22)', 'rgb(2,135,195)', 'rgb(209,10,255)', 'rgb(74,227,247)', 'rgb(220,223,228)']
+panel-icon-type='none'
+shortcut-page-close=['<Shift><Control>w']
+shortcut-win-new-tab=['<Shift><Control>t']
+tab-close-buttons=false
+tab-policy='automatic'
+use-system-font=false
+window-position='bottom'
+window-size=0.4

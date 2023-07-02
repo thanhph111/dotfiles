@@ -1,0 +1,9 @@
+{{- if eq .osid "linux-ubuntu" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+dconf load / <"{{ joinPath .chezmoi.sourceDir ".gnome" (lower .codename) }}.dconf"
+
+{{- end -}}
