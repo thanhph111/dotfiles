@@ -1,0 +1,90 @@
+tap "homebrew/bundle"
+tap "homebrew/linux-fonts"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Fancy interface to the Python interpreter
+brew "bpython"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# Modern replacement for 'ls'
+brew "exa"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
+# Blazing fast terminal-ui for git written in rust
+brew "gitui"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Colorize logfiles and command output
+brew "grc"
+# JSON output from a shell
+brew "jo"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Simple terminal UI for git commands
+brew "lazygit"
+# Remote terminal application
+brew "mosh"
+# Interactive cheatsheet tool for the command-line
+brew "navi"
+# Linux networking base tools
+brew "net-tools"
+# Platform built on V8 to build network applications
+brew "node"
+# Command-line collection runner for Postman
+brew "newman"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
+# Python dependency management tool
+brew "pipenv"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# Python package management tool
+brew "poetry"
+# Python version management
+brew "pyenv"
+# Rsync for cloud storage
+brew "rclone"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Command-line deletion tool focused on safety, ergonomics, and performance
+brew "rm-improved"
+# Rust toolchain installer
+brew "rustup-init"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
+# Upgrade all the things
+brew "topgrade"
+# Lightweight BitTorrent client
+brew "transmission-cli"
+# Vi 'workalike' with many additional features
+brew "vim"
+# Access X11 clipboards from the command-line
+brew "xclip"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Fira Code
+brew "homebrew/linux-fonts/font-fira-code"
+# Developer targeted fonts with a high number of glyphs
+brew "homebrew/linux-fonts/font-fira-code-nerd-font"
+# Typeface made for developers
+brew "homebrew/linux-fonts/font-jetbrains-mono"
+# Developer targeted fonts with a high number of glyphs
+brew "homebrew/linux-fonts/font-jetbrains-mono-nerd-font"
