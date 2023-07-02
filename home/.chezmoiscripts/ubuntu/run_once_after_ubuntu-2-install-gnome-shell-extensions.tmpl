@@ -32,8 +32,6 @@ packages=(
     user-theme@gnome-shell-extensions.gcampax.github.com
 )
 
-echo 'This is a list of GNOME Shell Extensions to be installed:'
-printf '%s\n' "${packages[@]}"
-echo 'Please install them manually.'
+gext install "${packages[@]}"
 
 {{- end -}}

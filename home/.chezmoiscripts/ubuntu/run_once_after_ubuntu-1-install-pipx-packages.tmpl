@@ -1,0 +1,13 @@
+{{- if eq .osid "linux-ubuntu" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+packages=(
+    gnome-extensions-cli
+)
+
+pipx install "${packages[@]}"
+
+{{- end -}}
