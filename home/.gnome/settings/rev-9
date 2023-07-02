@@ -119,3 +119,34 @@ tab-policy='automatic'
 use-system-font=false
 window-position='bottom'
 window-size=0.4
+
+[org/gnome/desktop/peripherals/mouse]
+natural-scroll=true
+
+[org/gnome/shell/extensions/ding]
+show-home=false
+start-corner='top-right'
+
+[org/gnome/shell]
+disabled-extensions=['spotify-ad-block@danigm.net']
+last-selected-power-profile='performance'
+favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'kitty.desktop']
+
+[org/gnome/desktop/interface]
+enable-hot-corners=true
+
+[org/gnome/desktop/session]
+idle-delay=uint32 600
+
+[org/gnome/settings-daemon/plugins/power]
+power-button-action='nothing'
+
+[system/locale]
+region='en_GB.UTF-8'
+
+[org/gnome/desktop/wm/preferences]
+action-middle-click-titlebar='minimize'
+button-layout='close:'
+
+[org/gnome/mutter]
+center-new-windows=true

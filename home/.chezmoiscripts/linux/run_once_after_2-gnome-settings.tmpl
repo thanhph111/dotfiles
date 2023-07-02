@@ -1,9 +1,9 @@
-{{- if eq .osid "linux-ubuntu" -}}
+{{- if eq .chezmoi.os "linux"-}}
 
 #! /usr/bin/env bash
 
 set -euo pipefail
 
-dconf load / <"{{ joinPath .chezmoi.sourceDir ".gnome" (lower .codename) }}.dconf"
+dconf load / <{{ joinPath .chezmoi.sourceDir ".gnome" "settings" (lower .codename) | quote }}
 
 {{- end -}}
