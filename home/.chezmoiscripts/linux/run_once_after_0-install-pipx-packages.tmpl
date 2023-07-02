@@ -1,13 +1,9 @@
-{{- if eq .osid "linux-ubuntu" -}}
+{{- if eq .chezmoi.os "linux"-}}
 
 #! /usr/bin/env bash
 
 set -euo pipefail
 
-packages=(
-    gnome-extensions-cli
-)
-
-pipx install "${packages[@]}"
+pipx install "$(cat {{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }})"
 
 {{- end -}}
