@@ -6,7 +6,7 @@ set -euo pipefail
 
 #: Install GNOME Shell Extensions
 
-gext install "$(cat {{ joinPath .chezmoi.sourceDir ".gnome" "extensions" (lower .codename) | quote }})"
+xargs gext install <{{ joinPath .chezmoi.sourceDir ".gnome" "extensions" (lower .codename) | quote }}
 
 #: Compile extension schemas
 for ext in ~/.local/share/gnome-shell/extensions/*/schemas/*.gschema.xml; do

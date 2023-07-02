@@ -4,6 +4,6 @@
 
 set -euo pipefail
 
-pipx install "$(cat {{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }})"
+xargs pipx install <{{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }}
 
 {{- end -}}

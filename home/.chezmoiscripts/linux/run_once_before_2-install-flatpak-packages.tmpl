@@ -9,6 +9,6 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 #: Install Flatpak apps
 
-flatpak install -y flathub "$(cat {{ joinPath .chezmoi.sourceDir ".flatpak" (lower .codename) | quote }})"
+xargs flatpak install -y flathub <{{ joinPath .chezmoi.sourceDir ".flatpak" (lower .codename) | quote }}
 
 {{- end -}}
