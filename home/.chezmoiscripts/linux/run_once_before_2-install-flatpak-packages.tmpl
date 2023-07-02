@@ -1,4 +1,4 @@
-{{- if eq .osid "linux-ubuntu" -}}
+{{- if eq .chezmoi.os "linux"-}}
 
 #! /usr/bin/env bash
 
@@ -9,19 +9,6 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 
 #: Install Flatpak apps
 
-packages=(
-    com.calibre_ebook.calibre
-    com.discordapp.Discord
-    com.getpostman.Postman
-    com.github.johnfactotum.Foliate
-    com.spotify.Client
-    com.valvesoftware.Steam
-    org.gimp.GIMP
-    org.gnome.FontManager
-    org.gnome.Geary
-    org.inkscape.Inkscape
-)
-
-flatpak install -y flathub "${packages[@]}"
+flatpak install -y flathub "$(cat {{ joinPath .chezmoi.sourceDir ".flatpak" (lower .codename) | quote }})"
 
 {{- end -}}
