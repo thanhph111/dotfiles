@@ -79,6 +79,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
         /opt/homebrew/bin:\
         /usr/local/bin:\
         /home/linuxbrew/.linuxbrew/bin:\
+        {{ .chezmoi.homeDir }}/.local/bin:\
         {{ env "PATH" }}\
     """
     {{- end }}
