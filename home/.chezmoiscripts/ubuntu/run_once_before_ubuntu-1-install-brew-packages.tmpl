@@ -7,4 +7,5 @@
 # Link Homebrew fonts
 mkdir -p ~/.local/share/fonts
 ln -fs "$(brew --prefix)/share/fonts" ~/.local/share/fonts/homebrew
+fc-cache -f -v
 {{- end -}}
