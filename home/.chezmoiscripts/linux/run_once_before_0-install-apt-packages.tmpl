@@ -1,4 +1,4 @@
-{{- if eq .osid "linux-ubuntu" -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt")) -}}
 
 #! /usr/bin/env bash
 #: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
@@ -22,28 +22,7 @@ sudo apt install -y aptitude
 
 #: Install some official packages <<<
 
-packages=(
-    apt-transport-https
-    baobab
-    barrier
-    build-essential
-    chrome-gnome-shell
-    curl
-    dconf-editor
-    devhelp
-    flatpak
-    gir1.2-gda-5.0
-    gir1.2-gsound-1.0
-    gnome-shell-extension-manager
-    gnome-shell-extensions
-    gnome-sushi
-    gnome-tweaks
-    gpick
-    libfuse2
-    openssh-server
-    synaptic
-)
-sudo aptitude install -y "${packages[@]}"
+sudo aptitude install -y "$(cat {{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }})"
 
 #: >>>
 
