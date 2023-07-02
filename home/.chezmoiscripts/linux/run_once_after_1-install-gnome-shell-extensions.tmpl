@@ -6,22 +6,7 @@ set -euo pipefail
 
 #: Install GNOME Shell Extensions
 
-packages=(
-    apps-menu@gnome-shell-extensions.gcampax.github.com
-    auto-move-windows@gnome-shell-extensions.gcampax.github.com
-    caffeine@patapon.info
-    ddterm@amezin.github.com
-    gsconnect@andyholmes.github.io
-    hide-keyboard-layout@sitnik.ru
-    hidetopbar@mathieu.bidon.ca
-    native-window-placement@gnome-shell-extensions.gcampax.github.com
-    places-menu@gnome-shell-extensions.gcampax.github.com
-    rounded-window-corners@yilozt
-    spotify-ad-block@danigm.net
-    user-theme@gnome-shell-extensions.gcampax.github.com
-)
-
-gext install "${packages[@]}"
+gext install "$(cat {{ joinPath .chezmoi.sourceDir ".gnome" "extensions" (lower .codename) | quote }})"
 
 #: Compile extension schemas
 for ext in ~/.local/share/gnome-shell/extensions/*/schemas/*.gschema.xml; do
