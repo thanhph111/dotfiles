@@ -22,4 +22,10 @@ packages=(
 
 gext install "${packages[@]}"
 
+#: Compile extension schemas
+for ext in ~/.local/share/gnome-shell/extensions/*/schemas/*.gschema.xml; do
+    sudo cp -v "$ext" /usr/share/glib-2.0/schemas/
+done
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+
 {{- end -}}
