@@ -22,7 +22,17 @@ sudo apt install -y aptitude
 
 #: Install some official packages <<<
 
-xargs sudo aptitude install -y --without-recommends <{{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }}
+#: Loop every lines to allow passing extra arguments to `aptitude`
+while read -r line; do
+    #: Skip empty lines
+    [[ -z "$line" ]] && continue
+
+    #: Skip comments
+    [[ "${line:0:1}" == "#" ]] && continue
+
+    #: Install packages
+    sudo aptitude install -y $line
+done <<{{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }}
 
 #: >>>
 
