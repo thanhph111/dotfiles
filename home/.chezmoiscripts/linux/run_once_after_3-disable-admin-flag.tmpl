@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.os "linux" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+sudo tee /etc/sudoers.d/disable_admin_file_in_home >/dev/null <<EOT
+# Disable `~/.sudo_as_admin_successful` file
+Defaults !admin_flag
+EOT
+
+{{- end -}}
