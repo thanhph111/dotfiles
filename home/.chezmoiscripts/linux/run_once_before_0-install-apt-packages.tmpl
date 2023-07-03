@@ -22,7 +22,7 @@ sudo apt install -y aptitude
 
 #: Install some official packages <<<
 
-xargs sudo aptitude install -y <{{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }}
+xargs sudo aptitude install -y --without-recommends <{{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }}
 
 #: >>>
 
