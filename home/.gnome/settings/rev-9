@@ -133,13 +133,17 @@ last-selected-power-profile='performance'
 favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'kitty.desktop']
 
 [org/gnome/desktop/interface]
+document-font-name='SF Pro Display 11'
 enable-hot-corners=true
+font-name='SF Pro Display 11'
+monospace-font-name='SF Mono Medium 11'
 
 [org/gnome/desktop/session]
 idle-delay=uint32 600
 
 [org/gnome/settings-daemon/plugins/power]
 power-button-action='nothing'
+sleep-inactive-ac-type='nothing'
 
 [system/locale]
 region='en_GB.UTF-8'
@@ -147,6 +151,7 @@ region='en_GB.UTF-8'
 [org/gnome/desktop/wm/preferences]
 action-middle-click-titlebar='minimize'
 button-layout='close:'
+titlebar-font='SF Pro Display Semi-Bold 11'
 
 [org/gnome/mutter]
 center-new-windows=true
