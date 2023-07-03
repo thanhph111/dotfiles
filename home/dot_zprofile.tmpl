@@ -101,7 +101,10 @@ export PATH="$GOPATH/bin:$PATH"
 #: Java <<<
 
 #: To add a new Java version, for example, 11, run:
-#: jenv add "$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home"
+#: - macOS:
+#:     jenv add "$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home"
+#: - Linux:
+#:     jenv add "$(brew --prefix openjdk@11)/libexec"
 type jenv &>/dev/null && {
     export PATH="$HOME/.jenv/bin:$PATH"
     eval "$(jenv init -)"
