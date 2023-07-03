@@ -139,8 +139,23 @@ are_all_packages_install docker-ce docker-ce-cli containerd.io docker-compose-pl
 #: IBus Bamboo <<<
 
 are_all_packages_install ibus-bamboo || {
+    {{ if eq .chezmoi.osRelease.id "ubuntu" -}}
     sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
     sudo aptitude update && sudo aptitude install -y ibus-bamboo
+    {{ else if eq .chezmoi.osRelease.id "debian" -}}
+    #: Reference: https://software.opensuse.org//download.html?project=home%3Alamlng&package=ibus-bamboo
+    #: For now, install
+    #: Add GPG key
+    curl -fsSL https://download.opensuse.org/repositories/home:lamlng/Debian_11/Release.key |
+        sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/ibus-bamboo.gpg
+    #: Set up the repository
+    echo "deb http://download.opensuse.org/repositories/home:/lamlng/Debian_11/ /" |
+        sudo tee /etc/apt/sources.list.d/ibus-bamboo.list >/dev/null
+    {{- end }}
+
+    #: Install IBus Bamboo
+    #: Temporarily suppress error code, it seems like a server outage
+    sudo aptitude update && sudo aptitude install -y ibus-bamboo || true
 }
 
 env DCONF_PROFILE=ibus \
