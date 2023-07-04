@@ -123,7 +123,13 @@ window-size=0.4
 natural-scroll=true
 
 [org/gnome/shell/extensions/ding]
+arrangeorder='KIND'
+keep-arranged=true
+keep-stacked=false
 show-home=false
+show-trash=false
+show-volumes=false
+sort-special-folders=true
 start-corner='top-right'
 
 [org/gnome/shell]
