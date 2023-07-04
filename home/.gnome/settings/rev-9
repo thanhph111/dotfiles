@@ -43,9 +43,11 @@ indicator-position-max=3
 [org/gnome/shell/extensions/dash-to-dock]
 click-action='minimize'
 dash-max-icon-size=44
+disable-overview-on-startup=false
 dock-fixed=false
 dock-position='BOTTOM'
 extend-height=false
+intellihide-mode='ALL_WINDOWS'
 middle-click-action='previews'
 scroll-action='cycle-windows'
 show-apps-at-top=true
@@ -62,19 +64,19 @@ sunrise='switch-theme light'
 sunset='switch-theme dark'
 
 [org/gnome/shell/extensions/nightthemeswitcher/cursor-variants]
-day='DMZ-Black'
+day='Yaru'
 enabled=true
-night='DMZ-White'
+night='Yaru'
 
 [org/gnome/shell/extensions/nightthemeswitcher/gtk-variants]
 day='Yaru'
-enabled=true
+enabled=false
 night='Yaru-dark'
 
 [org/gnome/shell/extensions/nightthemeswitcher/icon-variants]
 day='Yaru'
-enabled=false
-night='Yaru-bark'
+enabled=true
+night='Yaru-red-dark'
 
 [org/gnome/shell/extensions/nightthemeswitcher/shell-variants]
 day='Yaru'
@@ -96,9 +98,6 @@ border-width=-1
 focused-shadow={'vertical_offset': 4, 'horizontal_offset': 0, 'blur_offset': 28, 'spread_radius': 4, 'opacity': 60}
 global-rounded-corner-settings={'padding': <{'left': <uint32 2>, 'right': <uint32 2>, 'top': <uint32 2>, 'bottom': <uint32 2>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 10>, 'smoothing': <uint32 0>, 'enabled': <true>}
 settings-version=uint32 5
-
-[org/gnome/shell/extensions/user-theme]
-name='Yaru'
 
 [com/github/amezin/ddterm]
 background-color='rgb(23,20,33)'
@@ -130,7 +129,7 @@ start-corner='top-right'
 [org/gnome/shell]
 disabled-extensions=['spotify-ad-block@danigm.net']
 last-selected-power-profile='performance'
-favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'kitty.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'com.spotify.Client.desktop']
 
 [org/gnome/desktop/interface]
 document-font-name='SF Pro Display 11'
