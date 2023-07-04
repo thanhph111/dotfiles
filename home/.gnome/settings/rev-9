@@ -56,6 +56,7 @@ switch-to-workspace-up=@as []
 action-middle-click-titlebar='minimize'
 button-layout='close:'
 titlebar-font='SF Pro Display Semi-Bold 11'
+titlebar-uses-system-font=false
 
 [org/gnome/mutter]
 center-new-windows=true
