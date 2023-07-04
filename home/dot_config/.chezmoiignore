@@ -25,6 +25,7 @@
 
 {{/* Linux */}}
 {{ if eq .chezmoi.os "linux" }}
+!autostart
 !readline
 {{ end }}
 
