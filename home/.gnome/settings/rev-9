@@ -1,3 +1,35 @@
+[com/github/amezin/ddterm]
+background-color='rgb(23,20,33)'
+background-opacity=1.0
+command='custom-command'
+cursor-shape='ibeam'
+custom-command="bash -is eval 'unset PROMPT_COMMAND; unset HISTFILE; eval \"$(oh-my-posh init bash)\"; cd ~/Desktop; history -s topgrade'"
+custom-font='FiraCode Nerd Font Medium 10'
+ddterm-toggle-hotkey=['<Control><Super>grave']
+foreground-color='rgb(208,207,204)'
+notebook-border=false
+palette=['rgb(24,26,27)', 'rgb(169,20,9)', 'rgb(56,128,58)', 'rgb(204,122,0)', 'rgb(10,106,182)', 'rgb(82,46,146)', 'rgb(55,170,185)', 'rgb(120,129,135)', 'rgb(85,91,94)', 'rgb(255,48,120)', 'rgb(173,221,30)', 'rgb(255,236,22)', 'rgb(2,135,195)', 'rgb(209,10,255)', 'rgb(74,227,247)', 'rgb(220,223,228)']
+panel-icon-type='none'
+shortcut-page-close=['<Shift><Control>w']
+shortcut-win-new-tab=['<Shift><Control>t']
+tab-close-buttons=false
+tab-policy='automatic'
+use-system-font=false
+window-position='bottom'
+window-size=0.4
+
+[org/gnome/desktop/interface]
+document-font-name='SF Pro Display 11'
+enable-hot-corners=true
+font-name='SF Pro Display 11'
+monospace-font-name='SF Mono Medium 11'
+
+[org/gnome/desktop/peripherals/mouse]
+natural-scroll=true
+
+[org/gnome/desktop/session]
+idle-delay=uint32 600
+
 [org/gnome/desktop/wm/keybindings]
 move-to-monitor-down=@as []
 move-to-monitor-left=@as []
@@ -18,6 +50,23 @@ switch-to-workspace-last=@as []
 switch-to-workspace-left=@as []
 switch-to-workspace-right=@as []
 switch-to-workspace-up=@as []
+
+[org/gnome/desktop/wm/preferences]
+action-middle-click-titlebar='minimize'
+button-layout='close:'
+titlebar-font='SF Pro Display Semi-Bold 11'
+
+[org/gnome/mutter]
+center-new-windows=true
+
+[org/gnome/settings-daemon/plugins/power]
+power-button-action='nothing'
+sleep-inactive-ac-type='nothing'
+
+[org/gnome/shell]
+disabled-extensions=['spotify-ad-block@danigm.net']
+favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'com.spotify.Client.desktop']
+last-selected-power-profile='performance'
 
 [org/gnome/shell/extensions/auto-move-windows]
 application-list=['com.spotify.Client.desktop:2']
@@ -52,6 +101,16 @@ middle-click-action='previews'
 scroll-action='cycle-windows'
 show-apps-at-top=true
 show-mounts=false
+
+[org/gnome/shell/extensions/ding]
+arrangeorder='KIND'
+keep-arranged=true
+keep-stacked=false
+show-home=false
+show-trash=false
+show-volumes=false
+sort-special-folders=true
+start-corner='top-right'
 
 [org/gnome/shell/extensions/hidetopbar]
 enable-active-window=false
@@ -99,64 +158,5 @@ focused-shadow={'vertical_offset': 4, 'horizontal_offset': 0, 'blur_offset': 28,
 global-rounded-corner-settings={'padding': <{'left': <uint32 2>, 'right': <uint32 2>, 'top': <uint32 2>, 'bottom': <uint32 2>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 10>, 'smoothing': <uint32 0>, 'enabled': <true>}
 settings-version=uint32 5
 
-[com/github/amezin/ddterm]
-background-color='rgb(23,20,33)'
-background-opacity=1.0
-command='custom-command'
-cursor-shape='ibeam'
-custom-command="bash -is eval 'unset PROMPT_COMMAND; unset HISTFILE; eval \"$(oh-my-posh init bash)\"; cd ~/Desktop; history -s topgrade'"
-custom-font='FiraCode Nerd Font Medium 10'
-ddterm-toggle-hotkey=['<Control><Super>grave']
-foreground-color='rgb(208,207,204)'
-notebook-border=false
-palette=['rgb(24,26,27)', 'rgb(169,20,9)', 'rgb(56,128,58)', 'rgb(204,122,0)', 'rgb(10,106,182)', 'rgb(82,46,146)', 'rgb(55,170,185)', 'rgb(120,129,135)', 'rgb(85,91,94)', 'rgb(255,48,120)', 'rgb(173,221,30)', 'rgb(255,236,22)', 'rgb(2,135,195)', 'rgb(209,10,255)', 'rgb(74,227,247)', 'rgb(220,223,228)']
-panel-icon-type='none'
-shortcut-page-close=['<Shift><Control>w']
-shortcut-win-new-tab=['<Shift><Control>t']
-tab-close-buttons=false
-tab-policy='automatic'
-use-system-font=false
-window-position='bottom'
-window-size=0.4
-
-[org/gnome/desktop/peripherals/mouse]
-natural-scroll=true
-
-[org/gnome/shell/extensions/ding]
-arrangeorder='KIND'
-keep-arranged=true
-keep-stacked=false
-show-home=false
-show-trash=false
-show-volumes=false
-sort-special-folders=true
-start-corner='top-right'
-
-[org/gnome/shell]
-disabled-extensions=['spotify-ad-block@danigm.net']
-last-selected-power-profile='performance'
-favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'com.spotify.Client.desktop']
-
-[org/gnome/desktop/interface]
-document-font-name='SF Pro Display 11'
-enable-hot-corners=true
-font-name='SF Pro Display 11'
-monospace-font-name='SF Mono Medium 11'
-
-[org/gnome/desktop/session]
-idle-delay=uint32 600
-
-[org/gnome/settings-daemon/plugins/power]
-power-button-action='nothing'
-sleep-inactive-ac-type='nothing'
-
 [system/locale]
 region='en_GB.UTF-8'
-
-[org/gnome/desktop/wm/preferences]
-action-middle-click-titlebar='minimize'
-button-layout='close:'
-titlebar-font='SF Pro Display Semi-Bold 11'
-
-[org/gnome/mutter]
-center-new-windows=true

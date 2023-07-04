@@ -1,3 +1,23 @@
+[com/github/amezin/ddterm]
+background-color='rgb(23,20,33)'
+background-opacity=1.0
+command='custom-command'
+cursor-shape='ibeam'
+custom-command="bash -is eval 'unset PROMPT_COMMAND; unset HISTFILE; eval \"$(oh-my-posh init bash)\"; cd ~/Desktop; history -s topgrade'"
+custom-font='FiraCode Nerd Font Medium 10'
+ddterm-toggle-hotkey=['<Control><Super>grave']
+foreground-color='rgb(208,207,204)'
+notebook-border=false
+palette=['rgb(24,26,27)', 'rgb(169,20,9)', 'rgb(56,128,58)', 'rgb(204,122,0)', 'rgb(10,106,182)', 'rgb(82,46,146)', 'rgb(55,170,185)', 'rgb(120,129,135)', 'rgb(85,91,94)', 'rgb(255,48,120)', 'rgb(173,221,30)', 'rgb(255,236,22)', 'rgb(2,135,195)', 'rgb(209,10,255)', 'rgb(74,227,247)', 'rgb(220,223,228)']
+panel-icon-type='none'
+shortcut-page-close=['<Shift><Control>w']
+shortcut-win-new-tab=['<Shift><Control>t']
+tab-close-buttons=false
+tab-policy='automatic'
+use-system-font=false
+window-position='bottom'
+window-size=0.4
+
 [org/gnome/desktop/wm/keybindings]
 move-to-monitor-down=@as []
 move-to-monitor-left=@as []
@@ -99,23 +119,3 @@ settings-version=uint32 5
 
 [org/gnome/shell/extensions/user-theme]
 name='Yaru'
-
-[com/github/amezin/ddterm]
-background-color='rgb(23,20,33)'
-background-opacity=1.0
-command='custom-command'
-cursor-shape='ibeam'
-custom-command="bash -is eval 'unset PROMPT_COMMAND; unset HISTFILE; eval \"$(oh-my-posh init bash)\"; cd ~/Desktop; history -s topgrade'"
-custom-font='FiraCode Nerd Font Medium 10'
-ddterm-toggle-hotkey=['<Control><Super>grave']
-foreground-color='rgb(208,207,204)'
-notebook-border=false
-palette=['rgb(24,26,27)', 'rgb(169,20,9)', 'rgb(56,128,58)', 'rgb(204,122,0)', 'rgb(10,106,182)', 'rgb(82,46,146)', 'rgb(55,170,185)', 'rgb(120,129,135)', 'rgb(85,91,94)', 'rgb(255,48,120)', 'rgb(173,221,30)', 'rgb(255,236,22)', 'rgb(2,135,195)', 'rgb(209,10,255)', 'rgb(74,227,247)', 'rgb(220,223,228)']
-panel-icon-type='none'
-shortcut-page-close=['<Shift><Control>w']
-shortcut-win-new-tab=['<Shift><Control>t']
-tab-close-buttons=false
-tab-policy='automatic'
-use-system-font=false
-window-position='bottom'
-window-size=0.4
