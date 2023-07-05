@@ -1,4 +1,4 @@
-ca-certificates curl dconf-editor flatpak gnome-session gnome-shell-extension-desktop-icons-ng gnome-shell-extension-manager gnome-tweaks gnupg nautilus openssh-server yaru-theme-gnome-shell yaru-theme-gtk yaru-theme-icon yaru-theme-sound
+ca-certificates curl dconf-editor flatpak gnome-session gnome-shell-extension-desktop-icons-ng gnome-shell-extension-manager gnome-tweaks gnupg nautilus openssh-server ufw yaru-theme-gnome-shell yaru-theme-gtk yaru-theme-icon yaru-theme-sound
 
 # Needed for `pano@elhan.io` GNOME Shell Extension
 gir1.2-gda-5.0 gir1.2-gsound-1.0
