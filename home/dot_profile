@@ -19,8 +19,25 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 #: Force UTF-8 usage {{{
 
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+#: Use `update-locale` instead
+
+# export LANG=en_US.utf8
+# export LANGUAGE=en_US:en
+
+# export LC_ADDRESS=en_GB.utf8
+# export LC_COLLATE=en_GB.utf8
+# export LC_CTYPE=en_GB.utf8
+# export LC_IDENTIFICATION=en_GB.utf8
+# export LC_MEASUREMENT=en_GB.utf8
+# export LC_MESSAGES=en_GB.utf8
+# export LC_MONETARY=en_GB.utf8
+# export LC_NAME=en_GB.utf8
+# export LC_NUMERIC=en_GB.utf8
+# export LC_PAPER=en_GB.utf8
+# export LC_TELEPHONE=en_GB.utf8
+# export LC_TIME=en_GB.utf8
+
+# export LC_ALL=
 
 #: }}}
 
