@@ -203,6 +203,18 @@ type jenv &>/dev/null && {
 
 #: }}}
 
+#: Android Studio {{{
+
+export ANDROID_HOME="$XDG_DATA_HOME"/android
+
+#: }}}
+
+#: Gradle {{{
+
+export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
+
+#: }}}
+
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
