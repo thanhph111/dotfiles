@@ -13,6 +13,13 @@ export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export ZSH_CACHE_DIR="$USER_CACHE_DIR/zsh"
 [[ -x /bin/mkdir ]] && /bin/mkdir -p "$ZSH_CACHE_DIR"
 
+#: Source environment variables
+[[ -r "$ZSH_CONFIG_DIR"/env ]] && {
+    set -o allexport
+    . "$ZSH_CONFIG_DIR"/env
+    set +o allexport
+}
+
 {{ if eq .osid "darwin" -}}
 #: Change Oh My Zsh install path
 [[ -d ~/Documents/Projects/External/oh-my-zsh ]] &&

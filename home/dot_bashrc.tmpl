@@ -17,6 +17,13 @@ export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export BASH_CACHE_DIR="$USER_CACHE_DIR/bash"
 [[ -x /bin/mkdir ]] && /bin/mkdir -p "$BASH_CACHE_DIR"
 
+#: Source environment variables
+[[ -r "$BASH_CONFIG_DIR"/env ]] && {
+    set -o allexport
+    . "$BASH_CONFIG_DIR"/env
+    set +o allexport
+}
+
 #: Functions <<<
 
 #: Check if a command exists
