@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "linux" -}}
+
+#! /usr/bin/env bash
+
+url='http://www.gravatar.com/avatar/0b8f814fcc7d217a29f68293e9ec3f96?size=512'
+avatar_path=/var/lib/AccountsService/icons/{{ .chezmoi.username }}
+
+command -v curl &>/dev/null && {
+    sudo curl -o "$avatar_path" "$url"
+    exit 0
+}
+
+command -v wget &>/dev/null && {
+    sudo wget "$url" -O "$avatar_path"
+    exit 0
+}
+
+{{- end -}}
