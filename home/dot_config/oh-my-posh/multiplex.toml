@@ -60,7 +60,7 @@ zsh = "Zsh"
 background = "p:yellow"
 foreground = "p:lightWhite"
 style = "powerline"
-template = "{{ if not .Env.HISTFILE }}\uf708{{ end }} "
+template = "{{ if not .Env.HISTFILE }}\U000f0209{{ end }} "
 type = "text"
 
 [[blocks.segments]]
