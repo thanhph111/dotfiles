@@ -29,11 +29,11 @@ powerline_symbol = "\ue0b4"
 style = "powerline"
 template = """ \
     {{ if .SSHSession }}\
-        \uf817 \
+        \U000f0318 \
     {{ end }}\
 
     {{ if .Root }}\
-        \uf997 \
+        \U000f0498 \
     {{ end }}\
 
     {{ .UserName }} \
@@ -89,7 +89,7 @@ foreground = "p:lightWhite"
 powerline_symbol = "\ue0b4"
 style = "powerline"
 template = """ \
-    \uf81f \
+    \U000f0320 \
     {{ if .Error }}\
         {{ .Error }}\
     {{ else }}\
@@ -159,13 +159,13 @@ template = """ \
         {{ end }}\
     {{ end }}\
     {{ if gt .StashCount 0 }} \
-        \u2502 \uf692 {{ .StashCount }}\
+        \u2502 \U000f0193 {{ .StashCount }}\
     {{ end }} \
     """
 type = "git"
 [blocks.segments.properties]
-branch_ahead_icon = "\uf6bb"
-branch_behind_icon = "\uf6ba"
+branch_ahead_icon = "\U000f01b8"
+branch_behind_icon = "\U000f01b9"
 branch_gone_icon = "\uf204 "
 branch_icon = "\ue0a0 "
 branch_identical_icon = "\uf205 "
