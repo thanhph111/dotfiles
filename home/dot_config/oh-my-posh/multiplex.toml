@@ -37,7 +37,7 @@ template = """ \
     {{ end }}\
 
     {{ .UserName }} \
-    \uf444 \
+    \u25cf \
     <b>{{ .HostName }}</b> \
     """
 type = "session"
@@ -46,7 +46,7 @@ type = "session"
 background = "p:yellow"
 foreground = "p:lightWhite"
 style = "powerline"
-template = "\uf444 {{ .Name }} "
+template = "\u25cf {{ .Name }} "
 type = "shell"
 [blocks.segments.properties]
 [blocks.segments.properties.mapped_shell_names]
