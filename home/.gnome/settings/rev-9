@@ -186,7 +186,7 @@ settings-version=uint32 5
 
 [org/gtk/gtk4/settings/file-chooser]
 show-hidden=true
-sort-directories-first=false
+sort-directories-first=true
 
 [system/locale]
 region='en_GB.UTF-8'
