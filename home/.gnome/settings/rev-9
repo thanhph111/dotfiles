@@ -91,7 +91,7 @@ sleep-inactive-ac-type='nothing'
 
 [org/gnome/shell]
 disabled-extensions=['spotify-ad-block@danigm.net']
-favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'com.spotify.Client.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'google-chrome.desktop', 'code.desktop', 'com.spotify.Client.desktop', 'com.mattjakeman.ExtensionManager.desktop']
 last-selected-power-profile='performance'
 
 [org/gnome/shell/extensions/auto-move-windows]
@@ -155,7 +155,7 @@ night='Yaru'
 
 [org/gnome/shell/extensions/nightthemeswitcher/gtk-variants]
 day='Yaru'
-enabled=false
+enabled=true
 night='Yaru-dark'
 
 [org/gnome/shell/extensions/nightthemeswitcher/icon-variants]
