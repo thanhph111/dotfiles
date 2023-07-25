@@ -10,6 +10,11 @@ ulimit -n "$(ulimit -Hn)"
 
 #: Update installed packages <<<
 
+{{ if eq .chezmoi.osRelease.id "debian" -}}
+# Append `contrib non-free` to all lines that do not have `contrib non-free`
+sudo sed '/^deb[^#].*contrib non-free/! s/^deb\([^#].*\)$/& contrib non-free/' /etc/apt/sources.list
+{{- end }}
+
 sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove
 
 #: >>>
