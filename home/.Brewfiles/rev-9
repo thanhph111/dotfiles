@@ -4,8 +4,6 @@ tap "homebrew/linux-fonts"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
-# Fancy interface to the Python interpreter
-brew "bpython"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
 # Modern replacement for 'ls'
@@ -18,10 +16,6 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
-# Git extension for versioning large files
-brew "git-lfs"
-# Blazing fast terminal-ui for git written in rust
-brew "gitui"
 # Open source programming language to build simple/reliable/efficient software
 brew "go"
 # Colorize logfiles and command output
@@ -42,8 +36,6 @@ brew "navi"
 brew "net-tools"
 # Platform built on V8 to build network applications
 brew "node"
-# Command-line collection runner for Postman
-brew "newman"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
 # Python dependency management tool
