@@ -43,7 +43,7 @@ done <{{ joinPath .chezmoi.sourceDir ".apt" (lower .codename) | quote }}
 
 #: Install other packages with sophisticated steps <<<
 
-are_all_packages_install() {
+are_all_packages_installed() {
     number_of_packages="$#"
     number_of_installed_packages="$(apt -qq list "$@" 2>/dev/null | wc -l)"
     [[ "$number_of_packages" -eq "$number_of_installed_packages" ]]
@@ -53,7 +53,7 @@ are_all_packages_install() {
 
 #: Reference: https://support.1password.com/install-linux/#debian-or-ubuntu
 
-are_all_packages_install 1password 1password-cli || {
+are_all_packages_installed 1password 1password-cli || {
     #: Add the key for the 1Password apt repository
     curl -S https://downloads.1password.com/linux/keys/1password.asc |
         sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/1password.gpg
@@ -80,7 +80,7 @@ are_all_packages_install 1password 1password-cli || {
 
 #: Reference: https://www.ubuntuupdates.org/ppa/google_chrome
 
-are_all_packages_install google-chrome-stable || {
+are_all_packages_installed google-chrome-stable || {
     #: Setup key
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
         sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/google-chrome.gpg
@@ -99,7 +99,7 @@ are_all_packages_install google-chrome-stable || {
 
 #: Reference: https://code.visualstudio.com/docs/setup/linux
 
-are_all_packages_install code || {
+are_all_packages_installed code || {
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc |
         sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
 
@@ -113,7 +113,7 @@ are_all_packages_install code || {
 
 #: PowerShell <<<
 
-are_all_packages_install powershell || {
+are_all_packages_installed powershell || {
     # Import the public repository GPG keys
     curl https://packages.microsoft.com/keys/microsoft.asc |
         sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
@@ -132,7 +132,7 @@ are_all_packages_install powershell || {
 
 #: Reference: https://docs.docker.com/engine/install/ubuntu/
 
-are_all_packages_install docker-ce docker-ce-cli containerd.io docker-compose-plugin || {
+are_all_packages_installed docker-ce docker-ce-cli containerd.io docker-compose-plugin || {
     #: Add Docker’s official GPG key
     curl -fsSL https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg |
         sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/docker.gpg
@@ -153,7 +153,7 @@ are_all_packages_install docker-ce docker-ce-cli containerd.io docker-compose-pl
 
 #: IBus Bamboo <<<
 
-are_all_packages_install ibus-bamboo || {
+are_all_packages_installed ibus-bamboo || {
     {{ if eq .chezmoi.osRelease.id "ubuntu" -}}
     sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
     {{ else if eq .chezmoi.osRelease.id "debian" -}}
@@ -181,7 +181,7 @@ env DCONF_PROFILE=ibus \
 
 #: Reference: https://pkg.cloudflareclient.com/install
 
-are_all_packages_install cloudflare-warp || {
+are_all_packages_installed cloudflare-warp || {
     #: Setup key
     curl https://pkg.cloudflareclient.com/pubkey.gpg |
         sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-warp.gpg
