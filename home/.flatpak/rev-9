@@ -1,5 +1,9 @@
 ca.desrt.dconf-editor
 com.spotify.Client
+org.gnome.baobab
+org.gnome.dspy
+org.gnome.eog
+org.gnome.Evince
 org.gnome.FontManager
 org.gnome.Geary
 org.gnome.TextEditor
