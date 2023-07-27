@@ -1,9 +1,7 @@
-ca-certificates curl ffmpegthumbnailer flatpak gnome-session gnome-shell-extension-desktop-icons-ng gnome-system-monitor gnome-tweaks gnupg grub-customizer kitty-terminfo nautilus nvidia-driver openssh-server ufw yaru-theme-gnome-shell yaru-theme-gtk yaru-theme-icon yaru-theme-sound
+ca-certificates curl ffmpegthumbnailer flatpak gnome-session gnome-system-monitor gnome-tweaks gnupg grub-customizer kitty-terminfo nautilus nvidia-driver openssh-server ufw yaru-theme-gnome-shell yaru-theme-gtk yaru-theme-icon yaru-theme-sound
 
 # Needed for `pano@elhan.io` GNOME Shell Extension
 gir1.2-gda-5.0 gir1.2-gsound-1.0
 
 # Needed for `ddterm@amezin.github.com` GNOME Shell Extension
 gir1.2-vte-2.91
-
-gnome-shell-extension-dashtodock --without-recommends
