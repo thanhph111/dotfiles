@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from email.message import Message
 from enum import Enum
 from pathlib import Path
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, Optional
 
 DEFAULT_PATH = Path.home() / ".local/bin"
 
@@ -35,10 +35,10 @@ class Method(Enum):
 def request(
     url: str,
     method: Method = Method.GET,
-    headers: dict = None,
-    data: dict = None,
+    headers: Optional[dict[str, str]] = None,
+    data: Optional[dict[str, str]] = None,
     data_as_json: bool = True,
-    params: dict = None,
+    params: Optional[dict[str, str]] = None,
 ) -> Response:
     """https://github.com/bowmanjd/pysimpleurl"""
 
@@ -120,7 +120,7 @@ def unarchive(file_path: Path, destination: Path) -> None:
 class Downloader(ABC):
     @abstractmethod
     def download(
-        self, file_pattern: str, output_file: Path, version: str = None
+        self, file_pattern: str, output_file: Path, version: Optional[str] = None
     ) -> None:
         pass
 
@@ -135,7 +135,7 @@ class GitHub(Downloader):
         )
 
     def download(
-        self, file_pattern: str, output_file: Path, version: str = None
+        self, file_pattern: str, output_file: Path, version: Optional[str] = None
     ) -> None:
         import re
 
@@ -166,11 +166,11 @@ class GitHub(Downloader):
 
 class App(ABC):
     @abstractmethod
-    def install(self, version: str = None) -> None:
+    def install(self, version: Optional[str] = None) -> None:
         pass
 
     @abstractmethod
-    def update(self, version: str = None) -> None:
+    def update(self, version: Optional[str] = None) -> None:
         pass
 
     @abstractmethod
@@ -179,12 +179,14 @@ class App(ABC):
 
 
 class WezTerm(App):
-    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+    def __init__(
+        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+    ) -> None:
         self.executable = executable or "wezterm"
         self.install_directory = install_directory or Path.home() / ".local/bin"
         self.executable_path = self.install_directory / self.executable
 
-    def install(self, version: str = None) -> None:
+    def install(self, version: Optional[str] = None) -> None:
         github = GitHub("wez", "wezterm")
         if version == "nightly":
             download(
@@ -195,7 +197,7 @@ class WezTerm(App):
             github.download(".AppImage$", self.executable_path, version)
         self.executable_path.chmod(0o755)
 
-    def update(self, version: str = None) -> None:
+    def update(self, version: Optional[str] = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -203,11 +205,13 @@ class WezTerm(App):
 
 
 class Kitty(App):
-    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+    def __init__(
+        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+    ) -> None:
         self.executable = executable or "kitty"
         self.install_directory = install_directory or Path.home() / ".local/apps/kitty"
 
-    def install(self, version: str = None) -> None:
+    def install(self, version: Optional[str] = None) -> None:
         architecture = "x86_64"
         github = GitHub("kovidgoyal", "kitty")
         if version == "nightly":
@@ -246,7 +250,7 @@ class Kitty(App):
                 .replace("Icon=kitty", f"Icon={icon_file}")
             )
 
-    def update(self, version: str = None) -> None:
+    def update(self, version: Optional[str] = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -262,17 +266,19 @@ class Kitty(App):
 
 
 class Zap(App):
-    def __init__(self, executable: str = None, install_directory: Path = None) -> None:
+    def __init__(
+        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+    ) -> None:
         self.executable = executable or "zap"
         self.install_directory = install_directory or Path.home() / ".local/bin"
         self.executable_path = self.install_directory / self.executable
 
-    def install(self, version: str = None) -> None:
+    def install(self, version: Optional[str] = None) -> None:
         github = GitHub("srevinsaju", "zap")
         github.download("^zap-amd64$", self.executable_path, version)
         self.executable_path.chmod(0o755)
 
-    def update(self, version: str = None) -> None:
+    def update(self, version: Optional[str] = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
