@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+import sys
+from argparse import ArgumentParser, Namespace
+from configparser import ConfigParser
+from io import StringIO
+from pathlib import Path
+
+
+class Arguments(Namespace):
+    file: Path
+    inline: bool
+    space_around: bool
+
+
+def get_parser() -> ArgumentParser:
+    parser = ArgumentParser()
+
+    parser.add_argument(
+        "file",
+        type=Path,
+        help="The file to sort",
+    )
+    parser.add_argument(
+        "-i", "--inline", action="store_true", help="Replace the original file"
+    )
+    parser.add_argument(
+        "-s",
+        "--space-around",
+        action="store_true",
+        help="Add spaces around delimiters",
+    )
+
+    return parser
+
+
+def main() -> None:
+    # Get arguments
+    parser = get_parser()
+    args = parser.parse_args(namespace=Arguments())
+
+    # Check if file exists
+    if not args.file.exists():
+        print(f"File {args.file} does not exist", file=sys.stderr)
+        exit(1)
+
+    # Parse config file
+    config_parser = ConfigParser()
+    try:
+        config_parser.read(args.file)
+    except Exception as exception:
+        print(f"Error reading file {args.file}: {exception}", file=sys.stderr)
+        exit(1)
+
+    # Sort config file
+    sorted_config_parser = ConfigParser()
+    for section in sorted(config_parser.sections()):
+        sorted_config_parser[section] = dict(sorted(config_parser.items(section)))
+
+    # Push content to a variable to remove trailing newline
+    stream = StringIO()
+    sorted_config_parser.write(stream, space_around_delimiters=args.space_around)
+    content = stream.getvalue()
+    content = content.rstrip()
+
+    # Write to file or print to stdout
+    if args.inline:
+        args.file.write_text(content + "\n")
+    else:
+        print(content)
+
+
+if __name__ == "__main__":
+    main()
