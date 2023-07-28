@@ -489,7 +489,9 @@ autoload -U colors && colors
 #: Unset history on Visual Studio Code terminal
 [[ "$TERM_PROGRAM" = vscode ]] && {
     unset HISTFILE
+    VSCODE_SUGGEST=1
     command_exists code && . "$(code --locate-shell-integration-path zsh)"
+    unset VSCODE_SUGGEST
 }
 
 #: >>>
