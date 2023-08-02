@@ -1,10 +1,10 @@
 ca.desrt.dconf-editor
+com.mattjakeman.ExtensionManager
 com.spotify.Client
-org.gnome.baobab
-org.gnome.eog
 org.gnome.Evince
 org.gnome.FontManager
 org.gnome.Geary
 org.gnome.TextEditor
 org.gnome.Totem
-com.mattjakeman.ExtensionManager
+org.gnome.baobab
+org.gnome.eog
