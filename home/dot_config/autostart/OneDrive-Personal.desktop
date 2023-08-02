@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=OneDrive Personal
+Exec=sh -c '[ -d ~/Documents/OneDrive/Personal ] && rclone config show "OneDrive - Personal" >/dev/null 2>&1 && rclone --vfs-cache-mode writes mount "OneDrive - Personal": ~/Documents/OneDrive/Personal'
+StartupNotify=false
+Terminal=false

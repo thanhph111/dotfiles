@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=OneDrive HCMUT
+Exec=sh -c '[ -d ~/Documents/OneDrive/HCMUT ] && rclone config show "OneDrive - HCMUT" >/dev/null 2>&1 && rclone --vfs-cache-mode writes mount "OneDrive - HCMUT": ~/Documents/OneDrive/HCMUT'
+StartupNotify=false
+Terminal=false
