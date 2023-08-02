@@ -6,6 +6,8 @@ brew "bat"
 brew "bat-extras"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
+# Secure runtime for JavaScript and TypeScript
+brew "deno"
 # Modern replacement for 'ls'
 brew "exa"
 # Simple, fast and user-friendly alternative to find
