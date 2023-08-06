@@ -121,8 +121,6 @@ cask "appcleaner"
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
-# E-books management software
-cask "calibre"
 # Free app that makes your Internet safer
 cask "cloudflare-warp"
 # Server and cloud storage browser
@@ -147,8 +145,6 @@ cask "font-sf-mono"
 cask "font-sf-mono-nerd-font-ligaturized"
 # Sans-serif variant of "San Francisco" by Apple
 cask "font-sf-pro"
-# GIT client
-cask "fork"
 # Web browser
 cask "google-chrome"
 # Utility to hide menu bar items
@@ -199,13 +195,10 @@ cask "visual-studio-code"
 cask "wezterm"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
-mas "Color Picker", id: 1545870783
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
-mas "OwlOCR", id: 1499181666
 mas "Pages", id: 409201541
-mas "PDFgear", id: 1615523079
 mas "Velja", id: 1607635845
