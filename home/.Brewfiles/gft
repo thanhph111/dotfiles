@@ -117,6 +117,8 @@ cask "1password"
 cask "1password-cli"
 # Application uninstaller
 cask "appcleaner"
+# Chromium based browser
+cask "arc"
 # Cross platform SQL editor and database management app
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
@@ -125,6 +127,8 @@ cask "bettertouchtool"
 cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
+# Databases and SQL IDE
+cask "datagrip"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Collaborative team software
@@ -201,4 +205,5 @@ mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
+mas "Save to Raindrop.io", id: 1549370672
 mas "Velja", id: 1607635845
