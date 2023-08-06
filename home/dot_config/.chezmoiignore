@@ -18,9 +18,8 @@
 !python
 !ripgrep
 !starship
+!topgrade
 !zsh
-
-!topgrade.toml
 {{ end }}
 
 {{/* Linux */}}
