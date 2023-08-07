@@ -1,0 +1,26 @@
+# Version 1.0 -- Generated content!
+fontName         = JetBrainsMonoNF-Regular
+fontSize         = 12.500000
+showIndentGuides = false
+showInvisibles   = true
+showWrapColumn   = true
+softWrap         = false
+wrapColumn       = 80
+
+[ .zshrc ]
+fileType         = source.shell
+
+[ source ]
+softWrap         = false
+
+[ source.json ]
+softWrap         = true
+
+[ source.sql ]
+softWrap         = false
+
+[ text ]
+showInvisibles   = true
+
+[ text.plain ]
+showInvisibles   = true
