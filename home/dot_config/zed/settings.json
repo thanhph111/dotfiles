@@ -22,5 +22,9 @@
     },
     "experiments": {
         "experimental_themes": true
+    },
+    "telemetry": {
+        "diagnostics": false,
+        "metrics": false
     }
 }
