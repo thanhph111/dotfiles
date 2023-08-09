@@ -189,8 +189,6 @@ cask "slack"
 cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
-# General-purpose text editor
-cask "textmate"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
