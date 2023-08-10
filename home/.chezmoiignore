@@ -13,6 +13,7 @@
 
 !.Brewfile
 !.bashrc
+!.hushlogin
 !.profile
 !.zprofile
 !.zshrc
