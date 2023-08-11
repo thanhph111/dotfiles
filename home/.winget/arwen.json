@@ -25,6 +25,9 @@
                     "PackageIdentifier": "Google.Chrome"
                 },
                 {
+                    "PackageIdentifier": "Guru3D.RTSS"
+                },
+                {
                     "PackageIdentifier": "Microsoft.OneDrive"
                 },
                 {
