@@ -16,9 +16,6 @@
                     "PackageIdentifier": "Discord.Discord"
                 },
                 {
-                    "PackageIdentifier": "Fork.Fork"
-                },
-                {
                     "PackageIdentifier": "Git.Git"
                 },
                 {
@@ -38,9 +35,6 @@
                 },
                 {
                     "PackageIdentifier": "Microsoft.WindowsTerminal"
-                },
-                {
-                    "PackageIdentifier": "qBittorrent.qBittorrent"
                 },
                 {
                     "PackageIdentifier": "Spotify.Spotify"
