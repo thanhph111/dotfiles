@@ -18,6 +18,8 @@ brew "bpython"
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
+# Secure runtime for JavaScript and TypeScript
+brew "deno"
 # Modern replacement for 'ls'
 brew "exa"
 # Simple, fast and user-friendly alternative to find
@@ -44,6 +46,8 @@ brew "go"
 brew "grc"
 # Tools and libraries to manipulate images in many formats
 brew "imagemagick"
+# Manage your Java environment
+brew "jenv"
 # JSON output from a shell
 brew "jo"
 # Lightweight and flexible command-line JSON processor
@@ -56,6 +60,8 @@ brew "lazygit"
 brew "less"
 # Mac App Store command-line interface
 brew "mas"
+# Java-based project management
+brew "maven"
 # Remote terminal application
 brew "mosh"
 # Interactive cheatsheet tool for the command-line
@@ -66,6 +72,8 @@ brew "node"
 brew "newman"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
+# Development kit for the Java programming language
+brew "openjdk"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Python dependency management tool
@@ -197,8 +205,11 @@ cask "visual-studio-code"
 cask "wezterm"
 # Multiplayer code editor
 cask "zed"
+# Video communication and virtual meeting platform
+cask "zoom"
 mas "1Password for Safari", id: 1569813296
 mas "AdBlock Pro", id: 1018301773
+mas "Amphetamine", id: 937984704
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
