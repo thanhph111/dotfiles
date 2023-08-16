@@ -177,8 +177,6 @@ cask "shottr"
 cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
-# Messaging app with a focus on speed and security
-cask "telegram"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
@@ -200,3 +198,4 @@ mas "Numbers", id: 409203825
 mas "OneDrive", id: 823766827
 mas "Pages", id: 409201541
 mas "Save to Raindrop.io", id: 1549370672
+mas "Telegram", id: 747648890
