@@ -184,7 +184,7 @@ cask "visual-studio-code"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
 mas "1Password for Safari", id: 1569813296
-mas "AdBlock Pro", id: 1018301773
+mas "AdGuard for Safari", id: 1440147259
 mas "Adobe Lightroom", id: 1451544217
 mas "Amphetamine", id: 937984704
 mas "Curve", id: 1219074514
