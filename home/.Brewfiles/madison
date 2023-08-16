@@ -105,8 +105,6 @@ cask "appcleaner"
 cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
-# Free app that makes your Internet safer
-cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
 # Databases and SQL IDE
