@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS[0]%$'\n'}")" || exit
+mpv "${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS[0]%$'\n'}"
