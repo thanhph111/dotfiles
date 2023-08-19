@@ -145,6 +145,11 @@ export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 
+command -v npm >/dev/null 2>&1 && {
+    PATH="$(npm config get prefix)/bin:$PATH"
+    export PATH
+}
+
 #: }}}
 
 #: Docker {{{
