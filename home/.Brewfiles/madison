@@ -99,6 +99,8 @@ brew "jorgelbg/tap/pinentry-touchid"
 cask "1password"
 # Command-line helper for the 1Password password manager
 cask "1password-cli"
+# Menu bar tool to limit maximum charging percentage
+cask "aldente"
 # Application uninstaller
 cask "appcleaner"
 # Cross platform SQL editor and database management app
