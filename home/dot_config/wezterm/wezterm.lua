@@ -181,7 +181,7 @@ local config = {
     tab_bar_at_bottom = true,
 
     color_scheme = get_current_theme(),
-    window_background_gradient = get_window_background_gradient(),
+    -- window_background_gradient = get_window_background_gradient(),
     enable_scroll_bar = false,
     window_decorations = "RESIZE",
     default_cwd = ("%s/Desktop"):format(wezterm.home_dir),
