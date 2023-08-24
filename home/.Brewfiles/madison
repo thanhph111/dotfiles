@@ -109,16 +109,12 @@ cask "beekeeper-studio"
 cask "bettertouchtool"
 # Server and cloud storage browser
 cask "cyberduck"
-# Databases and SQL IDE
-cask "datagrip"
 # Voice and text chat software
 cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Collaborative team software
 cask "figma"
-# Hybrid IDE and text editor
-cask "fleet"
 # Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Developer targeted fonts with a high number of glyphs
@@ -137,8 +133,6 @@ cask "font-sf-mono-nerd-font-ligaturized"
 cask "font-sf-pro"
 # GIT client
 cask "fork"
-# Go (golang) IDE
-cask "goland"
 # Web browser
 cask "google-chrome"
 # Utility to hide menu bar items
@@ -147,6 +141,8 @@ cask "hiddenbar"
 cask "iina"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
+# JetBrains tools manager
+cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
 # Blocks all Keyboard and TouchBar input
@@ -163,8 +159,6 @@ cask "pictogram"
 cask "postman"
 # Command-line shell and scripting language
 cask "powershell"
-# IDE for professional Python development
-cask "pycharm"
 # HTTP client that helps testing and describing APIs
 cask "rapidapi"
 # Control your tools with a few keystrokes
