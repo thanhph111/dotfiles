@@ -96,6 +96,10 @@ include "$ZSH/oh-my-zsh.sh"
 #: Set the default editor to Vim
 command_exists vim && export VISUAL=vim
 
+#: Fix some edge cases: `gpg: signing failed: Inappropriate ioctl for device`
+#: Zsh automatically sets `TTY` during initialization
+export GPG_TTY=$TTY
+
 #: Load Python startup file (usually for disabling history)
 [[ -f "$USER_CONFIG_DIR/python/startup" ]] && export PYTHONSTARTUP="$USER_CONFIG_DIR/python/startup"
 

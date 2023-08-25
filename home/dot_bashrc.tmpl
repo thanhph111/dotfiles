@@ -227,6 +227,9 @@ alias pip=pip3
 #: Set default editor
 export VISUAL=vim
 
+#: Fix some edge cases: `gpg: signing failed: Inappropriate ioctl for device`
+export GPG_TTY=$(tty)
+
 #: Disable bash deprecation warning on macOS
 export BASH_SILENCE_DEPRECATION_WARNING=1
 

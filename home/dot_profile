@@ -57,10 +57,6 @@ fi
 
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
-#: In some edge cases: `gpg: signing failed: Inappropriate ioctl for device`
-GPG_TTY=$(tty)
-export GPG_TTY
-
 #: }}}
 
 #: Kvantum {{{
