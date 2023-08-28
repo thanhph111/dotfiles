@@ -520,6 +520,8 @@ fi
 #: Unset history on Visual Studio Code terminal
 [[ "$TERM_PROGRAM" = vscode ]] && {
     unset HISTFILE
+    unset PROMPT_COMMAND
+
     VSCODE_SUGGEST=1
     command_exists code && . "$(code --locate-shell-integration-path bash)"
     unset VSCODE_SUGGEST
