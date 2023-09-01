@@ -491,9 +491,19 @@ fi
 #: GNU coreutils <<<
 
 #: Add GNU coreutils to PATH
-command_exists brew && [[ -d "$(brew --prefix coreutils)/libexec/gnubin" ]] &&
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-
+command_exists brew && {
+    pkgs=(
+        coreutils
+        findutils
+        gnu-sed
+        gnu-tar
+        make
+    )
+    for pkg in "${pkgs[@]}"; do
+        [[ -d "$(brew --prefix $pkg)/libexec/gnubin" ]] &&
+            export PATH="$(brew --prefix $pkg)/libexec/gnubin:$PATH"
+    done
+}
 #: >>>
 {{- end }}
 
