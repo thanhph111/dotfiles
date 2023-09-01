@@ -50,6 +50,8 @@ brew "jq"
 brew "lazygit"
 # Pager program similar to more
 brew "less"
+# Utility for directing compilation
+brew "make"
 # Mac App Store command-line interface
 brew "mas"
 # Remote terminal application
