@@ -26,6 +26,8 @@
 {{ if eq .chezmoi.os "linux" }}
 !autostart
 !readline
+!spotifyd
+!systemd
 {{ end }}
 
 {{/* macOS */}}

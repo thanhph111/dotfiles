@@ -1,0 +1,6 @@
+[global]
+#: Zero authentication will only allow spotifyd to be discovered in the local network
+# username_cmd = "op read op://Service/Spotify/username"
+# password_cmd = "op read op://Service/Spotify/password"
+device_name = {{ .chezmoi.hostname | quote }}
+initial_volume = "80"

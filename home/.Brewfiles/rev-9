@@ -56,6 +56,8 @@ brew "ripgrep"
 brew "rm-improved"
 # Rust toolchain installer
 brew "rustup-init"
+# Spotify daemon
+brew "spotifyd"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
 # Upgrade all the things
