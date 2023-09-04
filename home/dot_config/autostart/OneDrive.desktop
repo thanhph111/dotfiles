@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=OneDrive HCMUT
+Exec=sh -c '[ -d ~/Documents/OneDrive ] && rclone config show OneDrive >/dev/null 2>&1 && rclone --vfs-cache-mode writes mount OneDrive: ~/Documents/OneDrive'
+StartupNotify=false
+Terminal=false
