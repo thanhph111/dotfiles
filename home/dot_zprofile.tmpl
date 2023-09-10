@@ -134,12 +134,11 @@ export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
 #: On macOS, Docker Desktop use the `~/.docker` directory
 if [[ -d "$HOME/.docker" ]]; then
     export DOCKER_CONFIG="$HOME/.docker"
+    export DOCKER_HOST="unix://$HOME/.docker/run/docker.sock"
 else
     export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 fi
 [[ -d "$DOCKER_CONFIG"/bin ]] && export PATH="$DOCKER_CONFIG/bin:$PATH"
-[[ -f "$DOCKER_CONFIG/run/docker.sock" ]] &&
-    export DOCKER_HOST="$DOCKER_CONFIG/run/docker.sock"
 
 #: >>>
 
