@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "darwin" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+ZSH_COMPLETION_DIR=~/.config/zsh/completions
+BASH_COMPLETION_DIR=~/.config/bash/completions
+
+etc=/Applications/Docker.app/Contents/Resources/etc
+[[ -d "$etc" ]] && {
+    mkdir -p "$ZSH_COMPLETION_DIR"
+    ln -fs "$etc/docker.zsh-completion" "$ZSH_COMPLETION_DIR/_docker"
+    mkdir -p "$BASH_COMPLETION_DIR"
+    ln -fs "$etc/docker.bash-completion" "$BASH_COMPLETION_DIR/docker"
+}
+
+{{- end -}}
