@@ -285,6 +285,10 @@ command_exists brew && {
     fi
 }
 
+#: Custom completion
+[[ -d "$BASH_CONFIG_DIR"/completions ]] &&
+    for file in "$BASH_CONFIG_DIR"/completions/*; do include "$file"; done
+
 #: Colorful things <<<
 
 #: Color the man page
