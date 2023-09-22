@@ -10,6 +10,9 @@
 {{/* Machine is a client */}}
 {{- $client := false -}}
 
+{{/* Personal or company device */}}
+{{- $personal := true -}}
+
 {{/* More specific Linux distros */}}
 {{- $osID := .chezmoi.os -}}
 {{- if (and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id")) -}}
@@ -43,22 +46,23 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $codename = "GFT" -}}
 {{-     $vault = "GFT" -}}
 {{-     $client = true -}}
+{{-     $personal = false -}}
 {{- else if eq $hostname "T-X" }}
 {{-     $codename = "T-X" -}}
-{{-     $vault = "Personal" -}}
 {{- else if eq $hostname "Rev-9" }}
 {{-     $codename = "Rev-9" -}}
-{{-     $vault = "Personal" -}}
 {{- else if eq $hostname "Arwen" }}
 {{-     $codename = "Arwen" -}}
-{{-     $vault = "Personal" -}}
 {{- else if eq $hostname "Madison" }}
 {{-     $codename = "Madison" -}}
-{{-     $vault = "Personal" -}}
 {{-     $client = true -}}
 {{- else -}}
 {{-     writeToStdout "Unknown host\n" -}}
 {{-     exit 1 -}}
+{{- end -}}
+
+{{- if $personal -}}
+{{-     $vault = "Personal" -}}
 {{- end -}}
 
 umask = 0o77
@@ -67,6 +71,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
 
 [data]
     codename = {{ $codename | quote }}
+    personal = {{ $personal }}
     vault = {{ $vault | quote }}
     headless = {{ $headless }}
     osid = {{ $osID | quote }}
