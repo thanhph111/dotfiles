@@ -1,0 +1,3 @@
+{{- if .personal -}}
+config-work
+{{- end -}}
