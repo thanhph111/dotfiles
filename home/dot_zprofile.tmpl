@@ -44,6 +44,22 @@ export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
 #: Pyenv <<<
 
+#: Require the following packages on Debian-based distros:
+#: - build-essential
+#: - libssl-dev
+#: - zlib1g-dev
+#: - libbz2-dev
+#: - libreadline-dev
+#: - libsqlite3-dev
+#: - curl
+#: - libncursesw5-dev
+#: - xz-utils
+#: - tk-dev
+#: - libxml2-dev
+#: - libxmlsec1-dev
+#: - libffi-dev
+#: - liblzma-dev
+
 type pyenv &>/dev/null && {
     export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
     eval "$(pyenv init -)"
