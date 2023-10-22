@@ -3,7 +3,7 @@
 assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-disable = ["pip3", "pipx", "vim", "powershell"]
+disable = ["pip3", "pipx", "vim", "powershell", "vscode"]
 
 # Ignore failures for these steps
 ignore_failures = ["powershell", "containers"]
