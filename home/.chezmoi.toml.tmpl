@@ -13,12 +13,6 @@
 {{/* Personal or company device */}}
 {{- $personal := true -}}
 
-{{/* More specific Linux distros */}}
-{{- $osID := .chezmoi.os -}}
-{{- if (and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id")) -}}
-{{-     $osID = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
-{{- end -}}
-
 {{/* Detect GitHub codespaces, VSCode remote containers, Docker containers,
 Multipass VMs, and Vagrant boxes */}}
 {{- $username := .chezmoi.username -}}
@@ -74,7 +68,6 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     personal = {{ $personal }}
     vault = {{ $vault | quote }}
     headless = {{ $headless }}
-    osid = {{ $osID | quote }}
     client = {{ $client }}
 
 [diff]
@@ -84,7 +77,6 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     exclude = ["scripts"]
 
 [scriptEnv]
-    CHEZMOI_OSID = {{ $osID | quote }}
     {{ if ne .chezmoi.os "windows" -}}
     PATH = """\
         /opt/homebrew/bin:\

@@ -20,7 +20,7 @@ export ZSH_CACHE_DIR="$USER_CACHE_DIR/zsh"
     set +o allexport
 }
 
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 #: Change Oh My Zsh install path
 [[ -d ~/Documents/Projects/External/oh-my-zsh ]] &&
     ZSH=~/Documents/Projects/External/oh-my-zsh
@@ -294,7 +294,7 @@ command_exists pinentry-mac && alias pinentry=pinentry-touchid
 
 #: >>>
 
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 #: JetBrains Toolbox scripts <<<
 
 [[ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ]] &&

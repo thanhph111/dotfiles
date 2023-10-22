@@ -7,7 +7,7 @@
 	# excludesFile = ~/.gitignore
 	# autocrlf = true
 
-{{- if eq .osid "windows" }}
+{{- if eq .chezmoi.os "windows" }}
 	longpaths = true
 	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
 

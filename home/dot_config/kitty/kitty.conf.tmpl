@@ -15,7 +15,7 @@ font_family      Fira Code Retina
 bold_font        Fira Code SemiBold
 italic_font      Fira Code
 bold_italic_font Fira Code SemiBold
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 font_size        13.0
 {{- else -}}
 font_size        10.0
@@ -25,7 +25,7 @@ font_size        10.0
 disable_ligatures cursor
 
 #: Adjust font baseline
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 modify_font baseline 1
 modify_font cell_height -3px
 modify_font baseline 2
@@ -210,7 +210,7 @@ enabled_layouts splits, all
 
 #: Hide the window decorations with `yes`, have to restart after quitting
 #: completely to take effect. On macOS, use `titlebar-only` for better look.
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 hide_window_decorations titlebar-only
 {{ else -}}
 hide_window_decorations no
@@ -323,7 +323,7 @@ env LESSHISTFILE=/tmp/.lesshst
 #: running on a remote server via SSH can read your clipboard.
 # clipboard_control write-clipboard write-primary
 
-{{ if eq .osid "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 #: Control where kitty finds the programs to run. The default search order is:
 #: First search the system wide PATH, then ~/.local/bin and ~/bin. If still not
 #: found, the PATH defined in the login shell after sourcing all its startup
