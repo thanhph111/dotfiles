@@ -172,17 +172,23 @@ alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 
 #: >>>
 
-#: IPython <<<
+#: Python {{{
+
+#: Load Python startup file (usually for disabling history)
+[[ -f "$USER_CONFIG_DIR/python/startup" ]] && export PYTHONSTARTUP="$USER_CONFIG_DIR/python/startup"
+
+#: Disable keyring backend as some tools like `poetry` often throw errors when
+#: trying to use in a non-GUI environment
+export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+
+#: }}}
+
+#: IPython {{{
 
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
-
-#: >>>
-
-#: IPython <<<
-
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 
-#: >>>
+#: }}}
 
 #: Executable search paths, should be at the end to be prepended <<<
 

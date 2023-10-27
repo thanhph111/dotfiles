@@ -100,9 +100,6 @@ command_exists vim && export VISUAL=vim
 #: Zsh automatically sets `TTY` during initialization
 export GPG_TTY=$TTY
 
-#: Load Python startup file (usually for disabling history)
-[[ -f "$USER_CONFIG_DIR/python/startup" ]] && export PYTHONSTARTUP="$USER_CONFIG_DIR/python/startup"
-
 #: Change location of `less` history file
 [[ -e "$USER_CACHE_DIR/less" ]] || mkdir -p "$USER_CACHE_DIR/less"
 export LESSHISTFILE="$USER_CACHE_DIR/less/history"
