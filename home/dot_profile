@@ -208,7 +208,8 @@ alias wget='wget --hsts-file=$XDG_DATA_HOME/wget-hsts'
 #: Python {{{
 
 #: Load Python startup file (usually for disabling history)
-[ -f "$USER_CONFIG_DIR/python/startup" ] && export PYTHONSTARTUP="$USER_CONFIG_DIR/python/startup"
+[ -f "$XDG_CONFIG_HOME/python/startup" ] &&
+    export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/startup"
 
 #: Disable keyring backend as some tools like `poetry` often throw errors when
 #: trying to use in a non-GUI environment
