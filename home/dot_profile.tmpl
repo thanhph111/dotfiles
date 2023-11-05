@@ -8,16 +8,16 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 077
 
-#: Environment variables for applications respecting XDG specifications {{{
+#: Environment variables for applications respecting XDG specifications <<<
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
 
-#: }}}
+#: >>>
 
-#: Force UTF-8 usage {{{
+#: Force UTF-8 usage <<<
 
 #: Use `update-locale` instead
 
@@ -39,9 +39,9 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 # export LC_ALL=
 
-#: }}}
+#: >>>
 
-#: Homebrew {{{
+#: Homebrew <<<
 
 if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -51,22 +51,36 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-#: }}}
+#: >>>
 
-#: GnuPG {{{
+{{ if eq .chezmoi.os "darwin" -}}
+
+#: SSH <<<
+
+#: SSH Agent forwarding in VSCode Dev Container without creating LaunchAgents
+#: Reference: https://github.com/maxgoedjen/secretive/blob/main/APP_CONFIG.md.
+if [ -S "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh" ]; then
+    export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+fi
+
+#: >>>
+
+{{- end }}
+
+#: GnuPG <<<
 
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
-#: }}}
+#: >>>
 
-#: Kvantum {{{
+#: Kvantum <<<
 
 #: Use Kvantum to override Qt style
 export QT_STYLE_OVERRIDE=kvantum
 
-#: }}}
+#: >>>
 
-#: AWS {{{
+#: AWS <<<
 
 #: Workaround to move AWS config to XDG_CONFIG_HOME until this issue is fixed:
 #: https://github.com/aws/aws-sdk/issues/30
@@ -79,24 +93,24 @@ export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
 # export AWS_WEB_IDENTITY_TOKEN_FILE="$XDG_CONFIG_HOME/aws/token"
 export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 
-#: }}}
+#: >>>
 
-#: Rust {{{
+#: Rust <<<
 
 export CARGO_HOME="$XDG_CACHE_HOME/cargo"
 [ -r "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
 export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
 
-#: }}}
+#: >>>
 
-#: Go {{{
+#: Go <<<
 
 export GOPATH="$XDG_DATA_HOME/go"
 export PATH="$GOPATH/bin:$PATH"
 
-#: }}}
+#: >>>
 
-#: Pyenv {{{
+#: Pyenv <<<
 
 #: Require the following packages on Debian-based distros:
 #: - build-essential
@@ -119,9 +133,9 @@ command -v pyenv >/dev/null 2>&1 && {
     eval "$(pyenv init -)"
 }
 
-#: }}}
+#: >>>
 
-#: IBus Bamboo {{{
+#: IBus Bamboo <<<
 
 export GTK_IM_MODULE=ibus
 export QT_IM_MODULE=ibus
@@ -132,30 +146,30 @@ export QT4_IM_MODULE=ibus
 export CLUTTER_IM_MODULE=ibus
 export GLFW_IM_MODULE=ibus
 
-#: }}}
+#: >>>
 
-#: macOS {{{
+#: macOS <<<
 
 #: Disable macOS deprecation warning
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-#: }}}
+#: >>>
 
-#: GNU Readline {{{
+#: GNU Readline <<<
 
 #: Change initialization file location, not sure if it works
 export INPUTRC="$HOME/.config/readline/inputrc"
 
-#: }}}
+#: >>>
 
-#: PowerShell {{{
+#: PowerShell <<<
 
 export POWERSHELL_UPDATECHECK=Off
 export POWERSHELL_TELEMETRY_OPTOUT=1
 
-#: }}}
+#: >>>
 
-#: Node.js {{{
+#: Node.js <<<
 
 export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
@@ -166,9 +180,9 @@ command -v npm >/dev/null 2>&1 && {
     export PATH
 }
 
-#: }}}
+#: >>>
 
-#: Docker {{{
+#: Docker <<<
 
 #: On macOS, Docker Desktop use the `~/.docker` directory
 if [ -d "$HOME/.docker" ]; then
@@ -179,9 +193,9 @@ else
 fi
 [ -d "$DOCKER_CONFIG"/bin ] && export PATH="$DOCKER_CONFIG/bin:$PATH"
 
-#: }}}
+#: >>>
 
-#: .NET {{{
+#: .NET <<<
 
 #: Opt out telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -189,23 +203,23 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 #: Change history file location
 export DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 
-#: }}}
+#: >>>
 
-#: terminfo {{{
+#: terminfo <<<
 
 export TERMINFO="$XDG_DATA_HOME/terminfo"
 export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
 
-#: }}}
+#: >>>
 
-#: Wget {{{
+#: Wget <<<
 
 #: Change history file location
 alias wget='wget --hsts-file=$XDG_DATA_HOME/wget-hsts'
 
-#: }}}
+#: >>>
 
-#: Python {{{
+#: Python <<<
 
 #: Load Python startup file (usually for disabling history)
 [ -f "$XDG_CONFIG_HOME/python/startup" ] &&
@@ -215,16 +229,16 @@ alias wget='wget --hsts-file=$XDG_DATA_HOME/wget-hsts'
 #: trying to use in a non-GUI environment
 export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 
-#: }}}
+#: >>>
 
-#: IPython {{{
+#: IPython <<<
 
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 
-#: }}}
+#: >>>
 
-#: Java {{{
+#: Java <<<
 
 #: To add a new Java version, for example, 11, run:
 #: - macOS:
@@ -236,26 +250,26 @@ type jenv &>/dev/null && {
     eval "$(jenv init -)"
 }
 
-#: }}}
+#: >>>
 
-#: Android Studio {{{
+#: Android Studio <<<
 
 export ANDROID_HOME="$XDG_DATA_HOME"/android
 
-#: }}}
+#: >>>
 
-#: Gradle {{{
+#: Gradle <<<
 
 export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
 
-#: }}}
+#: >>>
 
-#: Executable search paths, should be at the end to be prepended {{{
+#: Executable search paths, should be at the end to be prepended <<<
 
 #: Set PATH so it includes user's private bin if it exists
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 
-#: }}}
+#: >>>
 
 #: Source `.bashrc`
 [ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"

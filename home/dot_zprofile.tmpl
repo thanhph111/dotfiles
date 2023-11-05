@@ -36,6 +36,20 @@ type brew &>/dev/null && brew_prefix="$(brew --prefix)"
 
 #: >>>
 
+{{ if eq .chezmoi.os "darwin" -}}
+
+#: SSH <<<
+
+#: SSH Agent forwarding in VSCode Dev Container without creating LaunchAgents
+#: Reference: https://github.com/maxgoedjen/secretive/blob/main/APP_CONFIG.md.
+if [[ -S "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh" ]]; then
+    export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+fi
+
+#: >>>
+
+{{- end }}
+
 #: GnuPG <<<
 
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
