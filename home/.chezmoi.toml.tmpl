@@ -50,6 +50,10 @@ Multipass VMs, and Vagrant boxes */}}
 {{- else if eq $hostname "Madison" }}
 {{-     $codename = "Madison" -}}
 {{-     $client = true -}}
+{{- else if eq $hostname "Hal" }}
+{{-     $codename = "Hal" -}}
+{{-     $vault = "HDBank" -}}
+{{-     $client = true -}}
 {{- else -}}
 {{-     writeToStdout "Unknown host\n" -}}
 {{-     exit 1 -}}
