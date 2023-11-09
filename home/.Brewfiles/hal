@@ -116,8 +116,6 @@ cask "beekeeper-studio"
 cask "bettertouchtool"
 # Server and cloud storage browser
 cask "cyberduck"
-# Voice and text chat software
-cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Online diagram software
@@ -160,6 +158,12 @@ cask "keyboardcleantool"
 cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
+# Native desktop app for Messenger (formerly Facebook Messenger)
+cask "messenger"
+# Provides updates to various Microsoft products
+cask "microsoft-auto-update"
+# Meet, chat, call, and collaborate in just one place
+cask "microsoft-teams"
 # App to write, plan, collaborate, and get organized
 cask "notion"
 # Client program for the OpenVPN Access Server
@@ -180,6 +184,8 @@ cask "rectangle"
 cask "secretive"
 # Screenshot measurement and annotation tool
 cask "shottr"
+# Team communication and collaboration software
+cask "slack"
 # Music streaming service
 cask "spotify"
 # Quicklook extension for source files
@@ -194,10 +200,10 @@ cask "wezterm"
 cask "workplace-chat"
 # Multiplayer code editor
 cask "zed"
+# Video communication and virtual meeting platform
+cask "zoom"
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
-mas "Adobe Lightroom", id: 1451544217
-mas "Curve", id: 1219074514
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
@@ -207,3 +213,4 @@ mas "OneDrive", id: 823766827
 mas "Pages", id: 409201541
 mas "Save to Raindrop.io", id: 1549370672
 mas "Telegram", id: 747648890
+mas "Velja", id: 1607635845
