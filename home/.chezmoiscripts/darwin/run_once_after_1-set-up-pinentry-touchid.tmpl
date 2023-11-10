@@ -1,0 +1,11 @@
+{{- if eq .chezmoi.os "darwin" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+pinentry-touchid -fix >/dev/null 2>&1
+defaults write org.gpgtools.common DisableKeychain -bool yes
+gpg-connect-agent reloadagent /bye >/dev/null 2>&1
+
+{{- end -}}
