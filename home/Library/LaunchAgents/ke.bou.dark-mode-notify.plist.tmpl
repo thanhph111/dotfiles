@@ -17,7 +17,7 @@
         <string>{{ .chezmoi.homeDir }}/.cache/dark-notify/stdout.log</string>
         <key>ProgramArguments</key>
         <array>
-            <string>{{ output "which" "dark-notify" | trim }}</string>
+            <string>{{ lookPath "dark-notify" }}</string>
             <string>-c</string>
             <string>{{ .chezmoi.homeDir }}/.local/bin/switch-theme</string>
         </array>
