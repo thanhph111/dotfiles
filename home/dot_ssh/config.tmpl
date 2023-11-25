@@ -12,7 +12,7 @@ Host *
 {{- end }}
 
 # Connect 'Cloud9' instances via 'Visual Studio Code'
-Host "Cloud9 - *"
+Host cloud9-*
     User ec2-user
     ProxyCommand sh -c "~/.ssh/ssm-proxy %h %p"
 
