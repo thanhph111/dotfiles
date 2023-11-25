@@ -85,7 +85,7 @@ $RECYCLE.BIN/
 #: User specific files {{{
 
 #: Temporary folder at every project root
-/tmp
+/**/tmp/
 
 #: Visual Studio Code folder
 /.vscode/settings.json
