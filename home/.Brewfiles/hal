@@ -3,6 +3,8 @@ tap "homebrew/cask-fonts"
 tap "jorgelbg/tap"
 tap "kovetskiy/mark"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
+# Official Amazon AWS command-line interface
+brew "awscli"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Programmable completion for Bash 4.2+
@@ -19,6 +21,8 @@ brew "chezmoi"
 brew "coreutils"
 # Secure runtime for JavaScript and TypeScript
 brew "deno"
+# Modern replacement for 'ls'
+brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Collection of GNU find, xargs, and locate
@@ -110,8 +114,6 @@ cask "1password-cli"
 cask "aldente"
 # Application uninstaller
 cask "appcleaner"
-# Cross platform SQL editor and database management app
-cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
 # Server and cloud storage browser
@@ -160,8 +162,6 @@ cask "keycastr"
 cask "kitty"
 # Native desktop app for Messenger (formerly Facebook Messenger)
 cask "messenger"
-# Provides updates to various Microsoft products
-cask "microsoft-auto-update"
 # Meet, chat, call, and collaborate in just one place
 cask "microsoft-teams"
 # App to write, plan, collaborate, and get organized
@@ -190,6 +190,8 @@ cask "slack"
 cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
+# Native GUI tool for relational databases
+cask "tableplus"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
