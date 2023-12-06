@@ -186,7 +186,7 @@ leading_diamond = " \ue0b6"
 style = "diamond"
 template = " \ue3bf {{ .Code }} "
 trailing_diamond = "\ue0b4"
-type = "exit"
+type = "status"
 
 [[blocks]]
 alignment = "left"
