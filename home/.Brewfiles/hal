@@ -51,6 +51,8 @@ brew "jo"
 brew "jq"
 # Generic command-line non-JVM Apache Kafka producer and consumer
 brew "kcat"
+# Add indentation to LaTeX files
+brew "latexindent"
 # Lazier way to manage everything docker
 brew "lazydocker"
 # Simple terminal UI for git commands
@@ -89,8 +91,12 @@ brew "rm-improved"
 brew "rustup-init"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
+# Modernized, complete, self-contained TeX/LaTeX engine
+brew "tectonic"
 # Upgrade all the things
 brew "topgrade"
+# Markup-based typesetting system
+brew "typst"
 # Internet file retriever
 brew "wget"
 # Check your $HOME for unwanted files and directories
