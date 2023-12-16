@@ -37,6 +37,9 @@
                     "PackageIdentifier": "Microsoft.WindowsTerminal"
                 },
                 {
+                    "PackageIdentifier": "lamquangminh.EVKey"
+                },
+                {
                     "PackageIdentifier": "Spotify.Spotify"
                 },
                 {
