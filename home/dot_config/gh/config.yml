@@ -1,3 +1,4 @@
+version: "1"
 # Use SSH protocol to perform git operations
 git_protocol: ssh
 # Let the environment decide which editor to use
