@@ -10,16 +10,12 @@ brew "bash-completion@2"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
-# Yet another cross-platform graphical process/system monitor
-brew "bottom"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
 # Secure runtime for JavaScript and TypeScript
 brew "deno"
-# Modern replacement for 'ls'
-brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Collection of GNU find, xargs, and locate
@@ -30,8 +26,6 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
-# Blazing fast terminal-ui for git written in rust
-brew "gitui"
 # GNU implementation of the famous stream editor
 brew "gnu-sed"
 # GNU version of the tar archiving utility
@@ -42,10 +36,12 @@ brew "gnupg"
 brew "go"
 # Colorize logfiles and command output
 brew "grc"
-# JSON output from a shell
-brew "jo"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Generic command-line non-JVM Apache Kafka producer and consumer
+brew "kcat"
+# Lazier way to manage everything docker
+brew "lazydocker"
 # Simple terminal UI for git commands
 brew "lazygit"
 # Pager program similar to more
@@ -70,8 +66,6 @@ brew "pipenv"
 brew "pipx"
 # Python package management tool
 brew "poetry"
-# Modern replacement for ps written by Rust
-brew "procs"
 # Python version management
 brew "pyenv"
 # Search tool like grep and The Silver Searcher
@@ -88,8 +82,6 @@ brew "topgrade"
 brew "wget"
 # Check your $HOME for unwanted files and directories
 brew "xdg-ninja"
-# Process YAML, JSON, XML, CSV and properties documents from the CLI
-brew "yq"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
@@ -99,20 +91,16 @@ brew "zsh-syntax-highlighting"
 brew "jorgelbg/tap/pinentry-touchid"
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
-# Command-line helper for the 1Password password manager
+# Command-line interface for 1Password
 cask "1password-cli"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
 # Application uninstaller
 cask "appcleaner"
-# Cross platform SQL editor and database management app
-cask "beekeeper-studio"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
 # Server and cloud storage browser
 cask "cyberduck"
-# Voice and text chat software
-cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
 # Collaborative team software
@@ -149,8 +137,6 @@ cask "jetbrains-toolbox"
 cask "keka"
 # Blocks all Keyboard and TouchBar input
 cask "keyboardcleantool"
-# Open-source keystroke visualizer
-cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
 # App to write, plan, collaborate, and get organized
@@ -159,8 +145,6 @@ cask "notion"
 cask "pictogram"
 # Collaboration platform for API development
 cask "postman"
-# Command-line shell and scripting language
-cask "powershell"
 # HTTP client that helps testing and describing APIs
 cask "rapidapi"
 # Control your tools with a few keystrokes
@@ -175,20 +159,21 @@ cask "shottr"
 cask "spotify"
 # Quicklook extension for source files
 cask "syntax-highlight"
+# Native GUI tool for relational databases
+cask "tableplus"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
 cask "visual-studio-code"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
+# Multiplayer code editor
+cask "zed"
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
 mas "Adobe Lightroom", id: 1451544217
-mas "Curve", id: 1219074514
 mas "Dark Reader for Safari", id: 1438243180
-mas "Developer", id: 640199958
 mas "Dropover", id: 1355679052
-mas "Equinox", id: 1591510203
 mas "Keynote", id: 409183694
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
