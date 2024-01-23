@@ -35,6 +35,10 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $hostname := $computerName -}}
 {{- end -}}
 
+{{- if $personal -}}
+{{-     $vault = "Personal" -}}
+{{- end -}}
+
 {{/* Resolve codename and 1Password vault */}}
 {{- if hasPrefix "VNPC" $hostname -}}
 {{-     $codename = "GFT" -}}
@@ -57,10 +61,6 @@ Multipass VMs, and Vagrant boxes */}}
 {{- else -}}
 {{-     writeToStdout "Unknown host\n" -}}
 {{-     exit 1 -}}
-{{- end -}}
-
-{{- if $personal -}}
-{{-     $vault = "Personal" -}}
 {{- end -}}
 
 umask = 0o77
