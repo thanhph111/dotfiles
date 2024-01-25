@@ -2,6 +2,8 @@
 {
     "buffer_font_size": 13,
     "buffer_font_family": "JetBrainsMono Nerd Font",
+    "ui_font_family": "System Font",
+    "ui_font_size": 15,
     "theme": "Andromeda",
     "terminal": {
         "font_family": "FiraCode Nerd Font",
