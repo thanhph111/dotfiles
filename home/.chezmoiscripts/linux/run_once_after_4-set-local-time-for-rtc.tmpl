@@ -4,6 +4,7 @@
 
 set -euo pipefail
 
+#: This avoid time conflicts when dual booting with Windows
 timedatectl set-local-rtc 1
 
 {{- end -}}
