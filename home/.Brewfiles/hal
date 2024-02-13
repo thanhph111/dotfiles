@@ -45,6 +45,8 @@ brew "gnupg"
 brew "go"
 # Colorize logfiles and command output
 brew "grc"
+# Post-modern modal text editor
+brew "helix"
 # JSON output from a shell
 brew "jo"
 # Lightweight and flexible command-line JSON processor
@@ -67,6 +69,8 @@ brew "mas"
 brew "mosh"
 # Interactive cheatsheet tool for the command-line
 brew "navi"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
 # Platform built on V8 to build network applications
 brew "node"
 # Prompt theme engine for any shell
@@ -120,6 +124,8 @@ cask "1password-cli"
 cask "aldente"
 # Application uninstaller
 cask "appcleaner"
+# Chromium based browser
+cask "arc"
 # Tool to customize input devices and automate computer systems
 cask "bettertouchtool"
 # Server and cloud storage browser
@@ -206,6 +212,8 @@ cask "visual-studio-code"
 cask "wezterm"
 # Communications portal for your organisation
 cask "workplace-chat"
+# Messaging and calling application
+cask "zalo"
 # Multiplayer code editor
 cask "zed"
 # Video communication and virtual meeting platform
@@ -215,6 +223,7 @@ mas "AdGuard for Safari", id: 1440147259
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
+mas "Microsoft PowerPoint", id: 462062816
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
 mas "OneDrive", id: 823766827
