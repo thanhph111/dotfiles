@@ -4,7 +4,11 @@
     "buffer_font_family": "JetBrainsMono Nerd Font",
     "ui_font_family": "System Font",
     "ui_font_size": 15,
-    "theme": "Andromeda",
+    "theme": {
+        "mode": "system",
+        "light": "One Light",
+        "dark": "One Dark"
+    },
     "terminal": {
         "font_family": "FiraCode Nerd Font",
         "font_size": 12,
