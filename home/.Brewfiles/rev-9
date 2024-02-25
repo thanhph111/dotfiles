@@ -78,7 +78,7 @@ brew "zsh"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Fira Code
+# Free monospaced font with programming ligatures
 brew "homebrew/linux-fonts/font-fira-code"
 # Developer targeted fonts with a high number of glyphs
 brew "homebrew/linux-fonts/font-fira-code-nerd-font"
