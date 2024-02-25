@@ -2,7 +2,8 @@
 {
   "buffer_font_size": 13,
   "buffer_font_family": "JetBrainsMono Nerd Font",
-  "ui_font_family": "System Font",
+  // `System Font` to use the system font
+  "ui_font_family": "SF Mono",
   "ui_font_size": 15,
   "theme": {
     "mode": "system",
