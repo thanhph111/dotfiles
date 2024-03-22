@@ -291,6 +291,15 @@ command_exists pinentry-mac && alias pinentry=pinentry-touchid
 
 #: >>>
 
+#: GitHub CLI <<<
+
+#: Aliases for GitHub CLI Copilot extension
+command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
+    eval "$(gh copilot alias -- zsh)"
+}
+
+#: >>>
+
 {{ if eq .chezmoi.os "darwin" -}}
 #: JetBrains Toolbox scripts <<<
 

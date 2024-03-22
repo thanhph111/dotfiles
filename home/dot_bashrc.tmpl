@@ -454,8 +454,10 @@ which+( )+([^ ])*( )"
 
 #: GitHub CLI <<<
 
-#: Completion
-command_exists gh && eval "$(gh completion -s bash)"
+#: Aliases for GitHub CLI Copilot extension
+command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
+    eval "$(gh copilot alias -- zsh)"
+}
 
 #: >>>
 
