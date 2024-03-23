@@ -27,8 +27,25 @@ background = "p:yellow"
 foreground = "p:lightWhite"
 powerline_symbol = "\ue0b4"
 style = "powerline"
-template = """ \
-    {{ if .SSHSession }}\
+template = """\
+    {{ if .WSL }} \
+        WSL at\
+    {{ end }} \
+
+    {{.Icon}}\
+
+    {{ if .Env.NIX_BINTOOLS }} \
+        \uf313 \
+    {{ end }}\
+    """
+type = "os"
+
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+style = "powerline"
+template = """\
+    {{ if .SSHSession }} \
         \U000f0318 \
     {{ end }}\
 
