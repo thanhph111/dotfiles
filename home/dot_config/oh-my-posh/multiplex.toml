@@ -57,8 +57,6 @@ template = """ \
     <b>{{ .HostName }}</b>\
     """
 type = "os"
-[blocks.segments.properties]
-macos = "\uf8ff"
 
 [[blocks.segments]]
 background = "p:yellow"
