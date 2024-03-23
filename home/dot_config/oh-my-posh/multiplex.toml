@@ -28,23 +28,6 @@ foreground = "p:lightWhite"
 powerline_symbol = "\ue0b4"
 style = "powerline"
 template = """\
-    {{ if .WSL }} \
-        WSL at\
-    {{ end }} \
-
-    {{.Icon}}\
-
-    {{ if .Env.NIX_BINTOOLS }} \
-        \uf313 \
-    {{ end }}\
-    """
-type = "os"
-
-[[blocks.segments]]
-background = "p:yellow"
-foreground = "p:lightWhite"
-style = "powerline"
-template = """\
     {{ if .SSHSession }} \
         \U000f0318\
     {{ end }}\
@@ -59,18 +42,33 @@ type = "session"
 background = "p:yellow"
 foreground = "p:lightWhite"
 style = "powerline"
-template = """ \
-    {{ .UserName }} \
-    \u25cf \
-    <b>{{ .HostName }}</b> \
-    """
+template = " {{ .UserName }}"
 type = "text"
 
 [[blocks.segments]]
 background = "p:yellow"
 foreground = "p:lightWhite"
 style = "powerline"
-template = "\u25cf {{ .Name }} "
+template = """ \
+    \u25cf\
+    {{ if .WSL }} \
+        WSL at\
+    {{ end }} \
+
+    {{.Icon}}\
+
+    {{ if .Env.NIX_BINTOOLS }} \
+        \uf313 \
+    {{ end }} \
+    <b>{{ .HostName }}</b>\
+    """
+type = "os"
+
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+style = "powerline"
+template = " \u25cf {{ .Name }} "
 type = "shell"
 [blocks.segments.properties]
 [blocks.segments.properties.mapped_shell_names]
