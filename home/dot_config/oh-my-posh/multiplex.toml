@@ -34,16 +34,10 @@ template = """\
 
     {{ if .Root }}\
         \U000f0498 \
-    {{ end }}\
+    {{ end }} \
+    {{ .UserName }}\
     """
 type = "session"
-
-[[blocks.segments]]
-background = "p:yellow"
-foreground = "p:lightWhite"
-style = "powerline"
-template = " {{ .UserName }}"
-type = "text"
 
 [[blocks.segments]]
 background = "p:yellow"
@@ -63,6 +57,8 @@ template = """ \
     <b>{{ .HostName }}</b>\
     """
 type = "os"
+[blocks.segments.properties]
+macos = "\uf8ff"
 
 [[blocks.segments]]
 background = "p:yellow"
