@@ -46,18 +46,25 @@ foreground = "p:lightWhite"
 style = "powerline"
 template = """\
     {{ if .SSHSession }} \
-        \U000f0318 \
+        \U000f0318\
     {{ end }}\
 
     {{ if .Root }}\
         \U000f0498 \
-    {{ end }} \
+    {{ end }}\
+    """
+type = "session"
 
+[[blocks.segments]]
+background = "p:yellow"
+foreground = "p:lightWhite"
+style = "powerline"
+template = """ \
     {{ .UserName }} \
     \u25cf \
     <b>{{ .HostName }}</b> \
     """
-type = "session"
+type = "text"
 
 [[blocks.segments]]
 background = "p:yellow"
