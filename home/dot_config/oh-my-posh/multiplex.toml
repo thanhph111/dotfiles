@@ -51,7 +51,7 @@ template = """\
 
     {{ if .Root }}\
         \U000f0498 \
-    {{ end }}\
+    {{ end }} \
 
     {{ .UserName }} \
     \u25cf \
@@ -92,7 +92,7 @@ enable_hyperlink = true
 folder_icon = "\ue5fe"
 folder_separator_icon = " \u203a "
 home_icon = "\uf015"
-max_depth = 2.0
+max_depth = 1.0
 style = "agnoster_short"
 [blocks.segments.properties.mapped_locations]
 "/" = "\uf992\u203a "
