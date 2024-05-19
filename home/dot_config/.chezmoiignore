@@ -17,6 +17,7 @@
 !powershell
 !python
 !ripgrep
+!shell
 !starship
 !topgrade
 !zsh
