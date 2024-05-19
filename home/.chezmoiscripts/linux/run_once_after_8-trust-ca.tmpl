@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "linux" -}}
+
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+#: This script configures the SSH server to trust a CA for user authentication
+#: issued by services like Cloudflare Access, located at `/etc/ssh/ca.pub`
+#: Reference: https://developers.cloudflare.com/cloudflare-one/identity/users/short-lived-certificates/
+sudo tee /etc/ssh/sshd_config.d/trust-ca.conf >/dev/null <<EOT
+PubkeyAuthentication yes
+TrustedUserCAKeys /etc/ssh/ca.pub
+EOT
+
+{{- end -}}
