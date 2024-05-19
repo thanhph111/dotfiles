@@ -298,9 +298,9 @@ include current-theme.conf
 #: Advanced <<<
 
 {{ if eq .chezmoi.os "linux" -}}
-shell bash -is eval 'piccel ~/.local/bin/pac-man.json'
+shell bash -is eval 'export POSH_THEME="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml' eval 'piccel ~/.local/bin/pac-man.json'
 {{- else -}}
-shell zsh -ils eval 'piccel ~/.local/bin/pac-man.json'
+shell zsh -ils eval 'export POSH_THEME="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml' eval 'piccel ~/.local/bin/pac-man.json'
 {{- end }}
 
 

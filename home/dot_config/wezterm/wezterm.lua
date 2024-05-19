@@ -237,6 +237,8 @@ if wezterm.target_triple:find "apple%-darwin" then
         "zsh",
         "-ils",
         "eval",
+        'export POSH_THEME="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"',
+        "eval",
         "piccel ~/.local/bin/pac-man.json"
     }
 
@@ -248,6 +250,8 @@ config.window_decorations = nil
 config.default_prog = {
     "bash",
     "-is",
+    "eval",
+    'export POSH_THEME="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"',
     "eval",
     "piccel ~/.local/bin/pac-man.json"
 }
