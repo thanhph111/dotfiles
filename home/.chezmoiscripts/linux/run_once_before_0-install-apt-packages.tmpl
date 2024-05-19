@@ -179,7 +179,7 @@ env DCONF_PROFILE=ibus \
 
 #: Cloudflare Warp <<<
 
-#: Reference: https://pkg.cloudflareclient.com/install
+#: Reference: https://pkg.cloudflareclient.com/#debian
 
 are_all_packages_installed cloudflare-warp || {
     #: Setup key
@@ -195,6 +195,23 @@ are_all_packages_installed cloudflare-warp || {
 }
 
 #: >>>
+
+#: Cloudflared <<<
+
+#: Reference: https://pkg.cloudflare.com/index.html#cloudflared-packages
+
+are_all_packages_installed cloudflared || {
+    #: Setup key
+    curl https://pkg.cloudflare.com/cloudflare-main.gpg |
+        sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-main.gpg
+
+    #: Setup repository
+    echo 'deb [signed-by=/etc/apt/trusted.gpg.d/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' |
+        sudo tee /etc/apt/sources.list.d/cloudflare-warp.list
+
+    #: Install Cloudflared
+    sudo apt-get update && sudo apt-get install cloudflared
+}
 
 #: >>>
 
