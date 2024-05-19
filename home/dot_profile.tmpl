@@ -53,6 +53,14 @@ fi
 
 #: >>>
 
+#: Nix <<<
+
+#: Install with `sh <(curl -L https://nixos.org/nix/install) --no-daemon --no-modify-profile`
+[ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ] &&
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+
+#: >>>
+
 {{ if eq .chezmoi.os "darwin" -}}
 
 #: SSH <<<
