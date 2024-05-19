@@ -215,4 +215,23 @@ are_all_packages_installed cloudflared || {
 
 #: >>>
 
+#: OpenVPN <<<
+
+#: Reference: https://community.openvpn.net/openvpn/wiki/OpenVPN3Linux
+
+are_all_packages_installed openvpn3 || {
+    #: Setup key
+    curl https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub |
+        sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/openvpn.gpg
+
+    #: Setup repository
+    echo "deb [arch=amd64] https://swupdate.openvpn.net/community/openvpn3/repos bullseye main" |
+        sudo tee /etc/apt/sources.list.d/openvpn.list
+
+    #: Install OpenVPN
+    sudo aptitude update && sudo aptitude install -y openvpn3
+}
+
+#: >>>
+
 {{- end -}}
