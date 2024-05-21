@@ -4,17 +4,8 @@
 SHELL_NAME="$1"
 case "$SHELL_NAME" in
 zsh | bash) ;;
-*) return 1 ;;
+*) exit 1 ;;
 esac
-
-#: If not running interactively, don't do anything
-case "$-" in
-*i*) ;;
-*) exit ;;
-esac
-
-#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
-[ -z "$HOME" ] && exit
 
 #: Functions <<<
 

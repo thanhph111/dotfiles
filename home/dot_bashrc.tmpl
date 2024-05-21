@@ -3,6 +3,12 @@
 #: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
 #: vim: set colorcolumn=81 nospell:
 
+#: If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
+[[ -z "$HOME" ]] && return
+
 #: Source common rc file
 common_rc="$HOME/.config/shell/common_rc"
 if [ -f "$common_rc" ] && [ -r "$common_rc" ]; then
