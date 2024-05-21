@@ -399,5 +399,4 @@ fi
 
 #: >>>
 
-# unset SHELL_NAME
-# unset -f include command_exists
+unset SHELL_NAME

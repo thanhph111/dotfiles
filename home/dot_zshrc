@@ -177,3 +177,5 @@ while [[ "$1" == eval ]]; do
     eval "$1"
     shift
 done
+
+unset -f include command_exists
