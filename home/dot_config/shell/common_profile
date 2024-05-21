@@ -231,6 +231,12 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1
 
 #: >>>
 
+#: Poetry <<<
+
+command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
+
+#: >>>
+
 #: IPython <<<
 
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
