@@ -63,21 +63,9 @@ export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
 [ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CACHE_DIR"
 
-#: Source environment variables
-[ -r "$SHELL_CONFIG_DIR"/env ] && {
-    set -o allexport
-    # shellcheck disable=SC1091
-    . "$SHELL_CONFIG_DIR"/env
-    set +o allexport
-}
-
 #: >>>
 
 #: Aliases <<<
-
-#: Force 120-column width to man page if the terminal is wider than 120 columns
-#: TODO: Use it with below
-# alias man='MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS)) man'
 
 #: Enable color support of `ls` and also add handy aliases
 if [ -x /bin/dircolors ]; then
@@ -228,6 +216,18 @@ quote=01"
     export GROFF_NO_SGR=1
 }
 
+#: Force 120-column width to man page if the terminal is wider than 120 columns
+# shellcheck disable=SC2034
+MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS))
+
+#: Source environment variables
+[ -r "$SHELL_CONFIG_DIR"/env ] && {
+    set -o allexport
+    # shellcheck disable=SC1091
+    . "$SHELL_CONFIG_DIR"/env
+    set +o allexport
+}
+
 #: >>>
 
 #: Tools <<<
@@ -251,8 +251,6 @@ command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
 
 #: Pyenv <<<
 
-#: If you've called it in `.zprofile` no need to call it again as it's very slow
-# eval "$(pyenv init -)"
 alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
 
 #: >>>
@@ -338,12 +336,12 @@ fi
 #: Some kitty utilities
 command_exists kitty && {
     #: Wait for this implemented: https://github.com/BurntSushi/ripgrep/issues/665
+    alias diff_kitty='kitty +kitten diff'
     alias hg='kitty +kitten hyperlinked_grep'
-    alias diff-kitty='kitty +kitten diff'
-    alias ssh-kitty='kitty +kitten ssh'
     alias icat='kitty +kitten icat'
     alias set_kitty_dark='echo "include themes/Multiplex_Dark.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
     alias set_kitty_light='echo "include themes/Multiplex_Light.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
+    alias ssh_kitty='kitty +kitten ssh'
 
 }
 
