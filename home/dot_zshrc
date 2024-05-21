@@ -1,0 +1,179 @@
+#!/bin/bash
+#: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
+
+#: Reference: https://git.julian.maurice.name/jajm/dotfiles
+
+#: Source common rc file
+common_rc="$HOME/.config/shell/common_rc"
+if [ -f "$common_rc" ] && [ -r "$common_rc" ]; then
+    # shellcheck source=dot_config/shell/common_rc
+    . "$common_rc" zsh
+fi
+unset common_rc
+
+#: Aliases <<<
+
+alias zshout='zsh -is eval "unset HISTFILE"'
+
+#: >>>
+
+#: Shell settings <<<
+
+#: Let me kill less of words
+#: Don't consider '/', '-', '.', '=' is parts of words
+#: Disable warning as we don't intend to make it available in child processes
+# shellcheck disable=SC2034
+WORDCHARS='*?_[]~&;!#$%^(){}<>'
+
+#: Auto push previouse directory to stack, `popd` to get back
+setopt AUTO_PUSHD
+
+#: >>>
+
+#: History <<<
+
+#: Change location of history file
+HISTFILE="$SHELL_CACHE_DIR/history"
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+
+#: Can't still understand this but added to check later
+#: Record timestamp of command in HISTFILE
+setopt EXTENDED_HISTORY
+#: Delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+#: Ignore duplicated commands history list
+setopt HIST_IGNORE_DUPS
+#: Ignore commands that start with space
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+#: Show command with history expansion to user before running it
+setopt HIST_VERIFY
+#: Add commands to HISTFILE in order of execution
+setopt INC_APPEND_HISTORY
+#: Share command history data
+# setopt SHARE_HISTORY
+
+#: >>>
+
+#: Keybindings <<<
+
+#: Use Alt + left/right to move by words
+bindkey "\e[1;3D" backward-word
+bindkey "\e[1;3C" forward-word
+#: Use Alt + delete to delete forward word
+bindkey "\e[3;3~" kill-word
+
+#: Use up and down arrows for prefix history command searching
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+
+#: Use Cmd-delete or Cmd-fn-delete to delete to the beginning/end of line
+#: Cannot find a keybinding for Cmd-delete
+# bindkey '' backward-kill-line
+bindkey '\e[3;9~' kill-line
+
+#: Enable Shift-Tab to reverse in menu complete
+bindkey '\e[Z' reverse-menu-complete
+
+#: Ctrl-x Ctrl-e to open editor mode
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^x^e' edit-command-line
+
+#: >>>
+
+#: Completion <<<
+
+#: Brew autocompletion
+if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+#: Case insensitive completion
+zstyle ':completion:*' matcher-list \
+    'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
+    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
+    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+
+#: Change location of `.zcompcache` folder
+zstyle ':completion:*' cache-path "$USER_CACHE_DIR/zsh/completions"
+
+#: Force single tab completion
+setopt nolistambiguous
+
+#: Complete hidden files and folders
+setopt globdots
+
+#: Add a folder for user completions
+[ -d "$SHELL_CONFIG_DIR/completions" ] && FPATH="$SHELL_CONFIG_DIR/completions:${FPATH}"
+
+#: Partial completion suggestions
+zstyle ':completion:*' list-suffixeszstyle ':completion:*' expand prefix suffix
+zstyle ':completion:*' menu select
+
+#: >>>
+
+#: Tools <<<
+
+#: pinentry-mac <<<
+
+#: Follow this tutorial:
+#: https://github.com/jorgelbg/pinentry-touchid/issues/3#issuecomment-915440261
+command_exists pinentry-mac && alias pinentry=pinentry-touchid
+
+#: >>>
+
+#: kitty <<<
+
+#: Shell integration
+if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
+    export KITTY_SHELL_INTEGRATION="no-rc no-title"
+    autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+    kitty-integration
+    unfunction kitty-integration
+fi
+
+#: >>>
+
+#: Zsh plugins <<<
+
+command_exists brew && {
+    #: Fish-like autosuggestions 'zsh-autosuggestions'
+    include "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    #: Fish shell like syntax highlighting 'zsh-syntax-highlighting'
+    include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+}
+
+#: >>>
+
+#: >>>
+
+#: Miscellaneous <<<
+
+#: Something related to setting colors I don't know
+autoload -U colors && colors
+
+#: Build completion
+#: If wanna run `compinit` only every 24 hours, see:
+#: https://gist.github.com/ctechols/ca1035271ad134841284
+autoload -Uz compinit && compinit -d "$SHELL_CACHE_DIR/completion"
+
+#: >>>
+
+#: Execute a custom command without exiting like using `-c`
+#: So we can do like this `zsh -is eval 'echo 123' eval return`
+#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
+#: We can do `eval "$@"` but it'll break as some programs append extra arguments
+while [[ "$1" == eval ]]; do
+    shift
+    eval "$1"
+    shift
+done

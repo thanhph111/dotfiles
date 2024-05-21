@@ -1,8 +1,14 @@
 #!/bin/sh
 
+#: Check if a file readable and source it without repeating filepath
 include() {
     # shellcheck disable=SC1090,SC2015
     [ -r "$1" ] && [ -f "$1" ] && . "$1" || true
+}
+
+#: Check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
 }
 
 #: Environment variables for applications respecting XDG specifications <<<
@@ -74,6 +80,23 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+command_exists brew && {
+    #: Do not clean old version
+    # export HOMEBREW_NO_CLEANUP_FORMULAE=oh-my-posh
+
+    #: Do not show cleanup hint
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    #: Opt out Google Analytics
+    export HOMEBREW_NO_ANALYTICS=1
+
+    #: Forbid redirects from secure HTTPS to insecure HTTP
+    export HOMEBREW_NO_INSECURE_REDIRECT=1
+
+    #: Require all casks to have a checksum
+    export HOMEBREW_CASK_OPTS=--require-sha
+}
+
 #: >>>
 
 #: Nix <<<
@@ -144,7 +167,7 @@ export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 
-command -v npm >/dev/null 2>&1 && {
+command_exists npm && {
     PATH="$(npm config get prefix)/bin:$PATH"
     export PATH
 }
@@ -164,7 +187,7 @@ export NEXT_TELEMETRY_DISABLED=1
 #:     jenv add "$(brew --prefix openjdk@11)/libexec/openjdk.jdk/Contents/Home"
 #: - Linux:
 #:     jenv add "$(brew --prefix openjdk@11)/libexec"
-command -v jenv >/dev/null 2>&1 && {
+command_exists jenv && {
     export PATH="$HOME/.jenv/bin:$PATH"
     eval "$(jenv init -)"
 }
@@ -233,7 +256,7 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 #: - libffi-dev
 #: - liblzma-dev
 
-command -v pyenv >/dev/null 2>&1 && {
+command_exists pyenv && {
     export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
     eval "$(pyenv init -)"
 }
@@ -250,6 +273,14 @@ else
     export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 fi
 [ -d "$DOCKER_CONFIG"/bin ] && export PATH="$DOCKER_CONFIG/bin:$PATH"
+
+#: >>>
+
+#: JetBrains Toolbox scripts <<<
+
+#: On macOS
+[ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ] &&
+    export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:$PATH"
 
 #: >>>
 

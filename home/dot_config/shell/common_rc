@@ -1,0 +1,409 @@
+#!/bin/sh
+
+#: This is a shell script to be sourced in `~/.zshrc` or `~/.bashrc`
+SHELL_NAME="$1"
+case "$SHELL_NAME" in
+zsh | bash) ;;
+*) return 1 ;;
+esac
+
+#: If not running interactively, don't do anything
+case "$-" in
+*i*) ;;
+*) exit ;;
+esac
+
+#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
+[ -z "$HOME" ] && exit
+
+#: Functions <<<
+
+#: Check if a file readable and source it without repeating filepath
+include() {
+    # shellcheck disable=SC1090,SC2015
+    [ -r "$1" ] && [ -f "$1" ] && . "$1" || true
+}
+
+#: Check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+#: Check if a file has a valid checksum
+checksum() {
+    echo "$1  $(realpath "$2")" | shasum -c
+}
+
+#: Get directory size
+dsize() {
+    [ "$1" != "" ] && dir=$1 || dir=$(pwd)
+    du -hs "$dir"
+}
+
+#: Run a command and detach it from current process
+#: You can use it to open a file: `detach xdg-open file.pdf`
+detach() {
+    ("$@" >/dev/null 2>&1 &)
+}
+
+#: Better `mount`
+mnt() {
+    mount |
+        awk -F' ' '{ printf "%s\t%s\n",$1,$3; }' |
+        column -t |
+        grep -E ^/dev/ | sort
+}
+
+#: Source all other function files in my directory
+[ -d "$SHELL_CONFIG_DIR"/functions ] &&
+    for file in "$SHELL_CONFIG_DIR"/functions/*; do include "$file"; done
+
+#: >>>
+
+#: Prepare environment <<<
+
+#: Create config directory
+export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+export SHELL_CONFIG_DIR="$USER_CONFIG_DIR/$SHELL_NAME"
+[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CONFIG_DIR"
+
+#: Create cache directory
+export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
+[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CACHE_DIR"
+
+#: Source environment variables
+[ -r "$SHELL_CONFIG_DIR"/env ] && {
+    set -o allexport
+    # shellcheck disable=SC1091
+    . "$SHELL_CONFIG_DIR"/env
+    set +o allexport
+}
+
+#: >>>
+
+#: Aliases <<<
+
+#: Force 120-column width to man page if the terminal is wider than 120 columns
+#: TODO: Use it with below
+# alias man='MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS)) man'
+
+#: Enable color support of `ls` and also add handy aliases
+if [ -x /bin/dircolors ]; then
+    if [ -r ~/.dircolors ]; then
+        eval "$(/bin/dircolors -b ~/.dircolors)"
+    else
+        eval "$(/bin/dircolors -b)"
+    fi
+fi
+alias ls='ls --color=auto'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+#: Some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lt='du -sh * | sort -h'
+alias lsdir='ls -ld */'
+alias lsfile='ls -flp | grep -v /'
+
+#: Shutdown the computer
+alias reboot='sudo shutdown -r now'
+alias shutdown='sudo shutdown -h now'
+
+#: Clean all buffers
+alias clean="clear && printf '\e[3J'"
+
+#: Show all variables
+alias printvar='(set -o posix; set)'
+
+#: macOS vibe
+command_exists xdg-open && alias open=xdg-open
+
+#: Disable `rm` to prevent accidentally removing unrecoverable files
+rm() {
+    echo "rm: Refusing to remove '$*'"
+    echo "rm: Use 'rip' to remove"
+    return 1
+}
+
+#: No anoying banner
+command_exists pwsh && alias pwsh='pwsh -NoLogo'
+
+#: Other aliases
+alias python=python3
+alias pip=pip3
+alias export_env_file='set -o allexport && . .env && set +o allexport'
+alias gpg-reset='gpgconf --kill all'
+alias mute-spotify-ads='(&>/dev/null env mute-spotify-ads &)'
+alias npm-exec='PATH=$(npm bin):$PATH'
+
+#: >>>
+
+#: Environment variables <<<
+
+#: Set the default editor to Vim
+command_exists vim && export VISUAL=vim
+
+#: Fix some edge cases: `gpg: signing failed: Inappropriate ioctl for device`
+#: Zsh automatically sets `TTY` during initialization
+export GPG_TTY="${TTY:-$(tty)}"
+
+#: Ignore some filetypes in autocompletion
+FIGNORE="${FIGNORE}:\
+~:\
+.DS_Store:\
+.cmd:\
+.hidden:\
+.log:\
+.swp:\
+.uuid"
+
+#: Change location of `less` history file
+[ -e "$USER_CACHE_DIR/less" ] || mkdir -p "$USER_CACHE_DIR/less"
+export LESSHISTFILE="$USER_CACHE_DIR/less/history"
+
+#: Colored GCC warnings and errors
+export GCC_COLORS="\
+error=01;31:\
+warning=01;35:\
+note=01;36:\
+caret=01;32:\
+locus=01:\
+quote=01"
+
+#: Color the `less` pager which `man` uses
+#: Reference: https://unix.stackexchange.com/questions/119/colors-in-man-pages
+#: termcap
+#:     ks: make the keypad send commands
+#:     ke: make the keypad send digits
+#:     vb: emit visual bell
+#:     mb: start blink
+#:     md: start bold
+#:     me: turn off bold, blink and underline
+#:     so: start standout (reverse video)
+#:     se: stop standout
+#:     us: start underline
+#:     ue: stop underline
+
+[ -n "$TERM" ] && [ "$TERM" != "dumb" ] && command_exists tput && {
+    LESS_TERMCAP_mb="$(
+        tput blink
+    )"
+    LESS_TERMCAP_md="$(
+        tput bold
+        tput setaf 6
+    )"
+    LESS_TERMCAP_me="$(tput sgr0)"
+    LESS_TERMCAP_so="$(
+        tput smso
+    )"
+    LESS_TERMCAP_se="$(
+        tput rmso
+        tput sgr0
+    )"
+    LESS_TERMCAP_us="$(
+        tput smul
+        tput bold
+        tput setaf 7
+    )"
+    LESS_TERMCAP_ue="$(
+        tput rmul
+        tput sgr0
+    )"
+    LESS_TERMCAP_mr="$(tput rev)"
+    LESS_TERMCAP_mh="$(tput dim)"
+    LESS_TERMCAP_ZN="$(tput ssubm)"
+    LESS_TERMCAP_ZV="$(tput rsubm)"
+    LESS_TERMCAP_ZO="$(tput ssupm)"
+    LESS_TERMCAP_ZW="$(tput rsupm)"
+    export LESS_TERMCAP_mb
+    export LESS_TERMCAP_md
+    export LESS_TERMCAP_me
+    export LESS_TERMCAP_so
+    export LESS_TERMCAP_se
+    export LESS_TERMCAP_us
+    export LESS_TERMCAP_ue
+    export LESS_TERMCAP_mr
+    export LESS_TERMCAP_mh
+    export LESS_TERMCAP_ZN
+    export LESS_TERMCAP_ZV
+    export LESS_TERMCAP_ZO
+    export LESS_TERMCAP_ZW
+    export GROFF_NO_SGR=1
+}
+
+#: >>>
+
+#: Tools <<<
+
+#: GitHub CLI <<<
+
+#: Aliases for GitHub CLI Copilot extension
+command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
+    eval "$(gh copilot alias -- "$SHELL_NAME")"
+}
+
+#: >>>
+
+#: Poetry <<<
+
+command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
+
+#: >>>
+
+#: Pip <<<
+
+#: Autocompletion
+#: This is really slow
+# eval "$(pip completion --"$SHELL_NAME")"
+
+#: >>>
+
+#: Pyenv <<<
+
+#: If you've called it in `.zprofile` no need to call it again as it's very slow
+# eval "$(pyenv init -)"
+alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
+
+#: >>>
+
+#: Podman <<<
+
+command_exists podman && {
+    alias docker=podman
+    eval "$(podman completion "$SHELL_NAME")"
+}
+command_exists podman-compose && alias docker-compose=podman-compose
+
+#: >>>
+
+#: Ripgrep <<<
+
+[ -f "$USER_CONFIG_DIR/ripgrep/config" ] &&
+    export RIPGREP_CONFIG_PATH="$USER_CONFIG_DIR/ripgrep/config"
+
+#: >>>
+
+#: Fzf <<<
+
+if command_exists fzf; then
+    include "$SHELL_CONFIG_DIR/fzf.$SHELL_NAME"
+    #: TODO: Move this to Fzf config file
+    alias vimf="fzf --bind 'enter:abort+execute(vim -p {+} </dev/tty)'"
+    #: Or doing this, I don't know which one is better
+    #: Remember filepaths may contains spaces
+    # vimf () {
+    #     readarray -t files < <(fzf -m)
+    #     nvim -p "${files[@]}"
+    # }
+fi
+
+#: >>>
+
+#: GVM <<<
+
+include "$HOME/.gvm/scripts/gvm"
+
+#: >>>
+
+#: grc <<<
+
+#: Wrap some default commands with color
+#: I don't use it as it modifies `env` command
+# include "$(brew --prefix)/etc/grc.zsh"
+
+#: Wrap other commands with color
+command_exists grc && {
+    command_exists go && alias go='grc go'
+}
+
+#: >>>
+
+#: bat <<<
+
+command_exists batman && alias man=batman
+
+if command_exists bat; then
+    export PAGER=bat
+elif command_exists less; then
+    export PAGER=less
+fi
+
+#: >>>
+
+#: 1password CLI <<<
+
+#: Recheck if you want to use it
+# eval "$(op completion "$SHELL_NAME")"
+
+#: >>>
+
+#: kitty <<<
+
+#: Development
+if [ -d "$HOME/Documents/Projects/External/kitty" ]; then
+    export KITTY_DEVELOP_FROM="$HOME/Documents/Projects/External/kitty"
+fi
+
+#: Some kitty utilities
+command_exists kitty && {
+    #: Wait for this implemented: https://github.com/BurntSushi/ripgrep/issues/665
+    alias hg='kitty +kitten hyperlinked_grep'
+    alias diff-kitty='kitty +kitten diff'
+    alias ssh-kitty='kitty +kitten ssh'
+    alias icat='kitty +kitten icat'
+    alias set_kitty_dark='echo "include themes/Multiplex_Dark.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
+    alias set_kitty_light='echo "include themes/Multiplex_Light.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
+
+}
+
+#: >>>
+
+#: >>>
+
+#: Visual Studio Code terminal and prompt <<<
+
+#: Unset history on Visual Studio Code terminal
+[ "$TERM_PROGRAM" = vscode ] && {
+    unset HISTFILE
+    #: TODO: Remove this when the history manipulation is removed
+    unset PROMPT_COMMAND
+
+    export VSCODE_SUGGEST=1
+    # shellcheck disable=SC1090
+    command_exists code && . "$(code --locate-shell-integration-path "$SHELL_NAME")"
+    unset VSCODE_SUGGEST
+}
+
+#: And then set the prompt
+if command_exists oh-my-posh && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
+    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/probua.minimal.omp.json"}"
+    export POSH_THEME
+    eval "$(oh-my-posh init "$SHELL_NAME")"
+elif command_exists starship && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
+    export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"
+    eval "$(starship init "$SHELL_NAME")"
+elif [ -n "$ZSH" ]; then
+    export ZSH_THEME="robbyrussell"
+else
+    #: Colored prompt in case no powerline is used: `user@host:dir`
+    [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ] &&
+        debian_chroot=$(cat /etc/debian_chroot)
+    [ -x /bin/tput ] && tput setaf 1 >/dev/null 2>&1 &&
+        PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    case "$TERM" in
+    xterm* | rxvt*)
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        ;;
+    esac
+fi
+
+#: >>>
+
+# unset SHELL_NAME
+# unset -f include command_exists
