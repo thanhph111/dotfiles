@@ -265,7 +265,7 @@ command_exists brew && {
 
 #: GNU coreutils <<<
 
-# {{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
 
 #: Add GNU coreutils to PATH
 command_exists brew && {
@@ -283,7 +283,7 @@ command_exists brew && {
     done
 }
 
-# {{- end }}
+{{- end }}
 
 #: >>>
 
