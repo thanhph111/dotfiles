@@ -9,13 +9,13 @@
 #: If the `$HOME` is not set (such as `env -i bash`), stop for safety
 [[ -z "$HOME" ]] && return
 
-#: Source common rc file
-common_rc="$HOME/.config/shell/common_rc"
-if [ -f "$common_rc" ] && [ -r "$common_rc" ]; then
-    # shellcheck source=dot_config/shell/common_rc
-    . "$common_rc" zsh
+#: Source the common shell pre-configuration
+common_rc_pre="$HOME/.config/shell/common_rc_pre"
+if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
+    # shellcheck source=dot_config/shell/common_rc_pre
+    . "$common_rc_pre" zsh
 fi
-unset common_rc
+unset common_rc_pre
 
 #: Aliases <<<
 
@@ -174,14 +174,10 @@ autoload -Uz compinit && compinit -d "$SHELL_CACHE_DIR/completion"
 
 #: >>>
 
-#: Execute a custom command without exiting like using `-c`
-#: So we can do like this `zsh -is eval 'echo 123' eval return`
-#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
-#: We can do `eval "$@"` but it'll break as some programs append extra arguments
-while [[ "$1" == eval ]]; do
-    shift
-    eval "$1"
-    shift
-done
-
-unset -f include command_exists
+#: Source the common shell post-configuration
+common_rc_post="$HOME/.config/shell/common_rc_post"
+if [ -f "$common_rc_post" ] && [ -r "$common_rc_post" ]; then
+    # shellcheck source=dot_config/shell/common_rc_post
+    . "$common_rc_post" "$@"
+fi
+unset common_rc_post

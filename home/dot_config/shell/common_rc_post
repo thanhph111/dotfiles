@@ -1,0 +1,63 @@
+#!/bin/sh
+
+#: Visual Studio Code terminal  <<<
+
+#: Unset history on Visual Studio Code terminal
+[ "$TERM_PROGRAM" = vscode ] && {
+    unset HISTFILE
+    #: TODO: Remove this when the history manipulation is removed
+    unset PROMPT_COMMAND
+
+    export VSCODE_SUGGEST=1
+    # shellcheck disable=SC1090
+    command_exists code &&
+        . "$(code --locate-shell-integration-path "$SHELL_NAME")"
+    unset VSCODE_SUGGEST
+}
+
+#: >>>
+
+#: Prompt  <<<
+
+#: And then set the prompt
+if command_exists oh-my-posh && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
+    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/probua.minimal.omp.json"}"
+    export POSH_THEME
+    eval "$(oh-my-posh init "$SHELL_NAME")"
+elif command_exists starship && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
+    export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"
+    eval "$(starship init "$SHELL_NAME")"
+elif [ -n "$ZSH" ]; then
+    export ZSH_THEME="robbyrussell"
+else
+    #: Colored prompt in case no powerline is used: `user@host:dir`
+    [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ] &&
+        debian_chroot=$(cat /etc/debian_chroot)
+    [ -x /bin/tput ] && tput setaf 1 >/dev/null 2>&1 &&
+        PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    case "$TERM" in
+    xterm* | rxvt*)
+        PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        ;;
+    esac
+fi
+
+#: >>>
+
+#: Execute a custom command  <<<
+
+#: Execute a custom command without exiting like using `-c`
+#: So we can do like this `bash -is eval 'echo 123' eval return` or `zsh -ils`
+#: Reference: https://www.zsh.org/mla/users/2005/msg00599.html
+#: We can do `eval "$@"` but it'll break as some programs append extra arguments
+while [ "$1" = eval ]; do
+    shift
+    eval "$1"
+    shift
+done
+
+#: >>>
+
+#: Unset the variables and functions from `common_rc_pre`
+unset SHELL_NAME
+unset -f include command_exists
