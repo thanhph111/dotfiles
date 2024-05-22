@@ -3,17 +3,11 @@
 #: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
 #: vim: set colorcolumn=81 nospell:
 
-#: If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
-#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
-[[ -z "$HOME" ]] && return
-
 #: Source the common shell pre-configuration
 common_rc_pre="$HOME/.config/shell/common_rc_pre"
 if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
     # shellcheck source=dot_config/shell/common_rc_pre
-    . "$common_rc_pre" bash
+    . "$common_rc_pre" bash || return 0
 fi
 unset common_rc_pre
 

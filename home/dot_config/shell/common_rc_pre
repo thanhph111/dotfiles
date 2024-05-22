@@ -7,6 +7,15 @@ zsh | bash) ;;
 *) exit 1 ;;
 esac
 
+#: If not running interactively, don't do anything
+case "$-" in
+*i*) ;;
+*) return 1 ;;
+esac
+
+#: If the `$HOME` is not set (such as `env -i bash`), stop for safety
+[ -z "$HOME" ] && return 1
+
 #: Functions <<<
 
 #: Check if a file readable and source it without repeating filepath
@@ -348,5 +357,3 @@ command_exists kitty && {
 #: >>>
 
 #: >>>
-
-# unset SHELL_NAME
