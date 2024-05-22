@@ -265,10 +265,8 @@ command_exists brew && {
 
 #: GNU coreutils <<<
 
-{{ if eq .chezmoi.os "darwin" -}}
-
 #: Add GNU coreutils to PATH
-command_exists brew && {
+[[ "$OSTYPE" == "darwin"* ]] && command_exists brew && {
     pkgs=(
         coreutils
         findutils
@@ -282,8 +280,6 @@ command_exists brew && {
         export PATH="$brew_prefix:$PATH"
     done
 }
-
-{{- end }}
 
 #: >>>
 
