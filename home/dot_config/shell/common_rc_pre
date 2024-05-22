@@ -16,7 +16,7 @@ esac
 #: If the `$HOME` is not set (such as `env -i bash`), stop for safety
 [ -z "$HOME" ] && return 1
 
-#: Functions <<<
+#: Functions {{{
 
 #: Check if a file readable and source it without repeating filepath
 include() {
@@ -58,9 +58,9 @@ mnt() {
 [ -d "$SHELL_CONFIG_DIR"/functions ] &&
     for file in "$SHELL_CONFIG_DIR"/functions/*; do include "$file"; done
 
-#: >>>
+#: }}}
 
-#: Prepare environment <<<
+#: Prepare environment {{{
 
 #: Create config directory
 export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -72,9 +72,9 @@ export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
 [ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CACHE_DIR"
 
-#: >>>
+#: }}}
 
-#: Aliases <<<
+#: Aliases {{{
 
 #: Enable color support of `ls` and also add handy aliases
 if [ -x /bin/dircolors ]; then
@@ -130,9 +130,9 @@ alias gpg-reset='gpgconf --kill all'
 alias mute-spotify-ads='(&>/dev/null env mute-spotify-ads &)'
 alias npm-exec='PATH=$(npm bin):$PATH'
 
-#: >>>
+#: }}}
 
-#: Environment variables <<<
+#: Environment variables {{{
 
 #: Set the default editor to Vim
 command_exists vim && export VISUAL=vim
@@ -237,34 +237,34 @@ MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS))
     set +o allexport
 }
 
-#: >>>
+#: }}}
 
-#: Tools <<<
+#: Tools {{{
 
-#: GitHub CLI <<<
+#: GitHub CLI {{{
 
 #: Aliases for GitHub CLI Copilot extension
 command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
     eval "$(gh copilot alias -- "$SHELL_NAME")"
 }
 
-#: >>>
+#: }}}
 
-#: Pip <<<
+#: Pip {{{
 
 #: Autocompletion
 #: This is really slow
 # eval "$(pip completion --"$SHELL_NAME")"
 
-#: >>>
+#: }}}
 
-#: Pyenv <<<
+#: Pyenv {{{
 
 alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
 
-#: >>>
+#: }}}
 
-#: Podman <<<
+#: Podman {{{
 
 command_exists podman && {
     alias docker=podman
@@ -272,16 +272,16 @@ command_exists podman && {
 }
 command_exists podman-compose && alias docker-compose=podman-compose
 
-#: >>>
+#: }}}
 
-#: Ripgrep <<<
+#: Ripgrep {{{
 
 [ -f "$USER_CONFIG_DIR/ripgrep/config" ] &&
     export RIPGREP_CONFIG_PATH="$USER_CONFIG_DIR/ripgrep/config"
 
-#: >>>
+#: }}}
 
-#: Fzf <<<
+#: Fzf {{{
 
 if command_exists fzf; then
     include "$SHELL_CONFIG_DIR/fzf.$SHELL_NAME"
@@ -295,15 +295,15 @@ if command_exists fzf; then
     # }
 fi
 
-#: >>>
+#: }}}
 
-#: GVM <<<
+#: GVM {{{
 
 include "$HOME/.gvm/scripts/gvm"
 
-#: >>>
+#: }}}
 
-#: grc <<<
+#: grc {{{
 
 #: Wrap some default commands with color
 #: I don't use it as it modifies `env` command
@@ -314,9 +314,9 @@ command_exists grc && {
     command_exists go && alias go='grc go'
 }
 
-#: >>>
+#: }}}
 
-#: bat <<<
+#: bat {{{
 
 command_exists batman && alias man=batman
 
@@ -326,16 +326,16 @@ elif command_exists less; then
     export PAGER=less
 fi
 
-#: >>>
+#: }}}
 
-#: 1password CLI <<<
+#: 1password CLI {{{
 
 #: Recheck if you want to use it
 # eval "$(op completion "$SHELL_NAME")"
 
-#: >>>
+#: }}}
 
-#: kitty <<<
+#: kitty {{{
 
 #: Development
 if [ -d "$HOME/Documents/Projects/External/kitty" ]; then
@@ -354,6 +354,6 @@ command_exists kitty && {
 
 }
 
-#: >>>
+#: }}}
 
-#: >>>
+#: }}}

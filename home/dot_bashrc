@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:
-#: vim: set colorcolumn=81 nospell:
+#: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
 
 #: Source the common shell pre-configuration
 common_rc_pre="$HOME/.config/shell/common_rc_pre"
@@ -11,7 +10,7 @@ if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
 fi
 unset common_rc_pre
 
-#: Functions <<<
+#: Functions {{{
 
 #: Check termcap name
 is_termcap_name() {
@@ -114,9 +113,9 @@ alert() (
         "$([[ $last_error_code -eq 0 ]] && echo terminal || echo error)"
 )
 
-#: >>>
+#: }}}
 
-#: Shell settings <<<
+#: Shell settings {{{
 
 #: Make `less` more friendly for non-text input files, see `lesspipe(1)`
 [[ -x /bin/lesspipe ]] &&
@@ -146,11 +145,11 @@ shopt -s dirspell 2>/dev/null
 #: and zero or more directories and subdirectories
 shopt -s globstar 2>/dev/null
 
-#: >>>
+#: }}}
 
-#: History <<<
+#: History {{{
 
-#: Remove previous duplicate lines when append to the history file <<<
+#: Remove previous duplicate lines when append to the history file {{{
 
 #: Setting this is not enough As `HISCONTROL` only works with history list
 HISTCONTROL=ignoredups:erasedups
@@ -206,9 +205,9 @@ HISTFILESIZE=2000
 #: Number of lines to remember in the history list, let not pressure the Bash
 HISTSIZE="$((HISTFILESIZE * 2 / 3))"
 
-#: >>>
+#: }}}
 
-#: Ignore some commands when saving to history <<<
+#: Ignore some commands when saving to history {{{
 
 #: Patterns to ignore saving to the history file (or also history line, sadly)
 #: Ref: https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
@@ -237,11 +236,11 @@ which+( )+([^ ])*( )"
 # HISTIGNORE="${HISTIGNORE}\
 # $(alias | sed 's/^alias \([^ =]\+\)=.*/:\1+( )+([^ ])*( )/' | tr -d '\n')"
 
-#: >>>
+#: }}}
 
-#: >>>
+#: }}}
 
-#: Completion <<<
+#: Completion {{{
 
 #: Enable programmable completion features
 ! shopt -oq posix && include /etc/bash_completion
@@ -259,11 +258,11 @@ command_exists brew && {
 [[ -d "$SHELL_CONFIG_DIR"/completions ]] &&
     for file in "$SHELL_CONFIG_DIR"/completions/*; do include "$file"; done
 
-#: >>>
+#: }}}
 
-#: Tools <<<
+#: Tools {{{
 
-#: GNU coreutils <<<
+#: GNU coreutils {{{
 
 #: Add GNU coreutils to PATH
 [[ "$OSTYPE" == "darwin"* ]] && command_exists brew && {
@@ -281,9 +280,9 @@ command_exists brew && {
     done
 }
 
-#: >>>
+#: }}}
 
-#: kitty <<<
+#: kitty {{{
 
 #: Kitty shell integration
 if
@@ -295,17 +294,17 @@ then
     . "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"
 fi
 
-#: >>>
+#: }}}
 
-#: >>>
+#: }}}
 
-#: Miscellaneous <<<
+#: Miscellaneous {{{
 
 #: Cleanup history file when exiting
 #: Have to be down here to avoid other program overriding it
 add_trap clean_history EXIT
 
-#: >>>
+#: }}}
 
 #: Source the common shell post-configuration
 common_rc_post="$HOME/.config/shell/common_rc_post"

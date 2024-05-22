@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#: Visual Studio Code terminal  <<<
+#: Visual Studio Code terminal {{{
 
 #: Unset history on Visual Studio Code terminal
 [ "$TERM_PROGRAM" = vscode ] && {
@@ -15,9 +15,9 @@
     unset VSCODE_SUGGEST
 }
 
-#: >>>
+#: }}}
 
-#: Prompt  <<<
+#: Prompt {{{
 
 #: And then set the prompt
 if command_exists oh-my-posh && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
@@ -42,9 +42,9 @@ else
     esac
 fi
 
-#: >>>
+#: }}}
 
-#: Execute a custom command  <<<
+#: Execute a custom command {{{
 
 #: Execute a custom command without exiting like using `-c`
 #: So we can do like this `bash -is eval 'echo 123' eval return` or `zsh -ils`
@@ -56,7 +56,7 @@ while [ "$1" = eval ]; do
     shift
 done
 
-#: >>>
+#: }}}
 
 #: Unset the variables and functions from `common_rc_pre`
 unset SHELL_NAME

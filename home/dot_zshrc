@@ -11,13 +11,13 @@ if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
 fi
 unset common_rc_pre
 
-#: Aliases <<<
+#: Aliases {{{
 
 alias zshout='zsh -is eval "unset HISTFILE"'
 
-#: >>>
+#: }}}
 
-#: Shell settings <<<
+#: Shell settings {{{
 
 #: Let me kill less of words
 #: Don't consider '/', '-', '.', '=' is parts of words
@@ -28,9 +28,9 @@ WORDCHARS='*?_[]~&;!#$%^(){}<>'
 #: Auto push previouse directory to stack, `popd` to get back
 setopt AUTO_PUSHD
 
-#: >>>
+#: }}}
 
-#: History <<<
+#: History {{{
 
 #: Change location of history file
 HISTFILE="$SHELL_CACHE_DIR/history"
@@ -60,9 +60,9 @@ setopt INC_APPEND_HISTORY
 #: Share command history data
 # setopt SHARE_HISTORY
 
-#: >>>
+#: }}}
 
-#: Keybindings <<<
+#: Keybindings {{{
 
 #: Use Alt + left/right to move by words
 bindkey "\e[1;3D" backward-word
@@ -87,9 +87,9 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^x^e' edit-command-line
 
-#: >>>
+#: }}}
 
-#: Completion <<<
+#: Completion {{{
 
 #: Brew autocompletion
 if type brew &>/dev/null; then
@@ -119,19 +119,19 @@ setopt globdots
 zstyle ':completion:*' list-suffixeszstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
 
-#: >>>
+#: }}}
 
-#: Tools <<<
+#: Tools {{{
 
-#: pinentry-mac <<<
+#: pinentry-mac {{{
 
 #: Follow this tutorial:
 #: https://github.com/jorgelbg/pinentry-touchid/issues/3#issuecomment-915440261
 command_exists pinentry-mac && alias pinentry=pinentry-touchid
 
-#: >>>
+#: }}}
 
-#: kitty <<<
+#: kitty {{{
 
 #: Shell integration
 if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
@@ -141,9 +141,9 @@ if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
     unfunction kitty-integration
 fi
 
-#: >>>
+#: }}}
 
-#: Zsh plugins <<<
+#: Zsh plugins {{{
 
 command_exists brew && {
     #: Fish-like autosuggestions 'zsh-autosuggestions'
@@ -152,11 +152,11 @@ command_exists brew && {
     include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 }
 
-#: >>>
+#: }}}
 
-#: >>>
+#: }}}
 
-#: Miscellaneous <<<
+#: Miscellaneous {{{
 
 #: Something related to setting colors I don't know
 autoload -U colors && colors
@@ -166,7 +166,7 @@ autoload -U colors && colors
 #: https://gist.github.com/ctechols/ca1035271ad134841284
 autoload -Uz compinit && compinit -d "$SHELL_CACHE_DIR/completion"
 
-#: >>>
+#: }}}
 
 #: Source the common shell post-configuration
 common_rc_post="$HOME/.config/shell/common_rc_post"
