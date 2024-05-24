@@ -4,7 +4,11 @@
 
 set -euo pipefail
 
+#: SSH
 sudo ufw allow ssh
+
+#: Spotifyd
+sudo ufw allow 36270/tcp
 
 sudo ufw enable
 
