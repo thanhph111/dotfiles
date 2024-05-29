@@ -31,6 +31,10 @@ command_exists() {
 
 #: Check if a file has a valid checksum
 checksum() {
+    [ "$#" -eq 1 ] && {
+        echo "$1" | shasum | awk '{ print $1 }'
+        return
+    }
     echo "$1  $(realpath "$2")" | shasum -c
 }
 
