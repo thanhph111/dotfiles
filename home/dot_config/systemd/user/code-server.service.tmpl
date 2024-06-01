@@ -1,0 +1,16 @@
+{{- $code := lookPath "code" -}}
+{{- if $code -}}
+[Unit]
+Description=Visual Studio Code Server
+Documentation=https://code.visualstudio.com/docs
+After=network.target
+
+[Service]
+Type=simple
+User=thanhph111
+ExecStart={{ $code }} serve-web --port 9999 --without-connection-token
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+{{ end }}
