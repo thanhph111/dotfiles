@@ -7,7 +7,6 @@ After=network.target
 
 [Service]
 Type=simple
-User=thanhph111
 ExecStart={{ $code }} serve-web --port 9999 --without-connection-token
 Restart=always
 
