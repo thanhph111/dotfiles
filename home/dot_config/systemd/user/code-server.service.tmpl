@@ -11,5 +11,5 @@ ExecStart={{ $code }} serve-web --port 9999 --without-connection-token
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 {{ end }}
