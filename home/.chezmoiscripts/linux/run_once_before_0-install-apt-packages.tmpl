@@ -181,7 +181,8 @@ env DCONF_PROFILE=ibus \
 
 #: Reference: https://pkg.cloudflareclient.com/#debian
 
-are_all_packages_installed cloudflare-warp || {
+#: Temporary disable installing Cloudflare Warp, remove `false &&` to enable it
+are_all_packages_installed cloudflare-warp || false && {
     #: Setup key
     curl https://pkg.cloudflareclient.com/pubkey.gpg |
         sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-warp.gpg
