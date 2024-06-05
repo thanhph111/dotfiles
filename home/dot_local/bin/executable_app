@@ -47,7 +47,9 @@ def request(
     import urllib.request
 
     if not url.casefold().startswith("http"):
-        raise urllib.error.URLError("Incorrect and possibly insecure protocol in URL")
+        raise urllib.error.URLError(
+            "Incorrect and possibly insecure protocol in URL"
+        )
     request_data = None
     headers = headers or {}
     data = data or {}
@@ -120,7 +122,10 @@ def unarchive(file_path: Path, destination: Path) -> None:
 class Downloader(ABC):
     @abstractmethod
     def download(
-        self, file_pattern: str, output_file: Path, version: Optional[str] = None
+        self,
+        file_pattern: str,
+        output_file: Path,
+        version: Optional[str] = None,
     ) -> None:
         pass
 
@@ -129,13 +134,18 @@ class GitHub(Downloader):
     def __init__(self, owner: str, repo: str) -> None:
         self.owner = owner
         self.repo = repo
-        self.api_url = f"https://api.github.com/repos/{self.owner}/{self.repo}/releases"
+        self.api_url = (
+            f"https://api.github.com/repos/{self.owner}/{self.repo}/releases"
+        )
         self.download_url = (
             f"https://github.com/{self.owner}/{self.repo}/releases/download"
         )
 
     def download(
-        self, file_pattern: str, output_file: Path, version: Optional[str] = None
+        self,
+        file_pattern: str,
+        output_file: Path,
+        version: Optional[str] = None,
     ) -> None:
         import re
 
@@ -154,13 +164,16 @@ class GitHub(Downloader):
                 url
                 for url in browser_download_urls
                 if re.search(
-                    file_pattern, url.removeprefix(f"{self.download_url}/{version}/")
+                    file_pattern,
+                    url.removeprefix(f"{self.download_url}/{version}/"),
                 )
             ),
             None,
         )
         if not browser_download_url:
-            raise Exception(f"Could not find {file_pattern} in {browser_download_urls}")
+            raise Exception(
+                f"Could not find {file_pattern} in {browser_download_urls}"
+            )
         download(browser_download_url, output_file)
 
 
@@ -180,7 +193,9 @@ class App(ABC):
 
 class WezTerm(App):
     def __init__(
-        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+        self,
+        executable: Optional[str] = None,
+        install_directory: Optional[Path] = None,
     ) -> None:
         self.executable = executable or "wezterm"
         self.install_directory = install_directory or Path.home() / ".local/bin"
@@ -206,10 +221,14 @@ class WezTerm(App):
 
 class Kitty(App):
     def __init__(
-        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+        self,
+        executable: Optional[str] = None,
+        install_directory: Optional[Path] = None,
     ) -> None:
         self.executable = executable or "kitty"
-        self.install_directory = install_directory or Path.home() / ".local/apps/kitty"
+        self.install_directory = (
+            install_directory or Path.home() / ".local/apps/kitty"
+        )
 
     def install(self, version: Optional[str] = None) -> None:
         architecture = "x86_64"
@@ -227,7 +246,9 @@ class Kitty(App):
         archive_file_name = f"kitty-{version}-{architecture}.txz"
         archive_file = self.install_directory.parent / archive_file_name
         self.install_directory.parent.mkdir(parents=True, exist_ok=True)
-        download(f"{github.download_url}/{tag}/{archive_file_name}", archive_file)
+        download(
+            f"{github.download_url}/{tag}/{archive_file_name}", archive_file
+        )
 
         unarchive(archive_file, self.install_directory)
         archive_file.unlink()
@@ -242,7 +263,9 @@ class Kitty(App):
         install_share_directory = self.install_directory / "share"
         for desktop_file_name in {"kitty.desktop", "kitty-open.desktop"}:
             exec_file = self.install_directory / "bin/kitty"
-            icon_file = install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
+            icon_file = (
+                install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
+            )
             (application_directory / desktop_file_name).write_text(
                 (install_share_directory / "applications" / desktop_file_name)
                 .read_text()
@@ -267,7 +290,9 @@ class Kitty(App):
 
 class Zap(App):
     def __init__(
-        self, executable: Optional[str] = None, install_directory: Optional[Path] = None
+        self,
+        executable: Optional[str] = None,
+        install_directory: Optional[Path] = None,
     ) -> None:
         self.executable = executable or "zap"
         self.install_directory = install_directory or Path.home() / ".local/bin"
@@ -285,7 +310,9 @@ class Zap(App):
         self.executable_path.unlink()
 
 
-APPS = {app_class.__name__.lower(): app_class for app_class in App.__subclasses__()}
+APPS = {
+    app_class.__name__.lower(): app_class for app_class in App.__subclasses__()
+}
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -296,7 +323,9 @@ def get_parser() -> argparse.ArgumentParser:
     subparsers.required = True
 
     install_parser = subparsers.add_parser("install", help="install help")
-    install_parser.add_argument("app", choices=APPS.keys(), help="app to install")
+    install_parser.add_argument(
+        "app", choices=APPS.keys(), help="app to install"
+    )
     install_parser.add_argument("--version", help="version to install")
     install_parser.set_defaults(
         func=lambda args: APPS[args.app]().install(args.version)
@@ -305,11 +334,17 @@ def get_parser() -> argparse.ArgumentParser:
     update_parser = subparsers.add_parser("update", help="update help")
     update_parser.add_argument("app", choices=APPS.keys(), help="app to update")
     update_parser.add_argument("--version", help="version to update")
-    update_parser.set_defaults(func=lambda args: APPS[args.app]().update(args.version))
+    update_parser.set_defaults(
+        func=lambda args: APPS[args.app]().update(args.version)
+    )
 
     uninstall_parser = subparsers.add_parser("uninstall", help="uninstall help")
-    uninstall_parser.add_argument("app", choices=APPS.keys(), help="app to uninstall")
-    uninstall_parser.set_defaults(func=lambda args: APPS[args.app]().uninstall())
+    uninstall_parser.add_argument(
+        "app", choices=APPS.keys(), help="app to uninstall"
+    )
+    uninstall_parser.set_defaults(
+        func=lambda args: APPS[args.app]().uninstall()
+    )
 
     return parser
 
