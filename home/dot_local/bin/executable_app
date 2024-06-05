@@ -205,7 +205,10 @@ class WezTerm(App):
         github = GitHub("wez", "wezterm")
         if version == "nightly":
             download(
-                f"{github.download_url}/nightly/WezTerm-nightly-Ubuntu18.04.AppImage",
+                (
+                    f"{github.download_url}/nightly"
+                    "/WezTerm-nightly-Ubuntu18.04.AppImage"
+                ),
                 self.executable_path,
             )
         else:
