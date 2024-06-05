@@ -3,8 +3,8 @@
 import argparse
 import json
 from abc import ABC, abstractmethod
-from email.message import Message
 from enum import Enum
+from http.client import HTTPMessage
 from pathlib import Path
 from typing import Any, NamedTuple, Optional
 
@@ -13,7 +13,7 @@ DEFAULT_PATH = Path.home() / ".local/bin"
 
 class Response(NamedTuple):
     body: str
-    headers: Message
+    headers: HTTPMessage
     status: int
     error: bool = False
 
