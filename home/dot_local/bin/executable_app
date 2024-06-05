@@ -401,6 +401,169 @@ class Zap(App):
         self.executable_path.unlink()
 
 
+class Calibre(App):
+    def __init__(
+        self,
+        executable: Optional[str] = None,
+        install_directory: Optional[Path] = None,
+    ) -> None:
+        self.executable = executable or "calibre-server"
+        self.install_directory = (
+            install_directory and Path(install_directory).expanduser().resolve()
+        ) or Path.home() / ".local/apps/calibre"
+
+    def install(self, version: Optional[str] = None) -> None:
+        import errno
+        import shutil
+        import tempfile
+
+        CACERT = """\
+-----BEGIN CERTIFICATE-----
+MIIFzjCCA7agAwIBAgIJAKfuFL6Cvpn4MA0GCSqGSIb3DQEBCwUAMGIxCzAJBgNV
+BAYTAklOMRQwEgYDVQQIDAtNYWhhcmFzaHRyYTEPMA0GA1UEBwwGTXVtYmFpMRAw
+DgYDVQQKDAdjYWxpYnJlMRowGAYDVQQDDBFjYWxpYnJlLWVib29rLmNvbTAgFw0x
+NTEyMjMwNTQ2NTlaGA8yMTE1MTEyOTA1NDY1OVowYjELMAkGA1UEBhMCSU4xFDAS
+BgNVBAgMC01haGFyYXNodHJhMQ8wDQYDVQQHDAZNdW1iYWkxEDAOBgNVBAoMB2Nh
+bGlicmUxGjAYBgNVBAMMEWNhbGlicmUtZWJvb2suY29tMIICIjANBgkqhkiG9w0B
+AQEFAAOCAg8AMIICCgKCAgEAtlbeAxQKyWhoxwaGqMh5ktRhqsLR6uzjuqWmB+Mm
+fC0Ni45mOSo2R/usFQTZesrYUoo2yBhMN58CsLeuaaQfsPeDss7zJ9jX0v/GYUS3
+vM7qE55ruRWu0g11NpuWLZkqvcw5gVi3ZJYx/yqTEGlCDGxjXVs9iEg+L75Bcm9y
+87olbcZA6H/CbR5lP1/tXcyyb1TBINuTcg408SnieY/HpnA1r3NQB9MwfScdX08H
+TB0Bc8e0qz+r1BNi3wZZcrNpqWhw6X9QkHigGaDNppmWqc1Q5nxxk2rC21GRg56n
+p6t3ENQMctE3KTJfR8TwM33N/dfcgobDZ/ZTnogqdFQycFOgvT4mIZsXdsJv6smy
+hlkUqye2PV8XcTNJr+wRzIN/+u23jC+CaT0U0A57D8PUZVhT+ZshXjB91Ko8hLE1
+SmJkdv2bxFV42bsemhSxZWCtsc2Nv8/Ds+WVV00xfADym+LokzEqqfcK9vkkMGzF
+h7wzd7YqPOrMGOCe9vH1CoL3VO5srPV+0Mp1fjIGgm5SIhklyRfaeIjFeyoDRA6e
+8EXrI3xOsrkXXMJDvhndEJOYYqplY+4kLhW0XeTZjK7CmD59xRtFYWaV3dcMlaWb
+VxuY7dgsiO7iUztYY0To5ZDExcHem7PEPUTyFii9LhbcSJeXDaqPFMxih+X0iqKv
+ni8CAwEAAaOBhDCBgTAxBgNVHREEKjAoghFjYWxpYnJlLWVib29rLmNvbYITKi5j
+YWxpYnJlLWVib29rLmNvbTAdBgNVHQ4EFgQURWqz5EOg5K1OrSKpleR+louVxsQw
+HwYDVR0jBBgwFoAURWqz5EOg5K1OrSKpleR+louVxsQwDAYDVR0TBAUwAwEB/zAN
+BgkqhkiG9w0BAQsFAAOCAgEAS1+Jx0VyTrEFUQ5jEIx/7WrL4GDnzxjeXWJTyKSk
+YqcOvXZpwwrTHJSGHj7MpCqWIzQnHxICBFlUEVcb1g1UPvNB5OY69eLjlYdwfOK9
+bfp/KnLCsn7Pf4UCATRslX9J1LV6r17X2ONWWmSutDeGP1azXVxwFsogvvqwPHCs
+nlfvQycUcd4HWIZWBJ1n4Ry6OwdpFuHktRVtNtTlD34KUjzcN2GCA08Ur+1eiA9D
+/Oru1X4hfA3gbiAlGJ/+3AQw0oYS0IEW1HENurkIDNs98CXTiau9OXRECgGjE3hC
+viECb4beyhEOH5y1dQJZEynwvSepFG8wDJWmkVN7hMrfbZF4Ec0BmsJpbuq5GrdV
+cXUXJbLrnADFV9vkciLb3pl7gAmHi1T19i/maWMiYqIAh7Ezi/h6ufGbPiG+vfLt
+f4ywTKQeQKAamBW4P2oFgcmlPDlDeVFWdkF1aC0WFct5/R7Fea0D2bOVt52zm3v3
+Ghni3NYEZzXHf08c8tzXZmM1Q39sSS1vn2B9PgiYj87Xg9Fxn1trKFdsiry1F2Qx
+qDq1u+xTdjPKwVVB1zd5g3MM/YYTVRhuH2AZU/Z4qX8DAf9ESqLqUpEOpyvLkX3r
+gENtRgsmhjlf/Qwymuz8nnzJD5c4TgCicVjPNArprVtmyfOXLVXJLC+KpkzTxvdr
+nR0=
+-----END CERTIFICATE-----
+        """
+
+        download_url = calibre_version = signature = None
+        arch = "x86_64"
+
+        # Get tarball info
+        print("Downloading tarball signature securely...")
+        if version:
+            response = request(
+                f"https://code.calibre-ebook.com/signatures/calibre-"
+                f"{version}-{arch}.txz.sha512",
+                ca_cert=CACERT,
+            )
+            if response.error:
+                raise Exception(response.body)
+            signature = response.body
+            calibre_version = version
+            download_url = (
+                f"https://download.calibre-ebook.com/{version}/calibre-"
+                f"{version}-{arch}.txz"
+            )
+        else:
+            response = request(
+                f"https://code.calibre-ebook.com/tarball-info/{arch}",
+                ca_cert=CACERT,
+            )
+            if response.error:
+                raise Exception(response.body)
+            signature, calibre_version = response.body.split("@")
+            download_url = f"https://calibre-ebook.com/dist/linux-{arch}"
+
+        if not signature or not calibre_version:
+            raise ValueError(
+                "Failed to get install file signature, invalid signature"
+                " returned"
+            )
+        if isinstance(calibre_version, bytes):
+            calibre_version = calibre_version.decode("utf-8")
+
+        # Download tarball
+        tarball_file_name = f"calibre-{calibre_version}-{arch}.txz"
+        temp_directory = Path(tempfile.gettempdir())
+        cache = temp_directory / "calibre-installer-cache"
+        cache.mkdir(parents=True, exist_ok=True)
+
+        for x in cache.iterdir():
+            if tarball_file_name not in x.name:
+                x.unlink()
+
+        tarball_file = cache / tarball_file_name
+        signature_matched = check_signature(tarball_file, signature)
+        if signature_matched:
+            print(f"Using previously downloaded {tarball_file_name}")
+        else:
+            cached_signature_file = tarball_file.with_suffix(".signature")
+            cached_signature = None
+
+            if cached_signature_file.exists():
+                with cached_signature_file.open("r") as signature_file:
+                    cached_signature = signature_file.read()
+
+            if cached_signature != signature and tarball_file.exists():
+                tarball_file.unlink()
+
+            try:
+                with cached_signature_file.open("w") as f:
+                    f.write(signature)
+            except IOError as e:
+                if e.errno != errno.EACCES:
+                    raise
+                print(
+                    f"The installer cache directory has incorrect permissions."
+                    f" Delete {cache} and try again."
+                )
+                raise SystemExit(1)
+
+            download(download_url, tarball_file)
+            print("Checking downloaded file integrity...")
+            signature_matched = check_signature(tarball_file, signature)
+            if not signature_matched:
+                tarball_file.unlink()
+                print(
+                    "The downloaded files' signature does not match. "
+                    "Try the download again later."
+                )
+                raise SystemExit(1)
+
+        # Extract tarball
+        if self.install_directory.exists():
+            shutil.rmtree(self.install_directory)
+        self.install_directory.mkdir(parents=True, exist_ok=True)
+
+        print(f"Extracting files to {self.install_directory}...")
+        unarchive(tarball_file, self.install_directory)
+
+        # Create symlink
+        print(f"Creating symlink to {DEFAULT_PATH / self.executable}...")
+        (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
+        (DEFAULT_PATH / self.executable).symlink_to(
+            self.install_directory / self.executable
+        )
+
+    def update(self, version: Optional[str] = None) -> None:
+        self.install(version)
+
+    def uninstall(self) -> None:
+        import shutil
+
+        shutil.rmtree(self.install_directory)
+        (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
+
+
 APPS = {
     app_class.__name__.lower(): app_class for app_class in App.__subclasses__()
 }
