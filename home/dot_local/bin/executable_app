@@ -110,7 +110,7 @@ def unarchive(file_path: Path, destination: Path) -> None:
 
         with zipfile.ZipFile(file_path) as file:
             file.extractall(destination)
-    elif file_path.suffix in (".tar", ".tar.gz", ".tgz", ".txz"):
+    elif file_path.suffix in {".tar", ".tar.gz", ".tgz", ".txz"}:
         import tarfile
 
         with tarfile.open(file_path) as file:
