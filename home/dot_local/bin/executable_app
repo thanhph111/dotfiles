@@ -195,6 +195,18 @@ def unarchive(file_path: Path, destination: Path) -> None:
         raise ValueError(f"Unknown archive type: {file_path}")
 
 
+def check_signature(file_path: Path, signature: str) -> bool:
+    import hashlib
+
+    if not file_path.exists():
+        return None
+    with file_path.open("rb") as file:
+        raw = file.read()
+    hasher = hashlib.sha512()
+    hasher.update(raw)
+    return hasher.hexdigest() == signature
+
+
 class Downloader(ABC):
     @abstractmethod
     def download(
