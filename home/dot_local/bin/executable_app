@@ -39,14 +39,21 @@ def request(
     data: Optional[dict[str, str]] = None,
     data_as_json: bool = True,
     params: Optional[dict[str, str]] = None,
+    timeout: int = 60,
+    max_redirects: int = 5,
+    ca_cert: Optional[str] = None,
 ) -> Response:
-    """https://github.com/bowmanjd/pysimpleurl"""
+    """
+    https://github.com/bowmanjd/pysimpleurl
+    https://github.com/kovidgoyal/calibre/blob/master/setup/linux-installer.py
+    """
 
+    import ssl
     import urllib.error
     import urllib.parse
     import urllib.request
 
-    if not url.casefold().startswith("http"):
+    if not url.lower().startswith("http"):
         raise urllib.error.URLError(
             "Incorrect and possibly insecure protocol in URL"
         )
@@ -74,24 +81,46 @@ def request(
         url=url, data=request_data, headers=headers, method=method.value
     )
 
-    try:
-        with urllib.request.urlopen(http_request) as http_response:
-            response = Response(
-                headers=http_response.headers,
-                status=http_response.status,
-                body=http_response.read().decode(
-                    http_response.headers.get_content_charset("utf-8")
-                ),
-            )
-    except urllib.error.HTTPError as exception:
-        response = Response(
-            body=str(exception.reason),
-            headers=exception.headers,
-            status=exception.code,
-            error=True,
-        )
+    context = ssl.create_default_context()
+    context.verify_mode = ssl.CERT_REQUIRED
+    if ca_cert:
+        context.load_verify_locations(cadata=ca_cert)
 
-    return response
+    def _fetch(url: str, remaining_redirects: int) -> Response:
+        try:
+            with urllib.request.urlopen(
+                http_request, context=context, timeout=timeout
+            ) as http_response:
+                response = Response(
+                    headers=dict(http_response.headers),
+                    status=http_response.status,
+                    body=http_response.read().decode(
+                        http_response.headers.get_content_charset("utf-8")
+                    ),
+                )
+
+                if response.status in {301, 302, 303}:
+                    if remaining_redirects <= 0:
+                        raise ValueError("Too many redirects, giving up")
+                    new_url = http_response.getheader("Location", None)
+                    if new_url is None:
+                        raise ValueError(
+                            f"{url} returned a redirect response with no"
+                            " Location header"
+                        )
+                    return _fetch(new_url, remaining_redirects - 1)
+
+                return response
+
+        except urllib.error.HTTPError as exception:
+            return Response(
+                body=str(exception.reason),
+                headers=dict(exception.headers),
+                status=exception.code,
+                error=True,
+            )
+
+    return _fetch(url, max_redirects)
 
 
 def download(url: str, file_path: Path) -> None:
