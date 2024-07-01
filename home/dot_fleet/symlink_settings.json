@@ -29,5 +29,5 @@
         }
     ],
     "fus.sendAllowed": false,
-    "keymap": "macos-vscode"
+    "keymap": "vscode"
 }
