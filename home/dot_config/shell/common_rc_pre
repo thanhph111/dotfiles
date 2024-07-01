@@ -360,4 +360,10 @@ command_exists kitty && {
 
 #: }}}
 
+#: direnv {{{
+
+command_exists direnv && eval "$(direnv hook "$SHELL_NAME")"
+
+#: }}}
+
 #: }}}
