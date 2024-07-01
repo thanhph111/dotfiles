@@ -136,6 +136,9 @@ export AWS_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
 # export AWS_WEB_IDENTITY_TOKEN_FILE="$XDG_CONFIG_HOME/aws/token"
 export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/shared-credentials"
 
+#: Opt out AWS SAM CLI telemetry
+export SAM_CLI_TELEMETRY=0
+
 #: }}}
 
 #: Rust {{{
