@@ -112,6 +112,9 @@ setopt nolistambiguous
 #: Complete hidden files and folders
 setopt globdots
 
+#: Glob stars
+setopt globstarshort
+
 #: Add a folder for user completions
 [ -d "$SHELL_CONFIG_DIR/completions" ] && FPATH="$SHELL_CONFIG_DIR/completions:${FPATH}"
 
