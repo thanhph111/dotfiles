@@ -244,6 +244,12 @@ export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
 
 #: }}}
 
+#: Gauge {{{
+
+export GAUGE_HOME="$XDG_DATA_HOME/gauge"
+
+#:}}}
+
 #: Pyenv {{{
 
 #: Require the following packages on Debian-based distros:
