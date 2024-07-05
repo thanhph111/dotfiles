@@ -367,3 +367,5 @@ command_exists direnv && eval "$(direnv hook "$SHELL_NAME")"
 #: }}}
 
 #: }}}
+
+return 0
