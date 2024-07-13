@@ -6,6 +6,7 @@
 
 #: Version: 19.16.1
 
+disable_notice = true
 console_title_template = "{{ .Shell }} \u2724 {{ .Folder }}"
 final_space = true
 version = 2
