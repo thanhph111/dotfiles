@@ -116,6 +116,9 @@ alias printvar='(set -o posix; set)'
 #: macOS vibe
 command_exists xdg-open && alias open=xdg-open
 
+#: Kubernetes
+command_exists kubectl && alias k=kubectl
+
 #: Disable `rm` to prevent accidentally removing unrecoverable files
 # rm() {
 #     echo "rm: Refusing to remove '$*'"
