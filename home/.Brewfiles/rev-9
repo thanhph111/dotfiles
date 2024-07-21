@@ -1,5 +1,4 @@
 tap "homebrew/bundle"
-tap "homebrew/linux-fonts"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
@@ -8,10 +7,14 @@ brew "bat-extras"
 brew "chezmoi"
 # Secure runtime for JavaScript and TypeScript
 brew "deno"
-# Modern replacement for 'ls'
-brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
+# Fira Code
+brew "font-fira-code"
+# Typeface made for developers
+brew "font-jetbrains-mono"
+# Developer targeted fonts with a high number of glyphs
+brew "font-jetbrains-mono-nerd-font"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
@@ -26,14 +29,18 @@ brew "grc"
 brew "jo"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
 # Lazier way to manage everything docker
 brew "lazydocker"
-# Simple terminal UI for git commands
-brew "lazygit"
+# Run a Kubernetes cluster locally
+brew "minikube"
 # Remote terminal application
 brew "mosh"
 # Interactive cheatsheet tool for the command-line
 brew "navi"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
 # Linux networking base tools
 brew "net-tools"
 # Platform built on V8 to build network applications
@@ -55,7 +62,7 @@ brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
 # Rust toolchain installer
-brew "rustup-init"
+brew "rustup-init", link: true
 # Spotify daemon
 brew "spotifyd"
 # Very fast implementation of tldr in Rust
@@ -72,17 +79,11 @@ brew "xclip"
 brew "xdg-ninja"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
+# Feature-rich command-line audio/video downloader
+brew "yt-dlp"
 # UNIX shell (command interpreter)
 brew "zsh"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Free monospaced font with programming ligatures
-brew "homebrew/linux-fonts/font-fira-code"
-# Developer targeted fonts with a high number of glyphs
-brew "homebrew/linux-fonts/font-fira-code-nerd-font"
-# Typeface made for developers
-brew "homebrew/linux-fonts/font-jetbrains-mono"
-# Developer targeted fonts with a high number of glyphs
-brew "homebrew/linux-fonts/font-jetbrains-mono-nerd-font"
