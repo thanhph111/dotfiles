@@ -147,6 +147,16 @@ shopt -s globstar 2>/dev/null
 
 #: }}}
 
+#: Aliases {{{
+
+#: Kubernetes
+command_exists kubectl && {
+    alias k=kubectl
+    complete -o default -F __start_kubectl k
+}
+
+#: }}}
+
 #: History {{{
 
 #: Remove previous duplicate lines when append to the history file {{{
