@@ -29,6 +29,8 @@ brew "grc"
 brew "jo"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
 # Kubernetes command-line interface
 brew "kubernetes-cli"
 # Lazier way to manage everything docker
@@ -62,7 +64,7 @@ brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
 # Rust toolchain installer
-brew "rustup-init", link: true
+brew "rustup"
 # Spotify daemon
 brew "spotifyd"
 # Very fast implementation of tldr in Rust
