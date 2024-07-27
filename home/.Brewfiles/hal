@@ -12,6 +12,8 @@ brew "bash-completion@2"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
+# Toolchain of the web
+brew "biome"
 # Yet another cross-platform graphical process/system monitor
 brew "bottom"
 # Manage your dotfiles across multiple diverse machines, securely
@@ -32,6 +34,8 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
+# Git credential helper that authenticates in browser using OAuth
+brew "git-credential-oauth"
 # Blazing fast terminal-ui for git written in rust
 brew "gitui"
 # GNU implementation of the famous stream editor
@@ -56,8 +60,6 @@ brew "kcat"
 brew "latexindent"
 # Lazier way to manage everything docker
 brew "lazydocker"
-# Simple terminal UI for git commands
-brew "lazygit"
 # Pager program similar to more
 brew "less"
 # Utility for directing compilation
@@ -91,7 +93,7 @@ brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
 # Rust toolchain installer
-brew "rustup-init"
+brew "rustup"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
 # Modernized, complete, self-contained TeX/LaTeX engine
@@ -100,6 +102,8 @@ brew "tectonic"
 brew "topgrade"
 # Markup-based typesetting system
 brew "typst"
+# Formatter for typst
+brew "typstfmt"
 # Internet file retriever
 brew "wget"
 # Check your $HOME for unwanted files and directories
@@ -129,12 +133,12 @@ cask "arc"
 cask "bettertouchtool"
 # OpenAI's official ChatGPT desktop app
 cask "chatgpt"
+# Free app that makes your Internet safer
+cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
 # App to build and share containerised applications and microservices
 cask "docker"
-# Online diagram software
-cask "drawio"
 # Collaborative team software
 cask "figma"
 cask "font-fira-code"
@@ -152,6 +156,8 @@ cask "fork"
 cask "google-chrome"
 # Utility to hide menu bar items
 cask "hiddenbar"
+# Convert your caps lock key or any of your modifier keys to the hyper key
+cask "hyperkey"
 # Free and open-source media player
 cask "iina"
 # Terminal emulator as alternative to Apple's Terminal app
@@ -202,6 +208,8 @@ cask "tableplus"
 cask "transmission"
 # Open-source code editor
 cask "visual-studio-code"
+# Rust-based terminal
+cask "warp"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
 # Communications portal for your organisation
@@ -217,7 +225,10 @@ mas "AdGuard for Safari", id: 1440147259
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
+mas "Microsoft Excel", id: 462058435
 mas "Microsoft PowerPoint", id: 462062816
+mas "Microsoft Remote Desktop", id: 1295203466
+mas "Microsoft Word", id: 462054704
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
 mas "OneDrive", id: 823766827
