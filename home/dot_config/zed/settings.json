@@ -21,7 +21,7 @@
       }
     },
     "env": {
-      "POSH_THEME": "/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json"
+      "OMP_CONFIG": "/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json"
     }
   },
   "experiments": {

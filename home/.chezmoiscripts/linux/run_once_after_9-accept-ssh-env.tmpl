@@ -5,8 +5,8 @@
 set -euo pipefail
 
 sudo tee /etc/ssh/sshd_config.d/accept-env.conf >/dev/null <<EOT
-#: Oh My Posh theme
-AcceptEnv POSH_THEME
+#: Oh My Posh config
+AcceptEnv OMP_CONFIG
 EOT
 
 {{- end -}}

@@ -21,9 +21,8 @@
 
 #: And then set the prompt
 if command_exists oh-my-posh && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
-    POSH_THEME="${POSH_THEME:-"$USER_CONFIG_DIR/oh-my-posh/probua.minimal.omp.json"}"
-    export POSH_THEME
-    eval "$(oh-my-posh init "$SHELL_NAME")"
+    OMP_CONFIG="${OMP_CONFIG:-"$USER_CONFIG_DIR/oh-my-posh/probua.minimal.omp.json"}"
+    eval "$(oh-my-posh init "$SHELL_NAME" --config "$OMP_CONFIG")"
 elif command_exists starship && [ "$TERM_PROGRAM" != Apple_Terminal ]; then
     export STARSHIP_CONFIG="$USER_CONFIG_DIR/starship/multiplex.toml"
     eval "$(starship init "$SHELL_NAME")"

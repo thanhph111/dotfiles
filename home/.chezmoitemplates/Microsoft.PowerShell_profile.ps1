@@ -230,8 +230,8 @@ Set-PSReadLineOption -AddToHistoryHandler {
 
 if (Test-CommandExists oh-my-posh) {
     #: Use a theme
-    $env:POSH_THEME = '~/.config/oh-my-posh/multiplex.toml'
-    oh-my-posh init pwsh | Invoke-Expression
+    $env:OMP_CONFIG = '~/.config/oh-my-posh/multiplex.toml'
+    oh-my-posh init pwsh --config $env:OMP_CONFIG | Invoke-Expression
 
     #: Enable-PoshTransientPrompt
     Enable-PoshTooltips
