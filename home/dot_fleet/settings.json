@@ -21,8 +21,6 @@
             "args": [
                 "-is",
                 "eval",
-                "export OMP_CONFIG=$(brew --prefix)/share/oh-my-posh/themes/probua.minimal.omp.json",
-                "eval",
                 "unset HISTFILE"
             ],
             "name": "Light Zsh"

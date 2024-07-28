@@ -298,9 +298,9 @@ include current-theme.conf
 #: Advanced <<<
 
 {{ if eq .chezmoi.os "linux" -}}
-shell bash -is eval 'export OMP_CONFIG=~/.config/oh-my-posh/multiplex.toml' eval 'piccel ~/.local/bin/pac-man.json'
+shell bash -is eval 'piccel ~/.local/bin/pac-man.json'
 {{- else -}}
-shell zsh -ils eval 'export OMP_CONFIG=~/.config/oh-my-posh/multiplex.toml' eval 'piccel ~/.local/bin/pac-man.json'
+shell zsh -ils eval 'piccel ~/.local/bin/pac-man.json'
 {{- end }}
 
 
@@ -312,6 +312,7 @@ editor vim
 # env TERM=xterm-kitty
 # env TERMINFO="$HOME/.local/kitty.app/share/terminfo/x/xterm-kitty"
 env LESSHISTFILE=/tmp/.lesshst
+env OMP_CONFIG=~/.config/oh-my-posh/multiplex.toml
 
 #: Allow programs running in kitty to read and write from the clipboard. You can
 #: control exactly which actions are allowed. The set of possible actions is:

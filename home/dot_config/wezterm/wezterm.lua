@@ -229,6 +229,11 @@ if wezterm.target_triple:find "windows%-msvc" then
     return config
 end
 
+-- macOS & Linux specific configurations
+config.set_environment_variables = {
+    OMP_CONFIG = "~/.config/oh-my-posh/multiplex.toml",
+}
+
 -- macOS specific configurations
 if wezterm.target_triple:find "apple%-darwin" then
     config.font_size = 13
@@ -236,8 +241,6 @@ if wezterm.target_triple:find "apple%-darwin" then
     config.default_prog = {
         "zsh",
         "-ils",
-        "eval",
-        'export OMP_CONFIG="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"',
         "eval",
         "piccel ~/.local/bin/pac-man.json"
     }
@@ -250,8 +253,6 @@ config.window_decorations = nil
 config.default_prog = {
     "bash",
     "-is",
-    "eval",
-    'export OMP_CONFIG="$USER_CONFIG_DIR/oh-my-posh/multiplex.toml"',
     "eval",
     "piccel ~/.local/bin/pac-man.json"
 }

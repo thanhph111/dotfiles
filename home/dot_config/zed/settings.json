@@ -20,9 +20,7 @@
         "args": ["-is", "exec unset HISTFILE"]
       }
     },
-    "env": {
-      "OMP_CONFIG": "/opt/homebrew/share/oh-my-posh/themes/probua.minimal.omp.json"
-    }
+    "env": {}
   },
   "experiments": {
     "experimental_themes": true
