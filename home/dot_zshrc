@@ -1,12 +1,14 @@
 #!/bin/bash
+# The shebang above is for shellcheck to check this file
 #: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
 
 #: Reference: https://git.julian.maurice.name/jajm/dotfiles
 
 #: Source the common shell pre-configuration
 common_rc_pre="$HOME/.config/shell/common_rc_pre"
-if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
+if [[ -f "$common_rc_pre" ]] && [[ -r "$common_rc_pre" ]]; then
     # shellcheck source=dot_config/shell/common_rc_pre
+    # shellcheck disable=SC2317
     . "$common_rc_pre" zsh || return 0
 fi
 unset common_rc_pre

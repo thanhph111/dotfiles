@@ -1,4 +1,5 @@
 #!/bin/bash
+# The shebang above is for shellcheck to check this file
 #: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
 
 #: Source common profile configurations
