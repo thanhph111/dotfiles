@@ -26,6 +26,7 @@
 {{/* Linux */}}
 {{ if eq .chezmoi.os "linux" }}
 !autostart
+!fleet
 !nix
 !readline
 !spotifyd
