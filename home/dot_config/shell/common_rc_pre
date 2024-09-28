@@ -151,7 +151,6 @@ FIGNORE="${FIGNORE}:\
 .DS_Store:\
 .cmd:\
 .hidden:\
-.log:\
 .swp:\
 .uuid"
 
