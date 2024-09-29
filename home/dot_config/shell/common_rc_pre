@@ -58,6 +58,16 @@ mnt() {
         grep -E ^/dev/ | sort
 }
 
+#: PulseAudio control
+command_exists pactl && {
+    toggle_mute() {
+        pactl set-sink-mute @DEFAULT_SINK@ toggle
+    }
+    set_volume() {
+        pactl set-sink-volume @DEFAULT_SINK@ "$1%"
+    }
+}
+
 #: Source all other function files in my directory
 [ -d "$SHELL_CONFIG_DIR"/functions ] &&
     for file in "$SHELL_CONFIG_DIR"/functions/*; do include "$file"; done
