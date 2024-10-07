@@ -253,6 +253,12 @@ export MPLCONFIGDIR="$XDG_CACHE_HOME/matplotlib"
 
 #: }}}
 
+#: Keras {{{
+
+export KERAS_HOME="${XDG_STATE_HOME}/keras"
+
+#: }}}
+
 #: Gauge {{{
 
 export GAUGE_HOME="$XDG_DATA_HOME/gauge"
