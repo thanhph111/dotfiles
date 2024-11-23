@@ -137,8 +137,6 @@ cask "chatgpt"
 cask "cloudflare-warp"
 # Server and cloud storage browser
 cask "cyberduck"
-# App to build and share containerised applications and microservices
-cask "docker"
 # Collaborative team software
 cask "figma"
 cask "font-fira-code"
@@ -180,6 +178,8 @@ cask "microsoft-teams"
 cask "notion"
 # Client program for the OpenVPN Access Server
 cask "openvpn-connect"
+# Replacement for Docker Desktop
+cask "orbstack"
 # Customise and maintain app icons
 cask "pictogram"
 # Collaboration platform for API development
