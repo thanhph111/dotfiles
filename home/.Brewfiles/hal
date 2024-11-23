@@ -12,8 +12,6 @@ brew "bash-completion@2"
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
-# Toolchain of the web
-brew "biome"
 # Yet another cross-platform graphical process/system monitor
 brew "bottom"
 # Manage your dotfiles across multiple diverse machines, securely
@@ -24,12 +22,16 @@ brew "coreutils"
 brew "deno"
 # Load/unload environment variables based on $PWD
 brew "direnv"
+# Modern, maintained replacement for ls
+brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Collection of GNU find, xargs, and locate
 brew "findutils"
 # Command-line fuzzy finder written in Go
 brew "fzf"
+# Test automation tool that supports executable documentation
+brew "gauge"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
@@ -56,8 +58,6 @@ brew "jo"
 brew "jq"
 # Generic command-line non-JVM Apache Kafka producer and consumer
 brew "kcat"
-# Add indentation to LaTeX files
-brew "latexindent"
 # Lazier way to manage everything docker
 brew "lazydocker"
 # Pager program similar to more
@@ -82,7 +82,7 @@ brew "pinentry-mac"
 brew "pipenv"
 # Execute binaries from Python packages in isolated environments
 brew "pipx"
-# Modern replacement for ps written by Rust
+# Modern replacement for ps written in Rust
 brew "procs"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
@@ -225,7 +225,6 @@ mas "Dropover", id: 1355679052
 mas "Keynote", id: 409183694
 mas "Microsoft Excel", id: 462058435
 mas "Microsoft PowerPoint", id: 462062816
-mas "Microsoft Remote Desktop", id: 1295203466
 mas "Microsoft Word", id: 462054704
 mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
@@ -234,3 +233,4 @@ mas "Pages", id: 409201541
 mas "Save to Raindrop.io", id: 1549370672
 mas "Telegram", id: 747648890
 mas "Velja", id: 1607635845
+mas "Windows App", id: 1295203466
