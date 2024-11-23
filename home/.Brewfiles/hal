@@ -82,12 +82,8 @@ brew "pinentry-mac"
 brew "pipenv"
 # Execute binaries from Python packages in isolated environments
 brew "pipx"
-# Python package management tool
-brew "poetry"
 # Modern replacement for ps written by Rust
 brew "procs"
-# Python version management
-brew "pyenv"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
@@ -104,6 +100,8 @@ brew "topgrade"
 brew "typst"
 # Formatter for typst
 brew "typstfmt"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
 # Internet file retriever
 brew "wget"
 # Check your $HOME for unwanted files and directories
