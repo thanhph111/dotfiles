@@ -143,17 +143,21 @@ export SAM_CLI_TELEMETRY=0
 
 #: Rust {{{
 
-export CARGO_HOME="$XDG_CACHE_HOME/cargo"
-include "$CARGO_HOME/env"
-export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
-export PATH="$CARGO_HOME/bin:$PATH"
+command_exists cargo && {
+    export CARGO_HOME="$XDG_CACHE_HOME/cargo"
+    include "$CARGO_HOME/env"
+    export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
+    export PATH="$CARGO_HOME/bin:$PATH"
+}
 
 #: }}}
 
 #: Go {{{
 
-export GOPATH="$XDG_DATA_HOME/go"
-export PATH="$GOPATH/bin:$PATH"
+command_exists go && {
+    export GOPATH="$XDG_DATA_HOME/go"
+    export PATH="$GOPATH/bin:$PATH"
+}
 
 #: }}}
 
@@ -292,16 +296,19 @@ command_exists pyenv && {
 
 #: JetBrains Toolbox scripts {{{
 
-#: On macOS
-[ -d "$HOME/Library/Application Support/JetBrains/Toolbox/scripts" ] &&
-    export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:$PATH"
+#: On macOS, check if exists and not empty
+toolbox_scripts="$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+[ -d "$toolbox_scripts" ] && [ -n "$(ls -A "$toolbox_scripts")" ] &&
+    export PATH="$toolbox_scripts:$PATH"
+unset toolbox_scripts
 
 #: }}}
 
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
-[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
+[ -n "${PATH##*:$HOME/.local/bin:*}" ] && [ -d "$HOME/.local/bin" ] &&
+    PATH="$HOME/.local/bin:$PATH"
 
 #: }}}
 
