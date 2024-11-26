@@ -4,6 +4,6 @@
 
 set -euo pipefail
 
-xargs pipx install <{{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }}
+xargs uv tool install <{{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }}
 
 {{- end -}}

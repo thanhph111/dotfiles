@@ -49,14 +49,6 @@ brew "net-tools"
 brew "node"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
-# Python dependency management tool
-brew "pipenv"
-# Execute binaries from Python packages in isolated environments
-brew "pipx"
-# Python package management tool
-brew "poetry"
-# Python version management
-brew "pyenv"
 # Rsync for cloud storage
 brew "rclone"
 # Search tool like grep and The Silver Searcher
@@ -73,6 +65,8 @@ brew "tealdeer"
 brew "topgrade"
 # Lightweight BitTorrent client
 brew "transmission-cli"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
 # Vi 'workalike' with many additional features
 brew "vim"
 # Access X11 clipboards from the command-line
