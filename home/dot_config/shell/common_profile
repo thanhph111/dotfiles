@@ -40,6 +40,7 @@ export LC_ALL=en_US.UTF-8
 #: Change history file location
 # shellcheck disable=SC2139
 alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
+export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 
 #: }}}
 
