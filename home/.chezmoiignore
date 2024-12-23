@@ -13,7 +13,6 @@
 
 !.Brewfile
 !.bashrc
-!.hushlogin
 !.profile
 !.zprofile
 !.zshrc
@@ -22,6 +21,8 @@
 {{/* Linux */}}
 {{ if eq .chezmoi.os "linux" }}
 !Templates
+
+!.hushlogin
 {{ end }}
 
 {{/* macOS */}}
