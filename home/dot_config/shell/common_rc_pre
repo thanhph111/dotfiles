@@ -257,9 +257,22 @@ MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS))
 #: GitHub CLI {{{
 
 #: Aliases for GitHub CLI Copilot extension
-command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
-    eval "$(gh copilot alias -- "$SHELL_NAME")"
+GH_COPILOT_ALIAS_FILE="$SHELL_CACHE_DIR/gh_copilot_alias"
+
+regenerate_gh_copilot_alias() {
+    command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
+        gh copilot alias -- "$SHELL_NAME" >"$GH_COPILOT_ALIAS_FILE"
+    }
 }
+
+# Generate if file doesn't exist or is older than 1 day
+[ ! -f "$GH_COPILOT_ALIAS_FILE" ] ||
+    [ "$(find "$GH_COPILOT_ALIAS_FILE" -mtime +1)" ] &&
+    regenerate_gh_copilot_alias
+
+# Source the alias file if it exists
+# shellcheck disable=SC1090
+[ -f "$GH_COPILOT_ALIAS_FILE" ] && . "$GH_COPILOT_ALIAS_FILE"
 
 #: }}}
 
@@ -312,7 +325,12 @@ fi
 
 #: GVM {{{
 
-include "$HOME/.gvm/scripts/gvm"
+lazy_load_gvm() {
+    unalias gvm
+    # shellcheck disable=SC1090
+    . "$HOME/.gvm/scripts/gvm"
+}
+alias gvm='lazy_load_gvm && gvm'
 
 #: }}}
 
