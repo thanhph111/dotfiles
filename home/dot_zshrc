@@ -27,7 +27,7 @@ alias zshout='zsh -is eval "unset HISTFILE"'
 # shellcheck disable=SC2034
 WORDCHARS='*?_[]~&;!#$%^(){}<>'
 
-#: Auto push previouse directory to stack, `popd` to get back
+#: Auto push previous directory to stack, `popd` to get back
 setopt AUTO_PUSHD
 
 #: }}}

@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1090
 
 #: This is a shell script to be sourced in `~/.zshrc` or `~/.bashrc`
 SHELL_NAME="$1"
@@ -20,7 +21,6 @@ esac
 
 #: Check if a file readable and source it without repeating filepath
 include() {
-    # shellcheck disable=SC1090,SC2015
     [ -r "$1" ] && [ -f "$1" ] && . "$1" || true
 }
 
@@ -133,7 +133,7 @@ command_exists xdg-open && alias open=xdg-open
 #     return 1
 # }
 
-#: No anoying banner
+#: No annoying banner
 command_exists pwsh && alias pwsh='pwsh -NoLogo'
 
 #: Other aliases
@@ -271,7 +271,6 @@ regenerate_gh_copilot_alias() {
     regenerate_gh_copilot_alias
 
 # Source the alias file if it exists
-# shellcheck disable=SC1090
 [ -f "$GH_COPILOT_ALIAS_FILE" ] && . "$GH_COPILOT_ALIAS_FILE"
 
 #: }}}
@@ -327,7 +326,7 @@ fi
 
 lazy_load_gvm() {
     unalias gvm
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
     . "$HOME/.gvm/scripts/gvm"
 }
 alias gvm='lazy_load_gvm && gvm'
