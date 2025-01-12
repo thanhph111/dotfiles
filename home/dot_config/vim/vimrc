@@ -21,19 +21,19 @@ augroup MyAutocmdGroup
 augroup END
 
 ": Source configuration files
-source ~/.vim/config/general.vim
-source ~/.vim/config/interface.vim
-source ~/.vim/config/statusline.vim
-source ~/.vim/config/tabline.vim
-source ~/.vim/config/files.vim
-source ~/.vim/config/folding.vim
-source ~/.vim/config/netrw.vim
-source ~/.vim/config/completion.vim
-source ~/.vim/config/highlighting.vim
-source ~/.vim/config/keybindings.vim
-source ~/.vim/config/autocommands.vim
+runtime config/general.vim
+runtime config/interface.vim
+runtime config/statusline.vim
+runtime config/tabline.vim
+runtime config/files.vim
+runtime config/folding.vim
+runtime config/netrw.vim
+runtime config/completion.vim
+runtime config/highlighting.vim
+runtime config/keybindings.vim
+runtime config/autocommands.vim
 
-": Source local `.vimrc`
-if filereadable("~/.vimrc.local")
-    source ~/.vimrc.local
+": Runtime
+if filereadable("~/.config/vim/vimrc.local")
+    runtime vimrc.local")
 endif
