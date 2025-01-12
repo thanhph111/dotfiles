@@ -124,75 +124,57 @@ def request(
 
 
 def download(url: str, file_path: Path) -> None:
-    # TODO: Consider adding a progress bar.
-    # https://github.com/kovidgoyal/calibre/blob/master/setup/linux-installer.py
-
     from urllib.request import Request, urlopen
 
-    class Reporter:
-        def __init__(self, file_name: str) -> None:
-            print(f"Downloading {file_name}")
-            self.last_percent = 0
+    def show_progress(current: int, total: int, last_percent: float = 0) -> float:
+        percent = current / total
+        if percent - last_percent > 0.05:
+            print(f"Downloaded {percent:.0%}")
+            return percent
+        return last_percent
 
-        def __call__(self, blocks, block_size, total_size) -> None:
-            percent = (blocks * block_size) / float(total_size)
-            if percent - self.last_percent > 0.05:
-                self.last_percent = percent
-                print(f"Downloaded {percent:.0%}")
-
-    print(f"Will download and install {file_path.name}")
-    reporter = Reporter(file_path.name)
-    offset = 0
-
-    if file_path.exists():
-        offset = file_path.stat().st_size
-
+    print(f"Downloading {file_path.name}")
+    offset = file_path.stat().st_size if file_path.exists() else 0
     headers = {}
     mode = "wb"
 
-    if offset > 0:
+    # Get content length
+    with urlopen(Request(url)) as response:
+        content_length = int(response.getheader("Content-Length", "0"))
+        if content_length == 0:
+            raise ValueError("Failed to retrieve Content-Length")
+
+    # Handle partial downloads
+    if 0 < offset < content_length:
         headers["Range"] = f"bytes={offset}-"
         mode = "ab"
+    else:
+        offset = 0
 
-    request = Request(url, headers=headers)
-
-    with urlopen(request) as response:
+    # Download file
+    last_percent = 0
+    with urlopen(Request(url, headers=headers)) as response:
         total_size = int(response.getheader("Content-Length", "0"))
-        if total_size == 0:
-            print("Failed to retrieve Content-Length")
-            return
+        with file_path.open(mode) as f:
+            bytes_read = offset
+            while chunk := response.read(8192):
+                f.write(chunk)
+                bytes_read += len(chunk)
+                last_percent = show_progress(bytes_read, total_size, last_percent)
 
-        with file_path.open(mode) as file:
-            while True:
-                chunk = response.read(8192)
-                if not chunk:
-                    break
-                file.write(chunk)
-                reporter(file.tell(), 1, total_size)
-
-    # Remove incomplete file
+    # Verify download
     if file_path.stat().st_size < total_size:
-        print("Download incomplete, please try again.")
         file_path.unlink()
-        raise SystemExit(1)
+        raise RuntimeError("Download incomplete, please try again")
 
     print(f"Downloaded {file_path.stat().st_size} bytes")
 
 
 def unarchive(file_path: Path, destination: Path) -> None:
+    import shutil
+
     print(f"Unarchiving {file_path} to {destination}")
-    if file_path.suffix == ".zip":
-        import zipfile
-
-        with zipfile.ZipFile(file_path) as file:
-            file.extractall(destination)
-    elif file_path.suffix in {".tar", ".tar.gz", ".tgz", ".txz"}:
-        import tarfile
-
-        with tarfile.open(file_path) as file:
-            file.extractall(destination)
-    else:
-        raise ValueError(f"Unknown archive type: {file_path}")
+    shutil.unpack_archive(file_path, destination)
 
 
 def check_signature(file_path: Path, signature: str) -> bool:
