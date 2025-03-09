@@ -1,0 +1,169 @@
+{
+    "type": "group",
+    "actions": [
+        {
+            "key": "e",
+            "label": "Emoji",
+            "type": "url",
+            "value": "raycast://extensions/raycast/emoji-symbols/search-emoji-symbols"
+        },
+        {
+            "key": ".",
+            "label": null,
+            "type": "application",
+            "value": "/Applications/System Settings.app"
+        },
+        {
+            "key": "c",
+            "label": "Confluence",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "type": "url",
+                    "label": "Search",
+                    "value": "raycast://extensions/tbrown/confluence/search"
+                }
+            ]
+        },
+        {
+            "key": "b",
+            "label": "Homebrew",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "label": "Search",
+                    "type": "url",
+                    "value": "raycast://extensions/nhojb/brew/search"
+                }
+            ]
+        },
+        {
+            "key": "f",
+            "label": "Finder",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "label": "Search",
+                    "type": "url",
+                    "value": "raycast://extensions/raycast/file-search/search-files"
+                }
+            ]
+        },
+        {
+            "key": "j",
+            "label": "Jira",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "label": "Search",
+                    "type": "url",
+                    "value": "raycast://extensions/raycast/jira/search-issues"
+                }
+            ]
+        },
+        {
+            "key": "o",
+            "label": "Open",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "c",
+                    "label": "Camera",
+                    "type": "url",
+                    "value": "raycast://extensions/raycast/system/open-camera"
+                },
+                {
+                    "key": "e",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/Mail.app"
+                },
+                {
+                    "key": "g",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/Ghostty.app"
+                },
+                {
+                    "key": "i",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/iPhone Mirroring.app"
+                },
+                {
+                    "key": "k",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/kitty.app"
+                },
+                {
+                    "key": "m",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/Messages.app"
+                },
+                {
+                    "key": "s",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/Safari.app"
+                },
+                {
+                    "key": "w",
+                    "label": null,
+                    "type": "application",
+                    "value": "/Applications/WezTerm.app"
+                }
+            ]
+        },
+        {
+            "key": "n",
+            "label": "Notion",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "label": "Search",
+                    "type": "url",
+                    "value": "raycast://extensions/notion/notion/search-page"
+                }
+            ]
+        },
+        {
+            "key": "u",
+            "label": "Utilities",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "c",
+                    "label": "Confetti",
+                    "type": "url",
+                    "value": "raycast://confetti"
+                },
+                {
+                    "key": "t",
+                    "label": "Text Transform",
+                    "type": "url",
+                    "value": "raycast://extensions/koinzhang/text-shortcuts/shortcut-library"
+                }
+            ]
+        },
+        {
+            "key": "v",
+            "label": "VSCode",
+            "type": "group",
+            "actions": [
+                {
+                    "key": "s",
+                    "label": "Search",
+                    "type": "url",
+                    "value": "raycast://extensions/thomas/visual-studio-code/index"
+                }
+            ]
+        }
+    ]
+}
