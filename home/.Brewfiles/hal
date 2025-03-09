@@ -1,6 +1,7 @@
 tap "homebrew/bundle"
 tap "jorgelbg/tap"
 tap "kovetskiy/mark"
+tap "oven-sh/bun"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
 # Official Amazon AWS command-line interface
 brew "awscli"
@@ -22,6 +23,8 @@ brew "coreutils"
 brew "deno"
 # Load/unload environment variables based on $PWD
 brew "direnv"
+# Easily install prebuilt binaries from GitHub
+brew "eget"
 # Modern, maintained replacement for ls
 brew "eza"
 # Simple, fast and user-friendly alternative to find
@@ -82,10 +85,10 @@ brew "procs"
 brew "ripgrep"
 # Command-line deletion tool focused on safety, ergonomics, and performance
 brew "rm-improved"
-# Rust toolchain installer
-brew "rustup"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
+# User interface to the TELNET protocol
+brew "telnet"
 # Upgrade all the things
 brew "topgrade"
 # Markup-based typesetting system
@@ -109,14 +112,14 @@ brew "zsh-syntax-highlighting"
 brew "jorgelbg/tap/pinentry-touchid"
 # Sync your markdown files with Confluence pages.
 brew "kovetskiy/mark/mark"
+# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
+brew "oven-sh/bun/bun"
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
-# Application uninstaller
-cask "appcleaner"
 # Chromium based browser
 cask "arc"
 # Tool to customise input devices and automate computer systems
@@ -133,15 +136,15 @@ cask "font-fira-code"
 cask "font-fira-code-nerd-font"
 cask "font-jetbrains-mono"
 cask "font-jetbrains-mono-nerd-font"
+cask "font-monaspace"
 cask "font-new-york"
 cask "font-sf-mono"
-# SFMono with Nerd Font Glyphs and Fira Code Ligatures
 cask "font-sf-mono-nerd-font-ligaturized"
 cask "font-sf-pro"
 # GIT client
 cask "fork"
-# Web browser
-cask "google-chrome"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
 # Utility to hide menu bar items
 cask "hiddenbar"
 # Convert your caps lock key or any of your modifier keys to the hyper key
@@ -154,28 +157,20 @@ cask "iterm2"
 cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
-# Blocks all Keyboard and TouchBar input
-cask "keyboardcleantool"
 # Open-source keystroke visualiser
 cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
-# Native desktop app for Messenger (formerly Facebook Messenger)
-cask "messenger"
-# Meet, chat, call, and collaborate in just one place
-cask "microsoft-teams"
-# App to write, plan, collaborate, and get organised
-cask "notion"
 # Client program for the OpenVPN Access Server
 cask "openvpn-connect"
 # Replacement for Docker Desktop
 cask "orbstack"
+# Utility to uninstall apps and remove leftover files from old/uninstalled apps
+cask "pearcleaner"
 # Customise and maintain app icons
 cask "pictogram"
 # Collaboration platform for API development
 cask "postman"
-# Command-line shell and scripting language
-cask "powershell"
 # HTTP client that helps testing and describing APIs
 cask "rapidapi"
 # Control your tools with a few keystrokes
@@ -208,10 +203,14 @@ cask "zalo"
 cask "zed"
 # Video communication and virtual meeting platform
 cask "zoom"
+# Collect, organise, cite, and share research sources
+cask "zotero"
 mas "1Password for Safari", id: 1569813296
 mas "AdGuard for Safari", id: 1440147259
 mas "Dark Reader for Safari", id: 1438243180
+mas "Disk Graph", id: 697942581
 mas "Dropover", id: 1355679052
+mas "Folder Preview", id: 6698876601
 mas "Keynote", id: 409183694
 mas "Microsoft Excel", id: 462058435
 mas "Microsoft PowerPoint", id: 462062816
@@ -220,7 +219,9 @@ mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
 mas "OneDrive", id: 823766827
 mas "Pages", id: 409201541
+mas "Raycast Companion", id: 6738274497
 mas "Save to Raindrop.io", id: 1549370672
 mas "Telegram", id: 747648890
-mas "Velja", id: 1607635845
+mas "TestFlight", id: 899247664
+mas "Tomito", id: 1526042938
 mas "Windows App", id: 1295203466
