@@ -1,32 +1,68 @@
 // Documentation: https://zed.dev/docs/configuring-zed
 {
-  "buffer_font_size": 13,
-  "buffer_font_family": "JetBrainsMono Nerd Font",
-  // `System Font` to use the system font
-  "ui_font_family": "SF Mono",
-  "ui_font_size": 15,
-  "theme": {
-    "mode": "system",
-    "light": "One Light",
-    "dark": "One Dark"
-  },
-  "terminal": {
-    "font_family": "FiraCode Nerd Font",
-    "font_size": 12,
-    "blinking": "on",
-    "shell": {
-      "with_arguments": {
-        "program": "/bin/zsh",
-        "args": ["-is", "exec unset HISTFILE"]
-      }
+    "icon_theme": "Zed (Default)",
+    "assistant": {
+        "default_model": {
+            "provider": "copilot_chat",
+            "model": "gpt-4o"
+        },
+        "version": "2"
     },
-    "env": {}
-  },
-  "experiments": {
-    "experimental_themes": true
-  },
-  "telemetry": {
-    "diagnostics": false,
-    "metrics": false
-  }
+    "features": {
+        "edit_prediction_provider": "zed"
+    },
+    "buffer_font_size": 13,
+    "buffer_font_family": "Monaspace Neon",
+    "ui_font_family": ".SystemUIFont",
+    "ui_font_size": 16,
+    "theme": {
+        "mode": "system",
+        "light": "One Light",
+        "dark": "One Dark Pro"
+    },
+    "terminal": {
+        "font_family": "FiraCode Nerd Font",
+        "font_size": 13,
+        "font_weight": 500,
+        "blinking": "on",
+        "shell": {
+            "with_arguments": {
+                "program": "/bin/zsh",
+                "args": ["-is", "exec unset HISTFILE"]
+            }
+        },
+        "env": {}
+    },
+    "experiments": {
+        "experimental_themes": true
+    },
+    "telemetry": {
+        "diagnostics": false,
+        "metrics": false
+    },
+    "languages": {
+        "Python": {
+            "language_servers": ["ruff"],
+            "format_on_save": "on",
+            "formatter": [
+                {
+                    "code_actions": {
+                        "source.organizeImports.ruff": true,
+                        "source.fixAll.ruff": true
+                    }
+                },
+                {
+                    "language_server": {
+                        "name": "ruff"
+                    }
+                }
+            ]
+        },
+        "JSON": {
+            "tab_size": 4
+        },
+        "JSONC": {
+            "tab_size": 4
+        }
+    }
 }
