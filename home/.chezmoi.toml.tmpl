@@ -54,6 +54,9 @@ Multipass VMs, and Vagrant boxes */}}
 {{- else if eq $hostname "Madison" }}
 {{-     $codename = "Madison" -}}
 {{-     $client = true -}}
+{{- else if eq $hostname "TARS" }}
+{{-     $codename = "TARS" -}}
+{{-     $client = true -}}
 {{- else if eq $hostname "HAL" }}
 {{-     $codename = "HAL" -}}
 {{-     $vault = "HDBank" -}}
