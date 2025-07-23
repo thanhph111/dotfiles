@@ -1,4 +1,3 @@
-tap "homebrew/bundle"
 tap "jorgelbg/tap"
 tap "oven-sh/bun"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
