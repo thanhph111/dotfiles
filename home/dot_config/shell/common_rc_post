@@ -17,6 +17,15 @@
 
 #: }}}
 
+#: Zed terminal {{{
+
+#: Unset history on Zed
+[ "$TERM_PROGRAM" = zed ] && {
+    unset HISTFILE
+}
+
+#: }}}
+
 #: Prompt {{{
 
 #: And then set the prompt
