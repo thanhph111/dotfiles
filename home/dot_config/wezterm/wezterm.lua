@@ -20,6 +20,19 @@ local function get_current_theme()
     return THEMES[wezterm.GLOBAL.current_theme_index or 1]
 end
 
+WINDOW_PADDINGS = {
+    { left = "1cell", right = "1cell", top = "0.5cell", bottom = "0.5cell" },
+    { left = "0",     right = "0",     top = "0",       bottom = "0" },
+}
+
+WINDOW_PADDING = WINDOW_PADDINGS[wezterm.GLOBAL.window_padding_index or 1]
+
+-- Get the current window padding based on the current window padding index in
+-- the global storage
+local function get_current_window_padding()
+    return WINDOW_PADDINGS[wezterm.GLOBAL.window_padding_index or 1]
+end
+
 local function get_window_background_gradient()
     local theme = get_current_theme()
     if theme == DEFAULT_DARK_THEME_NAME then
@@ -45,6 +58,17 @@ wezterm.on(
         local current_theme_index = wezterm.GLOBAL.current_theme_index or 1
         local next_theme_index = current_theme_index % #THEMES + 1
         wezterm.GLOBAL.current_theme_index = next_theme_index
+        wezterm.reload_configuration()
+    end
+)
+
+-- Toggle padding
+wezterm.on(
+    "toggle-padding",
+    function()
+        local current_window_padding_index = wezterm.GLOBAL.window_padding_index or 1
+        local next_window_padding_index = current_window_padding_index % #WINDOW_PADDINGS + 1
+        wezterm.GLOBAL.window_padding_index = next_window_padding_index
         wezterm.reload_configuration()
     end
 )
@@ -166,12 +190,7 @@ local config = {
     default_cursor_style = "BlinkingBar",
     cursor_thickness = "1pt",
     check_for_updates = false,
-    window_padding = {
-        left = "1cell",
-        right = "1cell",
-        top = "0.5cell",
-        bottom = "0.5cell"
-    },
+    window_padding = get_current_window_padding(),
     initial_cols = 122,
     initial_rows = 35,
     use_resize_increments = true,
@@ -211,12 +230,27 @@ local config = {
             action = action.EmitEvent "switch-theme",
         },
         {
+            key = "q",
+            mods = "CTRL|SHIFT",
+            action = action.EmitEvent "toggle-padding",
+        },
+        {
             key = "F1",
             action = wezterm.action_callback(
                 function()
                     wezterm.open_with "https://wezfurlong.org/wezterm/"
                 end
             )
+        },
+        {
+            key = "UpArrow",
+            mods = "CMD",
+            action = action.ScrollToPrompt(-1)
+        },
+        {
+            key = "DownArrow",
+            mods = "CMD",
+            action = action.ScrollToPrompt(1)
         },
     }
 }
