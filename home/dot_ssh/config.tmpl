@@ -12,7 +12,13 @@ Host *
     UseKeychain yes
 
 {{- if eq .chezmoi.os "darwin" }}
-    IdentityAgent ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+    {{- if stat (joinPath .chezmoi.homeDir "Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh") }}
+    # Secretive SSH agent socket
+    IdentityAgent "~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+    {{- else if stat (joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock") }}
+    # 1Password SSH agent socket
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    {{- end }}
 {{- else }}
     IdentityFile ~/.ssh/keys/thanhph111
 {{- end }}
