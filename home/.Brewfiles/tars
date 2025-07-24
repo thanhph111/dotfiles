@@ -88,6 +88,8 @@ cask "1password"
 cask "1password-cli"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
+# Temporary notes with calculations and extensible features
+cask "antinote"
 # Chromium based browser
 cask "arc"
 # Tool to customise input devices and automate computer systems
@@ -137,6 +139,8 @@ cask "spotify"
 cask "syntax-highlight"
 # Native GUI tool for relational databases
 cask "tableplus"
+# Web browser
+cask "thebrowsercompany-dia"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
