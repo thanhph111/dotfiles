@@ -30,8 +30,9 @@ export LC_ALL=en_US.UTF-8
 
 #: terminfo {{{
 
-export TERMINFO="$XDG_DATA_HOME/terminfo"
-export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+# Should not set it manually as modern terminals usually set it automatically
+# export TERMINFO="$XDG_DATA_HOME/terminfo"
+export TERMINFO_DIRS="$TERMINFO_DIRS:$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
 
 #: }}}
 
