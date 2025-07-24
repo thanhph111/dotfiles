@@ -1,4 +1,3 @@
-tap "homebrew/bundle"
 tap "jorgelbg/tap"
 tap "kovetskiy/mark"
 tap "oven-sh/bun"
@@ -19,8 +18,6 @@ brew "bottom"
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
-# Secure runtime for JavaScript and TypeScript
-brew "deno"
 # Load/unload environment variables based on $PWD
 brew "direnv"
 # Easily install prebuilt binaries from GitHub
@@ -151,14 +148,10 @@ cask "hiddenbar"
 cask "hyperkey"
 # Free and open-source media player
 cask "iina"
-# Terminal emulator as alternative to Apple's Terminal app
-cask "iterm2"
 # JetBrains tools manager
 cask "jetbrains-toolbox"
 # File archiver
 cask "keka"
-# Open-source keystroke visualiser
-cask "keycastr"
 # GPU-based terminal emulator
 cask "kitty"
 # Client program for the OpenVPN Access Server
@@ -201,6 +194,8 @@ cask "workplace-chat"
 cask "zalo"
 # Multiplayer code editor
 cask "zed"
+# Gecko based web browser
+cask "zen"
 # Video communication and virtual meeting platform
 cask "zoom"
 # Collect, organise, cite, and share research sources
@@ -219,6 +214,7 @@ mas "Notion Web Clipper", id: 1559269364
 mas "Numbers", id: 409203825
 mas "OneDrive", id: 823766827
 mas "Pages", id: 409201541
+mas "Pieoneer", id: 6739781207
 mas "Raycast Companion", id: 6738274497
 mas "Save to Raindrop.io", id: 1549370672
 mas "Telegram", id: 747648890
