@@ -392,6 +392,13 @@ command_exists direnv && eval "$(direnv hook "$SHELL_NAME")"
 
 #: }}}
 
+#: OrbsStack {{{
+
+# Command-line tools and integration
+include "$HOME/.orbstack/shell/init.$SHELL_NAME"
+
+#: }}}
+
 #: }}}
 
 return 0

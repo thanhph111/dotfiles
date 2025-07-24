@@ -9,12 +9,3 @@ if [[ -f "$common_profile" ]] && [[ -r "$common_profile" ]]; then
     . "$common_profile"
 fi
 unset common_profile
-
-#: OrbsStack {{{
-
-# Added by OrbStack: command-line tools and integration
-if [[ -f ~/.orbstack/shell/init.zsh ]]; then
-    . ~/.orbstack/shell/init.zsh 2>/dev/null || :
-fi
-
-#: }}}
