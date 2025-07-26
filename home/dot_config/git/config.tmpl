@@ -75,6 +75,8 @@
 		grep '^S' | \
 		cut -c3-
 
+	ls-ignored = ! git ls-files --ignored --exclude-standard -o
+
 	graph = log \
 	--graph \
 	--abbrev-commit \
