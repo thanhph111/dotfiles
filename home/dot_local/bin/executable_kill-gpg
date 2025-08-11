@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# kill-gpg: Kill GPG agent processes
+
+set -e
+
+if command -v gpgconf >/dev/null; then
+    gpgconf --kill gpg-agent
+fi
+
+if command -v gpg-connect-agent >/dev/null; then
+    gpg-connect-agent reloadagent /bye
+fi
