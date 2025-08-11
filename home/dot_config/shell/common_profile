@@ -108,6 +108,13 @@ include "$HOME/.nix-profile/etc/profile.d/nix.sh"
 
 #: }}}
 
+#: Git {{{
+
+#: Turn off Git LFS smudge filter to avoid downloading large files
+export GIT_LFS_SKIP_SMUDGE=1
+
+#: }}}
+
 #: Secretive {{{
 
 #: Only on macOS
