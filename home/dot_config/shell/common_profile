@@ -40,8 +40,11 @@ export TERMINFO_DIRS="$TERMINFO_DIRS:$XDG_DATA_HOME/terminfo:/usr/share/terminfo
 
 #: Change history file location
 # shellcheck disable=SC2139
-alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
-export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
+[ -f "$XDG_DATA_HOME/wget-hsts" ] &&
+    alias wget="wget --hsts-file=\"$XDG_DATA_HOME/wget-hsts\""
+
+[ -f "$XDG_CONFIG_HOME/wget/wgetrc" ] &&
+    export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 
 #: }}}
 
