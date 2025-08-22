@@ -59,7 +59,7 @@ are_all_packages_installed 1password 1password-cli || {
         sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/1password.gpg
 
     #: Add the 1Password apt repository
-    echo 'deb [arch=amd64] https://downloads.1password.com/linux/debian/amd64 stable main' |
+    echo 'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/1password.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' |
         sudo tee /etc/apt/sources.list.d/1password.list
 
     #: Add the debsig-verify policy
