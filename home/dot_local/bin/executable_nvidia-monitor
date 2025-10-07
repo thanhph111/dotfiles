@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+
+# Real-time NVIDIA GPU monitoring script
+# Usage: nvidia-monitor [OPTIONS]
+# Options:
+#   -i, --interval SECONDS    Update interval in seconds (default: 1)
+#   -c, --compact            Show compact output
+#   -t, --temperature        Show temperature only
+#   -m, --memory             Show memory usage only
+#   -u, --utilization        Show GPU utilization only
+#   -h, --help               Show this help message
+
+set -euo pipefail
+
+# Default values
+INTERVAL=1
+COMPACT=false
+TEMP_ONLY=false
+MEMORY_ONLY=false
+UTIL_ONLY=false
+CLEAR_SCREEN=true
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+_BLUE='\033[0;34m'
+_MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
+
+# Function to show help
+show_help() {
+    cat << EOF
+Real-time NVIDIA GPU monitoring script
+
+Usage: $(basename "$0") [OPTIONS]
+
+Options:
+    -i, --interval SECONDS    Update interval in seconds (default: 1)
+    -c, --compact            Show compact output
+    -t, --temperature        Show temperature only
+    -m, --memory             Show memory usage only
+    -u, --utilization        Show GPU utilization only
+        --no-clear           Don't clear screen between updates (default: clear)
+    -h, --help               Show this help message
+
+Examples:
+    $(basename "$0")                    # Default monitoring
+    $(basename "$0") -i 2               # Update every 2 seconds
+    $(basename "$0") -c                 # Compact view
+    $(basename "$0") -t                 # Temperature only
+    $(basename "$0") -m                 # Memory usage only
+    $(basename "$0") -u                 # GPU utilization only
+    $(basename "$0") -c --no-clear      # Compact view without clearing screen
+
+Press Ctrl+C to exit.
+EOF
+}
+
+# Function to check if nvidia-smi is available
+check_nvidia_smi() {
+    if ! command -v nvidia-smi &> /dev/null; then
+        echo -e "${RED}Error: nvidia-smi not found. Please install NVIDIA drivers.${NC}" >&2
+        exit 1
+    fi
+}
+
+# Function to get GPU count
+get_gpu_count() {
+    nvidia-smi --query-gpu=count --format=csv,noheader,nounits | head -1
+}
+
+# Function to display compact stats
+show_compact() {
+    [[ "$CLEAR_SCREEN" == true ]] && clear
+    local timestamp
+    local gpu_data
+
+    timestamp=$(date '+%H:%M:%S')
+    gpu_data=$(nvidia-smi --query-gpu=index,name,temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw --format=csv,noheader,nounits)
+
+    echo -e "${CYAN}=== NVIDIA GPU Monitor (Compact) ===${NC}"
+    echo -e "${WHITE}[$timestamp] Update interval: ${INTERVAL}s | Press Ctrl+C to exit${NC}"
+    echo -e "${WHITE}GPU Status:${NC}"
+    echo "$gpu_data" | while IFS=', ' read -r idx name temp util mem_used mem_total power; do
+        # Validate numeric values and set defaults if empty/invalid
+        [[ "$temp" =~ ^[0-9]+$ ]] || temp=0
+        [[ "$util" =~ ^[0-9]+$ ]] || util=0
+        [[ "$mem_used" =~ ^[0-9]+$ ]] || mem_used=0
+        [[ "$mem_total" =~ ^[0-9]+$ ]] || mem_total=1
+        [[ "$power" =~ ^[0-9.]+$ ]] || power=0
+
+        local mem_percent=0
+        if (( mem_total > 0 )); then
+            mem_percent=$((mem_used * 100 / mem_total))
+        fi
+
+        local temp_color=$GREEN
+        local util_color=$GREEN
+        local mem_color=$GREEN
+
+        # Color coding based on values
+        if (( temp > 80 )); then temp_color=$RED
+        elif (( temp > 70 )); then temp_color=$YELLOW
+        fi
+
+        if (( util > 90 )); then util_color=$RED
+        elif (( util > 70 )); then util_color=$YELLOW
+        fi
+
+        if (( mem_percent > 90 )); then mem_color=$RED
+        elif (( mem_percent > 70 )); then mem_color=$YELLOW
+        fi
+
+        printf "  GPU%s: %s | ${temp_color}%s°C${NC} | ${util_color}%s%%${NC} | ${mem_color}%s/%sMB (%s%%)${NC} | %sW\n" \
+            "$idx" "$name" "$temp" "$util" "$mem_used" "$mem_total" "$mem_percent" "$power"
+    done
+    echo
+}
+
+# Function to display temperature only
+show_temperature() {
+    [[ "$CLEAR_SCREEN" == true ]] && clear
+    local timestamp
+    local temp_data
+
+    timestamp=$(date '+%H:%M:%S')
+    temp_data=$(nvidia-smi --query-gpu=index,name,temperature.gpu --format=csv,noheader,nounits)
+
+    echo -e "${CYAN}=== NVIDIA GPU Monitor (Temperature) ===${NC}"
+    echo -e "${WHITE}[$timestamp] Update interval: ${INTERVAL}s | Press Ctrl+C to exit${NC}"
+    echo -e "${WHITE}GPU Temperatures:${NC}"
+    echo "$temp_data" | while IFS=', ' read -r idx name temp; do
+        # Validate numeric values
+        [[ "$temp" =~ ^[0-9]+$ ]] || temp=0
+
+        local temp_color=$GREEN
+        if (( temp > 80 )); then temp_color=$RED
+        elif (( temp > 70 )); then temp_color=$YELLOW
+        fi
+
+        printf "  GPU%s (%s): ${temp_color}%s°C${NC}\n" "$idx" "$name" "$temp"
+    done
+    echo
+}
+
+# Function to display memory usage only
+show_memory() {
+    [[ "$CLEAR_SCREEN" == true ]] && clear
+    local timestamp
+    local mem_data
+
+    timestamp=$(date '+%H:%M:%S')
+    mem_data=$(nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader,nounits)
+
+    echo -e "${CYAN}=== NVIDIA GPU Monitor (Memory) ===${NC}"
+    echo -e "${WHITE}[$timestamp] Update interval: ${INTERVAL}s | Press Ctrl+C to exit${NC}"
+    echo -e "${WHITE}GPU Memory Usage:${NC}"
+    echo "$mem_data" | while IFS=', ' read -r idx name mem_used mem_total; do
+        # Validate numeric values
+        [[ "$mem_used" =~ ^[0-9]+$ ]] || mem_used=0
+        [[ "$mem_total" =~ ^[0-9]+$ ]] || mem_total=1
+
+        local mem_percent=0
+        if (( mem_total > 0 )); then
+            mem_percent=$((mem_used * 100 / mem_total))
+        fi
+
+        local mem_color=$GREEN
+        if (( mem_percent > 90 )); then mem_color=$RED
+        elif (( mem_percent > 70 )); then mem_color=$YELLOW
+        fi
+
+        printf "  GPU%s (%s): ${mem_color}%s/%s MB (%s%%)${NC}\n" "$idx" "$name" "$mem_used" "$mem_total" "$mem_percent"
+    done
+    echo
+}
+
+# Function to display utilization only
+show_utilization() {
+    [[ "$CLEAR_SCREEN" == true ]] && clear
+    local timestamp
+    local util_data
+
+    timestamp=$(date '+%H:%M:%S')
+    util_data=$(nvidia-smi --query-gpu=index,name,utilization.gpu --format=csv,noheader,nounits)
+
+    echo -e "${CYAN}=== NVIDIA GPU Monitor (Utilization) ===${NC}"
+    echo -e "${WHITE}[$timestamp] Update interval: ${INTERVAL}s | Press Ctrl+C to exit${NC}"
+    echo -e "${WHITE}GPU Utilization:${NC}"
+    echo "$util_data" | while IFS=', ' read -r idx name util; do
+        # Validate numeric values
+        [[ "$util" =~ ^[0-9]+$ ]] || util=0
+
+        local util_color=$GREEN
+        if (( util > 90 )); then util_color=$RED
+        elif (( util > 70 )); then util_color=$YELLOW
+        fi
+
+        printf "  GPU%s (%s): ${util_color}%s%%${NC}\n" "$idx" "$name" "$util"
+    done
+    echo
+}
+
+# Function to display full stats
+show_full() {
+    [[ "$CLEAR_SCREEN" == true ]] && clear
+    echo -e "${CYAN}=== NVIDIA GPU Real-time Monitor ===${NC}"
+    echo -e "${WHITE}Update interval: ${INTERVAL}s | Press Ctrl+C to exit${NC}"
+    echo
+
+    nvidia-smi
+}
+
+# Function to handle cleanup on exit
+cleanup() {
+    echo -e "\n${YELLOW}Monitoring stopped.${NC}"
+    exit 0
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -i|--interval)
+            INTERVAL="$2"
+            if ! [[ "$INTERVAL" =~ ^[0-9]+(\.[0-9]+)?$ ]] || (( $(echo "$INTERVAL <= 0" | bc -l) )); then
+                echo -e "${RED}Error: Interval must be a positive number${NC}" >&2
+                exit 1
+            fi
+            shift 2
+            ;;
+        -c|--compact)
+            COMPACT=true
+            shift
+            ;;
+        -t|--temperature)
+            TEMP_ONLY=true
+            shift
+            ;;
+        -m|--memory)
+            MEMORY_ONLY=true
+            shift
+            ;;
+        -u|--utilization)
+            UTIL_ONLY=true
+            shift
+            ;;
+        --no-clear)
+            CLEAR_SCREEN=false
+            shift
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Error: Unknown option $1${NC}" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
+# Check if nvidia-smi is available
+check_nvidia_smi
+
+# Set up signal handlers
+trap cleanup SIGINT SIGTERM
+
+# Main monitoring loop
+echo -e "${GREEN}Starting NVIDIA GPU monitoring...${NC}"
+echo -e "${YELLOW}Press Ctrl+C to stop${NC}"
+echo
+
+while true; do
+    if [[ "$TEMP_ONLY" == true ]]; then
+        show_temperature
+    elif [[ "$MEMORY_ONLY" == true ]]; then
+        show_memory
+    elif [[ "$UTIL_ONLY" == true ]]; then
+        show_utilization
+    elif [[ "$COMPACT" == true ]]; then
+        show_compact
+    else
+        show_full
+    fi
+
+    sleep "$INTERVAL"
+done
