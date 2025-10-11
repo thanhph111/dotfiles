@@ -157,6 +157,12 @@ command_exists aws && {
 
 #: }}}
 
+#: Modal {{{
+
+export MODAL_CONFIG_PATH="$XDG_CONFIG_HOME/modal.toml"
+
+#: }}}
+
 #: Rust {{{
 
 export RUSTUP_HOME="$XDG_CACHE_HOME/rustup"
