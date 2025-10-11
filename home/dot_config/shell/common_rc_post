@@ -3,17 +3,7 @@
 #: Visual Studio Code terminal {{{
 
 #: Unset history on Visual Studio Code terminal
-[ "$TERM_PROGRAM" = vscode ] && {
-    unset HISTFILE
-    #: TODO: Remove this when the history manipulation is removed
-    unset PROMPT_COMMAND
-
-    export VSCODE_SUGGEST=1
-    # shellcheck disable=SC1090
-    command_exists code &&
-        . "$(code --locate-shell-integration-path "$SHELL_NAME")"
-    unset VSCODE_SUGGEST
-}
+[ "$TERM_PROGRAM" = vscode ] && unset HISTFILE
 
 #: }}}
 
