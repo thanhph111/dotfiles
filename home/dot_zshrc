@@ -4,6 +4,16 @@
 
 #: Reference: https://git.julian.maurice.name/jajm/dotfiles
 
+#: Source .zprofile if not already sourced (makes `zsh -i` equivalent to `zsh -il`)
+if [[ ! -o login ]]; then
+    zprofile="$HOME/.zprofile"
+    if [[ -f "$zprofile" ]] && [[ -r "$zprofile" ]]; then
+        # shellcheck source=dot_zprofile
+        . "$zprofile"
+    fi
+    unset zprofile
+fi
+
 #: Source the common shell pre-configuration
 common_rc_pre="$HOME/.config/shell/common_rc_pre"
 if [[ -f "$common_rc_pre" ]] && [[ -r "$common_rc_pre" ]]; then

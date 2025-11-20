@@ -2,6 +2,18 @@
 
 #: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
 
+#: Source .profile if not already sourced (makes `bash -i` equivalent to `bash -il`)
+if ! shopt -q login_shell && [ -z "$_BASHRC_SOURCED" ]; then
+    export _BASHRC_SOURCED=1
+    profile="$HOME/.profile"
+    if [ -f "$profile" ] && [ -r "$profile" ]; then
+        # shellcheck source=dot_profile
+        . "$profile"
+    fi
+    unset profile
+    return 0
+fi
+
 #: Source the common shell pre-configuration
 common_rc_pre="$HOME/.config/shell/common_rc_pre"
 if [ -f "$common_rc_pre" ] && [ -r "$common_rc_pre" ]; then
