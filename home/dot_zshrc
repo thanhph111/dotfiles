@@ -164,7 +164,9 @@ command_exists brew && {
     #: Fish-like autosuggestions 'zsh-autosuggestions'
     include "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     #: Fish shell like syntax highlighting 'zsh-syntax-highlighting'
-    include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    #: Only enable it when not in VSCode terminal as it messes up when AI
+    #: inserts long text
+    [ "$TERM_PROGRAM" != vscode ] && include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 }
 
 #: }}}
