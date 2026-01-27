@@ -94,4 +94,7 @@ $RECYCLE.BIN/
 /.idea
 /.fleet
 
+#: Claude AI local settings
+**/.claude/settings.local.json
+
 #: }}}
