@@ -1,12 +1,11 @@
 // Documentation: https://zed.dev/docs/configuring-zed
 {
     "icon_theme": "Zed (Default)",
-    "assistant": {
+    "agent": {
         "default_model": {
             "provider": "copilot_chat",
             "model": "gpt-4o"
-        },
-        "version": "2"
+        }
     },
     "features": {
         "edit_prediction_provider": "zed"
@@ -28,13 +27,13 @@
         "shell": {
             "with_arguments": {
                 "program": "/bin/zsh",
-                "args": ["-is", "exec unset HISTFILE"]
+                "args": [
+                    "-is",
+                    "exec unset HISTFILE"
+                ]
             }
         },
         "env": {}
-    },
-    "experiments": {
-        "experimental_themes": true
     },
     "telemetry": {
         "diagnostics": false,
@@ -42,14 +41,16 @@
     },
     "languages": {
         "Python": {
-            "language_servers": ["ruff"],
+            "language_servers": [
+                "ruff"
+            ],
             "format_on_save": "on",
             "formatter": [
                 {
-                    "code_actions": {
-                        "source.organizeImports.ruff": true,
-                        "source.fixAll.ruff": true
-                    }
+                    "code_action": "source.organizeImports.ruff"
+                },
+                {
+                    "code_action": "source.fixAll.ruff"
                 },
                 {
                     "language_server": {
