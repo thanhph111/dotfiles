@@ -7,6 +7,8 @@ set -euo pipefail
 
 #: Remove soft limit
 ulimit -n "$(ulimit -Hn)"
+sudo mkdir -p /etc/apt/keyrings
+DIST_CODENAME="$(lsb_release -cs)"
 
 #: Update installed packages <<<
 
@@ -55,19 +57,19 @@ are_all_packages_installed() {
 
 are_all_packages_installed 1password 1password-cli || {
     #: Add the key for the 1Password apt repository
-    curl -S https://downloads.1password.com/linux/keys/1password.asc |
-        sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/1password.gpg
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc |
+        sudo gpg --dearmor --yes --output /etc/apt/keyrings/1password.gpg
 
     #: Add the 1Password apt repository
-    echo 'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/1password.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' |
+    echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/1password.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' |
         sudo tee /etc/apt/sources.list.d/1password.list
 
     #: Add the debsig-verify policy
     sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
-    curl -S https://downloads.1password.com/linux/debian/debsig/1password.pol |
+    curl -fsSL https://downloads.1password.com/linux/debian/debsig/1password.pol |
         sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
     sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-    curl -S https://downloads.1password.com/linux/keys/1password.asc |
+    curl -fsSL https://downloads.1password.com/linux/keys/1password.asc |
         sudo gpg --dearmor --yes --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
 
     #: Install 1Password and 1Password CLI
@@ -82,11 +84,11 @@ are_all_packages_installed 1password 1password-cli || {
 
 are_all_packages_installed google-chrome-stable || {
     #: Setup key
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub |
-        sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/google-chrome.gpg
+    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub |
+        sudo gpg --dearmor --yes --output /etc/apt/keyrings/google-chrome.gpg
 
     #: Setup repository
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" |
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" |
         sudo tee /etc/apt/sources.list.d/google-chrome.list
 
     #: Install Google Chrome
@@ -100,10 +102,10 @@ are_all_packages_installed google-chrome-stable || {
 #: Reference: https://code.visualstudio.com/docs/setup/linux
 
 are_all_packages_installed code || {
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc |
-        sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
+        sudo gpg --dearmor --yes --output /etc/apt/keyrings/microsoft.gpg
 
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" |
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |
         sudo tee /etc/apt/sources.list.d/vscode.list
 
     sudo aptitude update && sudo aptitude install -y code
@@ -115,12 +117,12 @@ are_all_packages_installed code || {
 
 are_all_packages_installed powershell || {
     # Import the public repository GPG keys
-    curl https://packages.microsoft.com/keys/microsoft.asc |
-        sudo gpg --dearmor --yes --output /etc/apt/trusted.gpg.d/microsoft.gpg
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
+        sudo gpg --dearmor --yes --output /etc/apt/keyrings/microsoft.gpg
 
     # Register the Microsoft Product feed
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" |
-        sudo tee /etc/apt/sources.list.d/microsoft.list
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/microsoft-debian-${DIST_CODENAME}-prod ${DIST_CODENAME} main" |
+        sudo tee /etc/apt/sources.list.d/microsoft.list >/dev/null
 
     # Install PowerShell
     sudo aptitude update && sudo aptitude install -y powershell
@@ -135,10 +137,10 @@ are_all_packages_installed powershell || {
 are_all_packages_installed docker-ce docker-ce-cli containerd.io docker-compose-plugin || {
     #: Add Docker’s official GPG key
     curl -fsSL https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg |
-        sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/docker.gpg
+        sudo gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
 
     #: Set up the repository
-    echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/{{ .chezmoi.osRelease.id }} $(lsb_release -cs) stable" |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ .chezmoi.osRelease.id }} ${DIST_CODENAME} stable" |
         sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
     #: Install Docker
@@ -161,9 +163,9 @@ are_all_packages_installed ibus-bamboo || {
     #: For now, install
     #: Add GPG key
     curl -fsSL https://download.opensuse.org/repositories/home:lamlng/Debian_12/Release.key |
-        sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/ibus-bamboo.gpg
+        sudo gpg --dearmor --yes -o /etc/apt/keyrings/ibus-bamboo.gpg
     #: Set up the repository
-    echo "deb http://download.opensuse.org/repositories/home:/lamlng/Debian_12/ /" |
+    echo "deb [signed-by=/etc/apt/keyrings/ibus-bamboo.gpg] http://download.opensuse.org/repositories/home:/lamlng/Debian_12/ /" |
         sudo tee /etc/apt/sources.list.d/ibus-bamboo.list >/dev/null
     {{- end }}
 
@@ -184,11 +186,11 @@ env DCONF_PROFILE=ibus \
 #: Temporary disable installing Cloudflare Warp, remove `false &&` to enable it
 are_all_packages_installed cloudflare-warp || false && {
     #: Setup key
-    curl https://pkg.cloudflareclient.com/pubkey.gpg |
-        sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-warp.gpg
+    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg |
+        sudo gpg --yes --dearmor --output /etc/apt/keyrings/cloudflare-warp.gpg
 
     #: Setup repository
-    echo "deb [arch=amd64] https://pkg.cloudflareclient.com/ bullseye main" |
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/cloudflare-warp.gpg] https://pkg.cloudflareclient.com/ ${DIST_CODENAME} main" |
         sudo tee /etc/apt/sources.list.d/cloudflare-warp.list
 
     #: Install Cloudflare Warp
@@ -203,15 +205,15 @@ are_all_packages_installed cloudflare-warp || false && {
 
 are_all_packages_installed cloudflared || {
     #: Setup key
-    curl https://pkg.cloudflare.com/cloudflare-main.gpg |
-        sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/cloudflare-main.gpg
+    curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg |
+        sudo gpg --yes --dearmor --output /etc/apt/keyrings/cloudflare-main.gpg
 
     #: Setup repository
-    echo 'deb [signed-by=/etc/apt/trusted.gpg.d/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' |
-        sudo tee /etc/apt/sources.list.d/cloudflare-warp.list
+    echo "deb [signed-by=/etc/apt/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared ${DIST_CODENAME} main" |
+        sudo tee /etc/apt/sources.list.d/cloudflared.list
 
     #: Install Cloudflared
-    sudo apt-get update && sudo apt-get install cloudflared
+    sudo aptitude update && sudo aptitude install -y cloudflared
 }
 
 #: >>>
@@ -222,11 +224,11 @@ are_all_packages_installed cloudflared || {
 
 are_all_packages_installed openvpn3 || {
     #: Setup key
-    curl https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub |
-        sudo gpg --yes --dearmor --output /etc/apt/trusted.gpg.d/openvpn.gpg
+    curl -fsSL https://swupdate.openvpn.net/repos/openvpn-repo-pkg-key.pub |
+        sudo gpg --yes --dearmor --output /etc/apt/keyrings/openvpn.gpg
 
     #: Setup repository
-    echo "deb [arch=amd64] https://swupdate.openvpn.net/community/openvpn3/repos bullseye main" |
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/openvpn.gpg] https://swupdate.openvpn.net/community/openvpn3/repos ${DIST_CODENAME} main" |
         sudo tee /etc/apt/sources.list.d/openvpn.list
 
     #: Install OpenVPN
