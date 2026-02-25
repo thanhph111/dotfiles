@@ -13,6 +13,14 @@
 {{/* Personal or company device */}}
 {{- $personal := true -}}
 
+{{/* Machine is operated by an AI agent */}}
+{{- $agent := false -}}
+
+{{/* Git identity */}}
+{{- $gitName := "Thanh Phan" -}}
+{{- $gitEmail := "thanhph111@gmail.com" -}}
+{{- $gitSigningKey := "DC49B16FF2563A32" -}}
+
 {{/* Detect GitHub codespaces, VSCode remote containers, Docker containers,
 Multipass VMs, and Vagrant boxes */}}
 {{- $username := .chezmoi.username -}}
@@ -32,7 +40,7 @@ Multipass VMs, and Vagrant boxes */}}
 {{/* Work around unreliable hostname on darwin */}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{-     $computerName := output "scutil" "--get" "ComputerName" | trim -}}
-{{-     $hostname := $computerName -}}
+{{-     $hostname = $computerName -}}
 {{- end -}}
 
 {{- if $personal -}}
@@ -61,6 +69,13 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $codename = "HAL" -}}
 {{-     $vault = "HDBank" -}}
 {{-     $client = true -}}
+{{- else if eq $hostname "Grid" }}
+{{-     $codename = "Grid" -}}
+{{-     $vault = "CLU" -}}
+{{-     $agent = true -}}
+{{-     $gitName = "CLU" -}}
+{{-     $gitEmail = "clu@thanhph111.com" -}}
+{{-     $gitSigningKey = "" -}}
 {{- else -}}
 {{-     writeToStdout "Unknown host\n" -}}
 {{-     exit 1 -}}
@@ -76,6 +91,10 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     vault = {{ $vault | quote }}
     headless = {{ $headless }}
     client = {{ $client }}
+    agent = {{ $agent }}
+    gitName = {{ $gitName | quote }}
+    gitEmail = {{ $gitEmail | quote }}
+    gitSigningKey = {{ $gitSigningKey | quote }}
 
 [diff]
     exclude = ["scripts"]

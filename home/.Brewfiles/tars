@@ -1,6 +1,7 @@
 tap "jorgelbg/tap"
 tap "oven-sh/bun"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
+tap "steipete/tap"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Programmable completion for Bash 4.2+
@@ -13,44 +14,32 @@ brew "bat-extras"
 brew "chezmoi"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
-# Load/unload environment variables based on $PWD
-brew "direnv"
-# Easily install prebuilt binaries from GitHub
-brew "eget"
 # Modern, maintained replacement for ls
 brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Collection of GNU find, xargs, and locate
-brew "findutils"
+# Text editor for your terminal: easy, powerful and fast
+brew "fresh-editor"
 # Command-line fuzzy finder written in Go
 brew "fzf"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
 brew "git"
-# GNU implementation of the famous stream editor
-brew "gnu-sed"
-# GNU version of the tar archiving utility
-brew "gnu-tar"
-# GNU Pretty Good Privacy (PGP) package
+# GNU Privacy Guard (OpenPGP)
 brew "gnupg"
-# Open source programming language to build simple/reliable/efficient software
-brew "go"
 # Post-modern modal text editor
 brew "helix"
-# Lightweight and flexible command-line JSON processor
-brew "jq"
-# Generic command-line non-JVM Apache Kafka producer and consumer
-brew "kcat"
 # Lazier way to manage everything docker
 brew "lazydocker"
-# Pager program similar to more
-brew "less"
-# Utility for directing compilation
-brew "make"
 # Mac App Store command-line interface
 brew "mas"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
 # Pinentry for GPG on Mac
@@ -61,18 +50,8 @@ brew "ripgrep"
 brew "telnet"
 # Upgrade all the things
 brew "topgrade"
-# Markup-based typesetting system
-brew "typst"
-# Formatter for typst
-brew "typstfmt"
-# Extremely fast Python package installer and resolver, written in Rust
-brew "uv"
-# Internet file retriever
-brew "wget"
 # Check your $HOME for unwanted files and directories
 brew "xdg-ninja"
-# Process YAML, JSON, XML, CSV and properties documents from the CLI
-brew "yq"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
@@ -80,14 +59,16 @@ brew "zsh-syntax-highlighting"
 # Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
 # the macOS keychain.
 brew "jorgelbg/tap/pinentry-touchid"
-# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
-brew "oven-sh/bun/bun"
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
+# Image editing and design software
+cask "affinity"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
+# AI Coding Agent IDE
+cask "antigravity"
 # Temporary notes with calculations and extensible features
 cask "antinote"
 # Chromium based browser
@@ -96,21 +77,30 @@ cask "arc"
 cask "bettertouchtool"
 # 3D creation suite
 cask "blender"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# Terminal-based AI coding assistant
+cask "claude-code"
 # Free app that makes your Internet safer
 cask "cloudflare-warp"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# OpenAI's Codex desktop app for managing coding agents
+cask "codex-app"
+# Menu bar usage monitor for Codex and Claude
+cask "steipete/tap/codexbar"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
 # Server and cloud storage browser
 cask "cyberduck"
 cask "font-fira-code"
 cask "font-fira-code-nerd-font"
 cask "font-jetbrains-mono"
 cask "font-jetbrains-mono-nerd-font"
-cask "font-monaspace"
 cask "font-new-york"
 cask "font-sf-mono"
 cask "font-sf-mono-nerd-font-ligaturized"
 cask "font-sf-pro"
-# GIT client
-cask "fork"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
 # Utility to hide menu bar items
@@ -121,6 +111,8 @@ cask "hyperkey"
 cask "iina"
 # File archiver
 cask "keka"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
 # Replacement for Docker Desktop
 cask "orbstack"
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
@@ -151,18 +143,20 @@ cask "warp"
 cask "zalo"
 # Multiplayer code editor
 cask "zed"
-# Gecko based web browser
-cask "zen"
 # Collect, organise, cite, and share research sources
 cask "zotero"
+mas "CleanMyKeyboard", id: 6468120888
 mas "Disk Graph", id: 697942581
 mas "Dropover", id: 1355679052
+mas "Equinox", id: 1591510203
 mas "Folder Preview", id: 6698876601
+mas "Folder Quick Look", id: 6753110395
 mas "HacKit", id: 1549557075
-mas "Keynote", id: 409183694
-mas "Numbers", id: 409203825
+mas "Keynote", id: 361285480
+mas "Numbers", id: 361304891
 mas "OneDrive", id: 823766827
-mas "Pages", id: 409201541
+mas "Pages", id: 361309726
 mas "Telegram", id: 747648890
+mas "TestFlight", id: 899247664
 mas "Tomito", id: 1526042938
 mas "WhatsApp", id: 310633997

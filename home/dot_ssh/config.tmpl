@@ -33,10 +33,10 @@ Host cloud9-*
 #: Specify the instance ID here
 #     HostName i-something
 
-{{ if .client -}}
+{{ if and .client (lookPath "op") -}}
 {{-     onepasswordRead "op://Personal/SSH servers/notesPlain" -}}
 {{- end }}
 
-{{ if eq .codename "HAL" -}}
+{{ if and (eq .codename "HAL") (lookPath "op") -}}
 {{-     onepasswordRead (print "op://" .vault "/SSH config/notesPlain") -}}
 {{- end -}}
