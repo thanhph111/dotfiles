@@ -254,6 +254,13 @@ MANWIDTH=$((COLUMNS > 120 ? 120 : COLUMNS))
 
 #: Tools {{{
 
+#: mise-en-place {{{
+
+# Use shims in non-interactive shells
+command_exists mise && eval "$(mise activate "$SHELL_NAME")"
+
+#:}}}
+
 #: GitHub CLI {{{
 
 #: Aliases for GitHub CLI Copilot extension
