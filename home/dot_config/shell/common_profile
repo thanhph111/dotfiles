@@ -345,6 +345,19 @@ unset toolbox_scripts
 
 #: }}}
 
+#: Antigravity {{{
+
+[ -d "$HOME/.antigravity" ] &&
+    export PATH="$HOME/.antigravity/bin:$PATH"
+
+#: }}}
+
+#: Claude Code {{{
+
+export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
+
+#: }}}
+
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
