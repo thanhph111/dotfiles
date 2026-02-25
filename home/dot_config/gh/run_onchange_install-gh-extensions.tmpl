@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.os "darwin" "linux" -}}
+{{- if and (eq .chezmoi.os "darwin" "linux") (lookPath "gh")-}}
 
 
 #! /usr/bin/env bash
