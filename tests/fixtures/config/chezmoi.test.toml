@@ -1,0 +1,16 @@
+umask = 0o022
+
+[data]
+codename = "T-X"
+personal = true
+vault = "Personal"
+headless = true
+client = false
+agent = false
+secretsEnabled = false
+gitName = "Thanh Phan"
+gitEmail = "thanhph111@gmail.com"
+gitSigningKey = "DC49B16FF2563A32"
+
+[onepassword]
+prompt = false

@@ -16,6 +16,9 @@
 {{/* Machine is operated by an AI agent */}}
 {{- $agent := false -}}
 
+{{/* Secrets rendering is explicitly gated */}}
+{{- $secretsEnabled := false -}}
+
 {{/* Git identity */}}
 {{- $gitName := "Thanh Phan" -}}
 {{- $gitEmail := "thanhph111@gmail.com" -}}
@@ -81,6 +84,10 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     exit 1 -}}
 {{- end -}}
 
+{{- if or (env "OP_SERVICE_ACCOUNT_TOKEN") (eq (env "CHEZMOI_ENABLE_SECRETS") "1") -}}
+{{-     $secretsEnabled = true -}}
+{{- end -}}
+
 umask = 0o022
 
 sourceDir = "~/Documents/Projects/Personal/dotfiles"
@@ -92,9 +99,16 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     headless = {{ $headless }}
     client = {{ $client }}
     agent = {{ $agent }}
+    secretsEnabled = {{ $secretsEnabled }}
     gitName = {{ $gitName | quote }}
     gitEmail = {{ $gitEmail | quote }}
     gitSigningKey = {{ $gitSigningKey | quote }}
+
+[onepassword]
+    prompt = false
+{{ if env "OP_SERVICE_ACCOUNT_TOKEN" -}}
+    mode = "service"
+{{- end }}
 
 [diff]
     exclude = ["scripts"]

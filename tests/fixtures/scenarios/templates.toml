@@ -1,0 +1,111 @@
+[[cases]]
+id = "ssh-config"
+template = "home/dot_ssh/config.tmpl"
+platform = "all"
+profile = "all"
+must_contain = "Host *"
+
+[[cases]]
+id = "openclaw-agent"
+template = "home/dot_openclaw/openclaw.json.tmpl"
+platform = "all"
+profile = "agent"
+must_contain = "apiKey"
+
+[[cases]]
+id = "linux-hook"
+template = "home/.chezmoiscripts/linux/run_once_before_1-install-brew-packages.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = "BREW_BIN"
+
+[[cases]]
+id = "darwin-hook"
+template = "home/.chezmoiscripts/darwin/run_onchange_after_1-openclaw-onboard.tmpl"
+platform = "darwin"
+profile = "agent"
+must_contain = "openclaw"
+
+[[cases]]
+id = "windows-hook"
+template = "home/.chezmoiscripts/windows/run_onchange_after_0-settings.ps1.tmpl"
+platform = "windows"
+profile = "personal"
+must_contain = "SetEnvironmentVariable"
+
+[[cases]]
+id = "git-config-linux"
+template = "home/dot_config/git/config.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = "[user]"
+
+[[cases]]
+id = "git-config-windows"
+template = "home/dot_config/git/config.tmpl"
+platform = "windows"
+profile = "personal"
+must_contain = "[user]"
+
+[[cases]]
+id = "kitty-conf-linux"
+template = "home/dot_config/kitty/kitty.conf.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = "font_size"
+
+[[cases]]
+id = "kitty-conf-darwin"
+template = "home/dot_config/kitty/kitty.conf.tmpl"
+platform = "darwin"
+profile = "personal"
+must_contain = "font_size"
+
+[[cases]]
+id = "wgetrc-darwin"
+template = "home/dot_config/wget/wgetrc.tmpl"
+platform = "darwin"
+profile = "personal"
+must_contain = "ca_certificate="
+
+[[cases]]
+id = "wgetrc-linux"
+template = "home/dot_config/wget/wgetrc.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = ""
+
+[[cases]]
+id = "gpg-agent-darwin-personal"
+template = "home/dot_local/share/gnupg/gpg-agent.conf.tmpl"
+platform = "darwin"
+profile = "personal"
+must_contain = "pinentry-program"
+
+[[cases]]
+id = "gpg-agent-darwin-agent"
+template = "home/dot_local/share/gnupg/gpg-agent.conf.tmpl"
+platform = "darwin"
+profile = "agent"
+must_contain = ""
+
+[[cases]]
+id = "code-server-service"
+template = "home/dot_config/systemd/user/code-server.service.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = ""
+
+[[cases]]
+id = "spotifyd-service"
+template = "home/dot_config/systemd/user/spotifyd.service.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = ""
+
+[[cases]]
+id = "brewfile-symlink"
+template = "home/symlink_dot_Brewfile.tmpl"
+platform = "linux"
+profile = "personal"
+must_contain = ""

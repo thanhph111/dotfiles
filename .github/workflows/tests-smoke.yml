@@ -1,0 +1,29 @@
+name: Tests Smoke
+
+on:
+  pull_request:
+  push:
+    branches:
+      - chezmoi
+  workflow_dispatch:
+
+jobs:
+  linux-smoke:
+    uses: ./.github/workflows/_tests-job.yml
+    with:
+      runner: ubuntu-latest
+      tier: smoke
+      platform: linux
+      driver: docker
+      artifact_dir: tests/artifacts/tests-smoke-linux
+      artifact_name: tests-smoke-linux-artifacts
+
+  windows-smoke:
+    uses: ./.github/workflows/_tests-job.yml
+    with:
+      runner: windows-latest
+      tier: smoke
+      platform: windows
+      driver: native
+      artifact_dir: tests/artifacts/tests-smoke-windows
+      artifact_name: tests-smoke-windows-artifacts

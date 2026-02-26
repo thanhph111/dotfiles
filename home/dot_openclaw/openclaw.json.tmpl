@@ -1,5 +1,6 @@
 {{- if eq .codename "Grid" -}}
-{{ if lookPath "op" }}
+{{- $secretsEnabled := or (index . "secretsEnabled") (env "OP_SERVICE_ACCOUNT_TOKEN") (eq (env "CHEZMOI_ENABLE_SECRETS") "1") -}}
+{{ if $secretsEnabled }}
 {
     "apiKey": "{{ onepasswordRead "op://CLU/OpenClaw/credential" }}"
 }

@@ -1,0 +1,41 @@
+name: Tests Full
+
+on:
+  pull_request:
+  push:
+    branches:
+      - chezmoi
+  workflow_dispatch:
+
+jobs:
+  linux-full:
+    uses: ./.github/workflows/_tests-job.yml
+    with:
+      runner: ubuntu-latest
+      tier: full
+      platform: all
+      driver: docker
+      artifact_dir: tests/artifacts/tests-full-linux
+      artifact_name: tests-full-linux-artifacts
+
+  macos-full:
+    uses: ./.github/workflows/_tests-job.yml
+    with:
+      runner: macos-latest
+      tier: full
+      platform: darwin
+      driver: native
+      artifact_dir: tests/artifacts/tests-full-macos
+      artifact_name: tests-full-macos-artifacts
+      install_chezmoi: true
+
+  windows-full:
+    uses: ./.github/workflows/_tests-job.yml
+    with:
+      runner: windows-latest
+      tier: full
+      platform: windows
+      driver: native
+      artifact_dir: tests/artifacts/tests-full-windows
+      artifact_name: tests-full-windows-artifacts
+      install_chezmoi: true

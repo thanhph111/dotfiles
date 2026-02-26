@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+resolve_command_path() {
+    local cmd="$1"
+    local resolved=""
+
+    if [[ "$cmd" == */* ]]; then
+        [[ -x "$cmd" ]] || return 1
+        resolved="$(cd "$(dirname "$cmd")" && pwd -P)/$(basename "$cmd")"
+    else
+        resolved="$(command -v "$cmd" 2>/dev/null || true)"
+        [[ -n "$resolved" && "$resolved" == */* ]] || return 1
+    fi
+
+    printf '%s\n' "$resolved"
+}
+
+choose_chezmoi() {
+    local candidate=""
+
+    if [[ -n "${CHEZMOI_CMD:-}" ]]; then
+        candidate="$CHEZMOI_CMD"
+    elif [[ -x "./bin/chezmoi" ]]; then
+        candidate="./bin/chezmoi"
+    else
+        candidate="chezmoi"
+    fi
+
+    resolve_command_path "$candidate"
+}
+
+choose_brew() {
+    local candidate=""
+
+    if candidate="$(command -v brew 2>/dev/null || true)" && [[ -x "$candidate" ]]; then
+        resolve_command_path "$candidate"
+        return 0
+    fi
+
+    for candidate in \
+        /opt/homebrew/bin/brew \
+        /usr/local/bin/brew \
+        /home/linuxbrew/.linuxbrew/bin/brew; do
+        if [[ -x "$candidate" ]]; then
+            resolve_command_path "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+CHZ_BIN="$(choose_chezmoi)" || {
+    echo "[bootstrap] Failed to locate chezmoi. Set CHEZMOI_CMD or ensure chezmoi is installed."
+    exit 1
+}
+
+echo "[bootstrap] Running first apply..."
+"$CHZ_BIN" apply --init "$@"
+
+if BREW_BIN="$(choose_brew 2>/dev/null || true)" && [[ -n "$BREW_BIN" ]]; then
+    # shellcheck disable=SC1090
+    eval "$("$BREW_BIN" shellenv)"
+fi
+
+secrets_ready=0
+readiness_reason=""
+
+if [[ -n "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]]; then
+    secrets_ready=1
+    readiness_reason="OP_SERVICE_ACCOUNT_TOKEN is set"
+else
+    op_bin="$(command -v op 2>/dev/null || true)"
+    if [[ -n "$op_bin" ]]; then
+        op_bin="$(resolve_command_path "$op_bin")"
+        if "$op_bin" vault list >/dev/null 2>&1; then
+            secrets_ready=1
+            readiness_reason="op session is authenticated"
+        fi
+    fi
+fi
+
+if [[ "$secrets_ready" -eq 1 ]]; then
+    echo "[bootstrap] Secrets are ready (${readiness_reason}). Running second apply..."
+    CHEZMOI_ENABLE_SECRETS=1 "$CHZ_BIN" apply --init "$@"
+    echo "[bootstrap] Completed with secrets enabled."
+else
+    cat <<'EOF'
+[bootstrap] Secrets are not ready. First pass completed successfully.
+
+Next steps:
+  1) Client machines: eval "$(op signin)"
+  2) Agent machines: export OP_SERVICE_ACCOUNT_TOKEN="<token>"
+  3) Re-run: ./script/bootstrap-first-run
+
+Tip: Reloading shell is optional now, but you can still run: exec "$SHELL" -l
+EOF
+fi

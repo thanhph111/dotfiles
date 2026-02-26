@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+
+#MISE description="Run tests"
+#USAGE flag "--tier <tier>" {
+#USAGE   help "Test tier"
+#USAGE   choices "local" "smoke" "full"
+#USAGE   default "local"
+#USAGE }
+#USAGE flag "--suite <suite>" {
+#USAGE   help "Test suite"
+#USAGE   choices "static" "bootstrap" "templates" "hooks" "all"
+#USAGE   default "all"
+#USAGE }
+#USAGE flag "--platform <platform>" {
+#USAGE   help "Target platform"
+#USAGE   choices "linux" "darwin" "windows" "powershell" "all"
+#USAGE   default "linux"
+#USAGE }
+#USAGE flag "--profile <profile>" {
+#USAGE   help "Chezmoi profile"
+#USAGE   choices "personal" "client" "client-auth" "agent" "all"
+#USAGE   default "all"
+#USAGE }
+#USAGE flag "--driver <driver>" {
+#USAGE   help "Execution driver"
+#USAGE   choices "docker" "native" "auto"
+#USAGE   default "docker"
+#USAGE }
+#USAGE flag "--report <report>" {
+#USAGE   help "Report mode"
+#USAGE   choices "pretty" "off"
+#USAGE   default "pretty"
+#USAGE }
+
+set -euo pipefail
+
+die() {
+  echo "[test] $1" >&2
+  exit 2
+}
+
+require_value() {
+  if [ "${2:-}" = "" ]; then
+    die "missing value for $1"
+  fi
+}
+
+validate_choice() {
+  local option="$1"
+  local value="$2"
+  shift 2
+  for allowed in "$@"; do
+    if [ "$value" = "$allowed" ]; then
+      return 0
+    fi
+  done
+  die "invalid value for $option: $value"
+}
+
+tier="local"
+suite="all"
+platform="linux"
+profile="all"
+driver="docker"
+report="pretty"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --tier)
+      require_value "$1" "${2:-}"
+      tier="$2"
+      shift 2
+      ;;
+    --suite)
+      require_value "$1" "${2:-}"
+      suite="$2"
+      shift 2
+      ;;
+    --platform)
+      require_value "$1" "${2:-}"
+      platform="$2"
+      shift 2
+      ;;
+    --profile)
+      require_value "$1" "${2:-}"
+      profile="$2"
+      shift 2
+      ;;
+    --driver)
+      require_value "$1" "${2:-}"
+      driver="$2"
+      shift 2
+      ;;
+    --report)
+      require_value "$1" "${2:-}"
+      report="$2"
+      shift 2
+      ;;
+    *)
+      die "unsupported argument: $1"
+      ;;
+  esac
+done
+
+validate_choice "--tier" "$tier" "local" "smoke" "full"
+validate_choice "--suite" "$suite" "static" "bootstrap" "templates" "hooks" "all"
+validate_choice "--platform" "$platform" "linux" "darwin" "windows" "powershell" "all"
+validate_choice "--profile" "$profile" "personal" "client" "client-auth" "agent" "all"
+validate_choice "--driver" "$driver" "docker" "native" "auto"
+validate_choice "--report" "$report" "pretty" "off"
+
+if [ "$report" = "pretty" ]; then
+  artifact_dir="${TEST_ARTIFACT_DIR:-tests/artifacts/$(date -u +%Y%m%dT%H%M%SZ)-$$}"
+  mkdir -p "$artifact_dir"
+  junit_path="$artifact_dir/junit.xml"
+  html_path="$artifact_dir/report.html"
+  summary_path="$artifact_dir/summary.md"
+
+  set +e
+  TEST_ARTIFACT_DIR="$artifact_dir" uv run pytest -q -c tests/pytest.ini tests/suites \
+    --tier "$tier" \
+    --suite "$suite" \
+    --platform "$platform" \
+    --profile "$profile" \
+    --driver "$driver" \
+    --junitxml "$junit_path" \
+    --html "$html_path" \
+    --self-contained-html
+  pytest_status=$?
+
+  test-build-summary \
+    --junit "$junit_path" \
+    --output "$summary_path" \
+    --meta "tier=$tier" \
+    --meta "suite=$suite" \
+    --meta "platform=$platform" \
+    --meta "profile=$profile" \
+    --meta "driver=$driver" \
+    --meta "report=$report"
+  summary_status=$?
+  set -e
+
+  if [ "$summary_status" -ne 0 ]; then
+    echo "[test] warning: summary generation failed with status $summary_status"
+  fi
+
+  echo "[test] report artifacts: $artifact_dir"
+  exit "$pytest_status"
+fi
+
+uv run pytest -q -c tests/pytest.ini tests/suites \
+  --tier "$tier" \
+  --suite "$suite" \
+  --platform "$platform" \
+  --profile "$profile" \
+  --driver "$driver"
