@@ -3,7 +3,11 @@
 
 [core]
 	editor = $VISUAL
+	{{- if lookPath "bat" }}
 	pager = bat
+	{{ else }}
+	pager = less -F -X -R
+	{{- end }}
 	# excludesFile = ~/.gitignore
 	# autocrlf = true
 
