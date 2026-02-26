@@ -5,6 +5,8 @@ prek = 'latest'
 ruff = 'latest'
 ty = 'latest'
 uv = 'latest'
+shfmt = "latest"
+shellcheck = "latest"
 
 [shell_alias]
 xsetup = 'mise run setup'

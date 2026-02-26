@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 type brew &>/dev/null && FZF_REPO_DIR="$(brew --prefix)/opt/fzf"
 
 [[ -z "$FZF_REPO_DIR" ]] && return
@@ -10,10 +11,12 @@ fi
 
 # Auto-completion
 # ---------------
+# shellcheck source=/dev/null
 [[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.zsh" 2>/dev/null
 
 # Key bindings
 # ------------
+# shellcheck source=/dev/null
 source "$FZF_REPO_DIR/shell/key-bindings.zsh"
 
 FZF_DEFAULT_OPTS="--info=inline \
@@ -82,6 +85,7 @@ fzf_gf() {
         cut -c4- | sed 's/.* -> //'
 }
 
+# shellcheck disable=SC2016
 fzf_gb() {
     is_in_git_repo || return
     git branch -a --color=always | grep -v '/HEAD\s' | sort |
@@ -121,17 +125,19 @@ fzf_gs() {
         cut -d: -f1
 }
 
-() {
-    join-lines() {
+_fzf_bind_keys() {
+    join_lines() {
         local item
-        while read item; do
-            echo -n "${(q)item} "
+        while IFS= read -r item; do
+            printf '%q ' "$item"
         done
     }
     local c
-    for c in $@; do
-        eval "fzf-g$c-widget() { local result=\$(fzf_g$c | join-lines); zle reset-prompt; LBUFFER+=\$result }"
+    for c in "$@"; do
+        eval "fzf-g$c-widget() { local result=\$(fzf_g$c | join_lines); zle reset-prompt; LBUFFER+=\$result }"
         eval "zle -N fzf-g$c-widget"
         eval "bindkey '^g^$c' fzf-g$c-widget"
     done
-} f b t r h s
+}
+_fzf_bind_keys f b t r h s
+unset -f _fzf_bind_keys

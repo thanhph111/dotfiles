@@ -10,25 +10,27 @@ fi
 
 # Auto-completion
 # ---------------
+# shellcheck source=/dev/null
 [[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.bash" 2>/dev/null
 
 # Key bindings
 # ------------
+# shellcheck source=/dev/null
 source "$FZF_REPO_DIR/shell/key-bindings.bash"
 
 __fzf_preview_file_type() {
     # kitty +kitten icat --transfer-mode=file --silent --clear
-    bat_args='--style numbers --color always'
+    bat_args=(--style numbers --color always)
     case "$1" in
     *.csv)
         # vd "$1"
-        bat $bat_args "$1"
+        bat "${bat_args[@]}" "$1"
         ;;
     *)
         mime=$(file -b --mime-type "$1")
         case "$mime" in
         text/*)
-            bat $bat_args "$1"
+            bat "${bat_args[@]}" "$1"
             ;;
         image/svg+xml | \
             image/png | \
@@ -54,7 +56,7 @@ __fzf_preview_file_type() {
             application/x-tar | \
             application/x-xar | \
             application/zip)
-            7z l $1 | tail -n +12
+            7z l "$1" | tail -n +12
             ;;
         *)
             file -b "$1"
@@ -74,7 +76,7 @@ code_workspace() {
         find "$CONFIG_PATH/User/workspaceStorage/" \
             -type f \
             -name 'workspace.json' \
-            -exec cat {} \; | jq -r '.folder' | while read i; do
+            -exec cat {} \; | jq -r '.folder' | while IFS= read -r i; do
             if [ -z "$i" ]; then
                 continue
             fi
@@ -218,11 +220,17 @@ _gs() {
 #: CTRL-G CTRL-H for commit hashes
 if [[ $- =~ i ]]; then
     bind '"\er": redraw-current-line'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-f": "$(_gf)\e\C-e\er"'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-b": "$(_gb)\e\C-e\er"'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-t": "$(_gt)\e\C-e\er"'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-h": "$(_gh)\e\C-e\er"'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-r": "$(_gr)\e\C-e\er"'
+    # shellcheck disable=SC2016
     bind '"\C-g\C-s": "$(_gs)\e\C-e\er"'
 fi
 
@@ -243,8 +251,9 @@ rfv() {
     INITIAL_QUERY="${*:-}"
     IFS=: read -ra selected < <(
         FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-            fzf --ansi \
-            $FZF_COLORS \
+            fzf --ansi
+        # shellcheck disable=SC2086
+        $FZF_COLORS \
             --disabled --query "$INITIAL_QUERY" \
             --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
             --bind "alt-enter:\
@@ -277,9 +286,10 @@ export FZF_CTRL_T_COMMAND="rg --files --no-messages --hidden --follow --glob '!{
 #: exit completely
 #: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/fp
 fb() {
-    local loc=$(echo $PATH | sed -e $'s/:/\\\n/g' | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:path]'")
+    local loc
+    loc=$(echo "$PATH" | sed -e $'s/:/\\\n/g' | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:path]'")
     if [[ -d $loc ]]; then
-        echo "$(rg --files $loc | rev | cut -d"/" -f1 | rev)" | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:exe] => ${loc}' >/dev/null"
+        rg --files "$loc" | rev | cut -d"/" -f1 | rev | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:exe] => ${loc}' >/dev/null"
         fb
     fi
 }
@@ -292,9 +302,10 @@ fb() {
 #: completely.
 #: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/kp
 kp() {
-    local pid=$(ps -ef | sed 1d | eval "fzf ${FZF_DEFAULT_OPTS} -m --header='[kill:process]'" | awk '{print $2}')
-    if [ "x$pid" != "x" ]; then
-        echo $pid | xargs kill -${1:-9}
+    local pid
+    pid=$(ps -ef | sed 1d | eval "fzf ${FZF_DEFAULT_OPTS} -m --header='[kill:process]'" | awk '{print $2}')
+    if [ -n "$pid" ]; then
+        echo "$pid" | xargs kill "-${1:-9}"
         kp
     fi
 }

@@ -1,0 +1,4 @@
+# This file is intended to config shmft, not the editor
+[*]
+indent_style = space
+indent_size = 4

@@ -32,7 +32,7 @@ NC='\033[0m' # No Color
 
 # Function to show help
 show_help() {
-    cat << EOF
+    cat <<EOF
 Real-time NVIDIA GPU monitoring script
 
 Usage: $(basename "$0") [OPTIONS]
@@ -61,7 +61,7 @@ EOF
 
 # Function to check if nvidia-smi is available
 check_nvidia_smi() {
-    if ! command -v nvidia-smi &> /dev/null; then
+    if ! command -v nvidia-smi &>/dev/null; then
         echo -e "${RED}Error: nvidia-smi not found. Please install NVIDIA drivers.${NC}" >&2
         exit 1
     fi
@@ -93,7 +93,7 @@ show_compact() {
         [[ "$power" =~ ^[0-9.]+$ ]] || power=0
 
         local mem_percent=0
-        if (( mem_total > 0 )); then
+        if ((mem_total > 0)); then
             mem_percent=$((mem_used * 100 / mem_total))
         fi
 
@@ -102,16 +102,22 @@ show_compact() {
         local mem_color=$GREEN
 
         # Color coding based on values
-        if (( temp > 80 )); then temp_color=$RED
-        elif (( temp > 70 )); then temp_color=$YELLOW
+        if ((temp > 80)); then
+            temp_color=$RED
+        elif ((temp > 70)); then
+            temp_color=$YELLOW
         fi
 
-        if (( util > 90 )); then util_color=$RED
-        elif (( util > 70 )); then util_color=$YELLOW
+        if ((util > 90)); then
+            util_color=$RED
+        elif ((util > 70)); then
+            util_color=$YELLOW
         fi
 
-        if (( mem_percent > 90 )); then mem_color=$RED
-        elif (( mem_percent > 70 )); then mem_color=$YELLOW
+        if ((mem_percent > 90)); then
+            mem_color=$RED
+        elif ((mem_percent > 70)); then
+            mem_color=$YELLOW
         fi
 
         printf "  GPU%s: %s | ${temp_color}%s°C${NC} | ${util_color}%s%%${NC} | ${mem_color}%s/%sMB (%s%%)${NC} | %sW\n" \
@@ -137,8 +143,10 @@ show_temperature() {
         [[ "$temp" =~ ^[0-9]+$ ]] || temp=0
 
         local temp_color=$GREEN
-        if (( temp > 80 )); then temp_color=$RED
-        elif (( temp > 70 )); then temp_color=$YELLOW
+        if ((temp > 80)); then
+            temp_color=$RED
+        elif ((temp > 70)); then
+            temp_color=$YELLOW
         fi
 
         printf "  GPU%s (%s): ${temp_color}%s°C${NC}\n" "$idx" "$name" "$temp"
@@ -164,13 +172,15 @@ show_memory() {
         [[ "$mem_total" =~ ^[0-9]+$ ]] || mem_total=1
 
         local mem_percent=0
-        if (( mem_total > 0 )); then
+        if ((mem_total > 0)); then
             mem_percent=$((mem_used * 100 / mem_total))
         fi
 
         local mem_color=$GREEN
-        if (( mem_percent > 90 )); then mem_color=$RED
-        elif (( mem_percent > 70 )); then mem_color=$YELLOW
+        if ((mem_percent > 90)); then
+            mem_color=$RED
+        elif ((mem_percent > 70)); then
+            mem_color=$YELLOW
         fi
 
         printf "  GPU%s (%s): ${mem_color}%s/%s MB (%s%%)${NC}\n" "$idx" "$name" "$mem_used" "$mem_total" "$mem_percent"
@@ -195,8 +205,10 @@ show_utilization() {
         [[ "$util" =~ ^[0-9]+$ ]] || util=0
 
         local util_color=$GREEN
-        if (( util > 90 )); then util_color=$RED
-        elif (( util > 70 )); then util_color=$YELLOW
+        if ((util > 90)); then
+            util_color=$RED
+        elif ((util > 70)); then
+            util_color=$YELLOW
         fi
 
         printf "  GPU%s (%s): ${util_color}%s%%${NC}\n" "$idx" "$name" "$util"
@@ -223,43 +235,43 @@ cleanup() {
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -i|--interval)
-            INTERVAL="$2"
-            if ! [[ "$INTERVAL" =~ ^[0-9]+(\.[0-9]+)?$ ]] || (( $(echo "$INTERVAL <= 0" | bc -l) )); then
-                echo -e "${RED}Error: Interval must be a positive number${NC}" >&2
-                exit 1
-            fi
-            shift 2
-            ;;
-        -c|--compact)
-            COMPACT=true
-            shift
-            ;;
-        -t|--temperature)
-            TEMP_ONLY=true
-            shift
-            ;;
-        -m|--memory)
-            MEMORY_ONLY=true
-            shift
-            ;;
-        -u|--utilization)
-            UTIL_ONLY=true
-            shift
-            ;;
-        --no-clear)
-            CLEAR_SCREEN=false
-            shift
-            ;;
-        -h|--help)
-            show_help
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Error: Unknown option $1${NC}" >&2
-            show_help
+    -i | --interval)
+        INTERVAL="$2"
+        if ! [[ "$INTERVAL" =~ ^[0-9]+(\.[0-9]+)?$ ]] || (($(echo "$INTERVAL <= 0" | bc -l))); then
+            echo -e "${RED}Error: Interval must be a positive number${NC}" >&2
             exit 1
-            ;;
+        fi
+        shift 2
+        ;;
+    -c | --compact)
+        COMPACT=true
+        shift
+        ;;
+    -t | --temperature)
+        TEMP_ONLY=true
+        shift
+        ;;
+    -m | --memory)
+        MEMORY_ONLY=true
+        shift
+        ;;
+    -u | --utilization)
+        UTIL_ONLY=true
+        shift
+        ;;
+    --no-clear)
+        CLEAR_SCREEN=false
+        shift
+        ;;
+    -h | --help)
+        show_help
+        exit 0
+        ;;
+    *)
+        echo -e "${RED}Error: Unknown option $1${NC}" >&2
+        show_help
+        exit 1
+        ;;
     esac
 done
 
