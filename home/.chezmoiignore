@@ -28,6 +28,7 @@
 {{/* macOS */}}
 {{ if eq .chezmoi.os "darwin" }}
 !.fleet
+!.openclaw
 !Library
 {{ end }}
 
