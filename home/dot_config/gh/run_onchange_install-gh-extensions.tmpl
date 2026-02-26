@@ -1,7 +1,7 @@
 {{- if and (eq .chezmoi.os "darwin" "linux") (lookPath "gh") -}}
 
 
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 # .extensions hash: {{ include "dot_config/gh/.extensions" | sha256sum }}
 
