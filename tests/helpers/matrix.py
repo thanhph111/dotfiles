@@ -15,6 +15,12 @@ class Profile:
     personal: bool
     with_token: bool
     op_mode: str
+
+
+@dataclass(frozen=True)
+class BootstrapCase:
+    id: str
+    profile: str
     expect_ready: bool
     expect_applies: int
 
@@ -22,13 +28,13 @@ class Profile:
 @dataclass(frozen=True)
 class Matrix:
     profiles: dict[str, Profile]
-    bootstrap: list[dict[str, Any]]
+    bootstrap: list[BootstrapCase]
     templates: list[dict[str, Any]]
 
     def profile_ids(self) -> tuple[str, ...]:
         return tuple(self.profiles.keys())
 
-    def bootstrap_cases(self) -> list[dict[str, Any]]:
+    def bootstrap_cases(self) -> list[BootstrapCase]:
         return list(self.bootstrap)
 
     def template_cases(self) -> list[dict[str, Any]]:
@@ -63,19 +69,26 @@ def _load_profiles(profiles_path: Path) -> dict[str, Profile]:
 def load_matrix(profiles_path: Path, scenarios_dir: Path) -> Matrix:
     profiles = _load_profiles(profiles_path)
 
-    bootstrap_cases = tomllib.loads((scenarios_dir / "bootstrap.toml").read_text(encoding="utf-8"))[
-        "cases"
-    ]
+    bootstrap_cases_raw = tomllib.loads(
+        (scenarios_dir / "bootstrap.toml").read_text(encoding="utf-8")
+    )["cases"]
     template_cases = tomllib.loads((scenarios_dir / "templates.toml").read_text(encoding="utf-8"))[
         "cases"
     ]
 
-    for index, case in enumerate(bootstrap_cases):
-        profile_name = str(case["profile"])
+    bootstrap_cases: list[BootstrapCase] = []
+    for index, case in enumerate(bootstrap_cases_raw):
+        try:
+            bootstrap_case = BootstrapCase(**case)
+        except TypeError as exc:
+            raise TypeError(f"bootstrap.cases[{index}] invalid schema: {exc}") from exc
+
+        profile_name = bootstrap_case.profile
         if profile_name not in profiles:
             raise ValueError(
                 f"bootstrap.cases[{index}] references unknown profile '{profile_name}'"
             )
+        bootstrap_cases.append(bootstrap_case)
 
     for index, case in enumerate(template_cases):
         profile_name = str(case["profile"])

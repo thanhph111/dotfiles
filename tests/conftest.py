@@ -1,16 +1,10 @@
 import os
 import subprocess
-from collections.abc import Generator
 from pathlib import Path
 
 import pytest
 
-from helpers.artifacts import (
-    clear_current_test,
-    create_artifact_dir,
-    set_current_test,
-    write_artifact_index,
-)
+from helpers.artifacts import create_artifact_dir
 from helpers.chezmoi import platform_matches
 from helpers.docker_cli import DockerRunner
 from helpers.matrix import Matrix, Profile, load_matrix, resolve_profile_ids
@@ -100,13 +94,6 @@ def pytest_sessionstart(session: pytest.Session) -> None:
             )
 
 
-def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
-    _ = exitstatus
-    artifact_path = getattr(session.config, "_artifact_dir_path", None)
-    if artifact_path:
-        write_artifact_index(Path(artifact_path))
-
-
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     selected_tier = config.getoption("--tier")
     selected_suite = config.getoption("--suite")
@@ -187,11 +174,9 @@ def matrix() -> Matrix:
 
 
 @pytest.fixture(scope="session")
-def artifact_dir(repo_root: Path, pytestconfig: pytest.Config) -> Path:
+def artifact_dir(repo_root: Path) -> Path:
     requested = os.getenv("TEST_ARTIFACT_DIR")
-    path = create_artifact_dir(repo_root=repo_root, requested=requested)
-    setattr(pytestconfig, "_artifact_dir_path", path)
-    return path
+    return create_artifact_dir(repo_root=repo_root, requested=requested)
 
 
 @pytest.fixture(scope="session")
@@ -240,10 +225,3 @@ def docker_runner(repo_root: Path, artifact_dir: Path, pytestconfig: pytest.Conf
 @pytest.fixture(scope="session")
 def all_profile_ids(matrix: Matrix) -> tuple[str, ...]:
     return matrix.profile_ids()
-
-
-@pytest.fixture(autouse=True)
-def artifact_test_context(request: pytest.FixtureRequest) -> Generator[None]:
-    set_current_test(request.node.nodeid)
-    yield
-    clear_current_test()

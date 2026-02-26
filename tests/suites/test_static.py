@@ -133,8 +133,6 @@ agent = false
 personal = true
 with_token = false
 op_mode = "missing"
-expect_ready = false
-# expect_applies intentionally missing
 """.strip()
         + "\n",
         encoding="utf-8",
@@ -148,7 +146,7 @@ expect_ready = false
 id = "case"
 profile = "personal"
 expect_ready = false
-expect_applies = 1
+# expect_applies intentionally missing
 """.strip()
         + "\n",
         encoding="utf-8",
@@ -166,5 +164,5 @@ must_contain = "Host *"
         encoding="utf-8",
     )
 
-    with pytest.raises(TypeError, match="expect_applies"):
+    with pytest.raises(TypeError, match="bootstrap.cases\\[0\\] invalid schema"):
         load_matrix(bad_profiles, scenarios_dir)

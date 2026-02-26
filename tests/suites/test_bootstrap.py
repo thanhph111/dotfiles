@@ -6,15 +6,23 @@ import pytest
 
 from helpers.artifacts import write_artifact
 from helpers.docker_cli import DockerRunner, LINUX_IMAGE, PWSH_IMAGE
-from helpers.matrix import Profile
+from helpers.matrix import BootstrapCase, Matrix, Profile
 from helpers.scripts import load_script
+
+
+def _bootstrap_case_by_profile(matrix: Matrix) -> dict[str, BootstrapCase]:
+    return {case.profile: case for case in matrix.bootstrap_cases()}
 
 
 @pytest.mark.tier_local
 @pytest.mark.platform_linux
 @pytest.mark.requires_docker
 def test_unix_bootstrap_mock(
-    docker_runner: DockerRunner, artifact_dir: Path, profile: Profile, repo_root: Path
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
 ) -> None:
     script = load_script(repo_root, "bash", "bootstrap_unix_mock.sh")
 
@@ -30,10 +38,12 @@ def test_unix_bootstrap_mock(
 
     assert result.returncode == 0, output
 
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
     actual_applies = len(re.findall(r"MOCK chezmoi apply", output))
-    assert actual_applies == profile.expect_applies
+    assert actual_applies == case.expect_applies
 
-    if profile.expect_ready:
+    if case.expect_ready:
         assert "Secrets are ready" in output
     else:
         assert "Secrets are not ready" in output
@@ -70,7 +80,11 @@ def test_unix_bootstrap_mock_token_with_op_success(
 @pytest.mark.platform_linux
 @pytest.mark.requires_docker
 def test_unix_bootstrap_integration(
-    docker_runner: DockerRunner, artifact_dir: Path, profile: Profile, repo_root: Path
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
 ) -> None:
     docker_runner.ensure_image(
         LINUX_IMAGE, docker_runner.repo_root / "tests" / "docker" / "linux.Dockerfile"
@@ -94,7 +108,9 @@ def test_unix_bootstrap_integration(
 
     assert result.returncode == 0, output
 
-    if profile.expect_ready:
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
+    if case.expect_ready:
         assert "Secrets are ready" in output
         assert "Running second apply" in output
     else:
@@ -106,18 +122,24 @@ def test_unix_bootstrap_integration(
 @pytest.mark.platform_windows
 @pytest.mark.requires_docker
 def test_powershell_bootstrap_mock(
-    docker_runner: DockerRunner, artifact_dir: Path, profile: Profile, repo_root: Path
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
 ) -> None:
     docker_runner.ensure_image(
         PWSH_IMAGE, docker_runner.repo_root / "tests" / "docker" / "powershell.Dockerfile"
     )
     script = load_script(repo_root, "pwsh", "bootstrap_powershell_mock.ps1")
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
 
     env = {
         "PROFILE_ID": profile.id,
         "PROFILE_WITH_TOKEN": "1" if profile.with_token else "0",
         "PROFILE_OP_MODE": profile.op_mode,
-        "PROFILE_EXPECT_APPLIES": str(profile.expect_applies),
+        "PROFILE_EXPECT_APPLIES": str(case.expect_applies),
     }
 
     result = docker_runner.run_pwsh(image=PWSH_IMAGE, script=script, env=env)
@@ -125,7 +147,7 @@ def test_powershell_bootstrap_mock(
     write_artifact(artifact_dir, f"bootstrap-powershell-mock-{profile.id}.log", output)
 
     assert result.returncode == 0, output
-    if profile.expect_ready:
+    if case.expect_ready:
         assert "Secrets are ready" in output
     else:
         assert "Secrets are not ready" in output

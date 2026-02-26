@@ -8,8 +8,6 @@ agent = false
 personal = true
 with_token = false
 op_mode = "missing"
-expect_ready = false
-expect_applies = 1
 
 [profiles.client]
 id = "client"
@@ -21,8 +19,6 @@ agent = false
 personal = true
 with_token = false
 op_mode = "fail"
-expect_ready = false
-expect_applies = 1
 
 [profiles."client-auth"]
 id = "client-auth"
@@ -34,8 +30,6 @@ agent = false
 personal = true
 with_token = false
 op_mode = "ok"
-expect_ready = true
-expect_applies = 2
 
 [profiles.agent]
 id = "agent"
@@ -47,5 +41,3 @@ agent = true
 personal = true
 with_token = true
 op_mode = "missing"
-expect_ready = false
-expect_applies = 1

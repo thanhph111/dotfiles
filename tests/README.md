@@ -25,10 +25,9 @@ Native execution is CI-only and guarded in `tests/conftest.py`.
 - `junit.xml`
 - `report.html` (self-contained)
 - `summary.md`
-- `artifact-index.json`
 - suite logs and rendered outputs from tests
 
-`summary.md` stays concise and includes artifact references/snippets for failed tests only.
+`summary.md` stays concise and failure-focused; full logs stay in the artifacts directory and `report.html`.
 CI appends `summary.md` to GitHub Step Summary and uploads artifacts on every run.
 
 ## Structure
