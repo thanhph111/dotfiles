@@ -1,6 +1,7 @@
 *
 
 {{/* General */}}
+!ghostty
 !wezterm
 
 {{/* Linux and macOS */}}
