@@ -120,7 +120,7 @@ chezmoi update             # Pull and apply from repository
 1. Choose a codename and create `home/.Brewfiles/<codename>` with the package list
 2. Add the hostname case to `home/.chezmoi.toml.tmpl`:
 
-   ```go-template
+   ```text
    {{- else if eq $hostname "NewMachine" }}
    {{-     $codename = "NewMachine" -}}
    {{-     $vault = "VaultName" -}}

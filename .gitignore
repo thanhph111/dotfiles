@@ -261,9 +261,3 @@ $RECYCLE.BIN/
 *.lnk
 
 ### User configurations ###
-
-# Marimo
-__marimo__/
-
-# Environments
-.env
