@@ -47,7 +47,7 @@
         },
         "python.terminal.activateEnvironment": true,
         "python.testing.pytestArgs": [],
-        "python.testing.pytestEnabled": false,
+        "python.testing.pytestEnabled": true,
         "ty.configuration": {
             "rules": {
                 "unresolved-reference": "warn"
