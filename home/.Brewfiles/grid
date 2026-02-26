@@ -6,6 +6,8 @@ brew "mas"
 brew "mise"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
 # Command-line interface for 1Password
 cask "1password-cli"
 # Terminal emulator that uses platform-native UI and GPU acceleration
