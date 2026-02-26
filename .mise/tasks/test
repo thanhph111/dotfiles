@@ -115,6 +115,7 @@ if [ "$report" = "pretty" ]; then
   junit_path="$artifact_dir/junit.xml"
   html_path="$artifact_dir/report.html"
   summary_path="$artifact_dir/summary.md"
+  artifact_index_path="$artifact_dir/artifact-index.json"
 
   set +e
   TEST_ARTIFACT_DIR="$artifact_dir" uv run pytest -q -c tests/pytest.ini tests/suites \
@@ -128,8 +129,13 @@ if [ "$report" = "pretty" ]; then
     --self-contained-html
   pytest_status=$?
 
-  mise run test-build-summary \
+  if [ ! -f "$artifact_index_path" ]; then
+    printf '{\n  "tests": {}\n}\n' >"$artifact_index_path"
+  fi
+
+  ./.mise/tasks/test-build-summary.py \
     --junit "$junit_path" \
+    --artifact-index "$artifact_index_path" \
     --output "$summary_path" \
     --meta "tier=$tier" \
     --meta "suite=$suite" \

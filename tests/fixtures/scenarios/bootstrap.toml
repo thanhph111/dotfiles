@@ -5,10 +5,10 @@ expect_ready = false
 expect_applies = 1
 
 [[cases]]
-id = "token-service"
+id = "token-missing-op"
 profile = "agent"
-expect_ready = true
-expect_applies = 2
+expect_ready = false
+expect_applies = 1
 
 [[cases]]
 id = "authenticated-op"

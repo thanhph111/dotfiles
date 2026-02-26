@@ -47,5 +47,5 @@ agent = true
 personal = true
 with_token = true
 op_mode = "missing"
-expect_ready = true
-expect_applies = 2
+expect_ready = false
+expect_applies = 1

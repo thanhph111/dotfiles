@@ -38,6 +38,33 @@ def test_unix_bootstrap_mock(
     else:
         assert "Secrets are not ready" in output
 
+    if profile.with_token and profile.op_mode == "missing":
+        assert "OP_SERVICE_ACCOUNT_TOKEN is set but op CLI is not available on PATH." in output
+    elif not profile.with_token and profile.op_mode == "fail":
+        assert "op CLI is available but not authenticated." in output
+    elif not profile.with_token and profile.op_mode == "missing":
+        assert "op CLI is not available on PATH." in output
+
+
+@pytest.mark.tier_local
+@pytest.mark.platform_linux
+@pytest.mark.requires_docker
+def test_unix_bootstrap_mock_token_with_op_success(
+    docker_runner: DockerRunner, artifact_dir: Path, repo_root: Path
+) -> None:
+    script = load_script(repo_root, "bash", "bootstrap_unix_mock.sh")
+
+    env = {"PROFILE_ID": "token-with-op", "PROFILE_OP_MODE": "ok", "PROFILE_WITH_TOKEN": "1"}
+
+    result = docker_runner.run_bash(image="bash:5.2", script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, "bootstrap-unix-mock-token-with-op.log", output)
+
+    assert result.returncode == 0, output
+    assert len(re.findall(r"MOCK chezmoi apply", output)) == 2
+    assert "Secrets are ready" in output
+    assert "Running second apply" in output
+
 
 @pytest.mark.tier_full
 @pytest.mark.platform_linux
@@ -98,6 +125,44 @@ def test_powershell_bootstrap_mock(
     write_artifact(artifact_dir, f"bootstrap-powershell-mock-{profile.id}.log", output)
 
     assert result.returncode == 0, output
+    if profile.expect_ready:
+        assert "Secrets are ready" in output
+    else:
+        assert "Secrets are not ready" in output
+
+    if profile.with_token and profile.op_mode == "missing":
+        assert "OP_SERVICE_ACCOUNT_TOKEN is set but op CLI is not available on PATH." in output
+    elif not profile.with_token and profile.op_mode == "fail":
+        assert "op CLI is available but not authenticated." in output
+    elif not profile.with_token and profile.op_mode == "missing":
+        assert "op CLI is not available on PATH." in output
+
+
+@pytest.mark.tier_smoke
+@pytest.mark.platform_windows
+@pytest.mark.requires_docker
+def test_powershell_bootstrap_mock_token_with_op_success(
+    docker_runner: DockerRunner, artifact_dir: Path, repo_root: Path
+) -> None:
+    docker_runner.ensure_image(
+        PWSH_IMAGE, docker_runner.repo_root / "tests" / "docker" / "powershell.Dockerfile"
+    )
+    script = load_script(repo_root, "pwsh", "bootstrap_powershell_mock.ps1")
+
+    env = {
+        "PROFILE_ID": "token-with-op",
+        "PROFILE_WITH_TOKEN": "1",
+        "PROFILE_OP_MODE": "ok",
+        "PROFILE_EXPECT_APPLIES": "2",
+    }
+
+    result = docker_runner.run_pwsh(image=PWSH_IMAGE, script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, "bootstrap-powershell-mock-token-with-op.log", output)
+
+    assert result.returncode == 0, output
+    assert "Secrets are ready" in output
+    assert "Running second apply" in output
 
 
 @pytest.mark.tier_smoke
