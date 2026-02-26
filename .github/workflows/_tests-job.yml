@@ -56,6 +56,8 @@ jobs:
         shell: pwsh
         run: |
           iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
+          $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+          if ($chezmoi) { Split-Path $chezmoi.Source | Add-Content $env:GITHUB_PATH }
 
       - name: Run tests
         env:

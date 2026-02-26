@@ -254,7 +254,10 @@ def test_windows_hooks_render_and_parse_docker(
 def test_darwin_openclaw_hook_guard_native_ci(
     repo_root: Path, artifact_dir: Path, profiles_map: dict[str, Profile]
 ) -> None:
-    check = subprocess.run(["chezmoi", "--version"], text=True, capture_output=True, check=False)
+    try:
+        check = subprocess.run(["chezmoi", "--version"], text=True, capture_output=True, check=False)
+    except FileNotFoundError:
+        pytest.fail("chezmoi not found in PATH for native CI")
     assert check.returncode == 0, f"Missing chezmoi in CI native job\n{check.stderr}"
 
     profile = profiles_map["agent"]
@@ -301,7 +304,10 @@ def test_darwin_openclaw_hook_guard_native_ci(
 def test_windows_hooks_render_and_parse_native_ci(
     repo_root: Path, artifact_dir: Path, selected_profiles: list[Profile]
 ) -> None:
-    check = subprocess.run(["chezmoi", "--version"], text=True, capture_output=True, check=False)
+    try:
+        check = subprocess.run(["chezmoi", "--version"], text=True, capture_output=True, check=False)
+    except FileNotFoundError:
+        pytest.fail("chezmoi not found in PATH for native CI")
     assert check.returncode == 0, f"Missing chezmoi in CI native job\n{check.stderr}"
 
     templates = sorted((repo_root / "home" / ".chezmoiscripts" / "windows").glob("*.ps1.tmpl"))
