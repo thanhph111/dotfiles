@@ -1,5 +1,9 @@
+tap "antoniorodr/memo"
+tap "steipete/tap"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
+# Like neofetch, but much faster because written mostly in C
+brew "fastfetch"
 # Mac App Store command-line interface
 brew "mas"
 # Polyglot runtime manager (asdf rust clone)
@@ -8,12 +12,19 @@ brew "mise"
 brew "neovim"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
+# Your own personal AI assistant
+brew "openclaw-cli"
+# CLI app to manage your Apple Notes and Apple reminders
+brew "antoniorodr/memo/memo"
+# Fast CLI for Apple Reminders
+brew "steipete/tap/remindctl"
 # Command-line interface for 1Password
 cask "1password-cli"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
+# Personal AI assistant
+cask "openclaw"
 # Replacement for Docker Desktop
 cask "orbstack"
-# Utility to uninstall apps and remove leftover files from old/uninstalled apps
 # Open-source code editor
 cask "visual-studio-code"
