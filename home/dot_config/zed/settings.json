@@ -5,21 +5,21 @@
         "**/.git",
         "**/.venv",
         "**/*.lock",
-        "**/node_modules",
+        "**/node_modules"
     ],
     "icon_theme": "Zed (Default)",
     "agent": {
         "inline_assistant_model": {
             "provider": "copilot_chat",
-            "model": "claude-sonnet-4.5",
+            "model": "claude-sonnet-4.5"
         },
         "default_model": {
             "provider": "copilot_chat",
-            "model": "gpt-4o",
-        },
+            "model": "gpt-4o"
+        }
     },
     "features": {
-        "edit_prediction_provider": "zed",
+        "edit_prediction_provider": "zed"
     },
     "buffer_font_size": 13,
     "buffer_font_family": "SF Mono",
@@ -28,7 +28,7 @@
     "theme": {
         "mode": "system",
         "light": "One Light",
-        "dark": "One Dark",
+        "dark": "One Dark"
     },
     "terminal": {
         "font_family": "FiraCode Nerd Font",
@@ -38,14 +38,14 @@
         "shell": {
             "with_arguments": {
                 "program": "/bin/zsh",
-                "args": ["-is", "exec unset HISTFILE"],
-            },
+                "args": ["-is", "exec unset HISTFILE"]
+            }
         },
-        "env": {},
+        "env": {}
     },
     "telemetry": {
         "diagnostics": false,
-        "metrics": false,
+        "metrics": false
     },
     "languages": {
         "Python": {
@@ -53,29 +53,29 @@
             "format_on_save": "on",
             "formatter": [
                 {
-                    "code_action": "source.organizeImports.ruff",
+                    "code_action": "source.organizeImports.ruff"
                 },
                 {
-                    "code_action": "source.fixAll.ruff",
+                    "code_action": "source.fixAll.ruff"
                 },
                 {
                     "language_server": {
-                        "name": "ruff",
-                    },
-                },
-            ],
+                        "name": "ruff"
+                    }
+                }
+            ]
         },
         "JSON": {
-            "tab_size": 4,
+            "tab_size": 4
         },
         "JSONC": {
-            "tab_size": 4,
-        },
+            "tab_size": 4
+        }
     },
     "auto_install_extensions": {
         "html": true,
         "toml": true,
         "git-firefly": true,
-        "cspell": true,
-    },
+        "cspell": true
+    }
 }

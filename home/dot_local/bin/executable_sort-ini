@@ -16,19 +16,10 @@ class Arguments(Namespace):
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser()
 
+    parser.add_argument("file", type=Path, help="The file to sort")
+    parser.add_argument("-i", "--inline", action="store_true", help="Replace the original file")
     parser.add_argument(
-        "file",
-        type=Path,
-        help="The file to sort",
-    )
-    parser.add_argument(
-        "-i", "--inline", action="store_true", help="Replace the original file"
-    )
-    parser.add_argument(
-        "-s",
-        "--space-around",
-        action="store_true",
-        help="Add spaces around delimiters",
+        "-s", "--space-around", action="store_true", help="Add spaces around delimiters"
     )
 
     return parser

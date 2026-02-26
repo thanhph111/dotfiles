@@ -2,18 +2,18 @@
 
 import argparse
 import json
+import sys
 from abc import ABC, abstractmethod
 from enum import Enum
-from http.client import HTTPMessage
 from pathlib import Path
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 DEFAULT_PATH = Path.home() / ".local/bin"
 
 
 class Response(NamedTuple):
     body: str
-    headers: HTTPMessage
+    headers: dict[str, str]
     status: int
     error: bool = False
 
@@ -35,13 +35,13 @@ class Method(Enum):
 def request(
     url: str,
     method: Method = Method.GET,
-    headers: Optional[dict[str, str]] = None,
-    data: Optional[dict[str, str]] = None,
+    headers: dict[str, str] | None = None,
+    data: dict[str, str] | None = None,
     data_as_json: bool = True,
-    params: Optional[dict[str, str]] = None,
+    params: dict[str, str] | None = None,
     timeout: int = 60,
     max_redirects: int = 5,
-    ca_cert: Optional[str] = None,
+    ca_cert: str | None = None,
 ) -> Response:
     """
     https://github.com/bowmanjd/pysimpleurl
@@ -54,9 +54,7 @@ def request(
     import urllib.request
 
     if not url.lower().startswith("http"):
-        raise urllib.error.URLError(
-            "Incorrect and possibly insecure protocol in URL"
-        )
+        raise urllib.error.URLError("Incorrect and possibly insecure protocol in URL")
     request_data = None
     headers = headers or {}
     data = data or {}
@@ -105,8 +103,7 @@ def request(
                     new_url = http_response.getheader("Location", None)
                     if new_url is None:
                         raise ValueError(
-                            f"{url} returned a redirect response with no"
-                            " Location header"
+                            f"{url} returned a redirect response with no Location header"
                         )
                     return _fetch(new_url, remaining_redirects - 1)
 
@@ -177,7 +174,7 @@ def unarchive(file_path: Path, destination: Path) -> None:
     shutil.unpack_archive(file_path, destination)
 
 
-def check_signature(file_path: Path, signature: str) -> bool:
+def check_signature(file_path: Path, signature: str) -> bool | None:
     import hashlib
 
     if not file_path.exists():
@@ -191,12 +188,7 @@ def check_signature(file_path: Path, signature: str) -> bool:
 
 class Downloader(ABC):
     @abstractmethod
-    def download(
-        self,
-        file_pattern: str,
-        output_file: Path,
-        version: Optional[str] = None,
-    ) -> None:
+    def download(self, file_pattern: str, output_file: Path, version: str | None = None) -> None:
         pass
 
 
@@ -204,25 +196,16 @@ class GitHub(Downloader):
     def __init__(self, owner: str, repo: str) -> None:
         self.owner = owner
         self.repo = repo
-        self.api_url = (
-            f"https://api.github.com/repos/{self.owner}/{self.repo}/releases"
-        )
-        self.download_url = (
-            f"https://github.com/{self.owner}/{self.repo}/releases/download"
-        )
+        self.api_url = f"https://api.github.com/repos/{self.owner}/{self.repo}/releases"
+        self.download_url = f"https://github.com/{self.owner}/{self.repo}/releases/download"
 
-    def download(
-        self,
-        file_pattern: str,
-        output_file: Path,
-        version: Optional[str] = None,
-    ) -> None:
+    def download(self, file_pattern: str, output_file: Path, version: str | None = None) -> None:
         import re
 
         version = version or "latest"
         response = request(f"{self.api_url}/{version}")
         if response.error:
-            raise Exception(response.body)
+            raise RuntimeError(response.body)
 
         version = response.json()["tag_name"]
         browser_download_urls: list[str] = [
@@ -233,27 +216,22 @@ class GitHub(Downloader):
             (
                 url
                 for url in browser_download_urls
-                if re.search(
-                    file_pattern,
-                    url.removeprefix(f"{self.download_url}/{version}/"),
-                )
+                if re.search(file_pattern, url.removeprefix(f"{self.download_url}/{version}/"))
             ),
             None,
         )
         if not browser_download_url:
-            raise Exception(
-                f"Could not find {file_pattern} in {browser_download_urls}"
-            )
+            raise RuntimeError(f"Could not find {file_pattern} in {browser_download_urls}")
         download(browser_download_url, output_file)
 
 
 class App(ABC):
     @abstractmethod
-    def install(self, version: Optional[str] = None) -> None:
+    def install(self, version: str | None = None) -> None:
         pass
 
     @abstractmethod
-    def update(self, version: Optional[str] = None) -> None:
+    def update(self, version: str | None = None) -> None:
         pass
 
     @abstractmethod
@@ -263,29 +241,24 @@ class App(ABC):
 
 class WezTerm(App):
     def __init__(
-        self,
-        executable: Optional[str] = None,
-        install_directory: Optional[Path] = None,
+        self, executable: str | None = None, install_directory: Path | None = None
     ) -> None:
         self.executable = executable or "wezterm"
         self.install_directory = install_directory or Path.home() / ".local/bin"
         self.executable_path = self.install_directory / self.executable
 
-    def install(self, version: Optional[str] = None) -> None:
+    def install(self, version: str | None = None) -> None:
         github = GitHub("wez", "wezterm")
         if version == "nightly":
             download(
-                (
-                    f"{github.download_url}/nightly"
-                    "/WezTerm-nightly-Ubuntu18.04.AppImage"
-                ),
+                (f"{github.download_url}/nightly/WezTerm-nightly-Ubuntu18.04.AppImage"),
                 self.executable_path,
             )
         else:
             github.download(".AppImage$", self.executable_path, version)
         self.executable_path.chmod(0o755)
 
-    def update(self, version: Optional[str] = None) -> None:
+    def update(self, version: str | None = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -294,51 +267,39 @@ class WezTerm(App):
 
 class Kitty(App):
     def __init__(
-        self,
-        executable: Optional[str] = None,
-        install_directory: Optional[Path] = None,
+        self, executable: str | None = None, install_directory: Path | None = None
     ) -> None:
         self.executable = executable or "kitty"
-        self.install_directory = (
-            install_directory or Path.home() / ".local/apps/kitty"
-        )
+        self.install_directory = install_directory or Path.home() / ".local/apps/kitty"
 
-    def install(self, version: Optional[str] = None) -> None:
+    def install(self, version: str | None = None) -> None:
         architecture = "x86_64"
         github = GitHub("kovidgoyal", "kitty")
         if version == "nightly":
             tag = version = "nightly"
         else:
-            latest_version = request(
-                "https://sw.kovidgoyal.net/kitty/current-version.txt"
-            )
+            latest_version = request("https://sw.kovidgoyal.net/kitty/current-version.txt")
             if latest_version.error:
-                raise Exception(latest_version.body)
+                raise RuntimeError(latest_version.body)
             tag = "v" + (version := latest_version.body)
 
         archive_file_name = f"kitty-{version}-{architecture}.txz"
         archive_file = self.install_directory.parent / archive_file_name
         self.install_directory.parent.mkdir(parents=True, exist_ok=True)
-        download(
-            f"{github.download_url}/{tag}/{archive_file_name}", archive_file
-        )
+        download(f"{github.download_url}/{tag}/{archive_file_name}", archive_file)
 
         unarchive(archive_file, self.install_directory)
         archive_file.unlink()
 
         (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
-        (DEFAULT_PATH / self.executable).symlink_to(
-            self.install_directory / "bin/kitty"
-        )
+        (DEFAULT_PATH / self.executable).symlink_to(self.install_directory / "bin/kitty")
 
         application_directory = Path.home() / ".local/share/applications"
         application_directory.mkdir(parents=True, exist_ok=True)
         install_share_directory = self.install_directory / "share"
         for desktop_file_name in {"kitty.desktop", "kitty-open.desktop"}:
             exec_file = self.install_directory / "bin/kitty"
-            icon_file = (
-                install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
-            )
+            icon_file = install_share_directory / "icons/hicolor/256x256/apps/kitty.png"
             (application_directory / desktop_file_name).write_text(
                 (install_share_directory / "applications" / desktop_file_name)
                 .read_text()
@@ -346,7 +307,7 @@ class Kitty(App):
                 .replace("Icon=kitty", f"Icon={icon_file}")
             )
 
-    def update(self, version: Optional[str] = None) -> None:
+    def update(self, version: str | None = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -363,20 +324,18 @@ class Kitty(App):
 
 class Zap(App):
     def __init__(
-        self,
-        executable: Optional[str] = None,
-        install_directory: Optional[Path] = None,
+        self, executable: str | None = None, install_directory: Path | None = None
     ) -> None:
         self.executable = executable or "zap"
         self.install_directory = install_directory or Path.home() / ".local/bin"
         self.executable_path = self.install_directory / self.executable
 
-    def install(self, version: Optional[str] = None) -> None:
+    def install(self, version: str | None = None) -> None:
         github = GitHub("srevinsaju", "zap")
         github.download("^zap-amd64$", self.executable_path, version)
         self.executable_path.chmod(0o755)
 
-    def update(self, version: Optional[str] = None) -> None:
+    def update(self, version: str | None = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -385,16 +344,14 @@ class Zap(App):
 
 class Calibre(App):
     def __init__(
-        self,
-        executable: Optional[str] = None,
-        install_directory: Optional[Path] = None,
+        self, executable: str | None = None, install_directory: Path | None = None
     ) -> None:
         self.executable = executable or "calibre-server"
         self.install_directory = (
             install_directory and Path(install_directory).expanduser().resolve()
         ) or Path.home() / ".local/apps/calibre"
 
-    def install(self, version: Optional[str] = None) -> None:
+    def install(self, version: str | None = None) -> None:
         import errno
         import shutil
         import tempfile
@@ -443,33 +400,27 @@ nR0=
         print("Downloading tarball signature securely...")
         if version:
             response = request(
-                f"https://code.calibre-ebook.com/signatures/calibre-"
-                f"{version}-{arch}.txz.sha512",
+                f"https://code.calibre-ebook.com/signatures/calibre-{version}-{arch}.txz.sha512",
                 ca_cert=CACERT,
             )
             if response.error:
-                raise Exception(response.body)
+                raise RuntimeError(response.body)
             signature = response.body
             calibre_version = version
             download_url = (
-                f"https://download.calibre-ebook.com/{version}/calibre-"
-                f"{version}-{arch}.txz"
+                f"https://download.calibre-ebook.com/{version}/calibre-{version}-{arch}.txz"
             )
         else:
             response = request(
-                f"https://code.calibre-ebook.com/tarball-info/{arch}",
-                ca_cert=CACERT,
+                f"https://code.calibre-ebook.com/tarball-info/{arch}", ca_cert=CACERT
             )
             if response.error:
-                raise Exception(response.body)
+                raise RuntimeError(response.body)
             signature, calibre_version = response.body.split("@")
             download_url = f"https://calibre-ebook.com/dist/linux-{arch}"
 
         if not signature or not calibre_version:
-            raise ValueError(
-                "Failed to get install file signature, invalid signature"
-                " returned"
-            )
+            raise ValueError("Failed to get install file signature, invalid signature returned")
         if isinstance(calibre_version, bytes):
             calibre_version = calibre_version.decode("utf-8")
 
@@ -501,7 +452,7 @@ nR0=
             try:
                 with cached_signature_file.open("w") as f:
                     f.write(signature)
-            except IOError as e:
+            except OSError as e:
                 if e.errno != errno.EACCES:
                     raise
                 print(
@@ -516,8 +467,7 @@ nR0=
             if not signature_matched:
                 tarball_file.unlink()
                 print(
-                    "The downloaded files' signature does not match. "
-                    "Try the download again later."
+                    "The downloaded files' signature does not match. Try the download again later."
                 )
                 raise SystemExit(1)
 
@@ -532,11 +482,9 @@ nR0=
         # Create symlink
         print(f"Creating symlink to {DEFAULT_PATH / self.executable}...")
         (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
-        (DEFAULT_PATH / self.executable).symlink_to(
-            self.install_directory / self.executable
-        )
+        (DEFAULT_PATH / self.executable).symlink_to(self.install_directory / self.executable)
 
-    def update(self, version: Optional[str] = None) -> None:
+    def update(self, version: str | None = None) -> None:
         self.install(version)
 
     def uninstall(self) -> None:
@@ -546,48 +494,32 @@ nR0=
         (DEFAULT_PATH / self.executable).unlink(missing_ok=True)
 
 
-APPS = {
-    app_class.__name__.lower(): app_class for app_class in App.__subclasses__()
-}
+APPS = {app_class.__name__.lower(): app_class for app_class in App.__subclasses__()}
 
 
 def get_parser() -> argparse.ArgumentParser:
-    import argparse
-
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(help="sub-command help", dest="command")
     subparsers.required = True
 
     install_parser = subparsers.add_parser("install", help="install help")
-    install_parser.add_argument(
-        "app", choices=APPS.keys(), help="app to install"
-    )
+    install_parser.add_argument("app", choices=APPS.keys(), help="app to install")
     install_parser.add_argument("--version", help="version to install")
-    install_parser.set_defaults(
-        func=lambda args: APPS[args.app]().install(args.version)
-    )
+    install_parser.set_defaults(func=lambda args: APPS[args.app]().install(args.version))
 
     update_parser = subparsers.add_parser("update", help="update help")
     update_parser.add_argument("app", choices=APPS.keys(), help="app to update")
     update_parser.add_argument("--version", help="version to update")
-    update_parser.set_defaults(
-        func=lambda args: APPS[args.app]().update(args.version)
-    )
+    update_parser.set_defaults(func=lambda args: APPS[args.app]().update(args.version))
 
     uninstall_parser = subparsers.add_parser("uninstall", help="uninstall help")
-    uninstall_parser.add_argument(
-        "app", choices=APPS.keys(), help="app to uninstall"
-    )
-    uninstall_parser.set_defaults(
-        func=lambda args: APPS[args.app]().uninstall()
-    )
+    uninstall_parser.add_argument("app", choices=APPS.keys(), help="app to uninstall")
+    uninstall_parser.set_defaults(func=lambda args: APPS[args.app]().uninstall())
 
     return parser
 
 
 def main() -> None:
-    import sys
-
     parser = get_parser()
     args = parser.parse_args(sys.argv[1:])
     args.func(args)

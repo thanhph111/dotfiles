@@ -1,61 +1,61 @@
 {
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blocks": [
-    {
-      "type": "prompt",
-      "alignment": "left",
-      "segments": [
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
         {
-          "properties": {
-            "cache_duration": "none"
-          },
-          "template": "{{ .UserName }}@{{ .HostName }} ",
-          "foreground": "yellow",
-          "type": "session",
-          "style": "plain"
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "properties": {
+                        "cache_duration": "none"
+                    },
+                    "template": "{{ .UserName }}@{{ .HostName }} ",
+                    "foreground": "yellow",
+                    "type": "session",
+                    "style": "plain"
+                },
+                {
+                    "properties": {
+                        "cache_duration": "none",
+                        "style": "full"
+                    },
+                    "template": "{{ .Path }} ",
+                    "foreground": "blue",
+                    "type": "path",
+                    "style": "plain"
+                },
+                {
+                    "properties": {
+                        "branch_icon": "",
+                        "cache_duration": "none",
+                        "fetch_status": true
+                    },
+                    "template": "<default>git:</>{{ if or (.Working.Changed) (.Staging.Changed) (gt .StashCount 0) }}<yellow>{{ .HEAD }}</>{{ else }}{{ .HEAD }}{{ end }}{{ if .Staging.Changed }} <green>{{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }} <red>{{ .Working.String }}</>{{ end }}",
+                    "type": "git",
+                    "style": "plain"
+                }
+            ]
         },
         {
-          "properties": {
-            "cache_duration": "none",
-            "style": "full"
-          },
-          "template": "{{ .Path }} ",
-          "foreground": "blue",
-          "type": "path",
-          "style": "plain"
-        },
-        {
-          "properties": {
-            "branch_icon": "",
-            "cache_duration": "none",
-            "fetch_status": true
-          },
-          "template": "<default>git:</>{{ if or (.Working.Changed) (.Staging.Changed) (gt .StashCount 0) }}<yellow>{{ .HEAD }}</>{{ else }}{{ .HEAD }}{{ end }}{{ if .Staging.Changed }} <green>{{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }} <red>{{ .Working.String }}</>{{ end }}",
-          "type": "git",
-          "style": "plain"
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "properties": {
+                        "always_enabled": true,
+                        "cache_duration": "none"
+                    },
+                    "template": "> ",
+                    "foreground": "yellow",
+                    "type": "status",
+                    "style": "plain",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}blue{{ end }}"
+                    ]
+                }
+            ],
+            "newline": true
         }
-      ]
-    },
-    {
-      "type": "prompt",
-      "alignment": "left",
-      "segments": [
-        {
-          "properties": {
-            "always_enabled": true,
-            "cache_duration": "none"
-          },
-          "template": "> ",
-          "foreground": "yellow",
-          "type": "status",
-          "style": "plain",
-          "foreground_templates": [
-            "{{ if gt .Code 0 }}blue{{ end }}"
-          ]
-        }
-      ],
-      "newline": true
-    }
-  ],
-  "version": 3
+    ],
+    "version": 3
 }

@@ -26,33 +26,32 @@ skip_notify = true
 # ]
 
 # Don't pull the predefined git repos
-#pull_predefined = false
+# pull_predefined = false
 
 # Arguments to pass Git when pulling Repositories
-#arguments = "--rebase --autostash"
+# arguments = "--rebase --autostash"
 
 [composer]
 self_update = false
 
 # Commands to run before anything
 [pre_commands]
-#"Emacs Snapshot" = "rm -rf ~/.emacs.d/elpa.bak && cp -rl ~/.emacs.d/elpa ~/.emacs.d/elpa.bak"
+# "Emacs Snapshot" = "rm -rf ~/.emacs.d/elpa.bak && cp -rl ~/.emacs.d/elpa ~/.emacs.d/elpa.bak"
 
 # Custom commands
 [commands]
 "chezmoi" = "chezmoi update"
 
 [brew]
-#greedy_cask = true
+# greedy_cask = true
 autoremove = true
 
 [linux]
 
-
 [windows]
 # Manually select Windows updates
-#accept_all_updates = false
-#open_remotes_in_new_terminal = true
+# accept_all_updates = false
+# open_remotes_in_new_terminal = true
 
 # Causes Topgrade to rename itself during the run to allow package managers
 # to upgrade it. Use this only if you installed Topgrade by using a package
@@ -61,4 +60,4 @@ self_rename = true
 
 [firmware]
 # Offer to update firmware; if false just check for and display available updates
-#upgrade = true
+# upgrade = true

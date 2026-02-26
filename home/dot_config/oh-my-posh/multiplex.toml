@@ -1,10 +1,10 @@
-#: schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-#: https://ohmyposh.dev/docs
-#: https://www.nerdfonts.com/cheat-sheet
-#: https://onlineunicodetools.com/escape-unicode
-#: https://dencode.com/en/string/unicode-escape
+# : schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+# : https://ohmyposh.dev/docs
+# : https://www.nerdfonts.com/cheat-sheet
+# : https://onlineunicodetools.com/escape-unicode
+# : https://dencode.com/en/string/unicode-escape
 
-#: Version: 19.16.1
+# : Version: 19.16.1
 
 disable_notice = true
 console_title_template = "{{ .Shell }} \u2724 {{ .Folder }}"
@@ -237,20 +237,20 @@ template = "{{ if .Env.OMP_SUFFIX }}{{ .Env.OMP_SUFFIX }}{{ end }}"
 type = "text"
 
 [palette]
-#: Create palette match terminal colors
-black = "black"               # "#181a1b"
-blue = "blue"                 # "#0a6ab6"
-cyan = "cyan"                 # "#37aab9"
-darkGray = "darkGray"         # "#555b5e"
-green = "green"               # "#2b803e"
-lightBlue = "lightBlue"       # "#0287c3"
-lightCyan = "lightCyan"       # "#4ae3f7"
-lightGreen = "lightGreen"     # "#addd1e"
+# : Create palette match terminal colors
+black = "black" # "#181a1b"
+blue = "blue" # "#0a6ab6"
+cyan = "cyan" # "#37aab9"
+darkGray = "darkGray" # "#555b5e"
+green = "green" # "#2b803e"
+lightBlue = "lightBlue" # "#0287c3"
+lightCyan = "lightCyan" # "#4ae3f7"
+lightGreen = "lightGreen" # "#addd1e"
 lightMagenta = "lightMagenta" # "#d10aff"
-lightRed = "lightRed"         # "#ff3078"
-lightWhite = "lightWhite"     # "#dcdfe4"
-lightYellow = "lightYellow"   # "#ffec16"
-magenta = "magenta"           # "#522e92"
-red = "red"                   # "#a91409"
-white = "white"               # "#788187"
-yellow = "yellow"             # "#cc7a00"
+lightRed = "lightRed" # "#ff3078"
+lightWhite = "lightWhite" # "#dcdfe4"
+lightYellow = "lightYellow" # "#ffec16"
+magenta = "magenta" # "#522e92"
+red = "red" # "#a91409"
+white = "white" # "#788187"
+yellow = "yellow" # "#cc7a00"

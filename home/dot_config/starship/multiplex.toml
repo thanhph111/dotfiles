@@ -1,4 +1,4 @@
-#: https://starship.rs/config
+# : https://starship.rs/config
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = false

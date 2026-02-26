@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-
 # Reference: https://gist.github.com/jamesmacfie/2061023e5365e8b6bfbbc20792ac90f8
 
-import iterm2
-
+import iterm2  # ty:ignore[unresolved-import]
 
 DARK_THEME_NAME = "Multiplex Dark"
 LIGHT_THEME_NAME = "Multiplex Light"

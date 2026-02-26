@@ -1,11 +1,9 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions":
-    [
+    "actions": [
         {
-            "command":
-            {
+            "command": {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -18,38 +16,31 @@
     "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
     "initialCols": 122,
     "initialRows": 35,
-    "newTabMenu":
-    [
+    "newTabMenu": [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles":
-    {
-        "defaults":
-        {
+    "profiles": {
+        "defaults": {
             "colorScheme": "Material",
-            "font":
-            {
+            "font": {
                 "size": 10.0
             },
             "opacity": 85,
             "padding": "18, 10, 0, 10",
             "useAcrylic": true
         },
-        "list":
-        [
+        "list": [
             {
-                "bellStyle":
-                [
+                "bellStyle": [
                     "audible",
                     "window"
                 ],
                 "commandline": "powershell.exe -nologo",
                 "cursorColor": "#E5C07B",
                 "cursorShape": "bar",
-                "font":
-                {
+                "font": {
                     "face": "FiraCode Nerd Font",
                     "weight": "normal"
                 },
@@ -61,8 +52,7 @@
             {
                 "commandline": "vim.exe",
                 "cursorShape": "filledBox",
-                "font":
-                {
+                "font": {
                     "face": "FiraCode NF"
                 },
                 "guid": "{1c2647bc-4b58-40da-81a1-214cd972f1ec}",
@@ -86,8 +76,7 @@
             }
         ]
     },
-    "schemes":
-    [
+    "schemes": [
         {
             "background": "#0C0C0C",
             "black": "#0C0C0C",
@@ -343,46 +332,39 @@
         }
     ],
     "tabSwitcherMode": "mru",
-    "themes":
-    [
+    "themes": [
         {
             "name": "legacyDark",
-            "tab":
-            {
+            "tab": {
                 "background": null,
                 "showCloseButton": "always",
                 "unfocusedBackground": null
             },
-            "window":
-            {
+            "window": {
                 "applicationTheme": "dark",
                 "useMica": false
             }
         },
         {
             "name": "legacyLight",
-            "tab":
-            {
+            "tab": {
                 "background": null,
                 "showCloseButton": "always",
                 "unfocusedBackground": null
             },
-            "window":
-            {
+            "window": {
                 "applicationTheme": "light",
                 "useMica": false
             }
         },
         {
             "name": "legacySystem",
-            "tab":
-            {
+            "tab": {
                 "background": null,
                 "showCloseButton": "always",
                 "unfocusedBackground": null
             },
-            "window":
-            {
+            "window": {
                 "applicationTheme": "system",
                 "useMica": false
             }
