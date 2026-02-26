@@ -1,15 +1,14 @@
-{{- if and (eq .chezmoi.os "darwin" "linux") (lookPath "gh") -}}
-
+{{- if eq .chezmoi.os "darwin" "linux" -}}
 
 #!/usr/bin/env bash
 
 # .extensions hash: {{ include "dot_config/gh/.extensions" | sha256sum }}
+# gh: {{ lookPath "gh" }}
 
 set -euo pipefail
 
 if ! command -v gh &>/dev/null; then
-    echo "gh is not installed"
-    exit 1
+    exit 0
 fi
 
 while read -r extension; do

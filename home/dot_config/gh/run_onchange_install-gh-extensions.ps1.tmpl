@@ -1,6 +1,9 @@
 {{- if eq .chezmoi.os "windows" -}}
 
 # .extensions hash: {{ include "dot_config/gh/.extensions" | sha256sum }}
+# gh: {{ lookPath "gh" }}
+
+if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { exit 0 }
 
 $extensionsFile = "$env:CHEZMOI_SOURCE_DIR\dot_config\gh\.extensions"
 
