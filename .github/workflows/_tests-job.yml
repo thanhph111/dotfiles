@@ -56,6 +56,15 @@ jobs:
         shell: pwsh
         run: |
           iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
+          # The installer places chezmoi.exe in .\bin\ relative to $PWD.
+          # Add that directory to GITHUB_PATH so subsequent steps can find it.
+          $binDir = "$PWD\bin"
+          if (Test-Path "$binDir\chezmoi.exe") {
+            $binDir | Add-Content $env:GITHUB_PATH
+          } else {
+            $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+            if ($chezmoi) { Split-Path $chezmoi.Source | Add-Content $env:GITHUB_PATH }
+          }
 
       - name: Run tests
         env:
