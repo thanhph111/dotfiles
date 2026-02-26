@@ -1,0 +1,19 @@
+[tools]
+dprint = 'latest'
+markdownlint-cli2 = 'latest'
+prek = 'latest'
+ruff = 'latest'
+ty = 'latest'
+uv = 'latest'
+
+[shell_alias]
+xsetup = 'mise run setup'
+xlint = 'mise run lint'
+
+[tasks.setup]
+description = 'Set up the environment for development'
+run = ['uv sync --frozen', 'prek install']
+
+[tasks.lint]
+description = 'Run all linting checks'
+run = 'prek --all-files'

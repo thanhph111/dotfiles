@@ -1,0 +1,18 @@
+[project]
+name = "dotfiles"
+version = "0.0.0"
+description = "Dotfiles for configuring my development environment"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = []
+
+[dependency-groups]
+dev = []
+
+[tool.ruff]
+extend-exclude = []
+fix = true
+line-length = 100
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
