@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 set -euo pipefail
 
 mock_root="$(mktemp -d)"

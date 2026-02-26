@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+# shellcheck disable=SC1083,SC2288
 set -euo pipefail
 
 mockbin="$(mktemp -d)"
