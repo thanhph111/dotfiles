@@ -17,6 +17,20 @@ esac
 #: If the `$HOME` is not set (such as `env -i bash`), stop for safety
 [ -z "$HOME" ] && return 1
 
+#: Prepare environment {{{
+
+#: Create config directory
+export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+export SHELL_CONFIG_DIR="$USER_CONFIG_DIR/$SHELL_NAME"
+[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CONFIG_DIR"
+
+#: Create cache directory
+export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
+[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CACHE_DIR"
+
+#: }}}
+
 #: Functions {{{
 
 #: Check if a file readable and source it without repeating filepath
@@ -71,20 +85,6 @@ command_exists pactl && {
 #: Source all other function files in my directory
 [ -d "$SHELL_CONFIG_DIR"/functions ] &&
     for file in "$SHELL_CONFIG_DIR"/functions/*; do include "$file"; done
-
-#: }}}
-
-#: Prepare environment {{{
-
-#: Create config directory
-export USER_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
-export SHELL_CONFIG_DIR="$USER_CONFIG_DIR/$SHELL_NAME"
-[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CONFIG_DIR"
-
-#: Create cache directory
-export USER_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
-export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
-[ -x /bin/mkdir ] && /bin/mkdir -p "$SHELL_CACHE_DIR"
 
 #: }}}
 
