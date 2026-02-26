@@ -128,7 +128,7 @@ if [ "$report" = "pretty" ]; then
     --self-contained-html
   pytest_status=$?
 
-  test-build-summary \
+  mise run test-build-summary \
     --junit "$junit_path" \
     --output "$summary_path" \
     --meta "tier=$tier" \
