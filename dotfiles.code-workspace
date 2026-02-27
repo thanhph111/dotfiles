@@ -47,6 +47,7 @@
         "python.terminal.activateEnvironment": true,
         "python.testing.pytestArgs": [],
         "python.testing.pytestEnabled": false,
+        "ruff.importStrategy": "useBundled",
         "ty.configuration": {
             "rules": {
                 "unresolved-reference": "warn"
