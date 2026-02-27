@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+# Python 3.9 compatibility
+from __future__ import annotations
+
 import json
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
-from typing import Self
 
 
 @dataclass
@@ -15,7 +17,7 @@ class Rgb:
     blue: int
 
     @classmethod
-    def from_hex(cls, hex_code: str) -> Self:
+    def from_hex(cls, hex_code: str) -> Rgb:
         return cls(*bytes.fromhex(hex_code.lstrip("#")))
 
 
@@ -127,7 +129,7 @@ class Collection:
     characters: list[Character]
 
     @classmethod
-    def from_file(cls, path: str) -> Self:
+    def from_file(cls, path: str) -> Collection:
         with open(path) as file:
             data = json.load(file)
         return cls(

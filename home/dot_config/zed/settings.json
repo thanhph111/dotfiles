@@ -1,5 +1,8 @@
 // Documentation: https://zed.dev/docs/configuring-zed
 {
+    "edit_predictions": {
+        "provider": "zed"
+    },
     "file_scan_exclusions": [
         "**/__pycache__",
         "**/.git",
@@ -17,9 +20,6 @@
             "provider": "copilot_chat",
             "model": "gpt-4o"
         }
-    },
-    "features": {
-        "edit_prediction_provider": "zed"
     },
     "buffer_font_size": 13,
     "buffer_font_family": "SF Mono",
@@ -73,9 +73,10 @@
         }
     },
     "auto_install_extensions": {
-        "html": true,
-        "toml": true,
+        "cspell": true,
         "git-firefly": true,
-        "cspell": true
+        "html": true,
+        "log": true,
+        "toml": true
     }
 }
