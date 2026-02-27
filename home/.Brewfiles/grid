@@ -1,5 +1,9 @@
 tap "antoniorodr/memo"
 tap "steipete/tap"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
 # Like neofetch, but much faster because written mostly in C
@@ -18,6 +22,10 @@ brew "openclaw-cli"
 brew "antoniorodr/memo/memo"
 # Fast CLI for Apple Reminders
 brew "steipete/tap/remindctl"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
 # Command-line interface for 1Password
 cask "1password-cli"
 # Terminal emulator that uses platform-native UI and GPU acceleration
@@ -26,5 +34,5 @@ cask "ghostty"
 cask "openclaw"
 # Replacement for Docker Desktop
 cask "orbstack"
-# Open-source code editor
-cask "visual-studio-code"
+# Multiplayer code editor
+cask "zed"
