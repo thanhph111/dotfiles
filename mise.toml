@@ -2,8 +2,6 @@
 dprint = 'latest'
 markdownlint-cli2 = 'latest'
 prek = 'latest'
-ruff = 'latest'
-ty = 'latest'
 uv = 'latest'
 shfmt = "latest"
 shellcheck = "latest"
