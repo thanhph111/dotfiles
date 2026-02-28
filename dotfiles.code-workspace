@@ -13,6 +13,9 @@
         "editor.wordWrap": "bounded",
 
         // Files
+        "files.associations": {
+            "*.tmpl": "go-template"
+        },
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
         "files.trimFinalNewlines": true,
@@ -48,12 +51,8 @@
         "python.terminal.activateEnvironment": true,
         "python.testing.pytestArgs": [],
         "python.testing.pytestEnabled": true,
-        "ruff.importStrategy": "useBundled",
-        "ty.configuration": {
-            "rules": {
-                "unresolved-reference": "warn"
-            }
-        },
+        "ruff.importStrategy": "fromEnvironment",
+        "ty.importStrategy": "fromEnvironment",
 
         // Dprint formatter
         "[css]": { "editor.defaultFormatter": "dprint.dprint" },
@@ -71,7 +70,21 @@
         "[toml]": { "editor.defaultFormatter": "dprint.dprint" },
         "[typescript]": { "editor.defaultFormatter": "dprint.dprint" },
         "[typescriptreact]": { "editor.defaultFormatter": "dprint.dprint" },
-        "[yaml]": { "editor.defaultFormatter": "dprint.dprint" }
+        "[yaml]": { "editor.defaultFormatter": "dprint.dprint" },
+
+        // Explicit Folding
+        "explicitFolding.rules": {
+            "*": {
+                "begin": "{{{",
+                "end": "}}}",
+                "autoFold": false
+            },
+            "go-template": {
+                "begin": "<<<",
+                "end": ">>>",
+                "autoFold": true
+            }
+        }
     },
     "extensions": {
         "recommendations": [
@@ -81,7 +94,9 @@
             "davidanson.vscode-markdownlint",
             "dprint.dprint",
             "ms-python.debugpy",
-            "ms-python.python"
+            "ms-python.python",
+            "romantomjak.go-template",
+            "zokugun.explicit-folding"
         ]
     },
     "launch": {}

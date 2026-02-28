@@ -365,6 +365,13 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
 
 #: }}}
 
+#: Obsidian {{{
+
+[ -d "/Applications/Obsidian.app/Contents/MacOS" ] &&
+    export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+
+#: }}}
+
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
