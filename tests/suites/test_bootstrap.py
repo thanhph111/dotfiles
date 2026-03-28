@@ -1,0 +1,211 @@
+from pathlib import Path
+import re
+import subprocess
+
+import pytest
+
+from helpers.artifacts import write_artifact
+from helpers.docker_cli import DockerRunner, LINUX_IMAGE, PWSH_IMAGE
+from helpers.matrix import BootstrapCase, Matrix, Profile
+from helpers.scripts import load_script
+
+
+def _bootstrap_case_by_profile(matrix: Matrix) -> dict[str, BootstrapCase]:
+    return {case.profile: case for case in matrix.bootstrap_cases()}
+
+
+@pytest.mark.tier_local
+@pytest.mark.platform_linux
+@pytest.mark.requires_docker
+def test_unix_bootstrap_mock(
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
+) -> None:
+    script = load_script(repo_root, "bash", "bootstrap_unix_mock.sh")
+
+    env = {
+        "PROFILE_ID": profile.id,
+        "PROFILE_OP_MODE": profile.op_mode,
+        "PROFILE_WITH_TOKEN": "1" if profile.with_token else "0",
+    }
+
+    result = docker_runner.run_bash(image="bash:5.2", script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, f"bootstrap-unix-mock-{profile.id}.log", output)
+
+    assert result.returncode == 0, output
+
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
+    actual_applies = len(re.findall(r"MOCK chezmoi apply", output))
+    assert actual_applies == case.expect_applies
+
+    if case.expect_ready:
+        assert "Secrets are ready" in output
+    else:
+        assert "Secrets are not ready" in output
+
+    if profile.with_token and profile.op_mode == "missing":
+        assert "OP_SERVICE_ACCOUNT_TOKEN is set but op CLI is not available on PATH." in output
+    elif not profile.with_token and profile.op_mode == "fail":
+        assert "op CLI is available but not authenticated." in output
+    elif not profile.with_token and profile.op_mode == "missing":
+        assert "op CLI is not available on PATH." in output
+
+
+@pytest.mark.tier_local
+@pytest.mark.platform_linux
+@pytest.mark.requires_docker
+def test_unix_bootstrap_mock_token_with_op_success(
+    docker_runner: DockerRunner, artifact_dir: Path, repo_root: Path
+) -> None:
+    script = load_script(repo_root, "bash", "bootstrap_unix_mock.sh")
+
+    env = {"PROFILE_ID": "token-with-op", "PROFILE_OP_MODE": "ok", "PROFILE_WITH_TOKEN": "1"}
+
+    result = docker_runner.run_bash(image="bash:5.2", script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, "bootstrap-unix-mock-token-with-op.log", output)
+
+    assert result.returncode == 0, output
+    assert len(re.findall(r"MOCK chezmoi apply", output)) == 2
+    assert "Secrets are ready" in output
+    assert "Running second apply" in output
+
+
+@pytest.mark.tier_full
+@pytest.mark.platform_linux
+@pytest.mark.requires_docker
+def test_unix_bootstrap_integration(
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
+) -> None:
+    docker_runner.ensure_image(
+        LINUX_IMAGE, docker_runner.repo_root / "tests" / "docker" / "linux.Dockerfile"
+    )
+    script = load_script(repo_root, "bash", "bootstrap_unix_integration.sh")
+
+    env = {
+        "PROFILE_ID": profile.id,
+        "PROFILE_CODENAME": profile.codename,
+        "PROFILE_VAULT": profile.vault,
+        "PROFILE_CLIENT": "1" if profile.client else "0",
+        "PROFILE_AGENT": "1" if profile.agent else "0",
+        "PROFILE_PERSONAL": "1" if profile.personal else "0",
+        "PROFILE_WITH_TOKEN": "1" if profile.with_token else "0",
+        "PROFILE_OP_MODE": profile.op_mode,
+    }
+
+    result = docker_runner.run_bash(image=LINUX_IMAGE, script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, f"bootstrap-unix-integration-{profile.id}.log", output)
+
+    assert result.returncode == 0, output
+
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
+    if case.expect_ready:
+        assert "Secrets are ready" in output
+        assert "Running second apply" in output
+    else:
+        assert "Secrets are not ready" in output
+        assert "Running second apply" not in output
+
+
+@pytest.mark.tier_smoke
+@pytest.mark.platform_windows
+@pytest.mark.requires_docker
+def test_powershell_bootstrap_mock(
+    docker_runner: DockerRunner,
+    artifact_dir: Path,
+    profile: Profile,
+    repo_root: Path,
+    matrix: Matrix,
+) -> None:
+    docker_runner.ensure_image(
+        PWSH_IMAGE, docker_runner.repo_root / "tests" / "docker" / "powershell.Dockerfile"
+    )
+    script = load_script(repo_root, "pwsh", "bootstrap_powershell_mock.ps1")
+    cases_by_profile = _bootstrap_case_by_profile(matrix)
+    case = cases_by_profile[profile.id]
+
+    env = {
+        "PROFILE_ID": profile.id,
+        "PROFILE_WITH_TOKEN": "1" if profile.with_token else "0",
+        "PROFILE_OP_MODE": profile.op_mode,
+        "PROFILE_EXPECT_APPLIES": str(case.expect_applies),
+    }
+
+    result = docker_runner.run_pwsh(image=PWSH_IMAGE, script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, f"bootstrap-powershell-mock-{profile.id}.log", output)
+
+    assert result.returncode == 0, output
+    if case.expect_ready:
+        assert "Secrets are ready" in output
+    else:
+        assert "Secrets are not ready" in output
+
+    if profile.with_token and profile.op_mode == "missing":
+        assert "OP_SERVICE_ACCOUNT_TOKEN is set but op CLI is not available on PATH." in output
+    elif not profile.with_token and profile.op_mode == "fail":
+        assert "op CLI is available but not authenticated." in output
+    elif not profile.with_token and profile.op_mode == "missing":
+        assert "op CLI is not available on PATH." in output
+
+
+@pytest.mark.tier_smoke
+@pytest.mark.platform_windows
+@pytest.mark.requires_docker
+def test_powershell_bootstrap_mock_token_with_op_success(
+    docker_runner: DockerRunner, artifact_dir: Path, repo_root: Path
+) -> None:
+    docker_runner.ensure_image(
+        PWSH_IMAGE, docker_runner.repo_root / "tests" / "docker" / "powershell.Dockerfile"
+    )
+    script = load_script(repo_root, "pwsh", "bootstrap_powershell_mock.ps1")
+
+    env = {
+        "PROFILE_ID": "token-with-op",
+        "PROFILE_WITH_TOKEN": "1",
+        "PROFILE_OP_MODE": "ok",
+        "PROFILE_EXPECT_APPLIES": "2",
+    }
+
+    result = docker_runner.run_pwsh(image=PWSH_IMAGE, script=script, env=env)
+    output = result.stdout + result.stderr
+    write_artifact(artifact_dir, "bootstrap-powershell-mock-token-with-op.log", output)
+
+    assert result.returncode == 0, output
+    assert "Secrets are ready" in output
+    assert "Running second apply" in output
+
+
+@pytest.mark.tier_smoke
+@pytest.mark.platform_windows
+@pytest.mark.native_ci_only
+def test_windows_native_bootstrap_script_parses(repo_root: Path) -> None:
+    script = "\n".join(
+        [
+            "$tokens = $null",
+            "$errors = $null",
+            "[void][System.Management.Automation.Language.Parser]::ParseFile('script/bootstrap-first-run.ps1', [ref]$tokens, [ref]$errors)",
+            "if ($errors.Count -gt 0) { exit 1 }",
+        ]
+    )
+
+    result = subprocess.run(
+        ["pwsh", "-NoLogo", "-NoProfile", "-Command", script],
+        cwd=repo_root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, f"STDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"

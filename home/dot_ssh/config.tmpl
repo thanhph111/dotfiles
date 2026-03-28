@@ -33,10 +33,13 @@ Host cloud9-*
 #: Specify the instance ID here
 #     HostName i-something
 
-{{ if and .client (lookPath "op") -}}
+{{/* Invariant: bootstrap runs second apply only after op CLI + auth are ready. */}}
+{{- $secretsEnabled := or (index . "secretsEnabled") (env "OP_SERVICE_ACCOUNT_TOKEN") (eq (env "CHEZMOI_ENABLE_SECRETS") "1") -}}
+
+{{ if and .client $secretsEnabled -}}
 {{-     onepasswordRead "op://Personal/SSH servers/notesPlain" -}}
 {{- end }}
 
-{{ if and (eq .codename "HAL") (lookPath "op") -}}
+{{ if and (eq .codename "HAL") $secretsEnabled -}}
 {{-     onepasswordRead (print "op://" .vault "/SSH config/notesPlain") -}}
 {{- end -}}

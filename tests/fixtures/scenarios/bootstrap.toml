@@ -1,0 +1,23 @@
+[[cases]]
+id = "no-token-no-op"
+profile = "personal"
+expect_ready = false
+expect_applies = 1
+
+[[cases]]
+id = "token-missing-op"
+profile = "agent"
+expect_ready = false
+expect_applies = 1
+
+[[cases]]
+id = "authenticated-op"
+profile = "client-auth"
+expect_ready = true
+expect_applies = 2
+
+[[cases]]
+id = "unauthenticated-op"
+profile = "client"
+expect_ready = false
+expect_applies = 1

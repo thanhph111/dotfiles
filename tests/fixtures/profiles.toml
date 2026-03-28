@@ -1,0 +1,43 @@
+[profiles.personal]
+id = "personal"
+hostname = "T-X"
+codename = "T-X"
+vault = "Personal"
+client = false
+agent = false
+personal = true
+with_token = false
+op_mode = "missing"
+
+[profiles.client]
+id = "client"
+hostname = "TARS"
+codename = "TARS"
+vault = "Personal"
+client = true
+agent = false
+personal = true
+with_token = false
+op_mode = "fail"
+
+[profiles."client-auth"]
+id = "client-auth"
+hostname = "TARS"
+codename = "TARS"
+vault = "Personal"
+client = true
+agent = false
+personal = true
+with_token = false
+op_mode = "ok"
+
+[profiles.agent]
+id = "agent"
+hostname = "Grid"
+codename = "Grid"
+vault = "CLU"
+client = false
+agent = true
+personal = true
+with_token = true
+op_mode = "missing"

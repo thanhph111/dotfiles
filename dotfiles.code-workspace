@@ -25,6 +25,7 @@
             "**/*.lock": true,
             "**/.DS_Store": true,
             "**/.git": true,
+            "**/.pytest_cache": true,
             "**/.ruff_cache": true,
             "**/.venv": true,
             "**/Thumbs.db": true
@@ -49,7 +50,7 @@
         },
         "python.terminal.activateEnvironment": true,
         "python.testing.pytestArgs": [],
-        "python.testing.pytestEnabled": false,
+        "python.testing.pytestEnabled": true,
         "ruff.importStrategy": "fromEnvironment",
         "ty.importStrategy": "fromEnvironment",
 

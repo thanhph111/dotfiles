@@ -16,7 +16,7 @@ development environment across multiple machines (macOS, Debian, Windows).
 | Rev-9    | Linux   | personal         | Personal |
 | Arwen    | Windows | personal         | Personal |
 
-## Setup: new Mac
+## Setup: new machine
 
 ### 1. Prepare the repo (on an existing machine)
 
@@ -24,15 +24,17 @@ development environment across multiple machines (macOS, Debian, Windows).
 - Add hostname detection in [`home/.chezmoi.toml.tmpl`](./home/.chezmoi.toml.tmpl)
 - Push to the repository
 
-### 2. Set the ComputerName (on the new machine)
+### 2. Set hostname (on the new machine)
 
-The hostname must match the codename exactly (case-sensitive):
+On macOS, the `ComputerName` must match the codename exactly (case-sensitive):
 
 ```bash
 sudo scutil --set ComputerName "Grid"  # or your codename
 ```
 
 ### 3. Install chezmoi and clone
+
+macOS / Linux:
 
 ```bash
 mkdir -p ~/Documents/Projects/Personal
@@ -42,30 +44,66 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 ./bin/chezmoi init -S ~/Documents/Projects/Personal/dotfiles thanhph111
 ```
 
-### 4. First apply (installs Homebrew + packages)
+Windows (PowerShell):
 
-```bash
-./bin/chezmoi apply
+```powershell
+New-Item -ItemType Directory -Force "$HOME\Documents\Projects\Personal" | Out-Null
+iex "&{$(irm 'https://get.chezmoi.io/ps1')}"   # installs chezmoi
+chezmoi init --source "$HOME\Documents\Projects\Personal\dotfiles" thanhph111
 ```
 
-This installs Homebrew (if missing) and all packages from the machine's Brewfile.
-For client machines, 1Password secrets are skipped since `op` isn't signed in yet.
+### 4. Bootstrap first run (recommended)
 
-### 5. Sign into 1Password CLI (client machines only)
+macOS / Linux:
+
+```bash
+./script/bootstrap-first-run
+```
+
+Windows (PowerShell):
+
+```powershell
+& "$HOME\Documents\Projects\Personal\dotfiles\script\bootstrap-first-run.ps1"
+```
+
+The bootstrap scripts:
+
+- Run `chezmoi apply` once to install dependencies and baseline config
+- Refresh environment in-process (no mandatory shell reload)
+- Run a second apply with `CHEZMOI_ENABLE_SECRETS=1` only when secrets are ready:
+  - `OP_SERVICE_ACCOUNT_TOKEN` is set, or
+  - `op vault list` succeeds
+
+If secrets are not ready, bootstrap exits successfully and prints the next step.
+
+### 5. If secrets were deferred
+
+Client machines (interactive):
 
 ```bash
 op account add
-eval $(op signin)
-op vault list  # verify access
+eval "$(op signin)"
+./script/bootstrap-first-run
 ```
 
-### 6. Second apply (client machines only — pulls 1Password secrets)
+Agent machines (service account):
+
+```bash
+export OP_SERVICE_ACCOUNT_TOKEN="<token>"
+./script/bootstrap-first-run
+```
+
+### 6. Troubleshooting fallback (manual two-pass)
+
+If you need full manual control, this still works:
 
 ```bash
 chezmoi apply
+eval "$(op signin)"   # or export OP_SERVICE_ACCOUNT_TOKEN
+CHEZMOI_ENABLE_SECRETS=1 chezmoi apply
 ```
 
-The process is idempotent — safe to run as many times as needed.
+The process remains idempotent and safe to run repeatedly.
 
 ## Managing dotfiles
 
@@ -91,3 +129,18 @@ chezmoi update             # Pull and apply from repository
 
 3. Set variables as needed: `$client`, `$agent`, `$personal`, `$gitName`, `$gitEmail`
 4. Push and follow the setup steps above
+
+## Testing
+
+Testing is Python-first (`uv` + `pytest`) and run through `mise` tasks.
+
+Official commands:
+
+```bash
+mise run test                            # local tier, docker-only
+mise run test --tier smoke               # CI-style smoke selection
+mise run test --tier full --platform all # widest matrix
+mise run test --report pretty            # html + junit + summary (default)
+```
+
+Local policy: runtime tests are Docker-only. Native test execution is CI-only.

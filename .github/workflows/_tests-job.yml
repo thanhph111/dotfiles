@@ -1,0 +1,106 @@
+name: Reusable Tests Job
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: GitHub runner label
+        required: true
+        type: string
+      tier:
+        description: pytest tier selector
+        required: true
+        type: string
+      platform:
+        description: pytest platform selector
+        required: false
+        type: string
+        default: linux
+      driver:
+        description: execution driver
+        required: false
+        type: string
+        default: docker
+      artifact_dir:
+        description: output directory under tests/artifacts
+        required: true
+        type: string
+      artifact_name:
+        description: upload artifact name
+        required: true
+        type: string
+      install_chezmoi:
+        description: install chezmoi in job before running tests
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  run:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Install chezmoi (Unix)
+        if: ${{ inputs.install_chezmoi && runner.os != 'Windows' }}
+        run: |
+          sh -c "$(curl -fsLS get.chezmoi.io)"
+          sudo install -m 0755 ./bin/chezmoi /usr/local/bin/chezmoi || true
+
+      - name: Install chezmoi (Windows)
+        if: ${{ inputs.install_chezmoi && runner.os == 'Windows' }}
+        shell: pwsh
+        run: |
+          iex "&{$(irm 'https://get.chezmoi.io/ps1')}"
+          # The installer places chezmoi.exe in .\bin\ relative to $PWD.
+          # Add that directory to GITHUB_PATH so subsequent steps can find it.
+          $binDir = "$PWD\bin"
+          if (Test-Path "$binDir\chezmoi.exe") {
+            $binDir | Add-Content $env:GITHUB_PATH
+          } else {
+            $chezmoi = Get-Command chezmoi -ErrorAction SilentlyContinue
+            if ($chezmoi) { Split-Path $chezmoi.Source | Add-Content $env:GITHUB_PATH }
+          }
+
+      - name: Run tests
+        env:
+          TEST_ARTIFACT_DIR: ${{ inputs.artifact_dir }}
+        run: >
+          mise run test
+          --tier ${{ inputs.tier }}
+          --platform ${{ inputs.platform }}
+          --driver ${{ inputs.driver }}
+          --report pretty
+
+      - name: Append test summary (Unix)
+        if: ${{ always() && runner.os != 'Windows' }}
+        run: |
+          summary_path="${{ inputs.artifact_dir }}/summary.md"
+          if [ -f "$summary_path" ]; then
+            cat "$summary_path" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No summary generated at $summary_path" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Append test summary (Windows)
+        if: ${{ always() && runner.os == 'Windows' }}
+        shell: pwsh
+        run: |
+          $summaryPath = "${{ inputs.artifact_dir }}/summary.md"
+          if (Test-Path $summaryPath) {
+            Get-Content $summaryPath | Add-Content $env:GITHUB_STEP_SUMMARY
+          } else {
+            "No summary generated at $summaryPath" | Add-Content $env:GITHUB_STEP_SUMMARY
+          }
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.artifact_dir }}/**
+          retention-days: 7

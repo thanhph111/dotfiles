@@ -1,11 +1,13 @@
 {{- if eq .codename "Grid" -}}
 #!/usr/bin/env bash
 
-# op: {{ lookPath "op" }}
-
 set -euo pipefail
 
-if ! command -v op &>/dev/null; then
+if ! command -v op &>/dev/null || ! command -v openclaw &>/dev/null; then
+    exit 0
+fi
+
+if ! op vault list &>/dev/null; then
     exit 0
 fi
 

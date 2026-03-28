@@ -8,6 +8,8 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "pytest-html>=4.2.0",
+    "pytest>=9.0.2",
     "ruff",
     "ty",
 ]
