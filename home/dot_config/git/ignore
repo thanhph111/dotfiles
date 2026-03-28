@@ -97,4 +97,7 @@ $RECYCLE.BIN/
 #: Claude AI local settings
 **/.claude/settings.local.json
 
+#: Codex local settings
+**/.codex/environments/
+
 #: }}}
