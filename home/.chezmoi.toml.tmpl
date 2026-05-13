@@ -16,6 +16,9 @@
 {{/* Machine is operated by an AI agent */}}
 {{- $agent := false -}}
 
+{{/* Machine is shared with other users — skip system-wide changes */}}
+{{- $shared := false -}}
+
 {{/* Git identity */}}
 {{- $gitName := "Thanh Phan" -}}
 {{- $gitEmail := "thanhph111@gmail.com" -}}
@@ -53,6 +56,13 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $vault = "GFT" -}}
 {{-     $client = true -}}
 {{-     $personal = false -}}
+{{- else if hasPrefix "vm02-" $hostname }}
+{{-     $codename = "Sonny" -}}
+{{-     $vault = "" -}}
+{{-     $personal = false -}}
+{{-     $headless = true -}}
+{{-     $shared = true -}}
+{{-     $gitSigningKey = "" -}}
 {{- else if eq $hostname "T-X" }}
 {{-     $codename = "T-X" -}}
 {{- else if eq $hostname "Rev-9" }}
@@ -92,6 +102,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     headless = {{ $headless }}
     client = {{ $client }}
     agent = {{ $agent }}
+    shared = {{ $shared }}
     gitName = {{ $gitName | quote }}
     gitEmail = {{ $gitEmail | quote }}
     gitSigningKey = {{ $gitSigningKey | quote }}
