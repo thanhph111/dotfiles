@@ -3,6 +3,7 @@
 {{/* General */}}
 !ghostty
 !wezterm
+!1Password
 
 {{/* Linux and macOS */}}
 {{ if eq .chezmoi.os "linux" "darwin" }}
