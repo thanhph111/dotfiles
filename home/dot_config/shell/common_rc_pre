@@ -271,7 +271,7 @@ command_exists mise && eval "$(mise activate "$SHELL_NAME")"
 GH_COPILOT_ALIAS_FILE="$SHELL_CACHE_DIR/gh_copilot_alias"
 
 regenerate_gh_copilot_alias() {
-    command_exists gh && gh extension list | grep -q 'github/gh-copilot' && {
+    command_exists gh && gh auth status &>/dev/null && gh extension list | grep -q 'github/gh-copilot' && {
         gh copilot alias -- "$SHELL_NAME" >"$GH_COPILOT_ALIAS_FILE"
     }
 }
