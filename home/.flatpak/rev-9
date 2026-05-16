@@ -1,12 +1,8 @@
 ca.desrt.dconf-editor
-com.abisource.AbiWord
 com.mattjakeman.ExtensionManager
 com.spotify.Client
-org.gnome.Evince
-org.gnome.FontManager
-org.gnome.Geary
+org.gnome.Loupe
+org.gnome.Papers
+org.gnome.Showtime
 org.gnome.TextEditor
-org.gnome.Totem
 org.gnome.baobab
-org.gnome.eog
-org.gnumeric.Gnumeric
