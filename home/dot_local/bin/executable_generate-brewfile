@@ -10,7 +10,7 @@ if ! command -v brew >/dev/null; then
 fi
 
 brewfile="${1:-$HOME/.Brewfile}"
-args=(--formula --tap)
+args=(--formula --tap --cask)
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     args+=(--cask --mas)
