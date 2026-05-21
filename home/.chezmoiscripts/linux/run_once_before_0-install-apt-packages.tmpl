@@ -1,4 +1,4 @@
-{{- if (and (eq .chezmoi.os "linux") (lookPath "apt") (not .shared)) -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt") .hasSudo (not .shared)) -}}
 
 #!/usr/bin/env bash
 #: vim: set fileencoding=utf-8 foldmethod=marker foldlevel=0 foldmarker=<<<,>>>:

@@ -19,6 +19,10 @@
 {{/* Machine is shared with other users — skip system-wide changes */}}
 {{- $shared := false -}}
 
+{{/* Current user can run sudo (write /etc, install system packages).
+Decoupled from `shared`: a shared box may grant sudo, a private box may not. */}}
+{{- $hasSudo := false -}}
+
 {{/* Git identity */}}
 {{- $gitName := "Thanh Phan" -}}
 {{- $gitEmail := "thanhph111@gmail.com" -}}
@@ -61,8 +65,16 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     $vault = "" -}}
 {{-     $personal = false -}}
 {{-     $headless = true -}}
-{{-     $shared = true -}}
 {{-     $gitSigningKey = "" -}}
+{{/*    thanhph111 is the privileged setup role (temporary sudo); thanphan is
+        the restricted day-to-day role. */}}
+{{-     if eq $username "thanhph111" -}}
+{{-         $shared = false -}}
+{{-         $hasSudo = true -}}
+{{-     else -}}
+{{-         $shared = true -}}
+{{-         $hasSudo = false -}}
+{{-     end -}}
 {{- else if eq $hostname "T-X" }}
 {{-     $codename = "T-X" -}}
 {{- else if eq $hostname "Rev-9" }}
@@ -91,6 +103,11 @@ Multipass VMs, and Vagrant boxes */}}
 {{-     exit 1 -}}
 {{- end -}}
 
+{{/* Default: non-shared hosts assume sudo. Shared hosts must opt in per host. */}}
+{{- if not $shared -}}
+{{-     $hasSudo = true -}}
+{{- end -}}
+
 umask = 0o022
 
 sourceDir = "~/Documents/Projects/Personal/dotfiles"
@@ -103,6 +120,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
     client = {{ $client }}
     agent = {{ $agent }}
     shared = {{ $shared }}
+    hasSudo = {{ $hasSudo }}
     gitName = {{ $gitName | quote }}
     gitEmail = {{ $gitEmail | quote }}
     gitSigningKey = {{ $gitSigningKey | quote }}
