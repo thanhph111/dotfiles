@@ -100,4 +100,7 @@ $RECYCLE.BIN/
 #: Codex local settings
 **/.codex/environments/
 
+#: Gemini/Antigravity local settings
+**/.antigravitycli
+
 #: }}}
