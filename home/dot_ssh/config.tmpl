@@ -23,6 +23,11 @@ Host *
     IdentityFile ~/.ssh/keys/thanhph111
 {{- end }}
 
+# Per-project SSH overrides. Projects drop files here; this is just plumbing.
+# Placed before the SkyPilot include so project Match/Host blocks win on
+# first-match for options like ForwardAgent.
+Include ~/.ssh/config.d/*
+
 # Added by SkyPilot for ssh config of all clusters
 Include ~/.sky/generated/ssh/*
 
