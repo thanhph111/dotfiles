@@ -1,12 +1,18 @@
-type brew &>/dev/null && FZF_REPO_DIR="$(brew --prefix)/opt/fzf"
+if [[ -z "${FZF_REPO_DIR:-}" ]] && type brew &>/dev/null; then
+    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+    FZF_REPO_DIR="$HOMEBREW_PREFIX/opt/fzf"
+fi
 
-[[ -z "$FZF_REPO_DIR" ]] && return
+[[ -d "${FZF_REPO_DIR:-}" ]] || return
 
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == *$FZF_REPO_DIR/bin* ]]; then
+case ":$PATH:" in
+*:"$FZF_REPO_DIR/bin":*) ;;
+*)
     export PATH="${PATH:+${PATH}:}$FZF_REPO_DIR/bin"
-fi
+    ;;
+esac
 
 # Auto-completion
 # ---------------

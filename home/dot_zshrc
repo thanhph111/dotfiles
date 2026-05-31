@@ -52,19 +52,8 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 setopt HIST_FIND_NO_DUPS
 setopt HIST_SAVE_NO_DUPS
-
-#: Can't still understand this but added to check later
 #: Record timestamp of command in HISTFILE
 setopt EXTENDED_HISTORY
-#: Delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-#: Ignore duplicated commands history list
-setopt HIST_IGNORE_DUPS
-#: Ignore commands that start with space
-setopt HIST_IGNORE_SPACE
-setopt HIST_SAVE_NO_DUPS
 #: Show command with history expansion to user before running it
 setopt HIST_VERIFY
 #: Add commands to HISTFILE in order of execution
@@ -104,8 +93,9 @@ bindkey '^x^e' edit-command-line
 #: Completion {{{
 
 #: Brew autocompletion
-if type brew &>/dev/null; then
-    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+if command_exists brew; then
+    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+    FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH}"
 fi
 
 #: Case insensitive completion
@@ -161,10 +151,11 @@ fi
 #: Zsh plugins {{{
 
 command_exists brew && {
+    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
     #: Fish-like autosuggestions 'zsh-autosuggestions'
-    include "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    include "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     #: Fish shell like syntax highlighting 'zsh-syntax-highlighting'
-    include "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    include "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 }
 
 #: }}}

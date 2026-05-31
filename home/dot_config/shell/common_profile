@@ -210,10 +210,10 @@ export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/config"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
 
-command_exists npm && {
-    PATH="$(npm config get prefix)/bin:$PATH"
-    export PATH
-}
+case ":$PATH:" in
+*:"$XDG_DATA_HOME/npm/bin":*) ;;
+*) [ -d "$XDG_DATA_HOME/npm/bin" ] && PATH="$XDG_DATA_HOME/npm/bin:$PATH" ;;
+esac
 
 #: }}}
 
@@ -381,8 +381,11 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000
 #: Executable search paths, should be at the end to be prepended {{{
 
 #: Set PATH so it includes user's private bin if it exists
-[ -n "${PATH##*:$HOME/.local/bin:*}" ] && [ -d "$HOME/.local/bin" ] &&
-    PATH="$HOME/.local/bin:$PATH"
+case ":$PATH:" in
+*:"$HOME/.local/bin":*) ;;
+*) [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH" ;;
+esac
+export PATH
 
 #: }}}
 
