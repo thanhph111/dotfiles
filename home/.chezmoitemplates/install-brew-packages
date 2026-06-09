@@ -50,7 +50,8 @@ trust_brewfile_items() {
             value=$0
             sub(/^[[:space:]]*brew[[:space:]]+"/, "", value)
             sub(/".*/, "", value)
-            if (value ~ /^[^/]+\/[^/]+\/[^/]+$/ && value !~ /^homebrew\//) {
+            part_count=split(value, parts, "/")
+            if (part_count == 3 && parts[1] != "homebrew") {
                 print "formula " value
             }
         }
@@ -58,7 +59,8 @@ trust_brewfile_items() {
             value=$0
             sub(/^[[:space:]]*cask[[:space:]]+"/, "", value)
             sub(/".*/, "", value)
-            if (value ~ /^[^/]+\/[^/]+\/[^/]+$/ && value !~ /^homebrew\//) {
+            part_count=split(value, parts, "/")
+            if (part_count == 3 && parts[1] != "homebrew") {
                 print "cask " value
             }
         }
