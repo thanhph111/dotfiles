@@ -1,0 +1,42 @@
+{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.ssh) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+changed=false
+
+write_file() {
+    local path="$1"
+    local tmp
+
+    tmp="$(mktemp)"
+    cat >"$tmp"
+    if ! sudo test -f "$path" || ! sudo cmp -s "$tmp" "$path"; then
+        sudo install -D -m 0644 "$tmp" "$path"
+        changed=true
+    fi
+    rm -f "$tmp"
+}
+
+write_file /etc/ssh/sshd_config.d/disable-password-login.conf <<'EOF'
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+EOF
+
+write_file /etc/ssh/sshd_config.d/trust-ca.conf <<'EOF'
+PubkeyAuthentication yes
+TrustedUserCAKeys /etc/ssh/ca.pub
+EOF
+
+write_file /etc/ssh/sshd_config.d/accept-env.conf <<'EOF'
+# Oh My Posh config
+AcceptEnv OMP_CONFIG
+EOF
+
+if [[ "$changed" == true ]]; then
+    sudo sshd -t
+    sudo systemctl reload ssh 2>/dev/null || sudo systemctl reload sshd 2>/dev/null || true
+fi
+
+{{- end -}}

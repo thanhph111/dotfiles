@@ -1,0 +1,13 @@
+{{- if (and (eq .chezmoi.os "darwin") (not .agent) .packages.darwin.pinentry_touchid.enabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+command -v pinentry-touchid >/dev/null || exit 0
+
+pinentry-touchid -fix >/dev/null 2>&1
+defaults write org.gpgtools.common DisableKeychain -bool yes
+gpg-connect-agent reloadagent /bye >/dev/null 2>&1
+
+{{- end -}}

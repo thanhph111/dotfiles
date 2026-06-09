@@ -1,0 +1,69 @@
+packages:
+  linux:
+    apt:
+      enabled: true
+      upgrade_on_apply: false
+      autoremove_on_apply: false
+      debian_components:
+        enabled: true
+        values:
+          - contrib
+          - non-free
+          - non-free-firmware
+      repositories:
+        onepassword:
+          enabled: true
+        google_chrome:
+          enabled: true
+        vscode:
+          enabled: true
+        powershell:
+          enabled: true
+        docker:
+          enabled: true
+        ibus_bamboo:
+          enabled: true
+        cloudflare_warp:
+          enabled: false
+        cloudflared:
+          enabled: true
+        openvpn3:
+          enabled: true
+    brew:
+      enabled: true
+      link_fonts: true
+    flatpak:
+      enabled: true
+    mise:
+      enabled: true
+    gnome:
+      extensions: true
+      settings: true
+    system:
+      sudoers_disable_admin_flag: true
+      rtc_local_time: true
+      account_avatar: true
+      ufw: true
+      ssh: true
+
+  darwin:
+    brew:
+      enabled: true
+    mise:
+      enabled: true
+    pinentry_touchid:
+      enabled: true
+    settings:
+      enabled: true
+    openclaw_onboard:
+      enabled: true
+
+  windows:
+    winget:
+      enabled: true
+    scoop:
+      enabled: true
+    mise:
+      enabled: true
+    settings:
+      enabled: true

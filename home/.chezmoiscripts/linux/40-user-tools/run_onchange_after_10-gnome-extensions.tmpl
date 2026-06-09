@@ -1,0 +1,36 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileGnome := get $profileLinux "gnome" | default dict -}}
+{{- $profileGnomeEnabled := get $profileGnome "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "linux") (not .headless) .packages.linux.gnome.extensions $profileGnomeEnabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{- range $profileGnome.extensions }}
+# gnome extensions hash: {{ . }} {{ include (joinPath ".gnome" "extensions" .) | sha256sum }}
+{{- end }}
+
+if command -v gext >/dev/null; then
+    gext_command=(gext)
+elif command -v mise >/dev/null; then
+    gext_command=(mise x uv@latest -- uvx --from gnome-extensions-cli gext)
+else
+    echo "Skipping GNOME Shell extensions: gext and mise are not available."
+    exit 0
+fi
+
+{{- range $profileGnome.extensions }}
+xargs -r "${gext_command[@]}" install <{{ joinPath $.chezmoi.sourceDir ".gnome" "extensions" . | quote }}
+{{- end }}
+
+shopt -s nullglob
+schemas=(~/.local/share/gnome-shell/extensions/*/schemas/*.gschema.xml)
+if ((${#schemas[@]})); then
+    sudo cp -v "${schemas[@]}" /usr/share/glib-2.0/schemas/
+    sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+fi
+
+{{- end -}}

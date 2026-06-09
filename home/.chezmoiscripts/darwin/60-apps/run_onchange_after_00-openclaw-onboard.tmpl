@@ -1,0 +1,14 @@
+{{- if (and (eq .chezmoi.os "darwin") .agent .packages.darwin.openclaw_onboard.enabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+command -v op >/dev/null || exit 0
+command -v openclaw >/dev/null || exit 0
+
+if ! launchctl list | grep -q "openclaw"; then
+    openclaw onboard --install-daemon
+fi
+
+{{- end -}}

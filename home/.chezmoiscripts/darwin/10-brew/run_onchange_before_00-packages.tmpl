@@ -1,0 +1,15 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileDarwin := get (get $profile "packages" | default dict) "darwin" | default dict -}}
+{{- $profileBrew := get $profileDarwin "brew" | default dict -}}
+{{- $profileBrewEnabled := get $profileBrew "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "darwin") .packages.darwin.brew.enabled $profileBrewEnabled) -}}
+{{- $files := list -}}
+{{- range $profileBrew.manifests -}}
+{{-     $files = append $files (joinPath $.chezmoi.sourceDir ".Brewfiles" .) -}}
+{{- end -}}
+{{- template
+    "install-brew-packages"
+    (dict "files" $files)
+-}}
+{{- end -}}

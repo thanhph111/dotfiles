@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+{{- range .files }}
+# Brewfile hash: {{ . }} {{ include . | sha256sum }}
+{{- end }}
+
 #: Remove soft limit
 ulimit -n "$(ulimit -Hn)"
 
@@ -29,6 +33,58 @@ BREW_BIN="$HOMEBREW_PREFIX/bin/brew"
     fi
 }
 
-exec "$BREW_BIN" bundle \
-    --verbose \
-    --file {{ . | quote }}
+brew_supports_tap_trust() {
+    "$BREW_BIN" help trust >/dev/null 2>&1
+}
+
+trust_brewfile_items() {
+    local brewfile="$1"
+    local kind
+    local name
+    local tap
+
+    brew_supports_tap_trust || return 0
+
+    awk '
+        /^[[:space:]]*brew[[:space:]]+"/ {
+            value=$0
+            sub(/^[[:space:]]*brew[[:space:]]+"/, "", value)
+            sub(/".*/, "", value)
+            if (value ~ /^[^/]+\/[^/]+\/[^/]+$/ && value !~ /^homebrew\//) {
+                print "formula " value
+            }
+        }
+        /^[[:space:]]*cask[[:space:]]+"/ {
+            value=$0
+            sub(/^[[:space:]]*cask[[:space:]]+"/, "", value)
+            sub(/".*/, "", value)
+            if (value ~ /^[^/]+\/[^/]+\/[^/]+$/ && value !~ /^homebrew\//) {
+                print "cask " value
+            }
+        }
+    ' "$brewfile" | while read -r kind name; do
+        tap="${name%/*}"
+        "$BREW_BIN" tap "$tap" >/dev/null
+        "$BREW_BIN" trust "--$kind" "$name" >/dev/null
+    done
+}
+
+brew_bundle() {
+    local brewfile="$1"
+
+    trust_brewfile_items "$brewfile"
+
+    if brew_supports_tap_trust; then
+        HOMEBREW_REQUIRE_TAP_TRUST=1 "$BREW_BIN" bundle \
+            --verbose \
+            --file "$brewfile"
+    else
+        "$BREW_BIN" bundle \
+            --verbose \
+            --file "$brewfile"
+    fi
+}
+
+{{- range .files }}
+brew_bundle {{ . | quote }}
+{{- end }}

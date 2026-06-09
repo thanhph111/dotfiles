@@ -1,0 +1,146 @@
+profile_defaults:
+  linux: linux-desktop
+  darwin: darwin-personal
+  windows: windows-desktop
+
+profile_choices:
+  linux:
+    - linux-desktop
+    - linux-workstation
+    - linux-vm-dev
+    - linux-minimal
+  darwin:
+    - darwin-personal
+    - darwin-work
+    - darwin-agent
+  windows:
+    - windows-desktop
+
+profiles:
+  linux-desktop:
+    packages:
+      linux:
+        apt:
+          enabled: true
+          manifests:
+            - linux-desktop
+        brew:
+          enabled: true
+          manifests:
+            - linux-desktop
+        flatpak:
+          enabled: true
+          manifests:
+            - linux-desktop
+        gnome:
+          enabled: true
+          extensions:
+            - linux-desktop
+          settings:
+            - linux-desktop
+
+  linux-workstation:
+    packages:
+      linux:
+        apt:
+          enabled: true
+          manifests:
+            - linux-workstation
+        brew:
+          enabled: true
+          manifests:
+            - linux-workstation
+        flatpak:
+          enabled: true
+          manifests:
+            - linux-workstation
+        gnome:
+          enabled: true
+          extensions:
+            - linux-workstation
+          settings:
+            - linux-workstation
+
+  linux-minimal:
+    defaults:
+      headless: true
+    packages:
+      linux:
+        apt:
+          enabled: false
+          manifests: []
+        brew:
+          enabled: true
+          manifests:
+            - linux-minimal
+        flatpak:
+          enabled: false
+          manifests: []
+        gnome:
+          enabled: false
+          extensions: []
+          settings: []
+
+  linux-vm-dev:
+    defaults:
+      headless: true
+    packages:
+      linux:
+        apt:
+          enabled: false
+          manifests: []
+        brew:
+          enabled: true
+          manifests:
+            - linux-vm-dev
+        flatpak:
+          enabled: false
+          manifests: []
+        gnome:
+          enabled: false
+          extensions: []
+          settings: []
+
+  darwin-personal:
+    defaults:
+      client: true
+    packages:
+      darwin:
+        brew:
+          enabled: true
+          manifests:
+            - darwin-personal
+
+  darwin-work:
+    packages:
+      darwin:
+        brew:
+          enabled: true
+          manifests:
+            - darwin-work
+
+  darwin-agent:
+    defaults:
+      agent: true
+      vault: CLU
+      gitName: CLU
+      gitEmail: clu@thanhph111.com
+      gitSigningKey: ""
+    packages:
+      darwin:
+        brew:
+          enabled: true
+          manifests:
+            - darwin-agent
+
+  windows-desktop:
+    packages:
+      windows:
+        winget:
+          enabled: true
+          manifests:
+            - windows-desktop.json
+        scoop:
+          enabled: true
+          manifests:
+            - windows-cli

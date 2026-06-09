@@ -1,1 +1,8 @@
-{{ joinPath .chezmoi.sourceDir ".Brewfiles" (lower .codename) }}
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profileName := default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile") -}}
+{{- $profile := index .profiles $profileName | default dict -}}
+{{- $packages := get $profile "packages" | default dict -}}
+{{- $osPackages := get $packages .chezmoi.os | default dict -}}
+{{- $brew := get $osPackages "brew" | default dict -}}
+{{- $manifests := get $brew "manifests" | default (list $profileName) -}}
+{{ joinPath .chezmoi.sourceDir ".Brewfiles" (index $manifests 0) }}

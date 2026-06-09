@@ -1,0 +1,281 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileApt := get $profileLinux "apt" | default dict -}}
+{{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) .packages.linux.apt.enabled $profileAptEnabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# apt repository flags: {{ .packages.linux.apt | toJson | sha256sum }}
+
+export DEBIAN_FRONTEND=noninteractive
+
+DIST_CODENAME="$(lsb_release -cs)"
+OS_ID="{{ .chezmoi.osRelease.id }}"
+OS_VERSION_ID="{{ .chezmoi.osRelease.versionID }}"
+ARCH="$(dpkg --print-architecture)"
+apt_sources_changed=false
+
+sudo install -d -m 0755 /etc/apt/keyrings /usr/share/keyrings /etc/apt/sources.list.d
+
+install_if_changed() {
+    local src="$1"
+    local dest="$2"
+    local mode="${3:-0644}"
+
+    if ! sudo test -f "$dest" || ! sudo cmp -s "$src" "$dest"; then
+        sudo install -D -m "$mode" "$src" "$dest"
+        apt_sources_changed=true
+    fi
+}
+
+download_file() {
+    local url="$1"
+    local dest="$2"
+    local mode="${3:-0644}"
+    local tmp
+
+    tmp="$(mktemp)"
+    curl -fsSL "$url" >"$tmp"
+    install_if_changed "$tmp" "$dest" "$mode"
+    rm -f "$tmp"
+}
+
+download_dearmored_key() {
+    local url="$1"
+    local dest="$2"
+    local tmp
+
+    tmp="$(mktemp)"
+    curl -fsSL "$url" | gpg --dearmor --yes --output "$tmp"
+    install_if_changed "$tmp" "$dest" 0644
+    rm -f "$tmp"
+}
+
+write_source() {
+    local dest="$1"
+    local tmp
+
+    tmp="$(mktemp)"
+    cat >"$tmp"
+    install_if_changed "$tmp" "$dest" 0644
+    rm -f "$tmp"
+}
+
+remove_legacy_source() {
+    local path="$1"
+
+    if sudo test -e "$path"; then
+        sudo rm -f "$path"
+        apt_sources_changed=true
+    fi
+}
+
+{{- if (and (eq .chezmoi.osRelease.id "debian") .packages.linux.apt.debian_components.enabled) }}
+ensure_debian_components() {
+    local components="{{ range .packages.linux.apt.debian_components.values }} {{ . }}{{ end }}"
+
+    if sudo test -f /etc/apt/sources.list; then
+        for component in $components; do
+            if ! sudo grep -Eq "^deb .*\\b${component}\\b" /etc/apt/sources.list; then
+                sudo sed -i "/^deb / s/$/ ${component}/" /etc/apt/sources.list
+                apt_sources_changed=true
+            fi
+        done
+    fi
+
+    for source in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/Debian.sources; do
+        sudo test -f "$source" || continue
+        tmp="$(mktemp)"
+        sudo awk '
+            BEGIN {
+                n = split("{{ range .packages.linux.apt.debian_components.values }} {{ . }}{{ end }}", want, " ")
+            }
+            /^Components:/ {
+                line = $0
+                for (i = 1; i <= n; i++) {
+                    if (want[i] == "") {
+                        continue
+                    }
+                    pattern = "(^|[[:space:]])" want[i] "($|[[:space:]])"
+                    if (line !~ pattern) {
+                        line = line " " want[i]
+                    }
+                }
+                print line
+                next
+            }
+            { print }
+        ' "$source" >"$tmp"
+        install_if_changed "$tmp" "$source" 0644
+        rm -f "$tmp"
+    done
+}
+
+ensure_debian_components
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.onepassword.enabled }}
+if [[ "$ARCH" == "amd64" ]]; then
+    download_dearmored_key \
+        https://downloads.1password.com/linux/keys/1password.asc \
+        /usr/share/keyrings/1password-archive-keyring.gpg
+
+    sudo install -d -m 0755 /etc/debsig/policies/AC2D62742012EA22 /usr/share/debsig/keyrings/AC2D62742012EA22
+    download_file \
+        https://downloads.1password.com/linux/debian/debsig/1password.pol \
+        /etc/debsig/policies/AC2D62742012EA22/1password.pol
+    download_dearmored_key \
+        https://downloads.1password.com/linux/keys/1password.asc \
+        /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+    remove_legacy_source /etc/apt/sources.list.d/1password.list
+    write_source /etc/apt/sources.list.d/1password.sources <<EOF
+Types: deb
+URIs: https://downloads.1password.com/linux/debian/amd64
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /usr/share/keyrings/1password-archive-keyring.gpg
+EOF
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.google_chrome.enabled }}
+if [[ "$ARCH" == "amd64" ]]; then
+    download_dearmored_key \
+        https://dl.google.com/linux/linux_signing_key.pub \
+        /etc/apt/keyrings/google-chrome.gpg
+
+    remove_legacy_source /etc/apt/sources.list.d/google-chrome.list
+    remove_legacy_source /etc/apt/sources.list.d/google.list
+    write_source /etc/apt/sources.list.d/google-chrome.sources <<EOF
+Types: deb
+URIs: https://dl.google.com/linux/chrome/deb/
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/google-chrome.gpg
+EOF
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.vscode.enabled }}
+download_dearmored_key \
+    https://packages.microsoft.com/keys/microsoft.asc \
+    /usr/share/keyrings/microsoft.gpg
+
+remove_legacy_source /etc/apt/sources.list.d/vscode.list
+write_source /etc/apt/sources.list.d/vscode.sources <<EOF
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64 arm64 armhf
+Signed-By: /usr/share/keyrings/microsoft.gpg
+EOF
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.powershell.enabled }}
+if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
+    tmp="$(mktemp --suffix=.deb)"
+    curl -fsSL \
+        "https://packages.microsoft.com/config/${OS_ID}/${OS_VERSION_ID}/packages-microsoft-prod.deb" \
+        -o "$tmp"
+    sudo dpkg -i "$tmp"
+    rm -f "$tmp"
+    apt_sources_changed=true
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.docker.enabled }}
+if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
+    download_dearmored_key \
+        "https://download.docker.com/linux/${OS_ID}/gpg" \
+        /etc/apt/keyrings/docker.gpg
+
+    remove_legacy_source /etc/apt/sources.list.d/docker.list
+    write_source /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/${OS_ID}
+Suites: ${DIST_CODENAME}
+Components: stable
+Architectures: ${ARCH}
+Signed-By: /etc/apt/keyrings/docker.gpg
+EOF
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.ibus_bamboo.enabled }}
+if [[ "$OS_ID" == "ubuntu" ]]; then
+    sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
+    apt_sources_changed=true
+elif [[ "$OS_ID" == "debian" && "$OS_VERSION_ID" == "12" ]]; then
+    download_dearmored_key \
+        https://download.opensuse.org/repositories/home:lamlng/Debian_12/Release.key \
+        /etc/apt/keyrings/ibus-bamboo.gpg
+
+    remove_legacy_source /etc/apt/sources.list.d/ibus-bamboo.list
+    write_source /etc/apt/sources.list.d/ibus-bamboo.sources <<EOF
+Types: deb
+URIs: http://download.opensuse.org/repositories/home:/lamlng/Debian_12/
+Suites: /
+Signed-By: /etc/apt/keyrings/ibus-bamboo.gpg
+EOF
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.cloudflare_warp.enabled }}
+download_dearmored_key \
+    https://pkg.cloudflareclient.com/pubkey.gpg \
+    /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+
+remove_legacy_source /etc/apt/sources.list.d/cloudflare-client.list
+write_source /etc/apt/sources.list.d/cloudflare-client.sources <<EOF
+Types: deb
+URIs: https://pkg.cloudflareclient.com/
+Suites: ${DIST_CODENAME}
+Components: main
+Signed-By: /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+EOF
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.cloudflared.enabled }}
+download_file \
+    https://pkg.cloudflare.com/cloudflare-main.gpg \
+    /usr/share/keyrings/cloudflare-main.gpg
+
+remove_legacy_source /etc/apt/sources.list.d/cloudflared.list
+write_source /etc/apt/sources.list.d/cloudflared.sources <<EOF
+Types: deb
+URIs: https://pkg.cloudflare.com/cloudflared
+Suites: any
+Components: main
+Signed-By: /usr/share/keyrings/cloudflare-main.gpg
+EOF
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.openvpn3.enabled }}
+download_file \
+    https://packages.openvpn.net/packages-repo.gpg \
+    /etc/apt/keyrings/openvpn.asc
+
+remove_legacy_source /etc/apt/sources.list.d/openvpn.list
+remove_legacy_source /etc/apt/sources.list.d/openvpn-packages.list
+write_source /etc/apt/sources.list.d/openvpn-packages.sources <<EOF
+Types: deb
+URIs: https://packages.openvpn.net/openvpn3/debian
+Suites: ${DIST_CODENAME}
+Components: main
+Signed-By: /etc/apt/keyrings/openvpn.asc
+EOF
+{{- end }}
+
+if [[ "$apt_sources_changed" == true ]]; then
+    sudo apt-get update
+fi
+
+{{- end -}}

@@ -1,0 +1,10 @@
+{{- if (and (eq .chezmoi.os "windows") .packages.windows.mise.enabled) -}}
+
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+
+$mise = Get-Command mise -ErrorAction SilentlyContinue
+if ($mise) {
+    & $mise.Source install --yes
+}
+
+{{- end -}}

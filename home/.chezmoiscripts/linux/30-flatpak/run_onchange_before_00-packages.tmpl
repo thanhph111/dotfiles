@@ -1,0 +1,22 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileFlatpak := get $profileLinux "flatpak" | default dict -}}
+{{- $profileFlatpakEnabled := get $profileFlatpak "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.flatpak.enabled $profileFlatpakEnabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{- range $profileFlatpak.manifests }}
+# flatpak manifest hash: {{ . }} {{ include (joinPath ".flatpak" .) | sha256sum }}
+{{- end }}
+
+flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+
+{{- range $profileFlatpak.manifests }}
+xargs -r flatpak install -y --user flathub <{{ joinPath $.chezmoi.sourceDir ".flatpak" . | quote }}
+{{- end }}
+
+{{- end -}}

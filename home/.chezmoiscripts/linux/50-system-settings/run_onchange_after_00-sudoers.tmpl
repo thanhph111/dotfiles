@@ -1,0 +1,17 @@
+{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.sudoers_disable_admin_flag) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+tmp="$(mktemp)"
+cat >"$tmp" <<'EOF'
+# Disable ~/.sudo_as_admin_successful file
+Defaults !admin_flag
+EOF
+
+sudo visudo -cf "$tmp"
+sudo install -D -m 0440 "$tmp" /etc/sudoers.d/disable-admin-file-in-home
+rm -f "$tmp"
+
+{{- end -}}

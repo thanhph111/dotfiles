@@ -1,0 +1,12 @@
+{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.ufw) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+sudo ufw allow ssh
+sudo ufw allow 36270/tcp
+sudo ufw allow 3389/tcp
+sudo ufw --force enable
+
+{{- end -}}

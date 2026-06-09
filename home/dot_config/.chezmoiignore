@@ -14,6 +14,7 @@
 !git
 !kitty
 !lazygit
+!mise
 !nano
 !npm
 !oh-my-posh
@@ -52,6 +53,7 @@
 !alacritty
 !gh
 !git
+!mise
 !oh-my-posh
 !python
 !wezterm

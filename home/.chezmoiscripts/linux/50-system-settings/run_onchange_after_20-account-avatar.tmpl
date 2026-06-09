@@ -1,0 +1,15 @@
+{{- if (and (eq .chezmoi.os "linux") .hasSudo .packages.linux.system.account_avatar) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+url='https://www.gravatar.com/avatar/0b8f814fcc7d217a29f68293e9ec3f96?size=512'
+avatar_path=/var/lib/AccountsService/icons/{{ .chezmoi.username }}
+tmp="$(mktemp)"
+
+curl -fsSL "$url" -o "$tmp"
+sudo install -D -m 0644 "$tmp" "$avatar_path"
+rm -f "$tmp"
+
+{{- end -}}

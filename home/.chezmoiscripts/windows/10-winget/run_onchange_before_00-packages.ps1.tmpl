@@ -1,0 +1,20 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileWindows := get (get $profile "packages" | default dict) "windows" | default dict -}}
+{{- $profileWinget := get $profileWindows "winget" | default dict -}}
+{{- $profileWingetEnabled := get $profileWinget "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "windows") .packages.windows.winget.enabled $profileWingetEnabled) -}}
+
+{{- range $profileWinget.manifests }}
+# winget import hash: {{ . }} {{ include (joinPath ".winget" .) | sha256sum }}
+
+winget import `
+    --import-file "$env:CHEZMOI_SOURCE_DIR\.winget\{{ . }}" `
+    --ignore-unavailable `
+    --ignore-versions `
+    --accept-package-agreements `
+    --accept-source-agreements `
+    --disable-interactivity
+{{- end }}
+
+{{- end -}}

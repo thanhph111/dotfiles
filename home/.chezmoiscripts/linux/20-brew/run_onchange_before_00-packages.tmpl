@@ -1,0 +1,24 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileBrew := get $profileLinux "brew" | default dict -}}
+{{- $profileBrewEnabled := get $profileBrew "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "linux") .packages.linux.brew.enabled $profileBrewEnabled) -}}
+{{- $files := list -}}
+{{- range $profileBrew.manifests -}}
+{{-     $files = append $files (joinPath $.chezmoi.sourceDir ".Brewfiles" .) -}}
+{{- end -}}
+{{- template
+    "install-brew-packages"
+    (dict "files" $files)
+-}}
+
+{{- if .packages.linux.brew.link_fonts }}
+HOMEBREW_PREFIX="$("$BREW_BIN" --prefix)"
+if [[ -d "$HOMEBREW_PREFIX/share/fonts" ]]; then
+    mkdir -p ~/.local/share/fonts
+    ln -fs "$HOMEBREW_PREFIX/share/fonts" ~/.local/share/fonts/homebrew
+    fc-cache -f -v
+fi
+{{- end }}
+{{- end -}}

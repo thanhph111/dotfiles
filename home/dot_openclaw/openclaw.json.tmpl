@@ -1,11 +1,5 @@
-{{- if eq .codename "Grid" -}}
-{{ if lookPath "op" }}
-{
-    "apiKey": "{{ onepasswordRead "op://CLU/OpenClaw/credential" }}"
-}
-{{ else }}
+{{- if .agent -}}
 {
     "apiKey": "MISSING_OP_CLI_RUN_SECOND_APPLY"
 }
-{{ end }}
 {{- end -}}

@@ -1,0 +1,57 @@
+machine_defaults:
+  global:
+    personal: true
+    vault: Personal
+    headless: false
+    client: false
+    agent: false
+    shared: false
+    hasSudo: true
+    gitName: Thanh Phan
+    gitEmail: thanhph111@gmail.com
+    gitSigningKey: DC49B16FF2563A32
+  by_os:
+    linux:
+      profile: linux-desktop
+    darwin:
+      profile: darwin-personal
+    windows:
+      profile: windows-desktop
+
+hostname_machines:
+  arwen: arwen
+  rev-9: rev-9
+  tars: tars
+
+hostname_prefix_machines:
+  - prefix: vm02-
+    machine: sonny
+
+machines:
+  arwen:
+    codename: Arwen
+    profile: windows-desktop
+
+  rev-9:
+    codename: Rev-9
+    profile: linux-desktop
+
+  sonny:
+    codename: Sonny
+    profile: linux-minimal
+    personal: false
+    vault: ""
+    headless: true
+    gitSigningKey: ""
+    users:
+      thanhph111:
+        shared: false
+        hasSudo: true
+      default:
+        shared: true
+        hasSudo: false
+
+  tars:
+    codename: TARS
+    profile: darwin-personal
+    client: true

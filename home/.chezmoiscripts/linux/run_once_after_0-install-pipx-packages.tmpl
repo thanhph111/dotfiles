@@ -1,9 +1,0 @@
-{{- if (and (eq .chezmoi.os "linux") (not .headless)) -}}
-
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-xargs uv tool install <{{ joinPath .chezmoi.sourceDir ".pipx" (lower .codename) | quote }}
-
-{{- end -}}

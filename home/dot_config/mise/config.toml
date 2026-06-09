@@ -1,0 +1,6 @@
+[tools]
+uv = "latest"
+
+[settings]
+disable_backends = ["asdf", "vfox", "pipx"]
+idiomatic_version_file_enable_tools = ["node", "python", "go", "rust"]

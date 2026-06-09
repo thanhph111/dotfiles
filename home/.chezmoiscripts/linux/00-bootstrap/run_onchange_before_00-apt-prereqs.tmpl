@@ -1,0 +1,45 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileApt := get $profileLinux "apt" | default dict -}}
+{{- $profileBrew := get $profileLinux "brew" | default dict -}}
+{{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
+{{- $profileBrewEnabled := get $profileBrew "enabled" | default true -}}
+{{- $useApt := and .packages.linux.apt.enabled $profileAptEnabled -}}
+{{- $useBrew := and .packages.linux.brew.enabled $profileBrewEnabled -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) (or $useApt $useBrew)) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ulimit -n "$(ulimit -Hn)"
+
+export DEBIAN_FRONTEND=noninteractive
+
+sudo install -d -m 0755 /etc/apt/keyrings /usr/share/keyrings /etc/apt/sources.list.d
+
+packages=(
+    ca-certificates
+    curl
+    gnupg
+    lsb-release
+)
+
+{{- if $useBrew }}
+packages+=(
+    build-essential
+    file
+    git
+    procps
+)
+{{- end }}
+
+{{- if (and $useApt .packages.linux.apt.repositories.ibus_bamboo.enabled (eq .chezmoi.osRelease.id "ubuntu")) }}
+packages+=(software-properties-common)
+{{- end }}
+
+sudo apt-get update
+sudo apt-get install -y "${packages[@]}"
+
+{{- end -}}

@@ -1,0 +1,159 @@
+tap "jorgelbg/tap"
+# Bourne-Again SHell, a UNIX command interpreter
+brew "bash"
+# Programmable completion for Bash 4.2+
+brew "bash-completion@2"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Modern, maintained replacement for ls
+brew "eza"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Text editor for your terminal: easy, powerful and fast
+brew "fresh-editor"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# GNU Privacy Guard (OpenPGP)
+brew "gnupg"
+# Post-modern modal text editor
+brew "helix"
+# Lazier way to manage everything docker
+brew "lazydocker"
+# Mac App Store command-line interface
+brew "mas"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# User interface to the TELNET protocol
+brew "telnet"
+# Upgrade all the things
+brew "topgrade"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
+# the macOS keychain.
+brew "jorgelbg/tap/pinentry-touchid"
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
+# Command-line interface for 1Password
+cask "1password-cli"
+# Image editing and design software
+cask "affinity"
+# Menu bar tool to limit maximum charging percentage
+cask "aldente"
+# AI Coding Agent IDE
+cask "antigravity"
+# Temporary notes with calculations and extensible features
+cask "antinote"
+# Chromium based browser
+cask "arc"
+# Tool to customise input devices and automate computer systems
+cask "bettertouchtool"
+# 3D creation suite
+cask "blender"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# Terminal-based AI coding assistant
+cask "claude-code"
+# Free app that makes your Internet safer
+cask "cloudflare-warp"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# OpenAI's Codex desktop app for managing coding agents
+cask "codex-app"
+# Menu bar usage monitor for Codex and Claude
+cask "codexbar"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
+# Server and cloud storage browser
+cask "cyberduck"
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"
+cask "font-jetbrains-mono"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-new-york"
+cask "font-sf-mono"
+cask "font-sf-mono-nerd-font-ligaturized"
+cask "font-sf-pro"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
+# Utility to hide menu bar items
+cask "hiddenbar"
+# Convert your caps lock key or any of your modifier keys to the hyper key
+cask "hyperkey"
+# Free and open-source media player
+cask "iina"
+# File archiver
+cask "keka"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
+# Replacement for Docker Desktop
+cask "orbstack"
+# Utility to uninstall apps and remove leftover files from old/uninstalled apps
+cask "pearcleaner"
+# Customise and maintain app icons
+cask "pictogram"
+# Collaboration platform for API development
+cask "postman"
+# Control your tools with a few keystrokes
+cask "raycast"
+# Screenshot measurement and annotation tool
+cask "shottr"
+# Music streaming service
+cask "spotify"
+# Quicklook extension for source files
+cask "syntax-highlight"
+# Native GUI tool for relational databases
+cask "tableplus"
+# Web browser
+cask "thebrowsercompany-dia"
+# Open-source BitTorrent client
+cask "transmission"
+# Open-source code editor
+cask "visual-studio-code"
+# Rust-based terminal
+cask "warp"
+# Messaging and calling application
+cask "zalo"
+# Multiplayer code editor
+cask "zed"
+# Collect, organise, cite, and share research sources
+cask "zotero"
+mas "CleanMyKeyboard", id: 6468120888
+mas "Disk Graph", id: 697942581
+mas "Dropover", id: 1355679052
+mas "Equinox", id: 1591510203
+mas "Folder Preview", id: 6698876601
+mas "Folder Quick Look", id: 6753110395
+mas "HacKit", id: 1549557075
+mas "Keynote", id: 361285480
+mas "Numbers", id: 361304891
+mas "OneDrive", id: 823766827
+mas "Pages", id: 361309726
+mas "Telegram", id: 747648890
+mas "TestFlight", id: 899247664
+mas "Tomito", id: 1526042938
+mas "WhatsApp", id: 310633997

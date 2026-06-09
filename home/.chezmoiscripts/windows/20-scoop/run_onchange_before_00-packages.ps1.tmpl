@@ -1,0 +1,30 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileWindows := get (get $profile "packages" | default dict) "windows" | default dict -}}
+{{- $profileScoop := get $profileWindows "scoop" | default dict -}}
+{{- $profileScoopEnabled := get $profileScoop "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "windows") .packages.windows.scoop.enabled $profileScoopEnabled) -}}
+
+{{- range $profileScoop.manifests }}
+# scoop list hash: {{ . }} {{ include (joinPath ".scoop" .) | sha256sum }}
+{{- end }}
+
+$scoop = "$HOME\.scoop\shims\scoop.cmd"
+
+if (-Not (Test-Path $scoop)) {
+    $installerScript = 'https://get.scoop.sh'
+    Invoke-Expression "& {$(Invoke-RestMethod -Uri $installerScript)} -RunAsAdmin -ScoopDir '$HOME\.scoop' -ScoopCacheDir '$HOME\.cache\scoop'"
+}
+
+& $scoop bucket add main
+
+$packages = @()
+{{- range $profileScoop.manifests }}
+$packages += Get-Content "$env:CHEZMOI_SOURCE_DIR\.scoop\{{ . }}" |
+    ForEach-Object { $_.Split('#')[0].Trim() } |
+    Where-Object { $_ }
+{{- end }}
+
+$packages | Select-Object -Unique | ForEach-Object { & $scoop install $_ }
+
+{{- end -}}

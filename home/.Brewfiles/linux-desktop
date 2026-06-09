@@ -1,0 +1,81 @@
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Bash scripts that integrate bat with various command-line tools
+brew "bat-extras"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# Secure runtime for JavaScript and TypeScript
+brew "deno"
+# Embeddable SQL OLAP Database Management System
+brew "duckdb"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GNU awk utility
+brew "gawk"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Colorize logfiles and command output
+brew "grc"
+# JSON output from a shell
+brew "jo"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
+# Lazier way to manage everything docker
+brew "lazydocker"
+# Run a Kubernetes cluster locally
+brew "minikube"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
+# Remote terminal application
+brew "mosh"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Linux networking base tools
+brew "net-tools"
+# Prompt theme engine for any shell
+brew "oh-my-posh"
+# Rsync for cloud storage
+brew "rclone"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Utility that provides fast incremental file transfer
+brew "rsync"
+# Spotify daemon
+brew "spotifyd"
+# Upgrade all the things
+brew "topgrade"
+# Lightweight BitTorrent client
+brew "transmission-cli"
+# Markup-based typesetting system
+brew "typst"
+# Vi 'workalike' with many additional features
+brew "vim"
+# Access X11 clipboards from the command-line
+brew "xclip"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
+brew "bun"
+# Terminal-based AI coding assistant
+cask "claude-code"
+cask "font-fira-code"
+cask "font-jetbrains-mono"
+cask "font-jetbrains-mono-nerd-font"

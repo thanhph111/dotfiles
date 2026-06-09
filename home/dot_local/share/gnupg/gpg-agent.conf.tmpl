@@ -1,3 +1,5 @@
-{{ if and (eq .chezmoi.os "darwin") (not .agent) -}}
-pinentry-program {{ lookPath "pinentry-touchid" }}
+{{- if and (eq .chezmoi.os "darwin") (not .agent) -}}
+{{-     with lookPath "pinentry-touchid" }}
+pinentry-program {{ . }}
+{{-     end }}
 {{- end }}

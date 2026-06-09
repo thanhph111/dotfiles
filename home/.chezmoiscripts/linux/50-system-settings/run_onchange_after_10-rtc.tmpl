@@ -1,0 +1,10 @@
+{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.rtc_local_time) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Avoid time conflicts when dual-booting with Windows.
+sudo timedatectl set-local-rtc 1
+
+{{- end -}}

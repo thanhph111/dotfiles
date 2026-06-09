@@ -1,0 +1,96 @@
+{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
+{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
+{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
+{{- $profileApt := get $profileLinux "apt" | default dict -}}
+{{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) .packages.linux.apt.enabled $profileAptEnabled) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# apt package flags: {{ .packages.linux.apt | toJson | sha256sum }}
+{{- range $profileApt.manifests }}
+# apt manifest hash: {{ . }} {{ include (joinPath ".apt" .) | sha256sum }}
+{{- end }}
+
+export DEBIAN_FRONTEND=noninteractive
+
+packages=()
+
+read_package_manifest() {
+    local manifest="$1"
+
+    while IFS= read -r line; do
+        line="${line%%#*}"
+        [[ -n "${line//[[:space:]]/}" ]] || continue
+        read -r -a words <<<"$line"
+        packages+=("${words[@]}")
+    done <"$manifest"
+}
+
+{{- range $profileApt.manifests }}
+read_package_manifest {{ joinPath $.chezmoi.sourceDir ".apt" . | quote }}
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.onepassword.enabled }}
+if [[ "$(dpkg --print-architecture)" == "amd64" ]]; then
+    packages+=(1password 1password-cli)
+fi
+{{- end }}
+{{- if .packages.linux.apt.repositories.google_chrome.enabled }}
+if [[ "$(dpkg --print-architecture)" == "amd64" ]]; then
+    packages+=(google-chrome-stable)
+fi
+{{- end }}
+{{- if .packages.linux.apt.repositories.vscode.enabled }}
+packages+=(code)
+{{- end }}
+{{- if .packages.linux.apt.repositories.powershell.enabled }}
+packages+=(powershell)
+{{- end }}
+{{- if .packages.linux.apt.repositories.docker.enabled }}
+packages+=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
+{{- end }}
+{{- if .packages.linux.apt.repositories.ibus_bamboo.enabled }}
+packages+=(ibus ibus-bamboo)
+{{- end }}
+{{- if .packages.linux.apt.repositories.cloudflare_warp.enabled }}
+packages+=(cloudflare-warp)
+{{- end }}
+{{- if .packages.linux.apt.repositories.cloudflared.enabled }}
+packages+=(cloudflared)
+{{- end }}
+{{- if .packages.linux.apt.repositories.openvpn3.enabled }}
+packages+=(openvpn3)
+{{- end }}
+
+sudo apt-get update
+
+if ((${#packages[@]})); then
+    sudo apt-get install -y "${packages[@]}"
+fi
+
+{{- if .packages.linux.apt.upgrade_on_apply }}
+sudo apt-get upgrade -y
+{{- end }}
+
+{{- if .packages.linux.apt.autoremove_on_apply }}
+sudo apt-get autoremove -y
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.docker.enabled }}
+if getent group docker >/dev/null; then
+    sudo usermod -aG docker "$USER"
+fi
+{{- end }}
+
+{{- if .packages.linux.apt.repositories.ibus_bamboo.enabled }}
+if command -v dconf >/dev/null && command -v gsettings >/dev/null; then
+    env DCONF_PROFILE=ibus \
+        dconf write /desktop/ibus/general/preload-engines "['BambooUs', 'Bamboo']" &&
+        gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'Bamboo')]"
+fi
+{{- end }}
+
+{{- end -}}

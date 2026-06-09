@@ -1,119 +1,132 @@
-{{/* Codename for specific machine */}}
-{{- $codename := "" -}}
+{{- $profileCatalog := include ".chezmoidata/profiles.yaml" | fromYaml -}}
+{{- $machineCatalog := include ".chezmoidata/machines.yaml" | fromYaml -}}
 
-{{/* 1Password vault to use */}}
-{{- $vault := "" -}}
-
-{{/* Machine does not have a screen and keyboard */}}
-{{- $headless := false -}}
-
-{{/* Machine is a client */}}
-{{- $client := false -}}
-
-{{/* Personal or company device */}}
-{{- $personal := true -}}
-
-{{/* Machine is operated by an AI agent */}}
-{{- $agent := false -}}
-
-{{/* Machine is shared with other users — skip system-wide changes */}}
-{{- $shared := false -}}
-
-{{/* Current user can run sudo (write /etc, install system packages).
-Decoupled from `shared`: a shared box may grant sudo, a private box may not. */}}
-{{- $hasSudo := false -}}
-
-{{/* Git identity */}}
-{{- $gitName := "Thanh Phan" -}}
-{{- $gitEmail := "thanhph111@gmail.com" -}}
-{{- $gitSigningKey := "DC49B16FF2563A32" -}}
-
-{{/* Detect GitHub codespaces, VSCode remote containers, Docker containers,
-Multipass VMs, and Vagrant boxes */}}
 {{- $username := .chezmoi.username -}}
+{{- $hostname := .chezmoi.hostname -}}
+{{- if and (eq .chezmoi.os "darwin") (lookPath "scutil") -}}
+{{-     $hostname = output "scutil" "--get" "ComputerName" | trim -}}
+{{- end -}}
+
+{{- $hostnameKey := lower $hostname -}}
+{{- $machineName := get $machineCatalog.hostname_machines $hostnameKey -}}
+{{- range $match := $machineCatalog.hostname_prefix_machines -}}
+{{-     if and (not $machineName) (hasPrefix $match.prefix $hostnameKey) -}}
+{{-         $machineName = $match.machine -}}
+{{-     end -}}
+{{- end -}}
+
+{{- $machine := dict -}}
+{{- if $machineName -}}
+{{-     $machine = get $machineCatalog.machines $machineName -}}
+{{- end -}}
+
+{{- $globalDefaults := $machineCatalog.machine_defaults.global -}}
+{{- $osDefaults := get $machineCatalog.machine_defaults.by_os .chezmoi.os | default dict -}}
+{{- $defaultProfile := get $osDefaults "profile" | default (get $profileCatalog.profile_defaults .chezmoi.os) | default "linux-desktop" -}}
+{{- $profileChoices := get $profileCatalog.profile_choices .chezmoi.os | default (list $defaultProfile) -}}
+{{- $interactive := stdinIsATTY -}}
+
+{{- $codename := $hostname -}}
+{{- $profile := $defaultProfile -}}
+{{- $vault := "" -}}
+{{- $headless := false -}}
+{{- $client := false -}}
+{{- $personal := true -}}
+{{- $agent := false -}}
+{{- $shared := false -}}
+{{- $hasSudo := false -}}
+{{- $gitName := "" -}}
+{{- $gitEmail := "" -}}
+{{- $gitSigningKey := "" -}}
+{{- $hasProfileData := and (not $machineName) (not (empty (get . "profile"))) -}}
+
+{{- range $source := list $globalDefaults $osDefaults $machine -}}
+{{-     if hasKey $source "codename" }}{{ $codename = get $source "codename" }}{{ end -}}
+{{-     if hasKey $source "profile" }}{{ $profile = get $source "profile" }}{{ end -}}
+{{-     if hasKey $source "vault" }}{{ $vault = get $source "vault" }}{{ end -}}
+{{-     if hasKey $source "headless" }}{{ $headless = get $source "headless" }}{{ end -}}
+{{-     if hasKey $source "client" }}{{ $client = get $source "client" }}{{ end -}}
+{{-     if hasKey $source "personal" }}{{ $personal = get $source "personal" }}{{ end -}}
+{{-     if hasKey $source "agent" }}{{ $agent = get $source "agent" }}{{ end -}}
+{{-     if hasKey $source "shared" }}{{ $shared = get $source "shared" }}{{ end -}}
+{{-     if hasKey $source "hasSudo" }}{{ $hasSudo = get $source "hasSudo" }}{{ end -}}
+{{-     if hasKey $source "gitName" }}{{ $gitName = get $source "gitName" }}{{ end -}}
+{{-     if hasKey $source "gitEmail" }}{{ $gitEmail = get $source "gitEmail" }}{{ end -}}
+{{-     if hasKey $source "gitSigningKey" }}{{ $gitSigningKey = get $source "gitSigningKey" }}{{ end -}}
+{{- end -}}
+
+{{- if and (not $machineName) (get . "codename") -}}
+{{-     $codename = get . "codename" -}}
+{{- end -}}
+{{- if $hasProfileData -}}
+{{-     $profile = get . "profile" -}}
+{{- end -}}
+
+{{- if and (not $machineName) $interactive -}}
+{{-     $codename = promptStringOnce . "codename" "codename" $hostname -}}
+{{-     $profile = promptChoiceOnce . "profile" "profile" $profileChoices $defaultProfile -}}
+{{- else if and (not $machineName) (not $hasProfileData) (eq .chezmoi.os "linux") -}}
+{{-     $profile = "linux-minimal" -}}
+{{- end -}}
+
+{{- if not (hasKey $profileCatalog.profiles $profile) -}}
+{{-     fail (printf "unknown chezmoi profile %q" $profile) -}}
+{{- end -}}
+
+{{- $profileSpec := get $profileCatalog.profiles $profile | default dict -}}
+{{- $profileDefaults := get $profileSpec "defaults" | default dict -}}
+{{- range $source := list $profileDefaults $machine -}}
+{{-     if hasKey $source "codename" }}{{ $codename = get $source "codename" }}{{ end -}}
+{{-     if hasKey $source "profile" }}{{ $profile = get $source "profile" }}{{ end -}}
+{{-     if hasKey $source "vault" }}{{ $vault = get $source "vault" }}{{ end -}}
+{{-     if hasKey $source "headless" }}{{ $headless = get $source "headless" }}{{ end -}}
+{{-     if hasKey $source "client" }}{{ $client = get $source "client" }}{{ end -}}
+{{-     if hasKey $source "personal" }}{{ $personal = get $source "personal" }}{{ end -}}
+{{-     if hasKey $source "agent" }}{{ $agent = get $source "agent" }}{{ end -}}
+{{-     if hasKey $source "shared" }}{{ $shared = get $source "shared" }}{{ end -}}
+{{-     if hasKey $source "hasSudo" }}{{ $hasSudo = get $source "hasSudo" }}{{ end -}}
+{{-     if hasKey $source "gitName" }}{{ $gitName = get $source "gitName" }}{{ end -}}
+{{-     if hasKey $source "gitEmail" }}{{ $gitEmail = get $source "gitEmail" }}{{ end -}}
+{{-     if hasKey $source "gitSigningKey" }}{{ $gitSigningKey = get $source "gitSigningKey" }}{{ end -}}
+{{- end -}}
+
 {{- if or
         (env "CODESPACES")
         (env "REMOTE_CONTAINERS_IPC")
         (eq $username "root" "ubuntu" "vagrant" "vscode")
 -}}
 {{-     $headless = true -}}
-{{- else if stdinIsATTY -}}
-{{-     $headless = promptBoolOnce . "headless" "headless" -}}
-{{- else -}}
+{{- else if and (not $machineName) $interactive -}}
+{{-     $headless = promptBoolOnce . "headless" "headless" $headless -}}
+{{- else if not $machineName -}}
 {{-     $headless = true -}}
 {{- end -}}
 
-{{- $hostname := .chezmoi.hostname -}}
-{{/* Work around unreliable hostname on darwin */}}
-{{- if eq .chezmoi.os "darwin" -}}
-{{-     $computerName := output "scutil" "--get" "ComputerName" | trim -}}
-{{-     $hostname = $computerName -}}
-{{- end -}}
+{{- $userOverrides := get $machine "users" | default dict -}}
+{{- $userOverride := get $userOverrides $username | default (get $userOverrides "default") | default dict -}}
+{{- if hasKey $userOverride "shared" }}{{ $shared = get $userOverride "shared" }}{{ end -}}
+{{- if hasKey $userOverride "hasSudo" }}{{ $hasSudo = get $userOverride "hasSudo" }}{{ end -}}
 
-{{- if $personal -}}
-{{-     $vault = "Personal" -}}
-{{- end -}}
-
-{{/* Resolve codename and 1Password vault */}}
-{{- if hasPrefix "VNPC" $hostname -}}
-{{-     $codename = "GFT" -}}
-{{-     $vault = "GFT" -}}
-{{-     $client = true -}}
-{{-     $personal = false -}}
-{{- else if hasPrefix "vm02-" $hostname }}
-{{-     $codename = "Sonny" -}}
-{{-     $vault = "" -}}
-{{-     $personal = false -}}
-{{-     $headless = true -}}
-{{-     $gitSigningKey = "" -}}
-{{/*    thanhph111 is the privileged setup role (temporary sudo); thanphan is
-        the restricted day-to-day role. */}}
-{{-     if eq $username "thanhph111" -}}
-{{-         $shared = false -}}
-{{-         $hasSudo = true -}}
-{{-     else -}}
-{{-         $shared = true -}}
-{{-         $hasSudo = false -}}
+{{- $sourceDir := .chezmoi.workingTree | default (dir .chezmoi.sourceDir) -}}
+{{- $scriptPathEntries := list
+        "/opt/homebrew/bin"
+        "/usr/local/bin"
+        "/home/linuxbrew/.linuxbrew/bin"
+        (joinPath .chezmoi.homeDir ".local/bin")
+-}}
+{{- range $pathEntry := splitList ":" (env "PATH") -}}
+{{-     if and $pathEntry (not (has $pathEntry $scriptPathEntries)) -}}
+{{-         $scriptPathEntries = append $scriptPathEntries $pathEntry -}}
 {{-     end -}}
-{{- else if eq $hostname "T-X" }}
-{{-     $codename = "T-X" -}}
-{{- else if eq $hostname "Rev-9" }}
-{{-     $codename = "Rev-9" -}}
-{{- else if eq $hostname "Arwen" }}
-{{-     $codename = "Arwen" -}}
-{{- else if eq $hostname "Madison" }}
-{{-     $codename = "Madison" -}}
-{{-     $client = true -}}
-{{- else if eq $hostname "TARS" }}
-{{-     $codename = "TARS" -}}
-{{-     $client = true -}}
-{{- else if eq $hostname "HAL" }}
-{{-     $codename = "HAL" -}}
-{{-     $vault = "HDBank" -}}
-{{-     $client = true -}}
-{{- else if eq $hostname "Grid" }}
-{{-     $codename = "Grid" -}}
-{{-     $vault = "CLU" -}}
-{{-     $agent = true -}}
-{{-     $gitName = "CLU" -}}
-{{-     $gitEmail = "clu@thanhph111.com" -}}
-{{-     $gitSigningKey = "" -}}
-{{- else -}}
-{{-     writeToStdout "Unknown host\n" -}}
-{{-     exit 1 -}}
-{{- end -}}
-
-{{/* Default: non-shared hosts assume sudo. Shared hosts must opt in per host. */}}
-{{- if not $shared -}}
-{{-     $hasSudo = true -}}
 {{- end -}}
 
 umask = 0o022
 
-sourceDir = "~/Documents/Projects/Personal/dotfiles"
+sourceDir = {{ $sourceDir | quote }}
 
 [data]
     codename = {{ $codename | quote }}
+    profile = {{ $profile | quote }}
     personal = {{ $personal }}
     vault = {{ $vault | quote }}
     headless = {{ $headless }}
@@ -133,13 +146,7 @@ sourceDir = "~/Documents/Projects/Personal/dotfiles"
 
 [scriptEnv]
     {{ if ne .chezmoi.os "windows" -}}
-    PATH = """\
-        /opt/homebrew/bin:\
-        /usr/local/bin:\
-        /home/linuxbrew/.linuxbrew/bin:\
-        {{ .chezmoi.homeDir }}/.local/bin:\
-        {{ env "PATH" }}\
-    """
+    PATH = {{ join ":" $scriptPathEntries | quote }}
     {{- end }}
 
 [interpreters.ps1]

@@ -1,0 +1,29 @@
+{{- if and (eq .chezmoi.os "darwin") .agent .vault -}}
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# OpenClaw API key ref hash: {{ print .vault "/OpenClaw/credential" | sha256sum }}
+
+command -v op >/dev/null || exit 0
+
+secret_ref={{ printf "op://%s/OpenClaw/credential" .vault | quote }}
+if ! api_key="$(op read "$secret_ref" 2>/dev/null)"; then
+    echo "Skipping OpenClaw config: 1Password is unavailable or locked."
+    exit 0
+fi
+
+[[ -n "$api_key" ]] || exit 0
+
+if [[ "$api_key" == *$'\n'* || "$api_key" == *$'\r'* ]] ||
+    printf '%s' "$api_key" | LC_ALL=C grep -q '["\\]'; then
+    echo "Skipping OpenClaw config: API key contains unsupported JSON characters." >&2
+    exit 0
+fi
+
+mkdir -p ~/.openclaw
+tmp="$(mktemp)"
+printf '{\n    "apiKey": "%s"\n}\n' "$api_key" >"$tmp"
+install -m 0600 "$tmp" ~/.openclaw/openclaw.json
+rm -f "$tmp"
+{{- end -}}
