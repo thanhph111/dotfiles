@@ -4,8 +4,8 @@
 {{- $profileApt := get $profileLinux "apt" | default dict -}}
 {{- $apt := mergeOverwrite (deepCopy .packages.linux.apt) $profileApt -}}
 {{- $profileBrew := get $profileLinux "brew" | default dict -}}
-{{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
-{{- $profileBrewEnabled := get $profileBrew "enabled" | default true -}}
+{{- $profileAptEnabled := dig "enabled" true $profileApt -}}
+{{- $profileBrewEnabled := dig "enabled" true $profileBrew -}}
 {{- $useApt := and .packages.linux.apt.enabled $profileAptEnabled -}}
 {{- $useBrew := and .packages.linux.brew.enabled $profileBrewEnabled -}}
 {{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) (or $useApt $useBrew)) -}}
