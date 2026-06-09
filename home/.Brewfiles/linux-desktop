@@ -72,8 +72,6 @@ brew "zsh"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
-brew "bun"
 # Terminal-based AI coding assistant
 cask "claude-code"
 cask "font-fira-code"
