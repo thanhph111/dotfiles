@@ -3,8 +3,6 @@
 
 set -euo pipefail
 
-# SSH private config ref hash: {{ print .vault "/SSH servers/notesPlain" | sha256sum }}
-
 command -v op >/dev/null || exit 0
 
 secret_ref={{ printf "op://%s/SSH servers/notesPlain" .vault | quote }}
@@ -16,8 +14,14 @@ fi
 [[ -n "$config" ]] || exit 0
 
 mkdir -p ~/.ssh/config.d
+dest=~/.ssh/config.d/1password
 tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
 printf '%s\n' "$config" >"$tmp"
-install -m 0600 "$tmp" ~/.ssh/config.d/1password
-rm -f "$tmp"
+
+if [[ -f "$dest" ]] && cmp -s "$tmp" "$dest"; then
+    exit 0
+fi
+
+install -m 0600 "$tmp" "$dest"
 {{- end -}}
