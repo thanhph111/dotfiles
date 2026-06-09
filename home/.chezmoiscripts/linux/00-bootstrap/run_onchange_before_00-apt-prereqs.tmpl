@@ -2,6 +2,7 @@
 {{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
 {{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
 {{- $profileApt := get $profileLinux "apt" | default dict -}}
+{{- $apt := mergeOverwrite (deepCopy .packages.linux.apt) $profileApt -}}
 {{- $profileBrew := get $profileLinux "brew" | default dict -}}
 {{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
 {{- $profileBrewEnabled := get $profileBrew "enabled" | default true -}}
@@ -35,7 +36,7 @@ packages+=(
 )
 {{- end }}
 
-{{- if (and $useApt .packages.linux.apt.repositories.ibus_bamboo.enabled (eq .chezmoi.osRelease.id "ubuntu")) }}
+{{- if (and $useApt $apt.repositories.ibus_bamboo.enabled (eq .chezmoi.osRelease.id "ubuntu")) }}
 packages+=(software-properties-common)
 {{- end }}
 

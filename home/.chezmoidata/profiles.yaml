@@ -87,8 +87,27 @@ profiles:
     packages:
       linux:
         apt:
-          enabled: false
+          enabled: true
           manifests: []
+          repositories:
+            onepassword:
+              enabled: false
+            google_chrome:
+              enabled: false
+            vscode:
+              enabled: false
+            powershell:
+              enabled: false
+            docker:
+              enabled: false
+            ibus_bamboo:
+              enabled: false
+            cloudflare_warp:
+              enabled: true
+            cloudflared:
+              enabled: true
+            openvpn3:
+              enabled: false
         brew:
           enabled: true
           manifests:
@@ -125,7 +144,7 @@ profiles:
       vault: CLU
       gitName: CLU
       gitEmail: clu@thanhph111.com
-      gitSigningKey: ""
+      gitSigningKey: ''
     packages:
       darwin:
         brew:

@@ -2,6 +2,7 @@
 {{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
 {{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
 {{- $profileApt := get $profileLinux "apt" | default dict -}}
+{{- $apt := mergeOverwrite (deepCopy .packages.linux.apt) $profileApt -}}
 {{- $profileAptEnabled := get $profileApt "enabled" | default true -}}
 {{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) .packages.linux.apt.enabled $profileAptEnabled) -}}
 
@@ -9,7 +10,7 @@
 
 set -euo pipefail
 
-# apt repository flags: {{ .packages.linux.apt | toJson | sha256sum }}
+# apt repository flags: {{ $apt | toJson | sha256sum }}
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -74,9 +75,9 @@ remove_legacy_source() {
     fi
 }
 
-{{- if (and (eq .chezmoi.osRelease.id "debian") .packages.linux.apt.debian_components.enabled) }}
+{{- if (and (eq .chezmoi.osRelease.id "debian") $apt.debian_components.enabled) }}
 ensure_debian_components() {
-    local components="{{ range .packages.linux.apt.debian_components.values }} {{ . }}{{ end }}"
+    local components="{{ range $apt.debian_components.values }} {{ . }}{{ end }}"
 
     if sudo test -f /etc/apt/sources.list; then
         for component in $components; do
@@ -92,7 +93,7 @@ ensure_debian_components() {
         tmp="$(mktemp)"
         sudo awk '
             BEGIN {
-                n = split("{{ range .packages.linux.apt.debian_components.values }} {{ . }}{{ end }}", want, " ")
+                n = split("{{ range $apt.debian_components.values }} {{ . }}{{ end }}", want, " ")
             }
             /^Components:/ {
                 line = $0
@@ -118,7 +119,7 @@ ensure_debian_components() {
 ensure_debian_components
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.onepassword.enabled }}
+{{- if $apt.repositories.onepassword.enabled }}
 if [[ "$ARCH" == "amd64" ]]; then
     download_dearmored_key \
         https://downloads.1password.com/linux/keys/1password.asc \
@@ -144,7 +145,7 @@ EOF
 fi
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.google_chrome.enabled }}
+{{- if $apt.repositories.google_chrome.enabled }}
 if [[ "$ARCH" == "amd64" ]]; then
     download_dearmored_key \
         https://dl.google.com/linux/linux_signing_key.pub \
@@ -163,7 +164,7 @@ EOF
 fi
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.vscode.enabled }}
+{{- if $apt.repositories.vscode.enabled }}
 download_dearmored_key \
     https://packages.microsoft.com/keys/microsoft.asc \
     /usr/share/keyrings/microsoft.gpg
@@ -179,7 +180,7 @@ Signed-By: /usr/share/keyrings/microsoft.gpg
 EOF
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.powershell.enabled }}
+{{- if $apt.repositories.powershell.enabled }}
 if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
     tmp="$(mktemp --suffix=.deb)"
     curl -fsSL \
@@ -191,7 +192,7 @@ if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
 fi
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.docker.enabled }}
+{{- if $apt.repositories.docker.enabled }}
 if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
     download_dearmored_key \
         "https://download.docker.com/linux/${OS_ID}/gpg" \
@@ -209,7 +210,7 @@ EOF
 fi
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.ibus_bamboo.enabled }}
+{{- if $apt.repositories.ibus_bamboo.enabled }}
 if [[ "$OS_ID" == "ubuntu" ]]; then
     sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
     apt_sources_changed=true
@@ -228,7 +229,7 @@ EOF
 fi
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.cloudflare_warp.enabled }}
+{{- if $apt.repositories.cloudflare_warp.enabled }}
 download_dearmored_key \
     https://pkg.cloudflareclient.com/pubkey.gpg \
     /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
@@ -243,7 +244,7 @@ Signed-By: /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 EOF
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.cloudflared.enabled }}
+{{- if $apt.repositories.cloudflared.enabled }}
 download_file \
     https://pkg.cloudflare.com/cloudflare-main.gpg \
     /usr/share/keyrings/cloudflare-main.gpg
@@ -258,7 +259,7 @@ Signed-By: /usr/share/keyrings/cloudflare-main.gpg
 EOF
 {{- end }}
 
-{{- if .packages.linux.apt.repositories.openvpn3.enabled }}
+{{- if $apt.repositories.openvpn3.enabled }}
 download_file \
     https://packages.openvpn.net/packages-repo.gpg \
     /etc/apt/keyrings/openvpn.asc
