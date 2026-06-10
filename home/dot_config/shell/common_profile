@@ -92,22 +92,7 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-command_exists brew && {
-    #: Do not clean old version
-    # export HOMEBREW_NO_CLEANUP_FORMULAE=oh-my-posh
-
-    #: Do not show cleanup hint
-    export HOMEBREW_NO_ENV_HINTS=1
-
-    #: Opt out Google Analytics
-    export HOMEBREW_NO_ANALYTICS=1
-
-    #: Forbid redirects from secure HTTPS to insecure HTTP
-    export HOMEBREW_NO_INSECURE_REDIRECT=1
-
-    #: Require all casks to have a checksum
-    export HOMEBREW_CASK_OPTS=--require-sha
-}
+# Homebrew command defaults live in ~/.config/homebrew/brew.env.
 
 #: }}}
 

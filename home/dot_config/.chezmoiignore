@@ -12,6 +12,7 @@
 !direnv
 !gh
 !git
+!homebrew
 !kitty
 !lazygit
 !mise
