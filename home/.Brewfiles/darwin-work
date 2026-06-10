@@ -1,4 +1,3 @@
-tap "jorgelbg/tap"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Bourne-Again SHell, a UNIX command interpreter
@@ -41,8 +40,6 @@ brew "gitui"
 brew "gnu-sed"
 # GNU version of the tar archiving utility
 brew "gnu-tar"
-# GNU Pretty Good Privacy (PGP) package
-brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
 brew "go"
 # Post-modern modal text editor
@@ -73,8 +70,6 @@ brew "neovim"
 brew "node"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
-# Pinentry for GPG on Mac
-brew "pinentry-mac"
 # Modern replacement for ps written in Rust
 brew "procs"
 # Search tool like grep and The Silver Searcher
@@ -101,9 +96,6 @@ brew "yq"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
-# the macOS keychain.
-brew "jorgelbg/tap/pinentry-touchid"
 # Sync your markdown files with Confluence pages.
 brew "mark"
 # Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.

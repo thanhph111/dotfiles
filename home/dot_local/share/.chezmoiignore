@@ -1,12 +1,5 @@
 *
 
-{{/* General */}}
-
-{{/* Linux and macOS */}}
-{{ if eq .chezmoi.os "linux" "darwin" }}
-!gnupg
-{{ end }}
-
 {{/* Linux */}}
 {{ if eq .chezmoi.os "linux" }}
 !nautilus

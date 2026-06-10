@@ -50,10 +50,6 @@ command_exists() {
 #: Set the default editor to Vim
 command_exists vim && export VISUAL=vim
 
-#: Fix some edge cases: `gpg: signing failed: Inappropriate ioctl for device`
-#: Zsh automatically sets `TTY` during initialization
-export GPG_TTY="${TTY:-$(tty)}"
-
 #: Ignore some filetypes in autocompletion
 FIGNORE="${FIGNORE}:\
 ~:\
@@ -250,7 +246,6 @@ command_exists pwsh && alias pwsh='pwsh -NoLogo'
 alias python=python3
 alias pip=pip3
 alias export_env_file='set -o allexport && . .env && set +o allexport'
-alias gpg-reset='gpgconf --kill all'
 alias mute-spotify-ads='(&>/dev/null env mute-spotify-ads &)'
 alias npm-exec='PATH=$(npm bin):$PATH'
 

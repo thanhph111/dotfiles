@@ -1,4 +1,3 @@
-tap "jorgelbg/tap"
 tap "shaunsingh/sfmono-nerd-font-ligaturized"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
@@ -26,8 +25,6 @@ brew "gemini-cli"
 brew "gh"
 # Distributed revision control system
 brew "git"
-# GNU Privacy Guard (OpenPGP)
-brew "gnupg"
 # Post-modern modal text editor
 brew "helix"
 # Lazier way to manage everything docker
@@ -40,8 +37,6 @@ brew "mise"
 brew "neovim"
 # Prompt theme engine for any shell
 brew "oh-my-posh"
-# Pinentry for GPG on Mac
-brew "pinentry-mac"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # User interface to the TELNET protocol
@@ -54,9 +49,6 @@ brew "xdg-ninja"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Custom GPG pinentry program for macOS that allows using Touch ID for fetching the password from
-# the macOS keychain.
-brew "jorgelbg/tap/pinentry-touchid", trusted: true
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password

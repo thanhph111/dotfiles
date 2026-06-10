@@ -9,7 +9,7 @@ machine_defaults:
     hasSudo: true
     gitName: Thanh Phan
     gitEmail: thanhph111@gmail.com
-    gitSigningKey: DC49B16FF2563A32
+    gitSigningKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzkDbY48HpcP2GIKT4N4w9iqtSt+IDVnqDEXDZrZZf0
   by_os:
     linux:
       profile: linux-desktop
@@ -40,9 +40,9 @@ machines:
     codename: Sonny
     profile: linux-minimal
     personal: false
-    vault: ""
+    vault: ''
     headless: true
-    gitSigningKey: ""
+    gitSigningKey: ''
     users:
       thanhph111:
         shared: false

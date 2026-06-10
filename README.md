@@ -17,16 +17,16 @@ repo change.
 | Sonny    | Linux   | `linux-minimal`   |
 | TARS     | macOS   | `darwin-personal` |
 
-| Profile             | Use for                              |
-| ------------------- | ------------------------------------ |
-| `linux-desktop`     | Primary GNOME Linux desktop          |
-| `linux-workstation` | Heavier reusable Linux workstation   |
-| `linux-vm-dev`      | Headless Azure/Linux development VM  |
-| `linux-minimal`     | Shared/headless Linux machine        |
-| `darwin-personal`   | Personal macOS machine               |
-| `darwin-work`       | Work macOS machine                   |
-| `darwin-agent`      | Lightweight macOS agent machine      |
-| `windows-desktop`   | Personal Windows desktop             |
+| Profile             | Use for                             |
+| ------------------- | ----------------------------------- |
+| `linux-desktop`     | Primary GNOME Linux desktop         |
+| `linux-workstation` | Heavier reusable Linux workstation  |
+| `linux-vm-dev`      | Headless Azure/Linux development VM |
+| `linux-minimal`     | Shared/headless Linux machine       |
+| `darwin-personal`   | Personal macOS machine              |
+| `darwin-work`       | Work macOS machine                  |
+| `darwin-agent`      | Lightweight macOS agent machine     |
+| `windows-desktop`   | Personal Windows desktop            |
 
 Profile definitions live in [`home/.chezmoidata/profiles.yaml`](./home/.chezmoidata/profiles.yaml).
 Feature flags live in [`home/.chezmoidata/packages.yaml`](./home/.chezmoidata/packages.yaml).
@@ -81,6 +81,21 @@ chezmoi apply
 ```
 
 The process is idempotent — safe to run as many times as needed.
+
+## Git signing
+
+Git commits and tags are signed with SSH. SSH signing means Git asks your SSH
+agent, such as Secretive or 1Password, to prove that your key made the commit.
+The private key stays in the agent.
+
+Add the public key from `gitSigningKey` in
+[`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) to GitHub
+as an SSH signing key.
+
+On remote machines, use the same signing key through SSH agent forwarding only
+for machines you trust. Agent forwarding lets the remote machine ask your local
+agent to sign, but it should not be enabled for every host. Keep it opt-in with
+per-host files under `~/.ssh/config.d/`.
 
 ## Managing dotfiles
 

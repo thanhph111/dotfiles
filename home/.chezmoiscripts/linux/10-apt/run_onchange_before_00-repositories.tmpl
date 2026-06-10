@@ -45,17 +45,6 @@ download_file() {
     rm -f "$tmp"
 }
 
-download_dearmored_key() {
-    local url="$1"
-    local dest="$2"
-    local tmp
-
-    tmp="$(mktemp)"
-    curl -fsSL "$url" | gpg --dearmor --yes --output "$tmp"
-    install_if_changed "$tmp" "$dest" 0644
-    rm -f "$tmp"
-}
-
 write_source() {
     local dest="$1"
     local tmp
@@ -121,17 +110,9 @@ ensure_debian_components
 
 {{- if $apt.repositories.onepassword.enabled }}
 if [[ "$ARCH" == "amd64" ]]; then
-    download_dearmored_key \
-        https://downloads.1password.com/linux/keys/1password.asc \
-        /usr/share/keyrings/1password-archive-keyring.gpg
-
-    sudo install -d -m 0755 /etc/debsig/policies/AC2D62742012EA22 /usr/share/debsig/keyrings/AC2D62742012EA22
     download_file \
-        https://downloads.1password.com/linux/debian/debsig/1password.pol \
-        /etc/debsig/policies/AC2D62742012EA22/1password.pol
-    download_dearmored_key \
         https://downloads.1password.com/linux/keys/1password.asc \
-        /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+        /usr/share/keyrings/1password-archive-keyring.asc
 
     remove_legacy_source /etc/apt/sources.list.d/1password.list
     write_source /etc/apt/sources.list.d/1password.sources <<EOF
@@ -140,16 +121,16 @@ URIs: https://downloads.1password.com/linux/debian/amd64
 Suites: stable
 Components: main
 Architectures: amd64
-Signed-By: /usr/share/keyrings/1password-archive-keyring.gpg
+Signed-By: /usr/share/keyrings/1password-archive-keyring.asc
 EOF
 fi
 {{- end }}
 
 {{- if $apt.repositories.google_chrome.enabled }}
 if [[ "$ARCH" == "amd64" ]]; then
-    download_dearmored_key \
+    download_file \
         https://dl.google.com/linux/linux_signing_key.pub \
-        /etc/apt/keyrings/google-chrome.gpg
+        /etc/apt/keyrings/google-chrome.asc
 
     remove_legacy_source /etc/apt/sources.list.d/google-chrome.list
     remove_legacy_source /etc/apt/sources.list.d/google.list
@@ -159,15 +140,15 @@ URIs: https://dl.google.com/linux/chrome/deb/
 Suites: stable
 Components: main
 Architectures: amd64
-Signed-By: /etc/apt/keyrings/google-chrome.gpg
+Signed-By: /etc/apt/keyrings/google-chrome.asc
 EOF
 fi
 {{- end }}
 
 {{- if $apt.repositories.vscode.enabled }}
-download_dearmored_key \
+download_file \
     https://packages.microsoft.com/keys/microsoft.asc \
-    /usr/share/keyrings/microsoft.gpg
+    /usr/share/keyrings/microsoft.asc
 
 remove_legacy_source /etc/apt/sources.list.d/vscode.list
 write_source /etc/apt/sources.list.d/vscode.sources <<EOF
@@ -176,7 +157,7 @@ URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Architectures: amd64 arm64 armhf
-Signed-By: /usr/share/keyrings/microsoft.gpg
+Signed-By: /usr/share/keyrings/microsoft.asc
 EOF
 {{- end }}
 
@@ -194,9 +175,9 @@ fi
 
 {{- if $apt.repositories.docker.enabled }}
 if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
-    download_dearmored_key \
+    download_file \
         "https://download.docker.com/linux/${OS_ID}/gpg" \
-        /etc/apt/keyrings/docker.gpg
+        /etc/apt/keyrings/docker.asc
 
     remove_legacy_source /etc/apt/sources.list.d/docker.list
     write_source /etc/apt/sources.list.d/docker.sources <<EOF
@@ -205,7 +186,7 @@ URIs: https://download.docker.com/linux/${OS_ID}
 Suites: ${DIST_CODENAME}
 Components: stable
 Architectures: ${ARCH}
-Signed-By: /etc/apt/keyrings/docker.gpg
+Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 fi
 {{- end }}
@@ -215,24 +196,24 @@ if [[ "$OS_ID" == "ubuntu" ]]; then
     sudo add-apt-repository -y ppa:bamboo-engine/ibus-bamboo
     apt_sources_changed=true
 elif [[ "$OS_ID" == "debian" && "$OS_VERSION_ID" == "12" ]]; then
-    download_dearmored_key \
+    download_file \
         https://download.opensuse.org/repositories/home:lamlng/Debian_12/Release.key \
-        /etc/apt/keyrings/ibus-bamboo.gpg
+        /etc/apt/keyrings/ibus-bamboo.asc
 
     remove_legacy_source /etc/apt/sources.list.d/ibus-bamboo.list
     write_source /etc/apt/sources.list.d/ibus-bamboo.sources <<EOF
 Types: deb
 URIs: http://download.opensuse.org/repositories/home:/lamlng/Debian_12/
 Suites: /
-Signed-By: /etc/apt/keyrings/ibus-bamboo.gpg
+Signed-By: /etc/apt/keyrings/ibus-bamboo.asc
 EOF
 fi
 {{- end }}
 
 {{- if $apt.repositories.cloudflare_warp.enabled }}
-download_dearmored_key \
+download_file \
     https://pkg.cloudflareclient.com/pubkey.gpg \
-    /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+    /usr/share/keyrings/cloudflare-warp-archive-keyring.asc
 
 remove_legacy_source /etc/apt/sources.list.d/cloudflare-client.list
 write_source /etc/apt/sources.list.d/cloudflare-client.sources <<EOF
@@ -240,7 +221,7 @@ Types: deb
 URIs: https://pkg.cloudflareclient.com/
 Suites: ${DIST_CODENAME}
 Components: main
-Signed-By: /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+Signed-By: /usr/share/keyrings/cloudflare-warp-archive-keyring.asc
 EOF
 {{- end }}
 

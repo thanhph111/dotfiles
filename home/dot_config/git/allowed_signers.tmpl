@@ -1,0 +1,3 @@
+{{- if and .gitEmail .gitSigningKey (hasPrefix "ssh-" .gitSigningKey) -}}
+{{ .gitEmail }} {{ .gitSigningKey }}
+{{- end }}

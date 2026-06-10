@@ -138,12 +138,6 @@ fi
 
 #: }}}
 
-#: GnuPG {{{
-
-export GNUPGHOME="$XDG_DATA_HOME/gnupg"
-
-#: }}}
-
 #: AWS {{{
 
 command_exists aws && {

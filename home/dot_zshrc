@@ -128,14 +128,6 @@ zstyle ':completion:*' menu select
 
 #: Tools {{{
 
-#: pinentry-mac {{{
-
-#: Follow this tutorial:
-#: https://github.com/jorgelbg/pinentry-touchid/issues/3#issuecomment-915440261
-command_exists pinentry-mac && alias pinentry=pinentry-touchid
-
-#: }}}
-
 #: kitty {{{
 
 #: Shell integration

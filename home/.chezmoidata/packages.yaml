@@ -51,8 +51,6 @@ packages:
       enabled: true
     mise:
       enabled: true
-    pinentry_touchid:
-      enabled: true
     settings:
       enabled: true
     openclaw_onboard:
