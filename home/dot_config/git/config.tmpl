@@ -4,7 +4,7 @@
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
 {{- $gitName := get $machine "gitName" | default "" -}}
 {{- $gitEmail := get $machine "gitEmail" | default "" -}}
-{{- $gitSigningKey := get $machine "gitSigningKey" | default "" -}}
+{{- $gitSigningKey := get $machine "gitSigningKey" | default "" }}
 
 [core]
 	editor = $VISUAL
