@@ -14,7 +14,14 @@
 
         // Files
         "files.associations": {
-            "*.tmpl": "go-template"
+            "*.tmpl": "go-template",
+            "home/.Brewfiles/**": "ruby",
+            "home/.apt/**": "plaintext",
+            "home/.flatpak/**": "plaintext",
+            "home/.gnome/extensions/**": "plaintext",
+            "home/.gnome/settings/**": "ini",
+            "home/.scoop/**": "plaintext",
+            "home/.winget/**": "json"
         },
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
@@ -92,9 +99,11 @@
             "charliermarsh.ruff",
             "davidanson.vscode-markdownlint",
             "dprint.dprint",
+            "hverlin.mise-vscode",
             "ms-python.debugpy",
             "ms-python.python",
             "romantomjak.go-template",
+            "timonwong.shellcheck",
             "zokugun.explicit-folding"
         ]
     },
