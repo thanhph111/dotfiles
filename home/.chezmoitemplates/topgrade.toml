@@ -3,19 +3,36 @@
 assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-disable = ["pip3", "pipx", "poetry", "powershell", "uv", "vim", "vscode"]
+disable = [
+    # {{ if ne .chezmoi.os "linux" }}
+    "system",
+    # {{ end }}
+    "bun",
+    "bun_packages",
+    "cargo",
+    "claude_code",
+    "containers",
+    "helm",
+    "node",
+    "pip3",
+    "pipx",
+    "poetry",
+    "powershell",
+    "rustup",
+    "typst",
+    "uv",
+    "vim",
+    "vscode",
+]
 
-# Ignore failures for these steps
-ignore_failures = ["powershell", "containers"]
+# Do not ask to retry failed steps
+ask_retry = false
 
-# Do not ask to retry failed steps (default: false)
-no_retry = true
-
-# Cleanup temporary or old files
+# Clean temporary or old files
 cleanup = true
 
 # Skip sending a notification at the end of a run
-skip_notify = true
+notify_end = "never"
 
 [git]
 # Additional git repositories to pull
@@ -37,10 +54,6 @@ self_update = false
 # Commands to run before anything
 [pre_commands]
 # "Emacs Snapshot" = "rm -rf ~/.emacs.d/elpa.bak && cp -rl ~/.emacs.d/elpa ~/.emacs.d/elpa.bak"
-
-# Custom commands
-[commands]
-"chezmoi" = "chezmoi update"
 
 [brew]
 # greedy_cask = true
