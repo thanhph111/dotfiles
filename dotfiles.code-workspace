@@ -1,7 +1,7 @@
 {
     "folders": [
         {
-            "name": "Dotfiles",
+            "name": "Root",
             "path": "."
         }
     ],
@@ -14,14 +14,15 @@
 
         // Files
         "files.associations": {
-            "*.tmpl": "go-template",
-            "home/.Brewfiles/**": "ruby",
-            "home/.apt/**": "plaintext",
-            "home/.flatpak/**": "plaintext",
-            "home/.gnome/extensions/**": "plaintext",
-            "home/.gnome/settings/**": "ini",
-            "home/.scoop/**": "plaintext",
-            "home/.winget/**": "json"
+            "**/home/.Brewfiles/**": "ruby",
+            "**/home/.apt/**": "plaintext",
+            "**/home/.chezmoitemplates/**": "go-template",
+            "**/home/.flatpak/**": "plaintext",
+            "**/home/.gnome/extensions/**": "plaintext",
+            "**/home/.gnome/settings/**": "ini",
+            "**/home/.scoop/**": "plaintext",
+            "**/home/.winget/**": "json",
+            "*.tmpl": "go-template"
         },
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
