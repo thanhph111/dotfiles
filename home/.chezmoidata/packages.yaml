@@ -28,7 +28,7 @@ packages:
         cloudflared:
           enabled: true
         openvpn3:
-          enabled: true
+          enabled: false
     brew:
       enabled: true
       link_fonts: true

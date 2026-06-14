@@ -157,8 +157,6 @@ cask "postman"
 cask "rapidapi"
 # Control your tools with a few keystrokes
 cask "raycast"
-# Store SSH keys in the Secure Enclave
-cask "secretive"
 # Screenshot measurement and annotation tool
 cask "shottr"
 # Team communication and collaboration software
