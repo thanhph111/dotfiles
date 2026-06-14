@@ -1,11 +1,9 @@
-{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
-{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
-{{- $profileWindows := get (get $profile "packages" | default dict) "windows" | default dict -}}
-{{- $profileWinget := get $profileWindows "winget" | default dict -}}
-{{- $profileWingetEnabled := dig "enabled" true $profileWinget -}}
-{{- if (and (eq .chezmoi.os "windows") .packages.windows.winget.enabled $profileWingetEnabled) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $windows := get $packages "windows" | default dict -}}
+{{- $winget := get $windows "winget" | default dict -}}
+{{- if (and (eq .chezmoi.os "windows") $winget.enabled) -}}
 
-{{- range $profileWinget.manifests }}
+{{- range $winget.manifests }}
 # winget import hash: {{ . }} {{ include (joinPath ".winget" .) | sha256sum }}
 
 winget import `

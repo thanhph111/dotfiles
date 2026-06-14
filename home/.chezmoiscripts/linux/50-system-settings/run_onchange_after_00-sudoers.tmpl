@@ -1,4 +1,8 @@
-{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.sudoers_disable_admin_flag) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.sudoers_disable_admin_flag) -}}
 
 #!/usr/bin/env bash
 

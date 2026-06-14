@@ -1,0 +1,87 @@
+{{- $hostname := .chezmoi.hostname -}}
+{{- if and (eq .chezmoi.os "darwin") (lookPath "scutil") -}}
+{{-     $hostname = output "scutil" "--get" "ComputerName" | trim -}}
+{{- end -}}
+
+{{- $machines := get . "machines" | default dict -}}
+{{- $hostnameMachines := get . "hostname_machines" | default dict -}}
+{{- $hostnamePrefixMachines := get . "hostname_prefix_machines" | default list -}}
+{{- $localCodename := get . "codename" | default "" -}}
+{{- $hostnameKey := lower $hostname -}}
+{{- $machineKey := "" -}}
+{{- if and $localCodename (hasKey $machines (lower $localCodename)) -}}
+{{-     $machineKey = lower $localCodename -}}
+{{- else -}}
+{{-     $machineKey = get $hostnameMachines $hostnameKey | default "" -}}
+{{- end -}}
+{{- range $match := $hostnamePrefixMachines -}}
+{{-     if and (not $machineKey) (hasPrefix $match.prefix $hostnameKey) -}}
+{{-         $machineKey = $match.machine -}}
+{{-     end -}}
+{{- end -}}
+
+{{- $machine := dict -}}
+{{- if $machineKey -}}
+{{-     $machine = get $machines $machineKey | default dict -}}
+{{- end -}}
+{{- $knownMachine := not (empty $machineKey) -}}
+
+{{- $profileDefaults := get . "profile_defaults" | default dict -}}
+{{- $defaultProfile := get $profileDefaults .chezmoi.os | default "linux-desktop" -}}
+{{- $profileName := $defaultProfile -}}
+{{- if and (not $knownMachine) (get . "profile") -}}
+{{-     $profileName = get . "profile" -}}
+{{- end -}}
+{{- if hasKey $machine "profile" -}}
+{{-     $profileName = get $machine "profile" -}}
+{{- end -}}
+
+{{- $profiles := get . "profiles" | default dict -}}
+{{- $profileSpec := get $profiles $profileName | default dict -}}
+{{- $profileConfigDefaults := get $profileSpec "defaults" | default dict -}}
+
+{{- $machineDefaults := get . "machine_defaults" | default dict -}}
+{{- $globalDefaults := get $machineDefaults "global" | default dict -}}
+{{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
+{{- $baseIdentity := dict
+    "codename" (get $machine "codename" | default $localCodename | default $hostname)
+    "profile" $profileName
+-}}
+
+{{- $localOverrides := get . "local" | default dict -}}
+
+{{- if and (not $knownMachine) (empty $localOverrides) -}}
+{{-     if hasKey . "personal" }}{{ $_ := set $localOverrides "personal" (get . "personal") }}{{ end -}}
+{{-     if hasKey . "vault" }}{{ $_ := set $localOverrides "vault" (get . "vault") }}{{ end -}}
+{{-     if hasKey . "headless" }}{{ $_ := set $localOverrides "headless" (get . "headless") }}{{ end -}}
+{{-     if hasKey . "client" }}{{ $_ := set $localOverrides "client" (get . "client") }}{{ end -}}
+{{-     if hasKey . "agent" }}{{ $_ := set $localOverrides "agent" (get . "agent") }}{{ end -}}
+{{-     if hasKey . "shared" }}{{ $_ := set $localOverrides "shared" (get . "shared") }}{{ end -}}
+{{-     if hasKey . "hasSudo" }}{{ $_ := set $localOverrides "hasSudo" (get . "hasSudo") }}{{ end -}}
+{{-     if hasKey . "gitName" }}{{ $_ := set $localOverrides "gitName" (get . "gitName") }}{{ end -}}
+{{-     if hasKey . "gitEmail" }}{{ $_ := set $localOverrides "gitEmail" (get . "gitEmail") }}{{ end -}}
+{{-     if hasKey . "gitSigningKey" }}{{ $_ := set $localOverrides "gitSigningKey" (get . "gitSigningKey") }}{{ end -}}
+{{- end -}}
+
+{{- $userOverrides := get $machine "users" | default dict -}}
+{{- $userOverride := get $userOverrides .chezmoi.username | default (get $userOverrides "default") | default dict -}}
+
+{{- $resolved := dict -}}
+{{- range $source := list $globalDefaults $osDefaults $baseIdentity $profileConfigDefaults $machine $userOverride $localOverrides -}}
+{{-     range $key := list "codename" "profile" "personal" "vault" "headless" "client" "agent" "shared" "hasSudo" "gitName" "gitEmail" "gitSigningKey" -}}
+{{-         if hasKey $source $key -}}
+{{-             $_ := set $resolved $key (get $source $key) -}}
+{{-         end -}}
+{{-     end -}}
+{{- end -}}
+
+{{- if or
+        (env "CODESPACES")
+        (env "REMOTE_CONTAINERS_IPC")
+        (eq .chezmoi.username "root" "ubuntu" "vagrant" "vscode")
+-}}
+{{-     $_ := set $resolved "headless" true -}}
+{{- end -}}
+
+{{- $_ := set $resolved "machineKey" $machineKey -}}
+{{- $resolved | toJson }}

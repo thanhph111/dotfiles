@@ -10,13 +10,6 @@ machine_defaults:
     gitName: Thanh Phan
     gitEmail: thanhph111@gmail.com
     gitSigningKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzkDbY48HpcP2GIKT4N4w9iqtSt+IDVnqDEXDZrZZf0
-  by_os:
-    linux:
-      profile: linux-desktop
-    darwin:
-      profile: darwin-personal
-    windows:
-      profile: windows-desktop
 
 hostname_machines:
   arwen: arwen
@@ -35,23 +28,22 @@ machines:
   rev-9:
     codename: Rev-9
     profile: linux-desktop
+    packages:
+      linux:
+        system:
+          sudo_ssh_agent_auth:
+            enabled: true
 
   sonny:
     codename: Sonny
     profile: linux-minimal
-    personal: false
-    vault: ''
-    headless: true
-    gitSigningKey: ''
     users:
       thanhph111:
         shared: false
         hasSudo: true
-      default:
-        shared: true
-        hasSudo: false
+        gitName: Thanh Phan
+        gitEmail: thanhph111@gmail.com
 
   tars:
     codename: TARS
     profile: darwin-personal
-    client: true

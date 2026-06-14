@@ -1,4 +1,7 @@
-{{- if (and (eq .chezmoi.os "darwin") .packages.darwin.mise.enabled) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $darwin := get $packages "darwin" | default dict -}}
+{{- $mise := get $darwin "mise" | default dict -}}
+{{- if (and (eq .chezmoi.os "darwin") $mise.enabled) -}}
 
 #!/usr/bin/env bash
 

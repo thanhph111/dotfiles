@@ -1,11 +1,13 @@
-{{- if and (eq .chezmoi.os "darwin" "linux") .client .vault -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $vault := get $machine "vault" | default "" -}}
+{{- if and (eq .chezmoi.os "darwin" "linux") (get $machine "client") $vault -}}
 #!/usr/bin/env bash
 
 set -euo pipefail
 
 command -v op >/dev/null || exit 0
 
-secret_ref={{ printf "op://%s/SSH servers/notesPlain" .vault | quote }}
+secret_ref={{ printf "op://%s/SSH servers/notesPlain" $vault | quote }}
 if ! config="$(op read "$secret_ref" 2>/dev/null)"; then
     echo "Skipping SSH private config: 1Password is unavailable or locked."
     exit 0

@@ -1,4 +1,5 @@
-{{- if .agent -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- if get $machine "agent" -}}
 {
     "apiKey": "MISSING_OP_CLI_RUN_SECOND_APPLY"
 }

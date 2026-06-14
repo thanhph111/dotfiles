@@ -35,9 +35,11 @@ profiles:
         gnome:
           enabled: true
           extensions:
-            - linux-desktop
+            manifests:
+              - linux-desktop
           settings:
-            - linux-desktop
+            manifests:
+              - linux-desktop
 
   linux-workstation:
     packages:
@@ -57,13 +59,22 @@ profiles:
         gnome:
           enabled: true
           extensions:
-            - linux-workstation
+            manifests:
+              - linux-workstation
           settings:
-            - linux-workstation
+            manifests:
+              - linux-workstation
 
   linux-minimal:
     defaults:
+      personal: false
+      vault: ''
       headless: true
+      shared: true
+      hasSudo: false
+      gitName: ''
+      gitEmail: ''
+      gitSigningKey: ''
     packages:
       linux:
         apt:
@@ -78,8 +89,16 @@ profiles:
           manifests: []
         gnome:
           enabled: false
-          extensions: []
-          settings: []
+          extensions:
+            manifests: []
+          settings:
+            manifests: []
+        system:
+          sudoers_disable_admin_flag: false
+          rtc_local_time: false
+          account_avatar: false
+          ufw: false
+          ssh: false
 
   linux-vm-dev:
     defaults:
@@ -117,8 +136,13 @@ profiles:
           manifests: []
         gnome:
           enabled: false
-          extensions: []
-          settings: []
+          extensions:
+            manifests: []
+          settings:
+            manifests: []
+        system:
+          sudo_ssh_agent_auth:
+            enabled: true
 
   darwin-personal:
     defaults:

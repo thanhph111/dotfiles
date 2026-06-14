@@ -1,0 +1,154 @@
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- $sudoSshAgentAuth := get $system "sudo_ssh_agent_auth" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared"))) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+enabled={{ dig "enabled" false $sudoSshAgentAuth }}
+package={{ dig "package" "libpam-ssh-agent-auth" $sudoSshAgentAuth | quote }}
+authorized_keys_dir={{ dig "authorized_keys_dir" "/etc/security/sudo_authorized_keys" $sudoSshAgentAuth | quote }}
+
+pam_file=/etc/pam.d/sudo
+pam_begin="# chezmoi: begin sudo ssh agent auth"
+pam_end="# chezmoi: end sudo ssh agent auth"
+pam_line="auth sufficient pam_ssh_agent_auth.so file=${authorized_keys_dir}/%u"
+sudoers_file=/etc/sudoers.d/ssh-auth-sock
+sudoers_marker="# Managed by chezmoi: preserve forwarded SSH agent for pam_ssh_agent_auth."
+
+write_pam_without_managed_block() {
+    sudo awk -v begin="$pam_begin" -v end="$pam_end" '
+        $0 == begin { skip = 1; next }
+        $0 == end { skip = 0; next }
+        !skip { print }
+    ' "$pam_file"
+}
+
+remove_pam_block() {
+    local tmp
+
+    if ! sudo test -f "$pam_file"; then
+        return
+    fi
+
+    tmp="$(mktemp)"
+    write_pam_without_managed_block >"$tmp"
+
+    if ! sudo cmp -s "$tmp" "$pam_file"; then
+        sudo cp -an "$pam_file" "${pam_file}.chezmoi-backup" 2>/dev/null || true
+        sudo install -m 0644 "$tmp" "$pam_file"
+    fi
+
+    rm -f "$tmp"
+}
+
+write_pam_block() {
+    local body tmp
+
+    if ! sudo test -f "$pam_file"; then
+        echo "$pam_file does not exist; cannot enable sudo SSH agent auth." >&2
+        exit 1
+    fi
+
+    body="$(mktemp)"
+    tmp="$(mktemp)"
+
+    write_pam_without_managed_block >"$body"
+
+    if grep -Eq '^[[:space:]]*@include[[:space:]]+common-auth([[:space:]]|$)' "$body"; then
+        awk -v begin="$pam_begin" -v line="$pam_line" -v end="$pam_end" '
+            !inserted && $0 ~ /^[[:space:]]*@include[[:space:]]+common-auth([[:space:]]|$)/ {
+                print begin
+                print line
+                print end
+                inserted = 1
+            }
+            { print }
+        ' "$body" >"$tmp"
+    else
+        {
+            if IFS= read -r first; then
+                if [[ "$first" == "#%PAM-1.0" ]]; then
+                    printf '%s\n' "$first"
+                    printf '%s\n%s\n%s\n' "$pam_begin" "$pam_line" "$pam_end"
+                    cat
+                else
+                    printf '%s\n%s\n%s\n' "$pam_begin" "$pam_line" "$pam_end"
+                    printf '%s\n' "$first"
+                    cat
+                fi
+            else
+                printf '%s\n%s\n%s\n' "$pam_begin" "$pam_line" "$pam_end"
+            fi
+        } <"$body" >"$tmp"
+    fi
+
+    if ! sudo cmp -s "$tmp" "$pam_file"; then
+        sudo cp -an "$pam_file" "${pam_file}.chezmoi-backup" 2>/dev/null || true
+        sudo install -m 0644 "$tmp" "$pam_file"
+    fi
+
+    rm -f "$body" "$tmp"
+}
+
+write_sudoers_file() {
+    local tmp
+
+    tmp="$(mktemp)"
+    cat >"$tmp" <<EOF
+${sudoers_marker}
+Defaults env_keep += "SSH_AUTH_SOCK"
+EOF
+
+    sudo visudo -cf "$tmp"
+    if ! sudo test -f "$sudoers_file" || ! sudo cmp -s "$tmp" "$sudoers_file"; then
+        sudo install -D -m 0440 "$tmp" "$sudoers_file"
+    fi
+
+    rm -f "$tmp"
+}
+
+remove_sudoers_file() {
+    if sudo test -f "$sudoers_file" && sudo grep -Fqx "$sudoers_marker" "$sudoers_file"; then
+        sudo rm -f "$sudoers_file"
+    fi
+}
+
+if [[ "$enabled" != true ]]; then
+    remove_pam_block
+    remove_sudoers_file
+    exit 0
+fi
+
+if ! command -v apt-get >/dev/null 2>&1; then
+    echo "apt-get is unavailable; skipping sudo SSH agent auth setup." >&2
+    exit 0
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+
+if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -q 'install ok installed'; then
+    sudo apt-get update
+    sudo apt-get install -y "$package"
+fi
+
+sudo install -d -m 0755 "$authorized_keys_dir"
+write_sudoers_file
+write_pam_block
+
+cat <<EOF
+sudo SSH agent auth is enabled for this machine.
+
+No sudo keys were added automatically. To activate it for a user, add that user's
+chosen public key to:
+
+    ${authorized_keys_dir}/USER
+
+See docs/sudo-ssh-agent-auth.md in the dotfiles repo.
+EOF
+
+{{- end -}}

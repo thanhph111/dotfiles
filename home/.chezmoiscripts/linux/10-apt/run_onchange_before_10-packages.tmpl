@@ -1,17 +1,15 @@
-{{- $machine := get .machines (lower (default "" (get . "codename"))) | default dict -}}
-{{- $profile := index .profiles (default (default (index .profile_defaults .chezmoi.os) (get $machine "profile")) (get . "profile")) -}}
-{{- $profileLinux := get (get $profile "packages" | default dict) "linux" | default dict -}}
-{{- $profileApt := get $profileLinux "apt" | default dict -}}
-{{- $apt := mergeOverwrite (deepCopy .packages.linux.apt) $profileApt -}}
-{{- $profileAptEnabled := dig "enabled" true $profileApt -}}
-{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") .hasSudo (not .shared) .packages.linux.apt.enabled $profileAptEnabled) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $apt := get $linux "apt" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") (get $machine "hasSudo") (not (get $machine "shared")) $apt.enabled) -}}
 
 #!/usr/bin/env bash
 
 set -euo pipefail
 
 # apt package flags: {{ $apt | toJson | sha256sum }}
-{{- range $profileApt.manifests }}
+{{- range $apt.manifests }}
 # apt manifest hash: {{ . }} {{ include (joinPath ".apt" .) | sha256sum }}
 {{- end }}
 
@@ -30,7 +28,7 @@ read_package_manifest() {
     done <"$manifest"
 }
 
-{{- range $profileApt.manifests }}
+{{- range $apt.manifests }}
 read_package_manifest {{ joinPath $.chezmoi.sourceDir ".apt" . | quote }}
 {{- end }}
 

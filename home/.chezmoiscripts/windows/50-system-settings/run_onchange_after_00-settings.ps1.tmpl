@@ -1,4 +1,7 @@
-{{- if (and (eq .chezmoi.os "windows") .packages.windows.settings.enabled) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $windows := get $packages "windows" | default dict -}}
+{{- $settings := get $windows "settings" | default dict -}}
+{{- if (and (eq .chezmoi.os "windows") $settings.enabled) -}}
 
 # Self-elevate the script
 if (

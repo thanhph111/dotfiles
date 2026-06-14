@@ -1,5 +1,7 @@
 #: vim: set nospell filetype=sshconfig:
 
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+
 {{- if eq .chezmoi.os "darwin" }}
 # OrbStack 'orb' SSH host for Linux machines
 # This only works if it's at the top of ssh_config (before any Host blocks).
@@ -19,7 +21,7 @@ Host *
     # 1Password SSH agent socket
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     {{- end }}
-{{- else if not .shared }}
+{{- else if not (get $machine "shared") }}
     IdentityFile ~/.ssh/keys/thanhph111
 {{- end }}
 

@@ -1,4 +1,8 @@
-{{- if (and (eq .chezmoi.os "linux") .hasSudo (not .shared) .packages.linux.system.ufw) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.ufw) -}}
 
 #!/usr/bin/env bash
 

@@ -1,4 +1,7 @@
-{{- if (and (eq .chezmoi.os "linux") .packages.linux.mise.enabled) -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $mise := get $linux "mise" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") $mise.enabled) -}}
 
 #!/usr/bin/env bash
 

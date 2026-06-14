@@ -20,9 +20,10 @@
 {{-     $machine = get $machineCatalog.machines $machineName -}}
 {{- end -}}
 
-{{- $globalDefaults := $machineCatalog.machine_defaults.global -}}
-{{- $osDefaults := get $machineCatalog.machine_defaults.by_os .chezmoi.os | default dict -}}
-{{- $defaultProfile := get $osDefaults "profile" | default (get $profileCatalog.profile_defaults .chezmoi.os) | default "linux-desktop" -}}
+{{- $machineDefaults := get $machineCatalog "machine_defaults" | default dict -}}
+{{- $globalDefaults := get $machineDefaults "global" | default dict -}}
+{{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
+{{- $defaultProfile := get $profileCatalog.profile_defaults .chezmoi.os | default "linux-desktop" -}}
 {{- $profileChoices := get $profileCatalog.profile_choices .chezmoi.os | default (list $defaultProfile) -}}
 {{- $interactive := stdinIsATTY -}}
 
@@ -38,6 +39,7 @@
 {{- $gitName := "" -}}
 {{- $gitEmail := "" -}}
 {{- $gitSigningKey := "" -}}
+{{- $setupMode := get . "setupMode" | default (get . "setup_mode") | default "profile" -}}
 {{- $hasProfileData := and (not $machineName) (not (empty (get . "profile"))) -}}
 
 {{- range $source := list $globalDefaults $osDefaults $machine -}}
@@ -97,15 +99,40 @@
 -}}
 {{-     $headless = true -}}
 {{- else if and (not $machineName) $interactive -}}
-{{-     $headless = promptBoolOnce . "headless" "headless" $headless -}}
+{{-     $headless = promptBoolOnce . "local.headless" "headless" $headless -}}
 {{- else if not $machineName -}}
 {{-     $headless = true -}}
 {{- end -}}
 
+{{- if and (not $machineName) $interactive -}}
+{{-     $setupMode = promptChoiceOnce . "setupMode" "local setup mode" (list "profile" "custom") $setupMode -}}
+{{-     if not (has $setupMode (list "profile" "custom")) -}}
+{{-         fail (printf "unknown setup mode %q" $setupMode) -}}
+{{-     end -}}
+{{-     if eq $setupMode "custom" -}}
+{{-         $personal = promptBoolOnce . "local.personal" "personal machine" $personal -}}
+{{-         $vault = promptStringOnce . "local.vault" "1Password vault" $vault -}}
+{{-         $client = promptBoolOnce . "local.client" "client machine" $client -}}
+{{-         $agent = promptBoolOnce . "local.agent" "agent machine" $agent -}}
+{{-         $shared = promptBoolOnce . "local.shared" "shared user" $shared -}}
+{{-         $hasSudo = promptBoolOnce . "local.hasSudo" "user has sudo" $hasSudo -}}
+{{-         $gitName = promptStringOnce . "local.gitName" "Git name" $gitName -}}
+{{-         $gitEmail = promptStringOnce . "local.gitEmail" "Git email" $gitEmail -}}
+{{-         $gitSigningKey = promptStringOnce . "local.gitSigningKey" "Git SSH signing key" $gitSigningKey -}}
+{{-     end -}}
+{{- end -}}
+
 {{- $userOverrides := get $machine "users" | default dict -}}
 {{- $userOverride := get $userOverrides $username | default (get $userOverrides "default") | default dict -}}
+{{- if hasKey $userOverride "personal" }}{{ $personal = get $userOverride "personal" }}{{ end -}}
+{{- if hasKey $userOverride "vault" }}{{ $vault = get $userOverride "vault" }}{{ end -}}
+{{- if hasKey $userOverride "client" }}{{ $client = get $userOverride "client" }}{{ end -}}
+{{- if hasKey $userOverride "agent" }}{{ $agent = get $userOverride "agent" }}{{ end -}}
 {{- if hasKey $userOverride "shared" }}{{ $shared = get $userOverride "shared" }}{{ end -}}
 {{- if hasKey $userOverride "hasSudo" }}{{ $hasSudo = get $userOverride "hasSudo" }}{{ end -}}
+{{- if hasKey $userOverride "gitName" }}{{ $gitName = get $userOverride "gitName" }}{{ end -}}
+{{- if hasKey $userOverride "gitEmail" }}{{ $gitEmail = get $userOverride "gitEmail" }}{{ end -}}
+{{- if hasKey $userOverride "gitSigningKey" }}{{ $gitSigningKey = get $userOverride "gitSigningKey" }}{{ end -}}
 
 {{- $sourceDir := .chezmoi.workingTree | default (dir .chezmoi.sourceDir) -}}
 {{- $scriptPathEntries := list
@@ -127,9 +154,14 @@ sourceDir = {{ $sourceDir | quote }}
 [data]
     codename = {{ $codename | quote }}
     profile = {{ $profile | quote }}
+    setupMode = {{ $setupMode | quote }}
+    {{- if not $machineName }}
+
+[data.local]
+    headless = {{ $headless }}
+    {{-     if eq $setupMode "custom" }}
     personal = {{ $personal }}
     vault = {{ $vault | quote }}
-    headless = {{ $headless }}
     client = {{ $client }}
     agent = {{ $agent }}
     shared = {{ $shared }}
@@ -137,6 +169,8 @@ sourceDir = {{ $sourceDir | quote }}
     gitName = {{ $gitName | quote }}
     gitEmail = {{ $gitEmail | quote }}
     gitSigningKey = {{ $gitSigningKey | quote }}
+    {{-     end }}
+    {{- end }}
 
 [diff]
     exclude = ["scripts"]

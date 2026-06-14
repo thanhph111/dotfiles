@@ -1,3 +1,6 @@
-{{- if and .gitEmail .gitSigningKey (hasPrefix "ssh-" .gitSigningKey) -}}
-{{ .gitEmail }} {{ .gitSigningKey }}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $gitEmail := get $machine "gitEmail" | default "" -}}
+{{- $gitSigningKey := get $machine "gitSigningKey" | default "" -}}
+{{- if and $gitEmail $gitSigningKey (hasPrefix "ssh-" $gitSigningKey) -}}
+{{ $gitEmail }} {{ $gitSigningKey }}
 {{- end }}

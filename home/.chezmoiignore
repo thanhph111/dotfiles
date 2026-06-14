@@ -1,3 +1,4 @@
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
 *
 
 {{/* General */}}
@@ -10,7 +11,7 @@
 !.cache
 !.config
 !.local
-{{ if .agent }}
+{{ if get $machine "agent" }}
 !.openclaw
 {{ end }}
 

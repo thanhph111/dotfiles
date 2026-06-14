@@ -1,0 +1,22 @@
+{{- $resolvedMachine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $machine := get .machines (get $resolvedMachine "machineKey") | default dict -}}
+{{- $profile := get .profiles (get $resolvedMachine "profile") | default dict -}}
+{{- $packageDefaults := get . "packages" | default dict -}}
+{{- $profilePackages := get $profile "packages" | default dict -}}
+{{- $machinePackages := get $machine "packages" | default dict -}}
+{{- $linux := mergeOverwrite
+    (deepCopy (get $packageDefaults "linux" | default dict))
+    (get $profilePackages "linux" | default dict)
+    (get $machinePackages "linux" | default dict)
+-}}
+{{- $darwin := mergeOverwrite
+    (deepCopy (get $packageDefaults "darwin" | default dict))
+    (get $profilePackages "darwin" | default dict)
+    (get $machinePackages "darwin" | default dict)
+-}}
+{{- $windows := mergeOverwrite
+    (deepCopy (get $packageDefaults "windows" | default dict))
+    (get $profilePackages "windows" | default dict)
+    (get $machinePackages "windows" | default dict)
+-}}
+{{ dict "linux" $linux "darwin" $darwin "windows" $windows | toJson }}

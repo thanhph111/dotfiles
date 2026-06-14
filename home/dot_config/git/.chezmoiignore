@@ -1,3 +1,4 @@
-{{- if .personal -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- if get $machine "personal" -}}
 config-work
 {{- end -}}

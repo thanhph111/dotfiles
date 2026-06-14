@@ -1,6 +1,11 @@
 #: vim: set autoindent noexpandtab tabstop=4 shiftwidth=4:
 #: vim: set list nospell filetype=gitconfig:
 
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $gitName := get $machine "gitName" | default "" -}}
+{{- $gitEmail := get $machine "gitEmail" | default "" -}}
+{{- $gitSigningKey := get $machine "gitSigningKey" | default "" -}}
+
 [core]
 	editor = $VISUAL
 	{{- if lookPath "bat" }}
@@ -16,12 +21,20 @@
 	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
 {{- end }}
 
+{{- if or $gitName $gitEmail $gitSigningKey }}
 [user]
-	name = {{ .gitName }}
-	email = {{ .gitEmail }}
-{{- if .gitSigningKey }}
-	signingkey = {{ .gitSigningKey | quote }}
+{{- if $gitName }}
+	name = {{ $gitName }}
+{{- end }}
+{{- if $gitEmail }}
+	email = {{ $gitEmail }}
+{{- end }}
+{{- if $gitSigningKey }}
+	signingkey = {{ $gitSigningKey | quote }}
+{{- end }}
+{{- end }}
 
+{{- if $gitSigningKey }}
 [gpg]
 	format = ssh
 

@@ -37,10 +37,17 @@ packages:
     mise:
       enabled: true
     gnome:
-      extensions: true
-      settings: true
+      enabled: true
+      extensions:
+        enabled: true
+      settings:
+        enabled: true
     system:
       sudoers_disable_admin_flag: true
+      sudo_ssh_agent_auth:
+        enabled: false
+        authorized_keys_dir: /etc/security/sudo_authorized_keys
+        package: libpam-ssh-agent-auth
       rtc_local_time: true
       account_avatar: true
       ufw: true
