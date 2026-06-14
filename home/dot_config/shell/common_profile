@@ -36,13 +36,6 @@ export TERMINFO_DIRS="$TERMINFO_DIRS:$XDG_DATA_HOME/terminfo:/usr/share/terminfo
 
 #: }}}
 
-#: mise-en-place {{{
-
-# Use shims in non-interactive shells
-command_exists mise && eval "$(mise activate --shims)"
-
-#:}}}
-
 #: Wget {{{
 
 #: Change history file location

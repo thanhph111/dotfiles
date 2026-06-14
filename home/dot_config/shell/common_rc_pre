@@ -255,7 +255,7 @@ alias npm-exec='PATH=$(npm bin):$PATH'
 
 #: mise-en-place {{{
 
-# Use shims in non-interactive shells
+# Activate mise without global shims.
 command_exists mise && eval "$(mise activate "$SHELL_NAME")"
 
 #:}}}
