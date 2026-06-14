@@ -1,14 +1,10 @@
 # Dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/) for a consistent
-development environment across multiple machines (macOS, Debian, Windows).
+Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/) for a consistent development environment across multiple machines (macOS, Debian, Windows).
 
 ## Machines
 
-Machines are selected by a small local profile, not by creating package files for
-every host. Known hosts are declared in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml);
-unknown hosts can choose an existing profile during `chezmoi init` without a
-repo change.
+Machines are selected by a small local profile, not by creating package files for every host. Known hosts are declared in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml); unknown hosts can choose an existing profile during `chezmoi init` without a repo change.
 
 | Codename | OS      | Profile           |
 | -------- | ------- | ----------------- |
@@ -28,16 +24,15 @@ repo change.
 | `darwin-agent`      | Lightweight macOS agent machine     |
 | `windows-desktop`   | Personal Windows desktop            |
 
-Profile definitions live in [`home/.chezmoidata/profiles.yaml`](./home/.chezmoidata/profiles.yaml).
-Feature flags live in [`home/.chezmoidata/packages.yaml`](./home/.chezmoidata/packages.yaml).
-Machine identity and per-host overrides live in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml).
+Profile definitions live in [`home/.chezmoidata/profiles.yaml`](./home/.chezmoidata/profiles.yaml). Feature flags live in [`home/.chezmoidata/packages.yaml`](./home/.chezmoidata/packages.yaml). Machine identity and per-host overrides live in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml).
+
+See [`docs/config`](./docs/config/README.md) for the full config model. The short version is: broad defaults come first, then the selected profile, then a named machine, then local or per-user overrides.
 
 ## Setup: new Mac
 
 ### 1. Set the ComputerName
 
-Known machines are auto-detected. For a new machine, this only needs to be a
-useful local name; it does not need a committed package manifest.
+Known machines are auto-detected. For a new machine, this only needs to be a useful local name; it does not need a committed package manifest.
 
 ```bash
 sudo scutil --set ComputerName "Grid"  # or your codename
@@ -53,9 +48,9 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 ./bin/chezmoi init -S ~/Documents/Projects/Personal/dotfiles thanhph111
 ```
 
-For an unknown host, init asks for a codename and one of the reusable profiles.
-You only need to commit a new machine entry when the machine needs persistent
-identity details such as a special vault, Git identity, or shared/sudo behavior.
+For an unknown host, init asks for a codename, one reusable profile, and whether the machine is headless. It also asks whether to keep the profile/default identity or customize this machine locally. Local answers are written to the machine's chezmoi config, so they are not asked again on normal `chezmoi apply`.
+
+Only commit a new machine entry when the machine should become known to the repo, for example because its hostname should auto-select a profile, it has shared-user rules, or the same identity needs to be reused later.
 
 ### 3. First apply
 
@@ -63,8 +58,7 @@ identity details such as a special vault, Git identity, or shared/sudo behavior.
 ./bin/chezmoi apply
 ```
 
-This installs Homebrew or platform package managers as needed, then applies the
-manifests selected by the profile.
+This installs Homebrew or platform package managers as needed, then applies the manifests selected by the profile.
 
 ### 4. Sign into 1Password CLI (client machines only)
 
@@ -84,18 +78,13 @@ The process is idempotent — safe to run as many times as needed.
 
 ## Git signing
 
-Git commits and tags are signed with SSH. SSH signing means Git asks your SSH
-agent, such as Secretive or 1Password, to prove that your key made the commit.
-The private key stays in the agent.
+Git commits and tags are signed with SSH. SSH signing means Git asks your SSH agent, such as Secretive or 1Password, to prove that your key made the commit. The private key stays in the agent.
 
-Add the public key from `gitSigningKey` in
-[`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) to GitHub
-as an SSH signing key.
+Add the public key from `gitSigningKey` in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) to GitHub as an SSH signing key.
 
-On remote machines, use the same signing key through SSH agent forwarding only
-for machines you trust. Agent forwarding lets the remote machine ask your local
-agent to sign, but it should not be enabled for every host. Keep it opt-in with
-per-host files under `~/.ssh/config.d/`.
+On remote machines, use the same signing key through SSH agent forwarding only for machines you trust. Agent forwarding lets the remote machine ask your local agent to sign, but it should not be enabled for every host. Keep it opt-in with per-host files under `~/.ssh/config.d/`.
+
+Trusted Linux profiles can also use SSH agent auth for sudo. Dotfiles can install the PAM/sudo plumbing, but the sudo public key is a manual trust decision. See [`docs/security/sudo-ssh-agent-auth.md`](./docs/security/sudo-ssh-agent-auth.md).
 
 ## Managing dotfiles
 
@@ -110,9 +99,9 @@ chezmoi update             # Pull and apply from repository
 ## Adding a new machine
 
 1. Pick the closest existing profile during `chezmoi init`.
-2. Avoid committing anything for one-off local differences.
+2. Use local setup customization for one-off differences.
 3. Add or change a profile only when the pattern should be reused on future machines.
-4. Add a machine entry in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) only for machines that need special identity, vault, or Git settings.
+4. Add a machine entry in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) only when this host should be auto-detected or carry repeatable per-machine rules.
 
 Package manifests are profile-oriented:
 
@@ -122,14 +111,6 @@ Package manifests are profile-oriented:
 - GNOME: [`home/.gnome`](./home/.gnome)
 - Windows: [`home/.winget`](./home/.winget), [`home/.scoop`](./home/.scoop)
 
-Homebrew is intentionally one Brewfile per profile. On Linux and macOS,
-`~/.Brewfile` is a symlink to the active profile manifest, so `generate-brewfile`
-and `brew bundle dump --file ~/.Brewfile` update the reusable profile recipe.
+Homebrew is intentionally one Brewfile per profile. On Linux and macOS, `~/.Brewfile` is a symlink to the active profile manifest, so `generate-brewfile` and `brew bundle dump --file ~/.Brewfile` update the reusable profile recipe.
 
-Prefer Homebrew core/cask packages over third-party taps when available.
-Third-party formulas or casks should stay fully qualified, for example
-`brew "user/tap/formula"`. The shared brew installer trusts only those explicit
-items before running `brew bundle` with tap trust checks enabled, matching the
-upcoming Homebrew default without trusting whole taps. If a package moves into
-Homebrew core/cask, remove the old Brewfile tap entry and do a one-time cleanup
-on machines that already installed the package from the old tap.
+Prefer Homebrew core/cask packages over third-party taps when available. Third-party formulas or casks should stay fully qualified, for example `brew "user/tap/formula"`. The shared brew installer trusts only those explicit items before running `brew bundle` with tap trust checks enabled, matching the upcoming Homebrew default without trusting whole taps. If a package moves into Homebrew core/cask, remove the old Brewfile tap entry and do a one-time cleanup on machines that already installed the package from the old tap.
