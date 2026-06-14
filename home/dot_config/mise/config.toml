@@ -2,5 +2,7 @@
 uv = "latest"
 
 [settings]
-disable_backends = ["asdf", "vfox", "pipx"]
+# Backends are tool sources. Keep unused plugin catalogs off so tool names resolve through the sources this setup uses.
+disable_backends = ["asdf", "vfox"]
 idiomatic_version_file_enable_tools = ["node", "python", "go", "rust"]
+not_found_auto_install = false
