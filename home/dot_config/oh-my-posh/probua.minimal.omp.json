@@ -10,7 +10,7 @@
                         "cache_duration": "none"
                     },
                     "template": "{{ .UserName }}@{{ .HostName }} ",
-                    "foreground": "yellow",
+                    "foreground": "#ffdd86",
                     "type": "session",
                     "style": "plain"
                 },
@@ -20,7 +20,7 @@
                         "style": "full"
                     },
                     "template": "{{ .Path }} ",
-                    "foreground": "blue",
+                    "foreground": "#42a9ff",
                     "type": "path",
                     "style": "plain"
                 },
@@ -30,7 +30,7 @@
                         "cache_duration": "none",
                         "fetch_status": true
                     },
-                    "template": "<default>git:</>{{ if or (.Working.Changed) (.Staging.Changed) (gt .StashCount 0) }}<yellow>{{ .HEAD }}</>{{ else }}{{ .HEAD }}{{ end }}{{ if .Staging.Changed }} <green>{{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }} <red>{{ .Working.String }}</>{{ end }}",
+                    "template": "git:{{ if or (.Working.Changed) (.Staging.Changed) (gt .StashCount 0) }}<#ffdd86>{{ .HEAD }}</>{{ else }}{{ .HEAD }}{{ end }}{{ if .Staging.Changed }} <#98c379>{{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }} <#d16971>{{ .Working.String }}</>{{ end }}",
                     "type": "git",
                     "style": "plain"
                 }
@@ -46,11 +46,11 @@
                         "cache_duration": "none"
                     },
                     "template": "> ",
-                    "foreground": "yellow",
+                    "foreground": "#ffdd86",
                     "type": "status",
                     "style": "plain",
                     "foreground_templates": [
-                        "{{ if gt .Code 0 }}blue{{ end }}"
+                        "{{ if gt .Code 0 }}#42a9ff{{ end }}"
                     ]
                 }
             ],
