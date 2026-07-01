@@ -7,7 +7,6 @@
 
 {{/* Linux and macOS */}}
 {{ if eq .chezmoi.os "linux" "darwin" }}
-!bash
 !bpython
 !direnv
 !gh
@@ -27,7 +26,6 @@
 !topgrade
 !vim
 !wget
-!zsh
 {{ end }}
 
 {{/* Linux */}}

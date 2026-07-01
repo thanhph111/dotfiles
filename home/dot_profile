@@ -1,17 +1,22 @@
-#!/bin/bash
-#: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
+#!/bin/sh
 
-#: Source common profile configurations
-common_profile="$HOME/.config/shell/common_profile"
-if [ -f "$common_profile" ] && [ -r "$common_profile" ]; then
-    # shellcheck source=dot_config/shell/common_profile
-    . "$common_profile"
+# POSIX login profile.
+#
+# Keep this file small.  It may be read by plain sh, Bash when no
+# ~/.bash_profile exists, and other login-session launchers.  Interactive shell
+# behavior belongs in ~/.bashrc or ~/.zshrc through shell/interactive.sh.
+
+dotfiles_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+dotfiles_profile="$dotfiles_config_home/shell/profile.sh"
+[ -r "$dotfiles_profile" ] || dotfiles_profile="$HOME/.config/shell/profile.sh"
+
+if [ -r "$dotfiles_profile" ]; then
+    DOTFILES_SHELL_ROOT="${dotfiles_profile%/*}"
+    export DOTFILES_SHELL_ROOT
+    # The entry file supports both XDG and fallback locations, so this path is
+    # chosen at runtime.
+    # shellcheck disable=SC1091
+    # shellcheck source=dot_config/shell/profile.sh
+    . "$dotfiles_profile"
 fi
-unset common_profile
-
-#: Disable Bash deprecation warning on macOS
-export BASH_SILENCE_DEPRECATION_WARNING=1
-
-#: Source `.bashrc`
-# shellcheck source=dot_bashrc.tmpl
-[ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+unset dotfiles_config_home dotfiles_profile

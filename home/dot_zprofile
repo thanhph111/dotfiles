@@ -1,11 +1,18 @@
-#!/bin/bash
-# The shebang above is for shellcheck to check this file
-#: vim: set fileencoding=utf-8 colorcolumn=81 nospell:
+#!/bin/zsh
 
-#: Source common profile configurations
-common_profile="$HOME/.config/shell/common_profile"
-if [[ -f "$common_profile" ]] && [[ -r "$common_profile" ]]; then
-    # shellcheck source=dot_config/shell/common_profile
-    . "$common_profile"
+# Zsh login profile.
+#
+# Zsh does not read ~/.profile by default.  Point it at the same profile loader
+# so Bash and Zsh agree on the session environment.
+
+dotfiles_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+dotfiles_profile="$dotfiles_config_home/shell/profile.sh"
+[ -r "$dotfiles_profile" ] || dotfiles_profile="$HOME/.config/shell/profile.sh"
+
+if [[ -r "$dotfiles_profile" ]]; then
+    DOTFILES_SHELL_ROOT="${dotfiles_profile%/*}"
+    export DOTFILES_SHELL_ROOT
+    # shellcheck source=dot_config/shell/profile.sh
+    . "$dotfiles_profile"
 fi
-unset common_profile
+unset dotfiles_config_home dotfiles_profile

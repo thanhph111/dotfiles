@@ -55,10 +55,12 @@
         "shell": {
             "with_arguments": {
                 "program": "/bin/zsh",
-                "args": ["-is", "exec unset HISTFILE"]
+                "args": ["-is"]
             }
         },
-        "env": {}
+        "env": {
+            "DOTFILES_HISTORY": "private"
+        }
     },
     "telemetry": {
         "diagnostics": false,

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Bash login profile.
+#
+# Bash reads this for login shells.  Source the POSIX profile first for session
+# environment, then load ~/.bashrc only when the shell is interactive.
+
+if [[ -r "$HOME/.profile" ]]; then
+    # This is a user-installed dotfile, not a repo-local relative include.
+    # shellcheck disable=SC1091
+    # shellcheck source=dot_profile
+    . "$HOME/.profile"
+fi
+
+case "$-" in
+*i*)
+    if [[ -r "$HOME/.bashrc" ]]; then
+        # This is a user-installed dotfile, not a repo-local relative include.
+        # shellcheck disable=SC1091
+        # shellcheck source=dot_bashrc
+        . "$HOME/.bashrc"
+    fi
+    ;;
+esac

@@ -1,0 +1,41 @@
+# Keep `command` direct so Ghostty starts the real shell, not `/bin/sh -c`.
+# Ghostty uses shell integration to know when a prompt is idle; an extra wrapper
+# shell can make close confirmation appear even when the visible shell is idle.
+{{- if eq .chezmoi.os "darwin" }}
+env = OMP_CONFIG=~/.config/oh-my-posh/probua.minimal.omp.json
+command = direct:zsh -il
+input = raw:command -v piccel >/dev/null 2>&1 && piccel ~/.local/bin/pac-man.json\n
+{{- else if eq .chezmoi.os "linux" }}
+env = OMP_CONFIG=~/.config/oh-my-posh/probua.minimal.omp.json
+command = direct:bash -il
+input = raw:command -v piccel >/dev/null 2>&1 && piccel ~/.local/bin/pac-man.json\n
+{{- else if eq .chezmoi.os "windows" }}
+command = direct:powershell.exe -NoLogo
+{{- end }}
+
+copy-on-select = false
+window-padding-x = 8
+window-padding-y = 8
+# window-padding-balance = true
+window-step-resize = true
+window-padding-color = extend
+window-height = 35
+window-width = 122
+font-size = 13
+font-thicken = true
+font-family = JetbrainsMono Nerd Font
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+quick-terminal-position = bottom
+adjust-cell-height = -10%
+adjust-cursor-thickness = +50%
+# cursor-invert-fg-bg = true
+quick-terminal-autohide = false
+
+keybind = global:cmd+backquote=unbind
+keybind = global:cmd+opt+backquote=toggle_quick_terminal
+
+{{- if eq .chezmoi.os "darwin" }}
+theme = light:/Applications/Ghostty.app/Contents/Resources/ghostty/themes/One Half Light,dark:/Applications/Ghostty.app/Contents/Resources/ghostty/themes/Ayu
+{{- end }}
+
+shell-integration-features = ssh-env,ssh-terminfo

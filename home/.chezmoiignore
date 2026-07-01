@@ -16,6 +16,7 @@
 {{ end }}
 
 !.Brewfile
+!.bash_profile
 !.bashrc
 !.profile
 !.zprofile

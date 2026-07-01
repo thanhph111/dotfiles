@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Bash fzf integration.
+#
+# This module owns Bash-specific fzf key bindings and helper widgets.  Shared
+# fzf defaults should stay here only when Bash needs Bash syntax.
+
 if [[ -z "${FZF_REPO_DIR:-}" ]] && type brew &>/dev/null; then
     HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
     FZF_REPO_DIR="$HOMEBREW_PREFIX/opt/fzf"
@@ -77,22 +84,24 @@ export -f __fzf_preview_file_type
 # export FZF_DEFAULT_COMMAND='find $(pwd)'
 
 code_workspace() {
-    get_code_workspaces() {
-        CONFIG_PATH=~/.config/Code
-        find "$CONFIG_PATH/User/workspaceStorage/" \
+    local config_path="$HOME/.config/Code"
+    local workspace
+
+    [ -d "$config_path/User/workspaceStorage" ] || return 0
+
+    workspace=$(
+        find "$config_path/User/workspaceStorage/" \
             -type f \
             -name 'workspace.json' \
-            -exec cat {} \; | jq -r '.folder' | while IFS= read -r i; do
-            if [ -z "$i" ]; then
-                continue
-            fi
-            folder=$(sed 's/file:\/\///' <<<"$i")
-            if [ -d "$folder" ]; then
-                echo "$folder"
-            fi
-        done
-    }
-    workspace=$(get_code_workspaces | fzf --keep-right --preview 'exa --tree {}')
+            -exec cat {} \; |
+            jq -r '.folder' |
+            while IFS= read -r folder_uri; do
+                [ -n "$folder_uri" ] || continue
+                folder="${folder_uri#file://}"
+                [ -d "$folder" ] && printf '%s\n' "$folder"
+            done |
+            fzf --keep-right --preview 'exa --tree {}'
+    )
     [ -n "$workspace" ] && code --new-window "$workspace"
 }
 
@@ -141,27 +150,27 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $FZF_COLORS"
 # GIT heart FZF
 # -------------
 
-is_in_git_repo() {
+_dotfiles_fzf_is_in_git_repo() {
     git rev-parse HEAD >/dev/null 2>&1
 }
 
-fzf-down() {
+_dotfiles_fzf_down() {
     fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
 }
 
-_gf() {
-    is_in_git_repo || return
+_dotfiles_fzf_gf() {
+    _dotfiles_fzf_is_in_git_repo || return
     git -c color.status=always status --short |
-        fzf-down -m --ansi --nth 2..,.. \
+        _dotfiles_fzf_down -m --ansi --nth 2..,.. \
             --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1})' \
             --preview-window 'wrap' |
         cut -c4- | sed 's/.* -> //'
 }
 
-_gb() {
-    is_in_git_repo || return
+_dotfiles_fzf_gb() {
+    _dotfiles_fzf_is_in_git_repo || return
     git branch -a --color=always | grep -v '/HEAD\s' | sort |
-        fzf-down --ansi --multi --tac --preview-window right:70% \
+        _dotfiles_fzf_down --ansi --multi --tac --preview-window right:70% \
             --preview "git log \
 --oneline \
 --graph \
@@ -173,20 +182,20 @@ _gb() {
         sed 's#^remotes/##'
 }
 
-_gt() {
-    is_in_git_repo || return
+_dotfiles_fzf_gt() {
+    _dotfiles_fzf_is_in_git_repo || return
     git tag --sort -version:refname |
-        fzf-down --multi --preview-window right:70% \
+        _dotfiles_fzf_down --multi --preview-window right:70% \
             --preview 'git show --color=always {}'
 }
 
-_gh() {
-    is_in_git_repo || return
+_dotfiles_fzf_gh() {
+    _dotfiles_fzf_is_in_git_repo || return
     git log \
         --date=short \
         --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" \
         --graph --color=always |
-        fzf-down \
+        _dotfiles_fzf_down \
             --ansi \
             --no-sort \
             --reverse \
@@ -198,10 +207,10 @@ xargs git show --color=always" |
         grep -o "[a-f0-9]\{7,\}"
 }
 
-_gr() {
-    is_in_git_repo || return
+_dotfiles_fzf_gr() {
+    _dotfiles_fzf_is_in_git_repo || return
     git remote -v | awk '{print $1 "\t" $2}' | uniq |
-        fzf-down --tac \
+        _dotfiles_fzf_down --tac \
             --preview "git log \
 --oneline \
 --graph \
@@ -210,9 +219,9 @@ _gr() {
         cut -d$'\t' -f1
 }
 
-_gs() {
-    is_in_git_repo || return
-    git stash list | fzf-down \
+_dotfiles_fzf_gs() {
+    _dotfiles_fzf_is_in_git_repo || return
+    git stash list | _dotfiles_fzf_down \
         --reverse -d: \
         --preview 'git show --color=always {1}' |
         cut -d: -f1
@@ -227,17 +236,17 @@ _gs() {
 if [[ $- =~ i ]]; then
     bind '"\er": redraw-current-line'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-f": "$(_gf)\e\C-e\er"'
+    bind '"\C-g\C-f": "$(_dotfiles_fzf_gf)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-b": "$(_gb)\e\C-e\er"'
+    bind '"\C-g\C-b": "$(_dotfiles_fzf_gb)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-t": "$(_gt)\e\C-e\er"'
+    bind '"\C-g\C-t": "$(_dotfiles_fzf_gt)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-h": "$(_gh)\e\C-e\er"'
+    bind '"\C-g\C-h": "$(_dotfiles_fzf_gh)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-r": "$(_gr)\e\C-e\er"'
+    bind '"\C-g\C-r": "$(_dotfiles_fzf_gr)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-s": "$(_gs)\e\C-e\er"'
+    bind '"\C-g\C-s": "$(_dotfiles_fzf_gs)\e\C-e\er"'
 fi
 
 #: Two-phase filtering with Ripgrep and fzf
@@ -293,9 +302,10 @@ export FZF_CTRL_T_COMMAND="rg --files --no-messages --hidden --follow --glob '!{
 #: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/fp
 fb() {
     local loc
-    loc=$(echo "$PATH" | sed -e $'s/:/\\\n/g' | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:path]'")
+    loc=$(printf '%s\n' "$PATH" | tr ':' '\n' | fzf --header='[find:path]')
     if [[ -d $loc ]]; then
-        rg --files "$loc" | rev | cut -d"/" -f1 | rev | eval "fzf ${FZF_DEFAULT_OPTS} --header='[find:exe] => ${loc}' >/dev/null"
+        rg --files "$loc" | rev | cut -d"/" -f1 | rev |
+            fzf --header="[find:exe] => $loc" >/dev/null
         fb
     fi
 }
@@ -309,7 +319,7 @@ fb() {
 #: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/kp
 kp() {
     local pid
-    pid=$(ps -ef | sed 1d | eval "fzf ${FZF_DEFAULT_OPTS} -m --header='[kill:process]'" | awk '{print $2}')
+    pid=$(ps -ef | sed 1d | fzf -m --header='[kill:process]' | awk '{print $2}')
     if [ -n "$pid" ]; then
         echo "$pid" | xargs kill "-${1:-9}"
         kp
