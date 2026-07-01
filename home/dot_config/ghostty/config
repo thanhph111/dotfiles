@@ -21,6 +21,7 @@ quick-terminal-autohide = false
 keybind = global:cmd+backquote=unbind
 keybind = global:cmd+opt+backquote=toggle_quick_terminal
 
-theme = light:One Half Light,dark:Ayu
+# Follow the system appearance with a matched, high-contrast pair.
+theme = light:GitHub Light Default,dark:GitHub Dark Default
 
 shell-integration-features = ssh-env,ssh-terminfo
