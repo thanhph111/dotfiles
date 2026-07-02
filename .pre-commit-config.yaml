@@ -37,6 +37,14 @@ repos:
         name: shellcheck
         entry: mise x -- shellcheck
         language: system
+        exclude: '^home/dot_config/shell/zsh\.d/.*\.zsh$'
+        types: [shell]
+
+      - id: zsh-n
+        name: zsh -n
+        entry: bash -c 'for file do zsh -n "$file" || exit; done' --
+        language: system
+        files: '^home/dot_config/shell/zsh\.d/.*\.zsh$'
         types: [shell]
 
       - id: markdownlint-cli2
