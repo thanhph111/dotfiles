@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Read the desktop clipboard to stdout.
+
+if command -v pbpaste >/dev/null 2>&1; then
+    exec pbpaste
+fi
+
+if command -v wl-paste >/dev/null 2>&1; then
+    exec wl-paste
+fi
+
+if command -v xclip >/dev/null 2>&1; then
+    exec xclip -selection clipboard -o
+fi
+
+if command -v xsel >/dev/null 2>&1; then
+    exec xsel --clipboard --output
+fi
+
+printf '%s\n' 'clippaste: no supported clipboard command found' >&2
+exit 1

@@ -2,9 +2,6 @@
 
 # Bash line editing and shell options.
 
-# Disable XON/XOFF so Ctrl-s can be used by readline search and applications.
-[ -t 0 ] && [ -x /bin/stty ] && /bin/stty -ixon
-
 # Avoid running pasted text immediately when it contains newlines.
 bind 'set enable-bracketed-paste on'
 

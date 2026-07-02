@@ -2,329 +2,70 @@
 
 # Bash fzf integration.
 #
-# This module owns Bash-specific fzf key bindings and helper widgets.  Shared
-# fzf defaults should stay here only when Bash needs Bash syntax.
+# Shared fzf behavior lives in interactive.d/40-fzf.sh. This file only owns the
+# Bash integration script and readline key bindings.
+#
+# Keep picker behavior in the shared file. This file should only load fzf and
+# map Bash keys to shared functions.
 
-if [[ -z "${FZF_REPO_DIR:-}" ]] && type brew &>/dev/null; then
-    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-    FZF_REPO_DIR="$HOMEBREW_PREFIX/opt/fzf"
+command -v fzf >/dev/null 2>&1 || return 0
+
+if _fzf_shell_integration="$(fzf --bash 2>/dev/null)"; then
+    eval "$_fzf_shell_integration"
+else
+    if [[ -n "${FZF_REPO_DIR:-}" ]]; then
+        # shellcheck source=/dev/null
+        [[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.bash" 2>/dev/null
+        # shellcheck source=/dev/null
+        source "$FZF_REPO_DIR/shell/key-bindings.bash" 2>/dev/null
+    fi
 fi
+unset _fzf_shell_integration
 
-[[ -d "${FZF_REPO_DIR:-}" ]] || return
-
-# Setup fzf
-# ---------
-case ":$PATH:" in
-*:"$FZF_REPO_DIR/bin":*) ;;
-*)
-    export PATH="${PATH:+${PATH}:}$FZF_REPO_DIR/bin"
-    ;;
-esac
-
-# Auto-completion
-# ---------------
-# shellcheck source=/dev/null
-[[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.bash" 2>/dev/null
-
-# Key bindings
-# ------------
-# shellcheck source=/dev/null
-source "$FZF_REPO_DIR/shell/key-bindings.bash"
-
-__fzf_preview_file_type() {
-    # kitty +kitten icat --transfer-mode=file --silent --clear
-    bat_args=(--style numbers --color always)
-    case "$1" in
-    *.csv)
-        # vd "$1"
-        bat "${bat_args[@]}" "$1"
-        ;;
-    *)
-        mime=$(file -b --mime-type "$1")
-        case "$mime" in
-        text/*)
-            bat "${bat_args[@]}" "$1"
-            ;;
-        image/svg+xml | \
-            image/png | \
-            image/gif | \
-            image/jpeg | \
-            image/webp)
-            # kitty +kitten icat \
-            # --transfer-mode=file \
-            # --silent \
-            # --align=left \
-            # --place "$COLUMNS"x"$LINES"@0x0 \
-            # --z-index=-1 \
-            # -- "$1"
-            file -b "$1"
-            echo "$mime"
-            ;;
-        application/gzip | \
-            application/java-archive | \
-            application/x-7z-compressed | \
-            application/x-bzip2 | \
-            application/x-chrome-extension | \
-            application/x-rar | \
-            application/x-tar | \
-            application/x-xar | \
-            application/zip)
-            7z l "$1" | tail -n +12
-            ;;
-        *)
-            file -b "$1"
-            echo "$mime"
-            ;;
-        esac
-        ;;
-    esac
-}
-export -f __fzf_preview_file_type
-
-# export FZF_DEFAULT_COMMAND='find $(pwd)'
-
-code_workspace() {
-    local config_path="$HOME/.config/Code"
-    local workspace
-
-    [ -d "$config_path/User/workspaceStorage" ] || return 0
-
-    workspace=$(
-        find "$config_path/User/workspaceStorage/" \
-            -type f \
-            -name 'workspace.json' \
-            -exec cat {} \; |
-            jq -r '.folder' |
-            while IFS= read -r folder_uri; do
-                [ -n "$folder_uri" ] || continue
-                folder="${folder_uri#file://}"
-                [ -d "$folder" ] && printf '%s\n' "$folder"
-            done |
-            fzf --keep-right --preview 'exa --tree {}'
-    )
-    [ -n "$workspace" ] && code --new-window "$workspace"
-}
-
-FZF_DEFAULT_OPTS="--info=inline \
---border \
---multi \
---cycle \
---layout=reverse \
---margin=2% \
---padding=1 \
---pointer='→ ' \
---marker='◉ ' \
---height=80%"
-# --preview \"$(type __fzf_preview_file_type | tail -n +2); __fzf_preview_file_type {}\" \
-
-FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
---bind 'ctrl-t:toggle-all' \
---bind 'home:first' \
---bind 'end:last' \
---bind 'ctrl-y:execute-silent(echo -n {+} | xclip -selection clipboard)' \
---bind 'alt-y:execute-silent(readlink -fn {} | xclip -selection clipboard)' \
-"
-# --pointer='' \
-export FZF_COLORS="--color=\
-fg:#981748,\
-fg+:#e31b61:bold,\
-bg:-1,\
-bg+:-1,\
-hl:#0571a3:bold,\
-hl+:#00a5ed:bold,\
-info:3,\
-prompt:4,\
-pointer:13,\
-marker:10,\
-spinner:10,\
-gutter:-1,\
-preview-fg:15,\
-preview-bg:-1,\
-query:15,\
-disabled:8,\
-border:8,\
-header:15"
-
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $FZF_COLORS"
-
-# GIT heart FZF
-# -------------
-
-_dotfiles_fzf_is_in_git_repo() {
-    git rev-parse HEAD >/dev/null 2>&1
-}
-
-_dotfiles_fzf_down() {
-    fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
-}
-
-_dotfiles_fzf_gf() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git -c color.status=always status --short |
-        _dotfiles_fzf_down -m --ansi --nth 2..,.. \
-            --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1})' \
-            --preview-window 'wrap' |
-        cut -c4- | sed 's/.* -> //'
-}
-
-_dotfiles_fzf_gb() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git branch -a --color=always | grep -v '/HEAD\s' | sort |
-        _dotfiles_fzf_down --ansi --multi --tac --preview-window right:70% \
-            --preview "git log \
---oneline \
---graph \
---date=short \
---color=always \
---pretty=\"format:%C(auto)%cd %h%d %s\" \
-\$(sed s/^..// <<< {} | cut -d ' ' -f1)" |
-        sed 's/^..//' | cut -d' ' -f1 |
-        sed 's#^remotes/##'
-}
-
-_dotfiles_fzf_gt() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git tag --sort -version:refname |
-        _dotfiles_fzf_down --multi --preview-window right:70% \
-            --preview 'git show --color=always {}'
-}
-
-_dotfiles_fzf_gh() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git log \
-        --date=short \
-        --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" \
-        --graph --color=always |
-        _dotfiles_fzf_down \
-            --ansi \
-            --no-sort \
-            --reverse \
-            --multi \
-            --bind 'ctrl-s:toggle-sort' \
-            --header 'Press CTRL-S to toggle sort' \
-            --preview "grep -o '[a-f0-9]\{7,\}' <<< {} | \
-xargs git show --color=always" |
-        grep -o "[a-f0-9]\{7,\}"
-}
-
-_dotfiles_fzf_gr() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git remote -v | awk '{print $1 "\t" $2}' | uniq |
-        _dotfiles_fzf_down --tac \
-            --preview "git log \
---oneline \
---graph \
---date=short \
---pretty='format:%C(auto)%cd %h%d %s' {1}" |
-        cut -d$'\t' -f1
-}
-
-_dotfiles_fzf_gs() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git stash list | _dotfiles_fzf_down \
-        --reverse -d: \
-        --preview 'git show --color=always {1}' |
-        cut -d: -f1
-}
-
-#: https://gist.github.com/junegunn/8b572b8d4b5eddd8b85e5f4d40f17236
-#: CTRL-G CTRL-F for files
-#: CTRL-G CTRL-B for branches
-#: CTRL-G CTRL-T for tags
-#: CTRL-G CTRL-R for remotes
-#: CTRL-G CTRL-H for commit hashes
+# fzf's generated Bash script owns CTRL-T, ALT-C, and CTRL-R.
+#
+# CTRL-O keeps non-Git actions in one place. Press CTRL-O, then a plain key:
+# f edits a file
+# r searches text with ripgrep
+# w opens a VS Code workspace
+# p selects processes to kill
+# b inserts a command from PATH
+# ? shows these keys
+#
+# CTRL-G keeps Git object insertion in one place. Press CTRL-G, then:
+# f for files
+# b for branches
+# t for tags
+# r for remotes
+# h for commit hashes
+# s for stashes
+# ? shows Git keys
 if [[ $- =~ i ]]; then
+    bind -r "\C-g"
+    bind -r "\C-o"
+
+    bind -x '"\C-of": fzf_edit_file'
+    bind -x '"\C-or": fzf_search_text'
+    bind -x '"\C-ow": fzf_open_code_workspace'
+    bind -x '"\C-op": fzf_kill_process'
+    bind -x '"\C-o?": fzf_show_keymap actions'
+
     bind '"\er": redraw-current-line'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-f": "$(_dotfiles_fzf_gf)\e\C-e\er"'
+    bind '"\C-ob": "$(fzf_select_path_executable | _fzf_quote)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-b": "$(_dotfiles_fzf_gb)\e\C-e\er"'
+    bind '"\C-gf": "$(fzf_select_git_changed_files | _fzf_quote)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-t": "$(_dotfiles_fzf_gt)\e\C-e\er"'
+    bind '"\C-gb": "$(fzf_select_git_branches | _fzf_quote)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-h": "$(_dotfiles_fzf_gh)\e\C-e\er"'
+    bind '"\C-gt": "$(fzf_select_git_tags | _fzf_quote)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-r": "$(_dotfiles_fzf_gr)\e\C-e\er"'
+    bind '"\C-gh": "$(fzf_select_git_commit_hashes | _fzf_quote)\e\C-e\er"'
     # shellcheck disable=SC2016
-    bind '"\C-g\C-s": "$(_dotfiles_fzf_gs)\e\C-e\er"'
+    bind '"\C-gr": "$(fzf_select_git_remotes | _fzf_quote)\e\C-e\er"'
+    # shellcheck disable=SC2016
+    bind '"\C-gs": "$(fzf_select_git_stashes | _fzf_quote)\e\C-e\er"'
+    bind -x '"\C-g?": fzf_show_keymap git'
 fi
 
-#: Two-phase filtering with Ripgrep and fzf
-#:
-#: 1. Search for text in files using Ripgrep
-#: 2. Interactively restart Ripgrep with reload action
-#:    * Press alt-enter to switch to fzf-only filtering
-#: 3. Open the file in Vim
-#: TODO: https://github.com/junegunn/fzf/blob/master/ADVANCED.md#switching-between-ripgrep-mode-and-fzf-mode
-rfv() {
-    RG_PREFIX="rg \
-    --column \
-    --line-number \
-    --no-heading \
-    --color=always \
-    --smart-case "
-    INITIAL_QUERY="${*:-}"
-    IFS=: read -ra selected < <(
-        FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
-            fzf --ansi
-        # shellcheck disable=SC2086
-        $FZF_COLORS \
-            --disabled --query "$INITIAL_QUERY" \
-            --bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
-            --bind "alt-enter:\
-unbind(change,alt-enter)\
-+change-prompt(2. fzf> )\
-+enable-search\
-+clear-query" \
-            --prompt '1. ripgrep> ' \
-            --delimiter : \
-            --preview 'bat --color=always {1} --highlight-line {2}' \
-            --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
-    )
-    [ -n "${selected[0]}" ] && vim "${selected[0]}" "+${selected[1]}"
-}
-
-fp() {
-    fzf --preview '__fzf_preview_file_type {}'
-}
-
-export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
-export FZF_CTRL_R_OPTS="--preview 'echo {}' \
---preview-window down:3:hidden:wrap \
---bind 'ctrl-/:toggle-preview'"
-export FZF_CTRL_T_COMMAND="rg --files --no-messages --hidden --follow --glob '!{.git,.gitignore}' --glob '!{.DS_Store,.Trash}'"
-
-#: Find binaries in PATH
-#: Mnemonic: [F]ind [B]inaries
-#: List directories in $PATH, press [enter] on an entry to list the executables
-#: inside. press [escape] to go back to directory listing, [escape] twice to
-#: exit completely
-#: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/fp
-fb() {
-    local loc
-    loc=$(printf '%s\n' "$PATH" | tr ':' '\n' | fzf --header='[find:path]')
-    if [[ -d $loc ]]; then
-        rg --files "$loc" | rev | cut -d"/" -f1 | rev |
-            fzf --header="[find:exe] => $loc" >/dev/null
-        fb
-    fi
-}
-
-#: Kill processes
-#: Mnemonic: [K]ill [P]rocess
-#: show output of "ps -ef", use [tab] to select one or multiple entries press
-#: [enter] to kill selected processes and go back to the process list. or press
-#: [escape] to go back to the process list. Press [escape] twice to exit
-#: completely.
-#: Reference: https://github.com/SidOfc/dotfiles/blob/d07fa3862ed065c2a5a7f1160ae98416bfe2e1ee/zsh/kp
-kp() {
-    local pid
-    pid=$(ps -ef | sed 1d | fzf -m --header='[kill:process]' | awk '{print $2}')
-    if [ -n "$pid" ]; then
-        echo "$pid" | xargs kill "-${1:-9}"
-        kp
-    fi
-}
-
-#: Support '**' completion for `code`
-_fzf_setup_completion path code
+type _fzf_setup_completion >/dev/null 2>&1 && _fzf_setup_completion path code

@@ -43,6 +43,9 @@ export FIGNORE
 mkdir -p "$USER_CACHE_DIR/less"
 export LESSHISTFILE="$USER_CACHE_DIR/less/history"
 
+# Disable XON/XOFF so Ctrl-S can be used by line editors and applications.
+[ -t 0 ] && dotfiles_command_exists stty && stty -ixon
+
 # Color GCC diagnostics in terminals that support color.
 export GCC_COLORS="\
 error=01;31:\
@@ -56,12 +59,25 @@ quote=01"
 # some minimal terminals report a TERM value but cannot answer tput correctly.
 if [ -n "${TERM:-}" ] && [ "$TERM" != dumb ] && dotfiles_command_exists tput; then
     LESS_TERMCAP_mb="$(tput blink)"
-    LESS_TERMCAP_md="$(tput bold; tput setaf 6)"
+    LESS_TERMCAP_md="$(
+        tput bold
+        tput setaf 6
+    )"
     LESS_TERMCAP_me="$(tput sgr0)"
     LESS_TERMCAP_so="$(tput smso)"
-    LESS_TERMCAP_se="$(tput rmso; tput sgr0)"
-    LESS_TERMCAP_us="$(tput smul; tput bold; tput setaf 7)"
-    LESS_TERMCAP_ue="$(tput rmul; tput sgr0)"
+    LESS_TERMCAP_se="$(
+        tput rmso
+        tput sgr0
+    )"
+    LESS_TERMCAP_us="$(
+        tput smul
+        tput bold
+        tput setaf 7
+    )"
+    LESS_TERMCAP_ue="$(
+        tput rmul
+        tput sgr0
+    )"
     LESS_TERMCAP_mr="$(tput rev)"
     LESS_TERMCAP_mh="$(tput dim)"
     LESS_TERMCAP_ZN="$(tput ssubm)"
@@ -76,5 +92,5 @@ if [ -n "${TERM:-}" ] && [ "$TERM" != dumb ] && dotfiles_command_exists tput; th
 fi
 
 # Keep very wide terminals from making man pages hard to read.
-MANWIDTH=$(( ${COLUMNS:-80} > 120 ? 120 : ${COLUMNS:-80} ))
+MANWIDTH=$((${COLUMNS:-80} > 120 ? 120 : ${COLUMNS:-80}))
 export MANWIDTH

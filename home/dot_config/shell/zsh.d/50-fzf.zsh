@@ -2,151 +2,82 @@
 
 # Zsh fzf integration.
 #
-# This module owns Zsh widgets and bindkey setup for fzf.  Keep it separate from
-# Bash because the widget APIs are completely different.
+# Shared fzf behavior lives in interactive.d/40-fzf.sh. This file only owns the
+# Zsh integration script and ZLE widgets.
+#
+# Keep picker behavior in the shared file. This file should only load fzf and
+# map Zsh keys to shared functions.
 
-if [[ -z "${FZF_REPO_DIR:-}" ]] && type brew &>/dev/null; then
-    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-    FZF_REPO_DIR="$HOMEBREW_PREFIX/opt/fzf"
+command -v fzf >/dev/null 2>&1 || return 0
+[[ -t 0 && -t 1 ]] || return 0
+
+if fzf --zsh >/dev/null 2>&1; then
+    source <(fzf --zsh)
+elif [[ -n "${FZF_REPO_DIR:-}" ]]; then
+    [[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.zsh" 2>/dev/null
+    source "$FZF_REPO_DIR/shell/key-bindings.zsh" 2>/dev/null
 fi
 
-[[ -d "${FZF_REPO_DIR:-}" ]] || return
+# fzf's generated Zsh script owns CTRL-T, ALT-C, and CTRL-R.
+#
+# CTRL-O keeps non-Git actions in one place. Press CTRL-O, then a plain key:
+# f edits a file
+# r searches text with ripgrep
+# w opens a VS Code workspace
+# p selects processes to kill
+# b inserts a command from PATH
+# ? shows these keys
+#
+# CTRL-G keeps Git object insertion in one place. Press CTRL-G, then:
+# f for files
+# b for branches
+# t for tags
+# r for remotes
+# h for commit hashes
+# s for stashes
+# ? shows Git keys
 
-# Setup fzf
-# ---------
-case ":$PATH:" in
-*:"$FZF_REPO_DIR/bin":*) ;;
-*)
-    export PATH="${PATH:+${PATH}:}$FZF_REPO_DIR/bin"
-    ;;
-esac
+_fzf_run_widget() {
+    case "$WIDGET" in
+    fzf-edit-file-widget) fzf_edit_file ;;
+    fzf-search-text-widget) fzf_search_text ;;
+    fzf-open-code-workspace-widget) fzf_open_code_workspace ;;
+    fzf-kill-process-widget) fzf_kill_process ;;
+    *) return 1 ;;
+    esac
 
-# Auto-completion
-# ---------------
-# shellcheck source=/dev/null
-[[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.zsh" 2>/dev/null
-
-# Key bindings
-# ------------
-# shellcheck source=/dev/null
-source "$FZF_REPO_DIR/shell/key-bindings.zsh"
-
-FZF_DEFAULT_OPTS="--info=inline \
---border \
---multi \
---cycle \
---layout=reverse \
---margin=2% \
---padding=1 \
---pointer='→ ' \
---marker='◉ ' \
---height=80%"
-
-FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
---bind 'ctrl-t:toggle-all' \
---bind 'home:first' \
---bind 'end:last' \
---bind 'ctrl-y:execute-silent(if [[ \"$OSTYPE\" == \"darwin\"* ]]; then echo -n {+} | pbcopy; else echo -n {+} | xclip -selection clipboard; fi)' \
---bind 'alt-y:execute-silent(if [[ \"$OSTYPE\" == \"darwin\"* ]]; then readlink -fn {} | pbcopy; else readlink -fn {} | xclip -selection clipboard; fi)' \
-"
-# --pointer='' \
-export FZF_COLORS="--color=\
-fg:#981748,\
-fg+:#e31b61:bold,\
-bg:-1,\
-bg+:-1,\
-hl:#0571a3:bold,\
-hl+:#00a5ed:bold,\
-info:3,\
-prompt:4,\
-pointer:13,\
-marker:10,\
-spinner:10,\
-gutter:-1,\
-preview-fg:15,\
-preview-bg:-1,\
-query:15,\
-disabled:8,\
-border:8,\
-header:15"
-
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS $FZF_COLORS"
-
-# GIT heart FZF
-#: Reference: https://gist.github.com/junegunn/8b572b8d4b5eddd8b85e5f4d40f17236
-#: CTRL-G CTRL-F for files
-#: CTRL-G CTRL-B for branches
-#: CTRL-G CTRL-T for tags
-#: CTRL-G CTRL-R for remotes
-#: CTRL-G CTRL-H for commit hashes
-# -------------
-
-_dotfiles_fzf_is_in_git_repo() {
-    git rev-parse HEAD >/dev/null 2>&1
+    zle reset-prompt
 }
 
-_dotfiles_fzf_down() {
-    fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
+_fzf_show_keymap_widget() {
+    case "$WIDGET" in
+    fzf-actions-help-widget) fzf_show_keymap actions ;;
+    fzf-git-help-widget) fzf_show_keymap git ;;
+    *) return 1 ;;
+    esac
+
+    zle reset-prompt
 }
 
-_dotfiles_fzf_gf() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git -c color.status=always status --short |
-        _dotfiles_fzf_down -m --ansi --nth 2..,.. \
-            --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1})' |
-        cut -c4- | sed 's/.* -> //'
+_fzf_insert_path_executable_widget() {
+    local result
+
+    result="$(fzf_select_path_executable | _fzf_quote)"
+
+    zle reset-prompt
+    LBUFFER+="$result"
 }
 
-# shellcheck disable=SC2016
-_dotfiles_fzf_gb() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git branch -a --color=always | grep -v '/HEAD\s' | sort |
-        _dotfiles_fzf_down --ansi --multi --tac --preview-window right:70% \
-            --preview 'git log --oneline --graph --date=short --color=always --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1)' |
-        sed 's/^..//' | cut -d' ' -f1 |
-        sed 's#^remotes/##'
-}
-
-_dotfiles_fzf_gt() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git tag --sort -version:refname |
-        _dotfiles_fzf_down --multi --preview-window right:70% \
-            --preview 'git show --color=always {}'
-}
-
-_dotfiles_fzf_gh() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
-        _dotfiles_fzf_down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
-            --header 'Press CTRL-S to toggle sort' \
-            --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always' |
-        grep -o "[a-f0-9]\{7,\}"
-}
-
-_dotfiles_fzf_gr() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git remote -v | awk '{print $1 "\t" $2}' | uniq |
-        _dotfiles_fzf_down --tac \
-            --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1}' |
-        cut -d$'\t' -f1
-}
-
-_dotfiles_fzf_gs() {
-    _dotfiles_fzf_is_in_git_repo || return
-    git stash list | _dotfiles_fzf_down --reverse -d: --preview 'git show --color=always {1}' |
-        cut -d: -f1
-}
-
-_dotfiles_fzf_git_widget() {
-    local result item
+_fzf_git_widget() {
+    local result
 
     case "$WIDGET" in
-    fzf-gf-widget) result="$(_dotfiles_fzf_gf | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
-    fzf-gb-widget) result="$(_dotfiles_fzf_gb | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
-    fzf-gt-widget) result="$(_dotfiles_fzf_gt | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
-    fzf-gr-widget) result="$(_dotfiles_fzf_gr | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
-    fzf-gh-widget) result="$(_dotfiles_fzf_gh | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
-    fzf-gs-widget) result="$(_dotfiles_fzf_gs | while IFS= read -r item; do printf '%q ' "$item"; done)" ;;
+    fzf-gf-widget) result="$(fzf_select_git_changed_files | _fzf_quote)" ;;
+    fzf-gb-widget) result="$(fzf_select_git_branches | _fzf_quote)" ;;
+    fzf-gt-widget) result="$(fzf_select_git_tags | _fzf_quote)" ;;
+    fzf-gr-widget) result="$(fzf_select_git_remotes | _fzf_quote)" ;;
+    fzf-gh-widget) result="$(fzf_select_git_commit_hashes | _fzf_quote)" ;;
+    fzf-gs-widget) result="$(fzf_select_git_stashes | _fzf_quote)" ;;
     *) return 1 ;;
     esac
 
@@ -154,16 +85,35 @@ _dotfiles_fzf_git_widget() {
     LBUFFER+="$result"
 }
 
-zle -N fzf-gf-widget _dotfiles_fzf_git_widget
-zle -N fzf-gb-widget _dotfiles_fzf_git_widget
-zle -N fzf-gt-widget _dotfiles_fzf_git_widget
-zle -N fzf-gr-widget _dotfiles_fzf_git_widget
-zle -N fzf-gh-widget _dotfiles_fzf_git_widget
-zle -N fzf-gs-widget _dotfiles_fzf_git_widget
+zle -N fzf-edit-file-widget _fzf_run_widget
+zle -N fzf-search-text-widget _fzf_run_widget
+zle -N fzf-open-code-workspace-widget _fzf_run_widget
+zle -N fzf-kill-process-widget _fzf_run_widget
+zle -N fzf-actions-help-widget _fzf_show_keymap_widget
+zle -N fzf-insert-path-executable-widget _fzf_insert_path_executable_widget
 
-bindkey '^g^f' fzf-gf-widget
-bindkey '^g^b' fzf-gb-widget
-bindkey '^g^t' fzf-gt-widget
-bindkey '^g^r' fzf-gr-widget
-bindkey '^g^h' fzf-gh-widget
-bindkey '^g^s' fzf-gs-widget
+zle -N fzf-gf-widget _fzf_git_widget
+zle -N fzf-gb-widget _fzf_git_widget
+zle -N fzf-gt-widget _fzf_git_widget
+zle -N fzf-gr-widget _fzf_git_widget
+zle -N fzf-gh-widget _fzf_git_widget
+zle -N fzf-gs-widget _fzf_git_widget
+zle -N fzf-git-help-widget _fzf_show_keymap_widget
+
+bindkey -r '^O'
+bindkey -r '^G'
+
+bindkey '^of' fzf-edit-file-widget
+bindkey '^or' fzf-search-text-widget
+bindkey '^ow' fzf-open-code-workspace-widget
+bindkey '^op' fzf-kill-process-widget
+bindkey '^ob' fzf-insert-path-executable-widget
+bindkey '^o?' fzf-actions-help-widget
+
+bindkey '^gf' fzf-gf-widget
+bindkey '^gb' fzf-gb-widget
+bindkey '^gt' fzf-gt-widget
+bindkey '^gr' fzf-gr-widget
+bindkey '^gh' fzf-gh-widget
+bindkey '^gs' fzf-gs-widget
+bindkey '^g?' fzf-git-help-widget

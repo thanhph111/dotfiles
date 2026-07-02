@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+# Preview one path for fzf.
+
+set -o pipefail
+
+line=
+if [[ "${1:-}" == "--line" ]]; then
+    line="${2:-}"
+    shift 2
+fi
+
+path="${1:-}"
+[[ -n "$path" ]] || exit 0
+
+preview_tree() {
+    if command -v eza >/dev/null 2>&1; then
+        eza --tree --level=2 --color=always --icons=auto -- "$1" | head -200
+    elif command -v exa >/dev/null 2>&1; then
+        exa --tree --level=2 --color=always -- "$1" | head -200
+    elif command -v tree >/dev/null 2>&1; then
+        tree -C -L 2 -- "$1" | head -200
+    else
+        find "$1" -maxdepth 2 -print | sed "s#^$1#.#" | head -200
+    fi
+}
+
+preview_text() {
+    local bat_args bat_theme
+    if [[ -n "${FZF_BAT_THEME:-}" ]]; then
+        bat_theme="$FZF_BAT_THEME"
+    elif [[ "${BAT_THEME:-}" == auto* || -z "${BAT_THEME:-}" ]]; then
+        bat_theme=ansi
+    else
+        bat_theme="$BAT_THEME"
+    fi
+
+    bat_args=(--style numbers --color always --theme "$bat_theme" --line-range :300)
+    [[ -n "$line" ]] && bat_args+=(--highlight-line "$line")
+
+    if command -v bat >/dev/null 2>&1; then
+        bat "${bat_args[@]}" -- "$1"
+    else
+        sed -n '1,300p' "$1"
+    fi
+}
+
+preview_archive() {
+    if command -v 7z >/dev/null 2>&1; then
+        7z l -- "$1" | tail -n +12
+    elif command -v unzip >/dev/null 2>&1; then
+        unzip -l -- "$1"
+    elif command -v tar >/dev/null 2>&1; then
+        tar -tf "$1"
+    else
+        file -b -- "$1"
+    fi
+}
+
+[[ -e "$path" ]] || exit 0
+
+if [[ -d "$path" ]]; then
+    preview_tree "$path"
+    exit
+fi
+
+mime=$(
+    file -b --mime-type -- "$path" 2>/dev/null ||
+        file -Ib -- "$path" 2>/dev/null ||
+        true
+)
+
+case "$mime" in
+text/* | \
+    application/json | \
+    application/xml | \
+    application/x-sh | \
+    application/x-shellscript)
+    preview_text "$path"
+    ;;
+image/*)
+    if command -v chafa >/dev/null 2>&1; then
+        chafa --size="${FZF_PREVIEW_COLUMNS:-80}x${FZF_PREVIEW_LINES:-40}" -- "$path"
+    else
+        file -b -- "$path"
+        printf '%s\n' "$mime"
+    fi
+    ;;
+application/gzip | \
+    application/java-archive | \
+    application/x-7z-compressed | \
+    application/x-bzip2 | \
+    application/x-rar | \
+    application/x-tar | \
+    application/zip)
+    preview_archive "$path"
+    ;;
+*)
+    file -b -- "$path"
+    [[ -n "$mime" ]] && printf '%s\n' "$mime"
+    ;;
+esac
