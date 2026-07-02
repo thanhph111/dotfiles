@@ -5,10 +5,13 @@ prek = 'latest'
 uv = 'latest'
 shfmt = "latest"
 shellcheck = "latest"
+watchexec = 'latest'
 
 [shell_alias]
 xsetup = 'mise run setup'
 xlint = 'mise run lint'
+xapply = 'mise run --skip-tools apply'
+xwatch = 'mise watch --postpone --debounce 300ms --watch home apply'
 
 [tasks.setup]
 description = 'Set up the environment for development'
@@ -17,3 +20,7 @@ run = ['uv sync --frozen', 'prek install']
 [tasks.lint]
 description = 'Run all linting checks'
 run = 'prek --all-files'
+
+[tasks.apply]
+description = 'Apply dotfile changes without setup scripts'
+run = 'chezmoi apply --exclude=scripts'
