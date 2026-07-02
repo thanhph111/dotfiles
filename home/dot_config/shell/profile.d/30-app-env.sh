@@ -18,16 +18,27 @@ export GLFW_IM_MODULE=ibus
 
 # Secretive / 1Password SSH agents on macOS.
 #
-# Keep a valid existing SSH_AUTH_SOCK.  Remote SSH sessions, dev containers, and
-# editor remote extensions often set this to a forwarded agent, and overwriting
-# it breaks authentication in exactly the places where it matters most.
-if [ -z "${SSH_AUTH_SOCK:-}" ] || [ ! -S "$SSH_AUTH_SOCK" ]; then
-    if [ -S "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh" ]; then
-        export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
-    elif [ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
-        export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+# Keep real forwarded SSH agents, but prefer the local app agent over macOS's
+# default launchd socket. Git SSH signing needs the key-holding agent directly.
+dotfiles_ssh_agent=
+if [ -S "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh" ]; then
+    dotfiles_ssh_agent="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+elif [ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]; then
+    dotfiles_ssh_agent="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+fi
+
+if [ -n "$dotfiles_ssh_agent" ]; then
+    if [ -z "${SSH_AUTH_SOCK:-}" ] || [ ! -S "$SSH_AUTH_SOCK" ]; then
+        export SSH_AUTH_SOCK="$dotfiles_ssh_agent"
+    elif [ -z "${SSH_CONNECTION:-}${SSH_CLIENT:-}" ]; then
+        case "$SSH_AUTH_SOCK" in
+        /var/run/com.apple.launchd.*/Listeners)
+            export SSH_AUTH_SOCK="$dotfiles_ssh_agent"
+            ;;
+        esac
     fi
 fi
+unset dotfiles_ssh_agent
 
 # AWS CLI.  Keep credentials and history out of $HOME.
 if dotfiles_command_exists aws; then
