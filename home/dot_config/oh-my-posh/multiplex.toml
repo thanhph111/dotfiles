@@ -206,16 +206,16 @@ background = 'p:lightGreen'
 type = 'git'
 style = 'powerline'
 foreground_templates = [
-'{{ if or (.Working.Changed) (.Staging.Changed) }}p:lightWhite{{ end }}',
-'{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:lightWhite{{ end }}',
-'{{ if gt .Ahead 0 }}p:black{{ end }}',
-'{{ if gt .Behind 0 }}p:lightWhite{{ end }}',
+    '{{ if or (.Working.Changed) (.Staging.Changed) }}p:lightWhite{{ end }}',
+    '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:lightWhite{{ end }}',
+    '{{ if gt .Ahead 0 }}p:black{{ end }}',
+    '{{ if gt .Behind 0 }}p:lightWhite{{ end }}',
 ]
 background_templates = [
-'{{ if or (.Working.Changed) (.Staging.Changed) }}p:magenta{{ end }}',
-'{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:yellow{{ end }}',
-'{{ if gt .Ahead 0 }}p:lightYellow{{ end }}',
-'{{ if gt .Behind 0 }}p:red{{ end }}',
+    '{{ if or (.Working.Changed) (.Staging.Changed) }}p:magenta{{ end }}',
+    '{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:yellow{{ end }}',
+    '{{ if gt .Ahead 0 }}p:lightYellow{{ end }}',
+    '{{ if gt .Behind 0 }}p:red{{ end }}',
 ]
 
 [blocks.segments.properties]
