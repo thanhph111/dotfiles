@@ -1,68 +1,58 @@
-#!/bin/bash
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: MIT-0
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Configuration
-# Change these values to reflect your environment
-AWS_PROFILE='default'
-AWS_REGION='ap-southeast-1'
-MAX_ITERATION=5
-SLEEP_DURATION=5
+program=${0##*/}
 
-# Arguments passed from SSH client
-HOST=$1
-PORT=$2
+usage() {
+    cat <<'EOF'
+Usage:
+  ssm-proxy INSTANCE_ID PORT
 
-STATUS=$(
-    aws ssm describe-instance-information \
-        --filters Key=InstanceIds,Values="$HOST" \
-        --output text \
-        --query 'InstanceInformationList[0].PingStatus' \
-        --profile "$AWS_PROFILE" \
-        --region "$AWS_REGION"
-)
+Connect SSH through AWS Systems Manager Session Manager.
 
-# If the instance is online, start the session
-if [ "$STATUS" == 'Online' ]; then
-    aws ssm start-session \
-        --target "$HOST" \
-        --document-name AWS-StartSSHSession \
-        --parameters portNumber="$PORT" \
-        --profile "$AWS_PROFILE" \
-        --region "$AWS_REGION"
-else
-    # Instance is offline - start the instance
-    aws ec2 start-instances \
-        --instance-ids "$HOST" \
-        --profile "$AWS_PROFILE" \
-        --region "$AWS_REGION"
-    sleep "$SLEEP_DURATION"
-    COUNT=0
-    while [ "$COUNT" -le "$MAX_ITERATION" ]; do
-        STATUS=$(
-            aws ssm describe-instance-information \
-                --filters Key=InstanceIds,Values="$HOST" \
-                --output text \
-                --query 'InstanceInformationList[0].PingStatus' \
-                --profile "$AWS_PROFILE" \
-                --region "$AWS_REGION"
-        )
-        if [ "$STATUS" == 'Online' ]; then
-            break
-        fi
-        # Max attempts reached, exit
-        if [ "$COUNT" -eq "$MAX_ITERATION" ]; then
-            exit 1
-        else
-            ((COUNT++)) || true
-            sleep "$SLEEP_DURATION"
-        fi
-    done
-    # Instance is online now - start the session
-    aws ssm start-session \
-        --target "$HOST" \
-        --document-name AWS-StartSSHSession \
-        --parameters portNumber="$PORT" \
-        --profile "$AWS_PROFILE" \
-        --region "$AWS_REGION"
+The target must already be visible to SSM as Online. This script never starts,
+stops, or changes an EC2 instance.
+EOF
+}
+
+die() {
+    printf '%s: %s\n' "$program" "$*" >&2
+    exit 1
+}
+
+if (($# == 1)) && [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+    usage
+    exit 0
 fi
+
+(($# == 2)) || {
+    usage >&2
+    exit 2
+}
+
+instance_id=$1
+port=$2
+
+[[ $instance_id =~ ^i-([0-9a-fA-F]{8}|[0-9a-fA-F]{17})$ ]] ||
+    die "target must be an EC2 instance ID, for example i-1234567890abcdef0"
+
+[[ $port =~ ^[0-9]+$ ]] || die "port must be a number"
+port_number=$((10#$port))
+((port_number >= 1 && port_number <= 65535)) || die "port must be between 1 and 65535"
+
+command -v aws >/dev/null 2>&1 || die "aws CLI was not found in PATH"
+
+status=$(
+    aws ssm describe-instance-information \
+        --filters "Key=InstanceIds,Values=$instance_id" \
+        --query 'InstanceInformationList[0].PingStatus' \
+        --output text
+) || die "could not read SSM status for $instance_id"
+
+[[ $status == Online ]] ||
+    die "SSM status for $instance_id is ${status:-None}; start the instance separately, then try again"
+
+exec aws ssm start-session \
+    --target "$instance_id" \
+    --document-name AWS-StartSSHSession \
+    --parameters "portNumber=$port_number"

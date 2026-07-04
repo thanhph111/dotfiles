@@ -33,12 +33,7 @@ Include ~/.ssh/config.d/*
 # Added by SkyPilot for ssh config of all clusters
 Include ~/.sky/generated/ssh/*
 
-# Connect 'Cloud9' instances via 'Visual Studio Code'
-Host cloud9-*
+# SSH to EC2 instance IDs through AWS Systems Manager.
+Host i-*
     User ec2-user
-    ProxyCommand sh -c "~/.ssh/ssm-proxy %h %p"
-
-#: Example for a 'Cloud9' host configuration
-# Host "Cloud9 - Something"
-#: Specify the instance ID here
-#     HostName i-something
+    ProxyCommand ~/.ssh/ssm-proxy '%h' '%p'
