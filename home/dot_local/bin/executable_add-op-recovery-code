@@ -1,97 +1,129 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# op-add-recovery-code: Add recovery code to the 1Password items.
+program=${0##*/}
 
-# Usage: op-add-recovery-code file_or_folder_path
-# Step:
-#     1. Set up 1Password CLI:
-#     https://developer.1password.com/docs/cli/get-started
-#     2. Store list of recovery codes line by line in a file whose name is the
-#     item ID you want to add (get them by running `op item list`).
-#     3. Run this script with the file or folder include multiple files as an
-#     argument.
+usage() {
+    cat <<'EOF'
+Usage:
+  add-op-recovery-code FILE_OR_FOLDER
 
-set -e
+Import recovery codes into existing 1Password items.
 
-add_recovery_code_from_file() {
-    filepath="$1"
-    echo "==> Processing '$filepath'"
+Each input file should be named after the target 1Password item ID. Put one
+recovery code on each line. Blank lines are ignored.
+EOF
+}
 
-    # Check if the file exists
-    [ ! -f "$filepath" ] && {
-        echo "'$filepath' does not exist, skipping"
-        return
-    }
+redact_code() {
+    local code=$1
+    local length=${#code}
 
-    # Check if the file mime is text-based
-    file_mime=$(file --mime-type -b "$filepath")
-    [ "$file_mime" != "text/plain" ] && {
-        echo "'$filepath' is not a text file, skipping"
-        return
-    }
-
-    # Get the length of the file
-    grep -q '[^[:space:]]' <"$filepath" || {
-        echo "'$filepath' is empty, skipping"
-        return
-    }
-    line_count=$(grep -c "" "$filepath")
-
-    # Get the width of the `line_count` number
-    max_index_width=${#line_count}
-
-    # Check if the item exists in 1Password
-    filename="$(basename "$filepath")"
-    item_id="${filename%.*}"
-    if output=$(op item get "$item_id" --cache); then
-        item_name=$(sed -nr 's/^Title:[[:space:]]+//p' <<<"$output")
-        echo "Found item '$item_id' ($item_name), adding recovery code"
+    if ((length < 6)); then
+        printf '[redacted:%d chars]' "$length"
     else
-        echo "Failed to get item '$item_id', skipping"
-        return
+        printf '%s... (%d chars)' "${code:0:2}" "$length"
     fi
+}
 
-    # Loop through the file and add the recovery code
+process_file() {
+    local filepath=$1
+    local mime filename item_id output title code_count width
+    local line index formatted_index preview
+
+    printf "==> Processing '%s'\n" "$filepath"
+
+    [[ -f $filepath ]] || {
+        printf '%s: Skipping non-file path: %s\n' "$program" "$filepath" >&2
+        return 0
+    }
+
+    mime=$(file --mime-type -b -- "$filepath") || {
+        printf "%s: Could not read file type for '%s'; skipping\n" "$program" "$filepath" >&2
+        return 0
+    }
+
+    [[ $mime == text/* ]] || {
+        printf '%s: Skipping non-text file: %s\n' "$program" "$filepath" >&2
+        return 0
+    }
+
+    code_count=$(grep -c '[^[:space:]]' "$filepath" || true)
+    ((code_count > 0)) || {
+        printf '%s: Skipping empty recovery-code file: %s\n' "$program" "$filepath" >&2
+        return 0
+    }
+
+    filename=${filepath##*/}
+    item_id=${filename%.*}
+
+    output=$(op item get "$item_id" --cache) || {
+        printf "%s: Failed to get item '%s'; skipping\n" "$program" "$item_id" >&2
+        return 1
+    }
+
+    title=$(sed -nr 's/^Title:[[:space:]]+//p' <<<"$output")
+    printf "Found item '%s' (%s), adding %d recovery code(s)\n" "$item_id" "$title" "$code_count"
+
+    width=${#code_count}
     index=0
-    # while read line; do
-    while IFS="" read -r line || [ -n "$line" ]; do
-        # if line is empty, skip
-        [ -z "$line" ] && {
-            echo "warning: '$line'"
-            continue
-        }
+    while IFS= read -r line || [[ -n $line ]]; do
+        [[ $line =~ [^[:space:]] ]] || continue
+
         index=$((index + 1))
-        formatted_index=$(printf "%0${max_index_width}d" $index)
-        op item edit "$item_id" \
-            "Recovery Codes.code ${formatted_index}[password]=$line" \
-            &>/dev/null || {
-            echo "    Failed to add code $formatted_index: $line"
-            return
-        }
-        echo "    Added code $formatted_index: $line"
+        formatted_index=$(printf "%0${width}d" "$index")
+        preview=$(redact_code "$line")
+
+        if op item edit "$item_id" "Recovery Codes.code ${formatted_index}[password]=$line" >/dev/null; then
+            printf '    Added code %s: %s\n' "$formatted_index" "$preview"
+        else
+            printf '%s: Failed to add code %s: %s\n' "$program" "$formatted_index" "$preview" >&2
+            return 1
+        fi
     done <"$filepath"
 }
 
-# Check if `op` is installed
-command -v op &>/dev/null || {
-    echo "'op' is not installed, skipping"
-    exit 0
+case ${1:-} in
+    -h|--help)
+        usage
+        exit 0
+        ;;
+esac
+
+(($# == 1)) || {
+    usage >&2
+    exit 2
 }
 
-first_argument="$1"
+for command in file grep op sed; do
+    command -v "$command" >/dev/null 2>&1 || {
+        printf "%s: '%s' is required\n" "$program" "$command" >&2
+        exit 1
+    }
+done
 
-# Check if argument is folder or file
-if [ -d "$first_argument" ]; then
-    # If argument is a folder, loop through all files in the folder
-    for filepath in "$first_argument"/*; do
-        add_recovery_code_from_file "$filepath"
-        echo
+input_path=$1
+files_seen=0
+failures=0
+
+if [[ -d $input_path ]]; then
+    for filepath in "$input_path"/*; do
+        [[ -e $filepath ]] || continue
+        files_seen=$((files_seen + 1))
+        process_file "$filepath" || failures=$((failures + 1))
+        printf '\n'
     done
-elif [ -f "$first_argument" ]; then
-    # If argument is a file, add the recovery code from the file
-    add_recovery_code_from_file "$first_argument"
+
+    ((files_seen > 0)) || printf "%s: No files found in '%s'\n" "$program" "$input_path" >&2
+elif [[ -f $input_path ]]; then
+    files_seen=1
+    process_file "$input_path" || failures=$((failures + 1))
 else
-    echo "Invalid argument: '$first_argument'"
-    echo "Usage: $0 <folder_or_file>"
+    printf "%s: Invalid path: '%s'\n" "$program" "$input_path" >&2
     exit 1
 fi
+
+((failures == 0)) || {
+    printf '%s: %d file(s) failed\n' "$program" "$failures" >&2
+    exit 1
+}
