@@ -18,7 +18,12 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Let tools find user-installed terminfo entries before falling back to system
 # entries.  Keep the existing value first in case the parent process set one.
-export TERMINFO_DIRS="${TERMINFO_DIRS:+$TERMINFO_DIRS:}$XDG_DATA_HOME/terminfo:/usr/share/terminfo"
+dotfiles_terminfo_dir="$XDG_DATA_HOME/terminfo"
+case ":${TERMINFO_DIRS:-}:" in
+*:"$dotfiles_terminfo_dir":*) ;;
+*) export TERMINFO_DIRS="${TERMINFO_DIRS:+$TERMINFO_DIRS:}$dotfiles_terminfo_dir:/usr/share/terminfo" ;;
+esac
+unset dotfiles_terminfo_dir
 
 # Readline is used by Bash and many command-line tools.
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"

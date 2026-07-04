@@ -8,10 +8,10 @@
 
 [ -n "$HOME" ] || return 0
 
-# If a child shell inherits this flag, it also inherited the environment this
-# file created.  A clean shell started with env -i will not have the flag and
-# will rebuild the environment.
-[ "${DOTFILES_PROFILE_LOADED:-}" = 1 ] && return 0
+# Run profile setup at most once per shell process.  Keep this marker local to
+# the current shell: child shells may inherit a different PATH from editors or
+# SSH, so they should rebuild the environment for themselves.
+[ "${DOTFILES_PROFILE_SHELL_PID:-}" = "$$" ] && return 0
 
 DOTFILES_SHELL_ROOT="${DOTFILES_SHELL_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/shell}"
 [ -r "$DOTFILES_SHELL_ROOT/lib.sh" ] || return 0
@@ -21,7 +21,8 @@ DOTFILES_SHELL_ROOT="${DOTFILES_SHELL_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/sh
 # shellcheck source=dot_config/shell/lib.sh
 . "$DOTFILES_SHELL_ROOT/lib.sh"
 
-export DOTFILES_PROFILE_LOADED=1
+DOTFILES_PROFILE_SHELL_PID=$$
+unset DOTFILES_PROFILE_LOADED
 
 # XDG base directories are the roots used by most modules below.
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
