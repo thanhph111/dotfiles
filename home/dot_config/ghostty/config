@@ -8,6 +8,7 @@ font-family = JetbrainsMono Nerd Font
 font-size = 13
 font-thicken = true
 keybind = global:cmd+grave_accent=toggle_quick_terminal
+macos-option-as-alt = true
 quick-terminal-autohide = false
 quick-terminal-position = bottom
 window-height = 35
