@@ -17,28 +17,63 @@ available because that is the friendly machine name this repo matches.
 {{- /*
 The caller passes the data catalogs into this template. That keeps this
 resolver reusable while leaving ownership in the YAML files:
-- machines.yaml owns known hostnames and machine exceptions
+- machines.yaml owns the global machine match registry and machine facts
 - profiles.yaml owns reusable shapes
 - the local chezmoi config owns private unknown-machine answers
+
+Normal templates get the YAML catalogs through chezmoi data. During init,
+.chezmoi.toml.tmpl renders before the local config exists, so this resolver
+can also read the catalog files directly.
 */ -}}
-{{- $machines := get . "machines" | default dict -}}
-{{- $hostnameMachines := get . "hostname_machines" | default dict -}}
-{{- $hostnamePrefixMachines := get . "hostname_prefix_machines" | default list -}}
+{{- $machineCatalog := dict -}}
+{{- if hasKey . "machines" -}}
+{{-     $machineCatalog = . -}}
+{{- else -}}
+{{-     $machineCatalog = include ".chezmoidata/machines.yaml" | fromYaml -}}
+{{- end -}}
+{{- $profileCatalog := dict -}}
+{{- if hasKey . "profiles" -}}
+{{-     $profileCatalog = . -}}
+{{- else -}}
+{{-     $profileCatalog = include ".chezmoidata/profiles.yaml" | fromYaml -}}
+{{- end -}}
+
+{{- $machineRoot := get $machineCatalog "machines" | default dict -}}
+{{- $profileRoot := get $profileCatalog "profiles" | default dict -}}
+{{- $machines := get $machineRoot "entries" | default dict -}}
 {{- $localDisplayName := get . "displayName" | default "" -}}
 
 {{- /*
 Known machine lookup is based only on hostname.
 
-Exact hostname wins. Prefix matches are a fallback for families of hosts.
+machines.yaml keeps one global match registry:
+- machines.matches.hostnames maps exact hostnames to machine keys
+- machines.matches.hostnamePrefixes maps hostname prefixes to machine keys
+
+Exact hostname matches win over prefix matches. Prefixes use the longest
+matching prefix, so more specific host families can live next to broader
+families without needing a priority field.
+
 Local displayName is deliberately not part of this lookup, because a saved
 label should not be able to make this host resolve as another known machine.
 */ -}}
 {{- $hostnameKey := lower $hostname -}}
-{{- $machineKey := get $hostnameMachines $hostnameKey | default "" -}}
-{{- range $match := $hostnamePrefixMachines -}}
-{{-     if and (not $machineKey) (hasPrefix $match.prefix $hostnameKey) -}}
-{{-         $machineKey = $match.machine -}}
+{{- $machineMatches := get $machineRoot "matches" | default dict -}}
+{{- $hostnameMachines := get $machineMatches "hostnames" | default dict -}}
+{{- $hostnamePrefixes := get $machineMatches "hostnamePrefixes" | default dict -}}
+{{- $machineKey := get $hostnameMachines $hostnameKey | default "" | toString -}}
+{{- if not $machineKey -}}
+{{-     $bestPrefixLength := 0 -}}
+{{-     range $candidatePrefix, $candidateMachineKey := $hostnamePrefixes -}}
+{{-         $candidatePrefixKey := lower (toString $candidatePrefix) -}}
+{{-         if and $candidatePrefixKey (hasPrefix $candidatePrefixKey $hostnameKey) (gt (len $candidatePrefixKey) $bestPrefixLength) -}}
+{{-             $bestPrefixLength = len $candidatePrefixKey -}}
+{{-             $machineKey = toString $candidateMachineKey -}}
+{{-         end -}}
 {{-     end -}}
+{{- end -}}
+{{- if and $machineKey (not (hasKey $machines $machineKey)) -}}
+{{-     fail (printf "machine match for hostname %q points to unknown machine %q" $hostnameKey $machineKey) -}}
 {{- end -}}
 
 {{- $machine := dict -}}
@@ -54,7 +89,7 @@ Unknown machines may use a saved local profile. Known machines use the
 profile from machines.yaml when one is set, because checked-in machine
 facts are the owner for known hosts.
 */ -}}
-{{- $profileDefaults := get . "profile_defaults" | default dict -}}
+{{- $profileDefaults := get $profileRoot "defaults" | default dict -}}
 {{- $defaultProfile := get $profileDefaults .chezmoi.os | default "linux-desktop" -}}
 {{- $profileName := $defaultProfile -}}
 {{- if and (not $knownMachine) (get . "profile") -}}
@@ -64,7 +99,7 @@ facts are the owner for known hosts.
 {{-     $profileName = get $machine "profile" -}}
 {{- end -}}
 
-{{- $profiles := get . "profiles" | default dict -}}
+{{- $profiles := get $profileRoot "entries" | default dict -}}
 {{- if not (hasKey $profiles $profileName) -}}
 {{-     fail (printf "unknown chezmoi profile %q" $profileName) -}}
 {{- end -}}
@@ -78,7 +113,7 @@ The display name starts as the real hostname. Known machines may replace
 it with the checked-in displayName. Unknown machines may use a saved local
 displayName, but only after we already proved this is not a known machine.
 */ -}}
-{{- $machineDefaults := get . "machine_defaults" | default dict -}}
+{{- $machineDefaults := get $machineRoot "defaults" | default dict -}}
 {{- $globalDefaults := get $machineDefaults "global" | default dict -}}
 {{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
 {{- $baseDisplayName := $hostname -}}

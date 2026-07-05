@@ -1,6 +1,10 @@
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $darwin := get $features "darwin" | default dict -}}
+{{- $apps := get $darwin "apps" | default dict -}}
+{{- $openclaw := get $apps "openclaw" | default dict -}}
 {{- $vault := get $machine "vault" | default "" -}}
-{{- if and (eq .chezmoi.os "darwin") (get $machine "agent") $vault -}}
+{{- if and (eq .chezmoi.os "darwin") (get $machine "agent") (get $openclaw "enabled" | default false) $vault -}}
 #!/usr/bin/env bash
 
 set -euo pipefail

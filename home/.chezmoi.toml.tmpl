@@ -11,36 +11,19 @@ the same rule for normal templates and scripts.
 */ -}}
 {{- $profileCatalog := include ".chezmoidata/profiles.yaml" | fromYaml -}}
 {{- $machineCatalog := include ".chezmoidata/machines.yaml" | fromYaml -}}
+{{- $profileRoot := get $profileCatalog "profiles" | default dict -}}
+{{- $profileEntries := get $profileRoot "entries" | default dict -}}
+{{- $machineRoot := get $machineCatalog "machines" | default dict -}}
+{{- $machineEntries := get $machineRoot "entries" | default dict -}}
 
-{{- /*
-chezmoi's hostname is usually right. On macOS, ComputerName is the name
-shown in the UI, and it is the name this repo has historically used for
-personal machines, so we prefer it when scutil is present.
-*/ -}}
 {{- $username := .chezmoi.username -}}
-{{- $hostname := .chezmoi.hostname -}}
-{{- if and (eq .chezmoi.os "darwin") (lookPath "scutil") -}}
-{{-     $hostname = output "scutil" "--get" "ComputerName" | trim -}}
-{{- end -}}
-
-{{- /*
-Resolve known machines only from the real hostname.
-
-First try an exact match, then try prefix matches. Local values like
-displayName are intentionally ignored here. A display name is a label for
-humans; it is not a way to select a known machine.
-*/ -}}
-{{- $hostnameKey := lower $hostname -}}
-{{- $machineName := get $machineCatalog.hostname_machines $hostnameKey -}}
-{{- range $match := $machineCatalog.hostname_prefix_machines -}}
-{{-     if and (not $machineName) (hasPrefix $match.prefix $hostnameKey) -}}
-{{-         $machineName = $match.machine -}}
-{{-     end -}}
-{{- end -}}
+{{- $initialMachine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $initialDisplayName := get $initialMachine "displayName" | default .chezmoi.hostname -}}
+{{- $machineName := get $initialMachine "machineKey" | default "" -}}
 
 {{- $machine := dict -}}
 {{- if $machineName -}}
-{{-     $machine = get $machineCatalog.machines $machineName -}}
+{{-     $machine = get $machineEntries $machineName -}}
 {{- end -}}
 {{- $knownMachine := not (empty $machineName) -}}
 
@@ -56,11 +39,13 @@ The order is:
 Later values win. This gives prompts useful defaults while still letting
 a known machine pin its own profile and flags.
 */ -}}
-{{- $machineDefaults := get $machineCatalog "machine_defaults" | default dict -}}
+{{- $machineDefaults := get $machineRoot "defaults" | default dict -}}
 {{- $globalDefaults := get $machineDefaults "global" | default dict -}}
 {{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
-{{- $defaultProfile := get $profileCatalog.profile_defaults .chezmoi.os | default "linux-desktop" -}}
-{{- $profileChoices := get $profileCatalog.profile_choices .chezmoi.os | default (list $defaultProfile) -}}
+{{- $profileDefaults := get $profileRoot "defaults" | default dict -}}
+{{- $profileChoicesByOs := get $profileRoot "choices" | default dict -}}
+{{- $defaultProfile := get $profileDefaults .chezmoi.os | default "linux-desktop" -}}
+{{- $profileChoices := get $profileChoicesByOs .chezmoi.os | default (list $defaultProfile) -}}
 {{- $interactive := stdinIsATTY -}}
 
 {{- /*
@@ -72,7 +57,7 @@ with old local answers will not accidentally override Rev-9 or another
 named host.
 */ -}}
 {{- $localDisplayName := get . "displayName" | default "" -}}
-{{- $displayName := get $machine "displayName" | default $hostname -}}
+{{- $displayName := get $machine "displayName" | default $initialDisplayName -}}
 {{- if and (not $knownMachine) $localDisplayName -}}
 {{-     $displayName = $localDisplayName -}}
 {{- end -}}
@@ -91,13 +76,13 @@ config, so the normal case is not "ask every apply". In non-interactive
 Linux bootstraps, choose linux-minimal unless a saved profile exists.
 */ -}}
 {{- if and (not $knownMachine) $interactive -}}
-{{-     $displayName = promptStringOnce . "displayName" "display name" $hostname -}}
+{{-     $displayName = promptStringOnce . "displayName" "display name" $initialDisplayName -}}
 {{-     $profile = promptChoiceOnce . "profile" "profile" $profileChoices $defaultProfile -}}
 {{- else if and (not $knownMachine) (not $hasProfileData) (eq .chezmoi.os "linux") -}}
 {{-     $profile = "linux-minimal" -}}
 {{- end -}}
 
-{{- if not (hasKey $profileCatalog.profiles $profile) -}}
+{{- if not (hasKey $profileEntries $profile) -}}
 {{-     fail (printf "unknown chezmoi profile %q" $profile) -}}
 {{- end -}}
 
@@ -108,7 +93,7 @@ mergeOverwrite copies each map into the previous one. The later map wins
 when the same key appears twice. Machine settings are last because they
 are the most specific checked-in facts.
 */ -}}
-{{- $profileSpec := get $profileCatalog.profiles $profile | default dict -}}
+{{- $profileSpec := get $profileEntries $profile | default dict -}}
 {{- $profileDefaults := get $profileSpec "defaults" | default dict -}}
 {{- $configDefaults := mergeOverwrite
     (deepCopy $globalDefaults)
@@ -260,7 +245,7 @@ stable without re-prompting.
 
 [status]
     # Match diff so normal status output focuses on files. The full review
-    # path is documented in docs/config/examples.md.
+    # path is documented in docs/guides/checks.md.
     exclude = ["scripts"]
 
 [scriptEnv]

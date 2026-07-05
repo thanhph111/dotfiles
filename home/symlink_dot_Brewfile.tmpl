@@ -1,6 +1,7 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $osPackages := get $packages .chezmoi.os | default dict -}}
-{{- $brew := get $osPackages "brew" | default dict -}}
-{{- $manifests := get $brew "manifests" | default (list (get $machine "profile")) -}}
+{{- $osFeatures := get $features .chezmoi.os | default dict -}}
+{{- $install := get $osFeatures "install" | default dict -}}
+{{- $homebrew := get $install "homebrew" | default dict -}}
+{{- $manifests := get $homebrew "manifests" | default (list (get $machine "profile")) -}}
 {{ joinPath .chezmoi.sourceDir ".Brewfiles" (index $manifests 0) }}

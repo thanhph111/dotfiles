@@ -1,8 +1,10 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
-{{- $system := get $linux "system" | default dict -}}
-{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") $system.account_avatar) -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $desktop := get $linux "desktop" | default dict -}}
+{{- $accountAvatar := get $desktop "account_avatar" | default dict -}}
+{{- $enabled := get $accountAvatar "enabled" | default false -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") $enabled) -}}
 
 #!/usr/bin/env bash
 

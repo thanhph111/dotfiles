@@ -1,4 +1,8 @@
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $darwinFeatures := get $features "darwin" | default dict -}}
+{{- $darwinApps := get $darwinFeatures "apps" | default dict -}}
+{{- $openclaw := get $darwinApps "openclaw" | default dict -}}
 *
 
 {{/* General */}}
@@ -11,7 +15,7 @@
 !.cache
 !.config
 !.local
-{{ if get $machine "agent" }}
+{{ if and (get $machine "agent") (get $openclaw "enabled" | default false) }}
 !.openclaw
 {{ end }}
 

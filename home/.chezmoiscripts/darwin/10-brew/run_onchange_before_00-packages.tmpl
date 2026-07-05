@@ -1,9 +1,10 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
-{{- $darwin := get $packages "darwin" | default dict -}}
-{{- $brew := get $darwin "brew" | default dict -}}
-{{- if (and (eq .chezmoi.os "darwin") $brew.enabled) -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $darwin := get $features "darwin" | default dict -}}
+{{- $install := get $darwin "install" | default dict -}}
+{{- $homebrew := get $install "homebrew" | default dict -}}
+{{- if (and (eq .chezmoi.os "darwin") $homebrew.enabled) -}}
 {{- $files := list -}}
-{{- range $brew.manifests -}}
+{{- range $homebrew.manifests -}}
 {{-     $files = append $files (joinPath $.chezmoi.sourceDir ".Brewfiles" .) -}}
 {{- end -}}
 {{- template

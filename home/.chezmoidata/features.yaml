@@ -1,0 +1,120 @@
+features:
+  linux:
+    install:
+      apt:
+        enabled: true
+        manifests: []
+        upgrade_on_apply: false
+        autoremove_on_apply: false
+        debian_components:
+          enabled: true
+          values:
+            - contrib
+            - non-free
+            - non-free-firmware
+        repositories:
+          onepassword:
+            enabled: true
+          google_chrome:
+            enabled: true
+          vscode:
+            enabled: true
+          powershell:
+            enabled: true
+          docker:
+            enabled: true
+          ibus_bamboo:
+            enabled: true
+          cloudflare_warp:
+            enabled: false
+          cloudflared:
+            enabled: true
+          openvpn3:
+            enabled: false
+      homebrew:
+        enabled: true
+        manifests: []
+        link_fonts: true
+      flatpak:
+        enabled: true
+        manifests: []
+    tools:
+      mise:
+        enabled: true
+    desktop:
+      gnome:
+        enabled: true
+        extensions:
+          enabled: true
+          manifests: []
+        settings:
+          enabled: true
+          manifests: []
+      account_avatar:
+        enabled: true
+    system:
+      rtc_local_time:
+        enabled: true
+    security:
+      sudoers_disable_admin_flag:
+        enabled: true
+      sudo_ssh_agent_auth:
+        enabled: false
+        authorized_keys_dir: /etc/security/sudo_authorized_keys
+        package: libpam-ssh-agent-auth
+    network:
+      ufw:
+        enabled: true
+        default_incoming: deny
+        default_outgoing: allow
+        rules:
+          ssh:
+            enabled: false
+            protocol: tcp
+            port: 22
+          xrdp:
+            enabled: false
+            protocol: tcp
+            port: 3389
+    services:
+      ssh_server:
+        enabled: false
+        disable_password_login: true
+        trusted_user_ca_keys: /etc/ssh/ca.pub
+      xrdp:
+        enabled: false
+      code_server:
+        enabled: false
+        command: code
+        host: 127.0.0.1
+        port: 9999
+
+  darwin:
+    install:
+      homebrew:
+        enabled: true
+        manifests: []
+    tools:
+      mise:
+        enabled: true
+    system:
+      defaults:
+        enabled: true
+    apps:
+      openclaw:
+        enabled: true
+
+  windows:
+    install:
+      winget:
+        enabled: true
+        manifests: []
+      scoop:
+        enabled: true
+        manifests: []
+    tools:
+      mise:
+        enabled: true
+    system:
+      settings:
+        enabled: true

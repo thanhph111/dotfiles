@@ -1,8 +1,10 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
+{{- $linux := get $features "linux" | default dict -}}
 {{- $system := get $linux "system" | default dict -}}
-{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.rtc_local_time) -}}
+{{- $rtcLocalTime := get $system "rtc_local_time" | default dict -}}
+{{- $enabled := get $rtcLocalTime "enabled" | default false -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $enabled) -}}
 
 #!/usr/bin/env bash
 

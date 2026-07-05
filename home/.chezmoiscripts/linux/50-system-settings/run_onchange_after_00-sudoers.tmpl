@@ -1,8 +1,10 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
-{{- $system := get $linux "system" | default dict -}}
-{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.sudoers_disable_admin_flag) -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $security := get $linux "security" | default dict -}}
+{{- $sudoersDisableAdminFlag := get $security "sudoers_disable_admin_flag" | default dict -}}
+{{- $enabled := get $sudoersDisableAdminFlag "enabled" | default false -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $enabled) -}}
 
 #!/usr/bin/env bash
 

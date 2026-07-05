@@ -1,6 +1,7 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
-{{- $windows := get $packages "windows" | default dict -}}
-{{- $mise := get $windows "mise" | default dict -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $windows := get $features "windows" | default dict -}}
+{{- $tools := get $windows "tools" | default dict -}}
+{{- $mise := get $tools "mise" | default dict -}}
 {{- if (and (eq .chezmoi.os "windows") $mise.enabled) -}}
 
 # mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}

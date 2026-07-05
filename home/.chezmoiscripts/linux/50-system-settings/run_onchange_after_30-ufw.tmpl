@@ -1,17 +1,13 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
-{{- $system := get $linux "system" | default dict -}}
-{{- $ufw := get $system "ufw" | default dict -}}
-{{- $sshServer := get $system "ssh_server" | default dict -}}
-{{- $rdp := get $system "rdp" | default dict -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $network := get $linux "network" | default dict -}}
+{{- $ufw := get $network "ufw" | default dict -}}
+{{- $ufwRules := get $ufw "rules" | default dict -}}
 {{- $ufwEnabled := get $ufw "enabled" | default false -}}
 {{- $ufwDefaultIncoming := get $ufw "default_incoming" | default "deny" -}}
 {{- $ufwDefaultOutgoing := get $ufw "default_outgoing" | default "allow" -}}
-{{- $ufwAllowTcpPorts := get $ufw "allow_tcp_ports" | default list -}}
-{{- $sshServerEnabled := get $sshServer "enabled" | default false -}}
-{{- $sshOpenFirewall := and $sshServerEnabled (get $sshServer "open_firewall" | default false) -}}
-{{- $rdpOpenFirewall := and (get $rdp "enabled" | default false) (get $rdp "open_firewall" | default false) -}}
+{{- $sshAllowed := eq $ufwDefaultIncoming "allow" -}}
 {{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $ufwEnabled) -}}
 
 #!/usr/bin/env bash
@@ -20,19 +16,28 @@ set -euo pipefail
 
 default_incoming={{ $ufwDefaultIncoming | quote }}
 default_outgoing={{ $ufwDefaultOutgoing | quote }}
-ssh_server_enabled={{ if $sshServerEnabled }}true{{ else }}false{{ end }}
 
-allow_tcp_ports=(
-{{- if $sshOpenFirewall }}
-    "22"
-{{- end }}
-{{- if $rdpOpenFirewall }}
-    "3389"
-{{- end }}
-{{- range $port := $ufwAllowTcpPorts }}
-    {{ printf "%v" $port | quote }}
+enabled_tcp_ports=(
+{{- range $ruleName := keys $ufwRules | sortAlpha }}
+{{-     $rule := get $ufwRules $ruleName -}}
+{{-     $ruleEnabled := get $rule "enabled" | default false -}}
+{{-     if $ruleEnabled -}}
+{{-         $protocol := get $rule "protocol" | default "tcp" -}}
+{{-         if ne $protocol "tcp" -}}
+{{-             fail (printf "ufw rule %q uses unsupported protocol %q; only tcp is supported" $ruleName $protocol) -}}
+{{-         end -}}
+{{-         if not (hasKey $rule "port") -}}
+{{-             fail (printf "ufw rule %q is enabled but has no port" $ruleName) -}}
+{{-         end -}}
+{{-         $port := printf "%v" (get $rule "port") -}}
+{{-         if eq $port "22" -}}
+{{-             $sshAllowed = true -}}
+{{-         end -}}
+    {{ $port | quote }}
+{{-     end -}}
 {{- end }}
 )
+ssh_policy_allows_ssh={{ if $sshAllowed }}true{{ else }}false{{ end }}
 
 die() {
     printf 'ufw setup: %s\n' "$*" >&2
@@ -59,13 +64,23 @@ validate_port() {
 validate_policy "$default_incoming" default_incoming
 validate_policy "$default_outgoing" default_outgoing
 
-for port in "${allow_tcp_ports[@]}"; do
+for port in "${enabled_tcp_ports[@]}"; do
     validate_port "$port"
 done
 
-if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" && "$ssh_server_enabled" != true ]]; then
+ssh_local_address=''
+if [[ -n "${SSH_CONNECTION:-}" ]]; then
+    read -r _ _ ssh_local_address _ <<<"$SSH_CONNECTION"
+fi
+
+ssh_is_loopback_tunnel=false
+case "$ssh_local_address" in
+    127.*|::1|localhost) ssh_is_loopback_tunnel=true ;;
+esac
+
+if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" && "$ssh_policy_allows_ssh" != true && "$ssh_is_loopback_tunnel" != true ]]; then
     if [[ "${DOTFILES_ALLOW_UFW_LOCKOUT:-}" != 1 ]]; then
-        die "refusing to reset UFW over SSH because the SSH server is disabled by resolved config; set DOTFILES_ALLOW_UFW_LOCKOUT=1 to override"
+        die "refusing to reset UFW over direct SSH because resolved UFW rules do not allow TCP port 22; set DOTFILES_ALLOW_UFW_LOCKOUT=1 to override"
     fi
 fi
 
@@ -73,7 +88,7 @@ sudo ufw --force reset
 sudo ufw default "$default_incoming" incoming
 sudo ufw default "$default_outgoing" outgoing
 
-for port in "${allow_tcp_ports[@]}"; do
+for port in "${enabled_tcp_ports[@]}"; do
     sudo ufw allow "${port}/tcp"
 done
 

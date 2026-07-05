@@ -1,0 +1,88 @@
+{{- /*
+This template emits one JSON object with the final feature settings.
+
+A feature is repo-managed behavior: install this package set, manage this
+service, apply this desktop setting, or control this firewall policy.
+Facts like displayName, hasSudo, shared, and Git identity stay in
+resolved-machine.json.
+
+Keep comments in template comments like this one. The rendered output must
+be plain JSON because other templates pipe it through fromJson.
+*/ -}}
+{{- /*
+Use resolved-machine.json as the source of truth for the active machine.
+
+Do not repeat hostname or profile logic here. The machine resolver already
+knows how to handle known hosts, unknown hosts, saved local answers, and
+headless environments.
+*/ -}}
+{{- $resolvedMachine := includeTemplate "resolved-machine.json" . | fromJson -}}
+
+{{- /*
+Load the three feature owners:
+- features.yaml owns the broad defaults for each operating system
+- profiles.entries owns reusable machine shapes
+- machines.entries owns one real host's feature exceptions
+
+There is no local feature override layer today. Local config is for
+private facts about an unknown machine, not for long-term feature policy.
+*/ -}}
+{{- $machineRoot := get . "machines" | default dict -}}
+{{- $profileRoot := get . "profiles" | default dict -}}
+{{- $machineEntries := get $machineRoot "entries" | default dict -}}
+{{- $profileEntries := get $profileRoot "entries" | default dict -}}
+{{- $machine := get $machineEntries (get $resolvedMachine "machineKey") | default dict -}}
+{{- $profile := get $profileEntries (get $resolvedMachine "profile") | default dict -}}
+
+{{- /*
+Fail fast if the old packages model reappears.
+
+This migration deliberately removed packages.yaml and packages: override
+blocks. Keeping both names would make future renders harder to reason
+about, so old keys now produce a clear error.
+*/ -}}
+{{- if hasKey . "packages" -}}
+{{-     fail "packages.yaml has been replaced by features.yaml" -}}
+{{- end -}}
+{{- if hasKey $profile "packages" -}}
+{{-     fail (printf "profile %q uses old packages: key; use features: instead" (get $resolvedMachine "profile")) -}}
+{{- end -}}
+{{- if hasKey $machine "packages" -}}
+{{-     fail (printf "machine %q uses old packages: key; use features: instead" (get $resolvedMachine "machineKey")) -}}
+{{- end -}}
+
+{{- $featureDefaults := get . "features" | default dict -}}
+{{- $profileFeatures := get $profile "features" | default dict -}}
+{{- $machineFeatures := get $machine "features" | default dict -}}
+
+{{- /*
+Merge each operating system separately.
+
+The order is:
+1. feature defaults
+2. selected profile feature settings
+3. matched machine feature settings
+
+Later values win. deepCopy protects the shared default maps because
+mergeOverwrite changes its first input while building the result.
+
+The template always returns linux, darwin, and windows keys. That keeps
+callers simple: they can read their OS block without first checking which
+machine rendered the template.
+*/ -}}
+{{- $linux := mergeOverwrite
+    (deepCopy (get $featureDefaults "linux" | default dict))
+    (get $profileFeatures "linux" | default dict)
+    (get $machineFeatures "linux" | default dict)
+-}}
+{{- $darwin := mergeOverwrite
+    (deepCopy (get $featureDefaults "darwin" | default dict))
+    (get $profileFeatures "darwin" | default dict)
+    (get $machineFeatures "darwin" | default dict)
+-}}
+{{- $windows := mergeOverwrite
+    (deepCopy (get $featureDefaults "windows" | default dict))
+    (get $profileFeatures "windows" | default dict)
+    (get $machineFeatures "windows" | default dict)
+-}}
+{{ dict "linux" $linux "darwin" $darwin "windows" $windows | toJson }}

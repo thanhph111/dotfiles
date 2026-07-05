@@ -1,8 +1,9 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $darwin := get $packages "darwin" | default dict -}}
-{{- $openclawOnboard := get $darwin "openclaw_onboard" | default dict -}}
-{{- if (and (eq .chezmoi.os "darwin") (get $machine "agent") $openclawOnboard.enabled) -}}
+{{- $darwin := get $features "darwin" | default dict -}}
+{{- $apps := get $darwin "apps" | default dict -}}
+{{- $openclaw := get $apps "openclaw" | default dict -}}
+{{- if (and (eq .chezmoi.os "darwin") (get $machine "agent") $openclaw.enabled) -}}
 
 #!/usr/bin/env bash
 

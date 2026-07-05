@@ -1,59 +1,58 @@
-machine_defaults:
-  global:
-    personal: true
-    vault: Personal
-    headless: false
-    client: false
-    agent: false
-    shared: false
-    hasSudo: true
-    gitName: Thanh Phan
-    gitEmail: thanhph111@gmail.com
-    gitSigningKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzkDbY48HpcP2GIKT4N4w9iqtSt+IDVnqDEXDZrZZf0
-
-hostname_machines:
-  arwen: arwen
-  rev-9: rev-9
-  tars: tars
-
-hostname_prefix_machines:
-  - prefix: vm02-
-    machine: sonny
-
 machines:
-  arwen:
-    displayName: Arwen
-    profile: windows-desktop
+  defaults:
+    global:
+      personal: true
+      vault: Personal
+      headless: false
+      client: false
+      agent: false
+      shared: false
+      hasSudo: true
+      gitName: Thanh Phan
+      gitEmail: thanhph111@gmail.com
+      gitSigningKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzkDbY48HpcP2GIKT4N4w9iqtSt+IDVnqDEXDZrZZf0
 
-  rev-9:
-    displayName: Rev-9
-    profile: linux-desktop
-    packages:
-      linux:
-        system:
-          sudo_ssh_agent_auth:
-            enabled: true
-          ssh_server:
-            enabled: true
-            open_firewall: false
-          rdp:
-            enabled: true
-            open_firewall: false
-          code_server:
-            enabled: true
-            host: 127.0.0.1
-            port: 9999
+  matches:
+    hostnames:
+      arwen: arwen
+      rev-9: rev-9
+      tars: tars
+    hostnamePrefixes:
+      vm02-: sonny
 
-  sonny:
-    displayName: Sonny
-    profile: linux-minimal
-    users:
-      thanhph111:
-        shared: false
-        hasSudo: true
-        gitName: Thanh Phan
-        gitEmail: thanhph111@gmail.com
+  entries:
+    arwen:
+      displayName: Arwen
+      profile: windows-desktop
 
-  tars:
-    displayName: TARS
-    profile: darwin-personal
+    rev-9:
+      displayName: Rev-9
+      profile: linux-desktop
+      features:
+        linux:
+          security:
+            sudo_ssh_agent_auth:
+              enabled: true
+          services:
+            ssh_server:
+              enabled: true
+            xrdp:
+              enabled: true
+            code_server:
+              enabled: true
+              host: 127.0.0.1
+              port: 9999
+
+    sonny:
+      displayName: Sonny
+      profile: linux-minimal
+      users:
+        thanhph111:
+          shared: false
+          hasSudo: true
+          gitName: Thanh Phan
+          gitEmail: thanhph111@gmail.com
+
+    tars:
+      displayName: TARS
+      profile: darwin-personal

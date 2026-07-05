@@ -1,7 +1,8 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
-{{- $darwin := get $packages "darwin" | default dict -}}
-{{- $settings := get $darwin "settings" | default dict -}}
-{{- if (and (eq .chezmoi.os "darwin") $settings.enabled) -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $darwin := get $features "darwin" | default dict -}}
+{{- $system := get $darwin "system" | default dict -}}
+{{- $defaults := get $system "defaults" | default dict -}}
+{{- if (and (eq .chezmoi.os "darwin") $defaults.enabled) -}}
 
 #!/usr/bin/env bash
 

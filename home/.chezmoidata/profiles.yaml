@@ -1,195 +1,214 @@
-profile_defaults:
-  linux: linux-desktop
-  darwin: darwin-personal
-  windows: windows-desktop
-
-profile_choices:
-  linux:
-    - linux-desktop
-    - linux-workstation
-    - linux-vm-dev
-    - linux-minimal
-  darwin:
-    - darwin-personal
-    - darwin-work
-    - darwin-agent
-  windows:
-    - windows-desktop
-
 profiles:
-  linux-desktop:
-    packages:
-      linux:
-        apt:
-          enabled: true
-          manifests:
-            - linux-desktop
-        brew:
-          enabled: true
-          manifests:
-            - linux-desktop
-        flatpak:
-          enabled: true
-          manifests:
-            - linux-desktop
-        gnome:
-          enabled: true
-          extensions:
-            manifests:
-              - linux-desktop
-          settings:
-            manifests:
-              - linux-desktop
+  defaults:
+    linux: linux-desktop
+    darwin: darwin-personal
+    windows: windows-desktop
 
-  linux-workstation:
-    packages:
-      linux:
-        apt:
-          enabled: true
-          manifests:
-            - linux-workstation
-        brew:
-          enabled: true
-          manifests:
-            - linux-workstation
-        flatpak:
-          enabled: true
-          manifests:
-            - linux-workstation
-        gnome:
-          enabled: true
-          extensions:
-            manifests:
-              - linux-workstation
-          settings:
-            manifests:
-              - linux-workstation
+  choices:
+    linux:
+      - linux-desktop
+      - linux-workstation
+      - linux-vm-dev
+      - linux-minimal
+    darwin:
+      - darwin-personal
+      - darwin-work
+      - darwin-agent
+    windows:
+      - windows-desktop
 
-  linux-minimal:
-    defaults:
-      personal: false
-      vault: ''
-      headless: true
-      shared: true
-      hasSudo: false
-      gitName: ''
-      gitEmail: ''
-      gitSigningKey: ''
-    packages:
-      linux:
-        apt:
-          enabled: false
-          manifests: []
-        brew:
-          enabled: true
-          manifests:
-            - linux-minimal
-        flatpak:
-          enabled: false
-          manifests: []
-        gnome:
-          enabled: false
-          extensions:
-            manifests: []
-          settings:
-            manifests: []
-        system:
-          sudoers_disable_admin_flag: false
-          rtc_local_time: false
-          account_avatar: false
-          ufw:
-            enabled: false
-          ssh_server:
-            enabled: false
-          rdp:
-            enabled: false
-          code_server:
-            enabled: false
-
-  linux-vm-dev:
-    defaults:
-      headless: true
-    packages:
-      linux:
-        apt:
-          enabled: true
-          manifests: []
-          repositories:
-            onepassword:
-              enabled: false
-            google_chrome:
-              enabled: false
-            vscode:
-              enabled: false
-            powershell:
-              enabled: false
-            docker:
-              enabled: false
-            ibus_bamboo:
-              enabled: false
-            cloudflare_warp:
+  entries:
+    linux-desktop:
+      features:
+        linux:
+          install:
+            apt:
               enabled: true
-            cloudflared:
+              manifests:
+                - linux-desktop
+            homebrew:
               enabled: true
-            openvpn3:
+              manifests:
+                - linux-desktop
+            flatpak:
+              enabled: true
+              manifests:
+                - linux-desktop
+          desktop:
+            gnome:
+              enabled: true
+              extensions:
+                manifests:
+                  - linux-desktop
+              settings:
+                manifests:
+                  - linux-desktop
+
+    linux-workstation:
+      features:
+        linux:
+          install:
+            apt:
+              enabled: true
+              manifests:
+                - linux-workstation
+            homebrew:
+              enabled: true
+              manifests:
+                - linux-workstation
+            flatpak:
+              enabled: true
+              manifests:
+                - linux-workstation
+          desktop:
+            gnome:
+              enabled: true
+              extensions:
+                manifests:
+                  - linux-workstation
+              settings:
+                manifests:
+                  - linux-workstation
+
+    linux-minimal:
+      defaults:
+        personal: false
+        vault: ''
+        headless: true
+        shared: true
+        hasSudo: false
+        gitName: ''
+        gitEmail: ''
+        gitSigningKey: ''
+      features:
+        linux:
+          install:
+            apt:
               enabled: false
-        brew:
-          enabled: true
-          manifests:
-            - linux-vm-dev
-        flatpak:
-          enabled: false
-          manifests: []
-        gnome:
-          enabled: false
-          extensions:
-            manifests: []
-          settings:
-            manifests: []
-        system:
-          sudo_ssh_agent_auth:
-            enabled: true
+              manifests: []
+            homebrew:
+              enabled: true
+              manifests:
+                - linux-minimal
+            flatpak:
+              enabled: false
+              manifests: []
+          desktop:
+            gnome:
+              enabled: false
+              extensions:
+                manifests: []
+              settings:
+                manifests: []
+            account_avatar:
+              enabled: false
+          system:
+            rtc_local_time:
+              enabled: false
+          security:
+            sudoers_disable_admin_flag:
+              enabled: false
+          network:
+            ufw:
+              enabled: false
+          services:
+            ssh_server:
+              enabled: false
+            xrdp:
+              enabled: false
+            code_server:
+              enabled: false
 
-  darwin-personal:
-    defaults:
-      client: true
-    packages:
-      darwin:
-        brew:
-          enabled: true
-          manifests:
-            - darwin-personal
+    linux-vm-dev:
+      defaults:
+        headless: true
+      features:
+        linux:
+          install:
+            apt:
+              enabled: true
+              manifests: []
+              repositories:
+                onepassword:
+                  enabled: false
+                google_chrome:
+                  enabled: false
+                vscode:
+                  enabled: false
+                powershell:
+                  enabled: false
+                docker:
+                  enabled: false
+                ibus_bamboo:
+                  enabled: false
+                cloudflare_warp:
+                  enabled: true
+                cloudflared:
+                  enabled: true
+                openvpn3:
+                  enabled: false
+            homebrew:
+              enabled: true
+              manifests:
+                - linux-vm-dev
+            flatpak:
+              enabled: false
+              manifests: []
+          desktop:
+            gnome:
+              enabled: false
+              extensions:
+                manifests: []
+              settings:
+                manifests: []
+          security:
+            sudo_ssh_agent_auth:
+              enabled: true
 
-  darwin-work:
-    packages:
-      darwin:
-        brew:
-          enabled: true
-          manifests:
-            - darwin-work
+    darwin-personal:
+      defaults:
+        client: true
+      features:
+        darwin:
+          install:
+            homebrew:
+              enabled: true
+              manifests:
+                - darwin-personal
 
-  darwin-agent:
-    defaults:
-      agent: true
-      vault: CLU
-      gitName: CLU
-      gitEmail: clu@thanhph111.com
-      gitSigningKey: ''
-    packages:
-      darwin:
-        brew:
-          enabled: true
-          manifests:
-            - darwin-agent
+    darwin-work:
+      features:
+        darwin:
+          install:
+            homebrew:
+              enabled: true
+              manifests:
+                - darwin-work
 
-  windows-desktop:
-    packages:
-      windows:
-        winget:
-          enabled: true
-          manifests:
-            - windows-desktop.json
-        scoop:
-          enabled: true
-          manifests:
-            - windows-cli
+    darwin-agent:
+      defaults:
+        agent: true
+        vault: CLU
+        gitName: CLU
+        gitEmail: clu@thanhph111.com
+        gitSigningKey: ''
+      features:
+        darwin:
+          install:
+            homebrew:
+              enabled: true
+              manifests:
+                - darwin-agent
+
+    windows-desktop:
+      features:
+        windows:
+          install:
+            winget:
+              enabled: true
+              manifests:
+                - windows-desktop.json
+            scoop:
+              enabled: true
+              manifests:
+                - windows-cli

@@ -1,8 +1,8 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
-{{- $system := get $linux "system" | default dict -}}
-{{- $sudoSshAgentAuth := get $system "sudo_ssh_agent_auth" | default dict -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $security := get $linux "security" | default dict -}}
+{{- $sudoSshAgentAuth := get $security "sudo_ssh_agent_auth" | default dict -}}
 {{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared"))) -}}
 
 #!/usr/bin/env bash
@@ -148,7 +148,7 @@ chosen public key to:
 
     ${authorized_keys_dir}/USER
 
-See docs/sudo-ssh-agent-auth.md in the dotfiles repo.
+See docs/guides/remote-access.md in the dotfiles repo.
 EOF
 
 {{- end -}}

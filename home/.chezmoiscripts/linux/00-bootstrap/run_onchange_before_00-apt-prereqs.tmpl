@@ -1,11 +1,12 @@
-{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-{{- $linux := get $packages "linux" | default dict -}}
-{{- $apt := get $linux "apt" | default dict -}}
-{{- $brew := get $linux "brew" | default dict -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $install := get $linux "install" | default dict -}}
+{{- $apt := get $install "apt" | default dict -}}
+{{- $homebrew := get $install "homebrew" | default dict -}}
 {{- $useApt := $apt.enabled -}}
-{{- $useBrew := $brew.enabled -}}
-{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") (get $machine "hasSudo") (not (get $machine "shared")) (or $useApt $useBrew)) -}}
+{{- $useHomebrew := $homebrew.enabled -}}
+{{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") (get $machine "hasSudo") (not (get $machine "shared")) (or $useApt $useHomebrew)) -}}
 
 #!/usr/bin/env bash
 
@@ -23,7 +24,7 @@ packages=(
     lsb-release
 )
 
-{{- if $useBrew }}
+{{- if $useHomebrew }}
 packages+=(
     build-essential
     file
