@@ -1,116 +1,57 @@
 # Dotfiles
 
-Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/) for a consistent development environment across multiple machines (macOS, Debian, Windows).
+This repo sets up my machines with [chezmoi](https://www.chezmoi.io/).
 
-## Machines
+It manages shell files, app config, package lists, desktop settings, services, and a few system settings across macOS, Linux, and Windows.
 
-Machines are selected by a small local profile, not by creating package files for every host. Known hosts are declared in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml); unknown hosts can choose an existing profile during `chezmoi init` without a repo change.
+## Start here
 
-| Display name | OS      | Profile           |
-| ------------ | ------- | ----------------- |
-| Arwen        | Windows | `windows-desktop` |
-| Rev-9        | Linux   | `linux-desktop`   |
-| Sonny        | Linux   | `linux-minimal`   |
-| TARS         | macOS   | `darwin-personal` |
+- Set up a machine: [set up a machine](./docs/setup.md).
+- Understand how config is resolved: [config model](./docs/model.md).
+- Add a machine or profile: [add a machine](./docs/guides/add-machine.md).
+- Change packages, apps, or settings lists: [change manifests](./docs/guides/change-manifests.md).
+- Work on SSH, RDP, code-server, UFW, or sudo: [remote access](./docs/guides/remote-access.md).
+- Review shell startup trust: [shell startup](./docs/guides/shell-startup.md).
+- Run checks before applying: [checks](./docs/guides/checks.md).
 
-| Profile             | Use for                             |
-| ------------------- | ----------------------------------- |
-| `linux-desktop`     | Primary GNOME Linux desktop         |
-| `linux-workstation` | Heavier reusable Linux workstation  |
-| `linux-vm-dev`      | Headless Azure/Linux development VM |
-| `linux-minimal`     | Shared/headless Linux machine       |
-| `darwin-personal`   | Personal macOS machine              |
-| `darwin-work`       | Work macOS machine                  |
-| `darwin-agent`      | Lightweight macOS agent machine     |
-| `windows-desktop`   | Personal Windows desktop            |
+## The model
 
-Profile definitions live in [`home/.chezmoidata/profiles.yaml`](./home/.chezmoidata/profiles.yaml). Feature flags live in [`home/.chezmoidata/packages.yaml`](./home/.chezmoidata/packages.yaml). Machine identity and per-host overrides live in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml).
+The repo keeps two ideas separate:
 
-See [`docs/config`](./docs/config/README.md) for the full config model. The short version is: broad defaults come first, then the selected profile, then a named machine, then local or per-user overrides.
+- **Facts** say what this machine or user is.
+- **Features** say what dotfiles should install, configure, start, stop, or manage.
 
-## Setup: new Mac
+Scripts do not read raw profiles or machines directly. They read the final answers from:
 
-### 1. Set the ComputerName
+- [`resolved-machine.json`](./home/.chezmoitemplates/resolved-machine.json)
+- [`resolved-features.json`](./home/.chezmoitemplates/resolved-features.json)
 
-Known machines are auto-detected. For a new machine, this only needs to be a useful local name; it does not need a committed package manifest.
+The source files are:
 
-```bash
-sudo scutil --set ComputerName "Grid"  # or your display name
-```
+- [`features.yaml`](./home/.chezmoidata/features.yaml): default features for each operating system
+- [`profiles.yaml`](./home/.chezmoidata/profiles.yaml): profile defaults, setup choices, and reusable machine shapes
+- [`machines.yaml`](./home/.chezmoidata/machines.yaml): machine defaults, hostname matches, and known machine entries
 
-### 2. Install chezmoi and clone
+Local chezmoi config is for private facts on unknown machines. It does not override features. Features come from defaults, then the selected profile, then the matched machine.
 
-```bash
-mkdir -p ~/Documents/Projects/Personal
-sh -c "$(curl -fsLS get.chezmoi.io)"
+## Known machines
 
-# May trigger Xcode Command Line Tools install — rerun after installation
-./bin/chezmoi init -S ~/Documents/Projects/Personal/dotfiles thanhph111
-```
+| Machine | OS      | Profile           |
+| ------- | ------- | ----------------- |
+| Arwen   | Windows | `windows-desktop` |
+| Rev-9   | Linux   | `linux-desktop`   |
+| Sonny   | Linux   | `linux-minimal`   |
+| TARS    | macOS   | `darwin-personal` |
 
-For an unknown host, init asks for a display name, one reusable profile, and whether the machine is headless. It also asks whether to keep the profile/default identity or customize this machine locally. Local answers are written to the machine's chezmoi config, so they are not asked again on normal `chezmoi apply`.
+Known machines are matched by hostname. Unknown machines can choose a profile during `chezmoi init` without adding a new file or committing a host entry.
 
-Only commit a new machine entry when the machine should become known to the repo, for example because its hostname should auto-select a profile, it has shared-user rules, or the same identity needs to be reused later.
-
-### 3. First apply
+## Common commands
 
 ```bash
-./bin/chezmoi apply
-```
-
-This installs Homebrew or platform package managers as needed, then applies the manifests selected by the profile.
-
-### 4. Sign into 1Password CLI (client machines only)
-
-```bash
-op account add
-eval $(op signin)
-op vault list  # verify access
-```
-
-### 5. Second apply (client machines only)
-
-```bash
-chezmoi apply
-```
-
-The process is idempotent — safe to run as many times as needed.
-
-## Git signing
-
-Git commits and tags are signed with SSH. SSH signing means Git asks your SSH agent, such as Secretive or 1Password, to prove that your key made the commit. The private key stays in the agent.
-
-Add the public key from `gitSigningKey` in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) to GitHub as an SSH signing key.
-
-On remote machines, use the same signing key through SSH agent forwarding only for machines you trust. Agent forwarding lets the remote machine ask your local agent to sign, but it should not be enabled for every host. Keep it opt-in with per-host files under `~/.ssh/config.d/`.
-
-Trusted Linux profiles can also use SSH agent auth for sudo. Dotfiles can install the PAM/sudo plumbing, but the sudo public key is a manual trust decision. See [`docs/security/sudo-ssh-agent-auth.md`](./docs/security/sudo-ssh-agent-auth.md).
-
-## Managing dotfiles
-
-```bash
-chezmoi edit ~/.zshrc      # Edit a managed file
-chezmoi diff               # Preview changes before applying
+chezmoi diff               # Preview regular file changes
+chezmoi diff --exclude=none # Preview scripts too
 chezmoi apply              # Apply changes
+chezmoi update             # Pull and apply this repo
+chezmoi edit ~/.zshrc      # Edit a managed file
 chezmoi add ~/.config/app  # Add a new file to management
-chezmoi update             # Pull and apply from repository
 ```
-
-## Adding a new machine
-
-1. Pick the closest existing profile during `chezmoi init`.
-2. Use local setup customization for one-off differences.
-3. Add or change a profile only when the pattern should be reused on future machines.
-4. Add a machine entry in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml) only when this host should be auto-detected or carry repeatable per-machine rules.
-
-Package manifests are profile-oriented:
-
-- APT: [`home/.apt`](./home/.apt)
-- Homebrew: [`home/.Brewfiles`](./home/.Brewfiles)
-- Flatpak: [`home/.flatpak`](./home/.flatpak)
-- GNOME: [`home/.gnome`](./home/.gnome)
-- Windows: [`home/.winget`](./home/.winget), [`home/.scoop`](./home/.scoop)
-
-Homebrew is intentionally one Brewfile per profile. On Linux and macOS, `~/.Brewfile` is a symlink to the active profile manifest, so `generate-brewfile` and `brew bundle dump --file ~/.Brewfile` update the reusable profile recipe.
-
-Prefer Homebrew core/cask packages over third-party taps when available. Third-party formulas or casks should stay fully qualified, for example `brew "user/tap/formula"`. The shared brew installer trusts only those explicit items before running `brew bundle` with tap trust checks enabled, matching the upcoming Homebrew default without trusting whole taps. If a package moves into Homebrew core/cask, remove the old Brewfile tap entry and do a one-time cleanup on machines that already installed the package from the old tap.
