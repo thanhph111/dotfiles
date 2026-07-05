@@ -8,7 +8,7 @@ Good:
 
 ```toml
 [data]
-codename = "Grid"
+displayName = "Grid"
 profile = "linux-minimal"
 setupMode = "custom"
 
@@ -34,7 +34,7 @@ Known machines are found by hostname and do not need profile prompts.
 
 Unknown machines ask for:
 
-- codename
+- display name
 - profile
 - headless
 - local setup mode

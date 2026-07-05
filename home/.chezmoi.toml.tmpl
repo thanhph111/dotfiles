@@ -1,12 +1,35 @@
+{{- /*
+This file renders the local .chezmoi.toml file.
+
+Keep the big rule simple:
+- known machines come from machines.yaml
+- unknown machines may use answers saved in local chezmoi config
+
+That split keeps a stale local config from making one known host pretend
+to be another known host. The shared resolver in resolved-machine.json uses
+the same rule for normal templates and scripts.
+*/ -}}
 {{- $profileCatalog := include ".chezmoidata/profiles.yaml" | fromYaml -}}
 {{- $machineCatalog := include ".chezmoidata/machines.yaml" | fromYaml -}}
 
+{{- /*
+chezmoi's hostname is usually right. On macOS, ComputerName is the name
+shown in the UI, and it is the name this repo has historically used for
+personal machines, so we prefer it when scutil is present.
+*/ -}}
 {{- $username := .chezmoi.username -}}
 {{- $hostname := .chezmoi.hostname -}}
 {{- if and (eq .chezmoi.os "darwin") (lookPath "scutil") -}}
 {{-     $hostname = output "scutil" "--get" "ComputerName" | trim -}}
 {{- end -}}
 
+{{- /*
+Resolve known machines only from the real hostname.
+
+First try an exact match, then try prefix matches. Local values like
+displayName are intentionally ignored here. A display name is a label for
+humans; it is not a way to select a known machine.
+*/ -}}
 {{- $hostnameKey := lower $hostname -}}
 {{- $machineName := get $machineCatalog.hostname_machines $hostnameKey -}}
 {{- range $match := $machineCatalog.hostname_prefix_machines -}}
@@ -19,7 +42,20 @@
 {{- if $machineName -}}
 {{-     $machine = get $machineCatalog.machines $machineName -}}
 {{- end -}}
+{{- $knownMachine := not (empty $machineName) -}}
 
+{{- /*
+Load the broad defaults used to seed the local config.
+
+The order is:
+1. global defaults
+2. operating system defaults
+3. profile defaults
+4. machine settings
+
+Later values win. This gives prompts useful defaults while still letting
+a known machine pin its own profile and flags.
+*/ -}}
 {{- $machineDefaults := get $machineCatalog "machine_defaults" | default dict -}}
 {{- $globalDefaults := get $machineDefaults "global" | default dict -}}
 {{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
@@ -27,47 +63,37 @@
 {{- $profileChoices := get $profileCatalog.profile_choices .chezmoi.os | default (list $defaultProfile) -}}
 {{- $interactive := stdinIsATTY -}}
 
-{{- $codename := $hostname -}}
-{{- $profile := $defaultProfile -}}
-{{- $vault := "" -}}
-{{- $headless := false -}}
-{{- $client := false -}}
-{{- $personal := true -}}
-{{- $agent := false -}}
-{{- $shared := false -}}
-{{- $hasSudo := false -}}
-{{- $gitName := "" -}}
-{{- $gitEmail := "" -}}
-{{- $gitSigningKey := "" -}}
+{{- /*
+Pick the starting display name and profile.
+
+Known machines get these values from machines.yaml. Unknown machines may
+reuse values already saved in local chezmoi config. This is why a laptop
+with old local answers will not accidentally override Rev-9 or another
+named host.
+*/ -}}
+{{- $localDisplayName := get . "displayName" | default "" -}}
+{{- $displayName := get $machine "displayName" | default $hostname -}}
+{{- if and (not $knownMachine) $localDisplayName -}}
+{{-     $displayName = $localDisplayName -}}
+{{- end -}}
+{{- $profile := get $machine "profile" | default $defaultProfile -}}
 {{- $setupMode := get . "setupMode" | default (get . "setup_mode") | default "profile" -}}
-{{- $hasProfileData := and (not $machineName) (not (empty (get . "profile"))) -}}
-
-{{- range $source := list $globalDefaults $osDefaults $machine -}}
-{{-     if hasKey $source "codename" }}{{ $codename = get $source "codename" }}{{ end -}}
-{{-     if hasKey $source "profile" }}{{ $profile = get $source "profile" }}{{ end -}}
-{{-     if hasKey $source "vault" }}{{ $vault = get $source "vault" }}{{ end -}}
-{{-     if hasKey $source "headless" }}{{ $headless = get $source "headless" }}{{ end -}}
-{{-     if hasKey $source "client" }}{{ $client = get $source "client" }}{{ end -}}
-{{-     if hasKey $source "personal" }}{{ $personal = get $source "personal" }}{{ end -}}
-{{-     if hasKey $source "agent" }}{{ $agent = get $source "agent" }}{{ end -}}
-{{-     if hasKey $source "shared" }}{{ $shared = get $source "shared" }}{{ end -}}
-{{-     if hasKey $source "hasSudo" }}{{ $hasSudo = get $source "hasSudo" }}{{ end -}}
-{{-     if hasKey $source "gitName" }}{{ $gitName = get $source "gitName" }}{{ end -}}
-{{-     if hasKey $source "gitEmail" }}{{ $gitEmail = get $source "gitEmail" }}{{ end -}}
-{{-     if hasKey $source "gitSigningKey" }}{{ $gitSigningKey = get $source "gitSigningKey" }}{{ end -}}
-{{- end -}}
-
-{{- if and (not $machineName) (get . "codename") -}}
-{{-     $codename = get . "codename" -}}
-{{- end -}}
+{{- $hasProfileData := and (not $knownMachine) (not (empty (get . "profile"))) -}}
 {{- if $hasProfileData -}}
 {{-     $profile = get . "profile" -}}
 {{- end -}}
 
-{{- if and (not $machineName) $interactive -}}
-{{-     $codename = promptStringOnce . "codename" "codename" $hostname -}}
+{{- /*
+Ask only for unknown machines, and only when the command is interactive.
+
+promptStringOnce and promptChoiceOnce store the answer in chezmoi's local
+config, so the normal case is not "ask every apply". In non-interactive
+Linux bootstraps, choose linux-minimal unless a saved profile exists.
+*/ -}}
+{{- if and (not $knownMachine) $interactive -}}
+{{-     $displayName = promptStringOnce . "displayName" "display name" $hostname -}}
 {{-     $profile = promptChoiceOnce . "profile" "profile" $profileChoices $defaultProfile -}}
-{{- else if and (not $machineName) (not $hasProfileData) (eq .chezmoi.os "linux") -}}
+{{- else if and (not $knownMachine) (not $hasProfileData) (eq .chezmoi.os "linux") -}}
 {{-     $profile = "linux-minimal" -}}
 {{- end -}}
 
@@ -75,36 +101,63 @@
 {{-     fail (printf "unknown chezmoi profile %q" $profile) -}}
 {{- end -}}
 
+{{- /*
+Build the full default set for this local config render.
+
+mergeOverwrite copies each map into the previous one. The later map wins
+when the same key appears twice. Machine settings are last because they
+are the most specific checked-in facts.
+*/ -}}
 {{- $profileSpec := get $profileCatalog.profiles $profile | default dict -}}
 {{- $profileDefaults := get $profileSpec "defaults" | default dict -}}
-{{- range $source := list $profileDefaults $machine -}}
-{{-     if hasKey $source "codename" }}{{ $codename = get $source "codename" }}{{ end -}}
-{{-     if hasKey $source "profile" }}{{ $profile = get $source "profile" }}{{ end -}}
-{{-     if hasKey $source "vault" }}{{ $vault = get $source "vault" }}{{ end -}}
-{{-     if hasKey $source "headless" }}{{ $headless = get $source "headless" }}{{ end -}}
-{{-     if hasKey $source "client" }}{{ $client = get $source "client" }}{{ end -}}
-{{-     if hasKey $source "personal" }}{{ $personal = get $source "personal" }}{{ end -}}
-{{-     if hasKey $source "agent" }}{{ $agent = get $source "agent" }}{{ end -}}
-{{-     if hasKey $source "shared" }}{{ $shared = get $source "shared" }}{{ end -}}
-{{-     if hasKey $source "hasSudo" }}{{ $hasSudo = get $source "hasSudo" }}{{ end -}}
-{{-     if hasKey $source "gitName" }}{{ $gitName = get $source "gitName" }}{{ end -}}
-{{-     if hasKey $source "gitEmail" }}{{ $gitEmail = get $source "gitEmail" }}{{ end -}}
-{{-     if hasKey $source "gitSigningKey" }}{{ $gitSigningKey = get $source "gitSigningKey" }}{{ end -}}
-{{- end -}}
+{{- $configDefaults := mergeOverwrite
+    (deepCopy $globalDefaults)
+    (deepCopy $osDefaults)
+    (dict "displayName" $displayName "profile" $profile)
+    (deepCopy $profileDefaults)
+    (deepCopy $machine)
+-}}
+{{- $displayName = get $configDefaults "displayName" | default $displayName -}}
+{{- $profile = get $configDefaults "profile" | default $profile -}}
+{{- $headless := get $configDefaults "headless" | default false -}}
 
+{{- /*
+Some environments should be headless without asking.
+
+Containers, Codespaces, and common image users should not depend on
+desktop prompts or GUI tools. For an unknown non-interactive host, default
+to headless as the safer bootstrap choice.
+*/ -}}
 {{- if or
         (env "CODESPACES")
         (env "REMOTE_CONTAINERS_IPC")
         (eq $username "root" "ubuntu" "vagrant" "vscode")
 -}}
 {{-     $headless = true -}}
-{{- else if and (not $machineName) $interactive -}}
+{{- else if and (not $knownMachine) $interactive -}}
 {{-     $headless = promptBoolOnce . "local.headless" "headless" $headless -}}
-{{- else if not $machineName -}}
+{{- else if not $knownMachine -}}
 {{-     $headless = true -}}
 {{- end -}}
 
-{{- if and (not $machineName) $interactive -}}
+{{- $personal := get $configDefaults "personal" | default true -}}
+{{- $vault := get $configDefaults "vault" | default "" -}}
+{{- $client := get $configDefaults "client" | default false -}}
+{{- $agent := get $configDefaults "agent" | default false -}}
+{{- $shared := get $configDefaults "shared" | default false -}}
+{{- $hasSudo := get $configDefaults "hasSudo" | default false -}}
+{{- $gitName := get $configDefaults "gitName" | default "" -}}
+{{- $gitEmail := get $configDefaults "gitEmail" | default "" -}}
+{{- $gitSigningKey := get $configDefaults "gitSigningKey" | default "" -}}
+
+{{- /*
+"profile" setup means "use the profile as-is".
+
+"custom" setup asks for the few private or one-off values that do not
+belong in checked-in machine data. This branch is only for unknown
+interactive machines, so it cannot change a known host by accident.
+*/ -}}
+{{- if and (not $knownMachine) $interactive -}}
 {{-     $setupMode = promptChoiceOnce . "setupMode" "local setup mode" (list "profile" "custom") $setupMode -}}
 {{-     if not (has $setupMode (list "profile" "custom")) -}}
 {{-         fail (printf "unknown setup mode %q" $setupMode) -}}
@@ -122,18 +175,13 @@
 {{-     end -}}
 {{- end -}}
 
-{{- $userOverrides := get $machine "users" | default dict -}}
-{{- $userOverride := get $userOverrides $username | default (get $userOverrides "default") | default dict -}}
-{{- if hasKey $userOverride "personal" }}{{ $personal = get $userOverride "personal" }}{{ end -}}
-{{- if hasKey $userOverride "vault" }}{{ $vault = get $userOverride "vault" }}{{ end -}}
-{{- if hasKey $userOverride "client" }}{{ $client = get $userOverride "client" }}{{ end -}}
-{{- if hasKey $userOverride "agent" }}{{ $agent = get $userOverride "agent" }}{{ end -}}
-{{- if hasKey $userOverride "shared" }}{{ $shared = get $userOverride "shared" }}{{ end -}}
-{{- if hasKey $userOverride "hasSudo" }}{{ $hasSudo = get $userOverride "hasSudo" }}{{ end -}}
-{{- if hasKey $userOverride "gitName" }}{{ $gitName = get $userOverride "gitName" }}{{ end -}}
-{{- if hasKey $userOverride "gitEmail" }}{{ $gitEmail = get $userOverride "gitEmail" }}{{ end -}}
-{{- if hasKey $userOverride "gitSigningKey" }}{{ $gitSigningKey = get $userOverride "gitSigningKey" }}{{ end -}}
+{{- /*
+Set a small, predictable PATH for chezmoi scripts.
 
+Scripts should not inherit every directory from the shell that happened
+to run chezmoi. Keep the normal system paths, common package manager
+paths, and ~/.local/bin where repo-owned helper commands can live.
+*/ -}}
 {{- $sourceDir := .chezmoi.workingTree | default (dir .chezmoi.sourceDir) -}}
 {{- $scriptPathEntries := list -}}
 {{- if eq .chezmoi.os "darwin" -}}
@@ -176,8 +224,16 @@ umask = 0o022
 
 sourceDir = {{ $sourceDir | quote }}
 
+{{/*
+Write only the durable answers chezmoi needs later.
+
+For known machines, the repo already owns the identity, so this file only
+records the selected displayName/profile values. For unknown machines, the
+local block records the private answers needed to make future applies
+stable without re-prompting.
+*/ -}}
 [data]
-    codename = {{ $codename | quote }}
+    displayName = {{ $displayName | quote }}
     profile = {{ $profile | quote }}
     setupMode = {{ $setupMode | quote }}
     {{- if not $machineName }}
@@ -198,12 +254,18 @@ sourceDir = {{ $sourceDir | quote }}
     {{- end }}
 
 [diff]
+    # Daily diffs stay fast by hiding scripts. Use --exclude=none when
+    # reviewing script changes or setup changes.
     exclude = ["scripts"]
 
 [status]
+    # Match diff so normal status output focuses on files. The full review
+    # path is documented in docs/config/examples.md.
     exclude = ["scripts"]
 
 [scriptEnv]
+    # Keep scripts on the fixed PATH built above instead of the caller's
+    # whole shell PATH.
     {{ if ne .chezmoi.os "windows" -}}
     PATH = {{ join ":" $scriptPathEntries | quote }}
     {{- end }}

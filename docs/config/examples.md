@@ -16,7 +16,7 @@ hostname_machines:
 
 machines:
   grid:
-    codename: Grid
+    displayName: Grid
     profile: darwin-personal
 ```
 
@@ -67,7 +67,7 @@ Use this when one named host differs from its profile.
 ```yaml
 machines:
   rev-9:
-    codename: Rev-9
+    displayName: Rev-9
     profile: linux-desktop
     packages:
       linux:
@@ -85,7 +85,7 @@ Use a machine override so the default desktop stays local-only. This starts the 
 ```yaml
 machines:
   grid:
-    codename: Grid
+    displayName: Grid
     profile: linux-desktop
     packages:
       linux:
@@ -118,7 +118,7 @@ Use a per-user rule:
 ```yaml
 machines:
   sonny:
-    codename: Sonny
+    displayName: Sonny
     profile: linux-minimal
     users:
       thanhph111:
@@ -146,17 +146,25 @@ Check Rev-9's sudo SSH agent setting:
 
 ```bash
 chezmoi execute-template \
-    --override-data '{"codename":"Rev-9","profile":"linux-desktop","chezmoi":{"os":"linux"}}' \
+    --override-data '{"chezmoi":{"os":"linux","hostname":"Rev-9"}}' \
     '{{ includeTemplate "resolved-packages.json" . }}' |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["linux"]["system"]["sudo_ssh_agent_auth"]["enabled"])'
 ```
 
 ## Check before applying
 
-Preview changes:
+For normal dotfile edits, preview and apply only regular files:
 
 ```bash
 chezmoi diff
+chezmoi apply --exclude=scripts
+```
+
+Before reviewing setup or script changes, include scripts explicitly:
+
+```bash
+chezmoi status --exclude=none
+chezmoi diff --exclude=none
 ```
 
 Render one managed file:

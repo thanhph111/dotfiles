@@ -59,7 +59,7 @@ Example:
 ```yaml
 machines:
   rev-9:
-    codename: Rev-9
+    displayName: Rev-9
     profile: linux-desktop
     packages:
       linux:
@@ -82,7 +82,7 @@ Example local config:
 
 ```toml
 [data]
-codename = "Grid"
+displayName = "Grid"
 profile = "linux-minimal"
 setupMode = "custom"
 
@@ -103,7 +103,7 @@ Example:
 ```yaml
 machines:
   sonny:
-    codename: Sonny
+    displayName: Sonny
     profile: linux-minimal
     users:
       thanhph111:

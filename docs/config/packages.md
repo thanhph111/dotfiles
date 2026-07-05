@@ -119,7 +119,7 @@ Example:
 ```yaml
 machines:
   rev-9:
-    codename: Rev-9
+    displayName: Rev-9
     profile: linux-desktop
     packages:
       linux:
@@ -145,7 +145,7 @@ To check a specific value for a simulated machine:
 
 ```bash
 chezmoi execute-template \
-    --override-data '{"codename":"Rev-9","profile":"linux-desktop","chezmoi":{"os":"linux"}}' \
+    --override-data '{"chezmoi":{"os":"linux","hostname":"Rev-9"}}' \
     '{{ includeTemplate "resolved-packages.json" . }}' |
     python3 -c 'import json,sys; print(json.load(sys.stdin)["linux"]["system"]["sudo_ssh_agent_auth"]["enabled"])'
 ```

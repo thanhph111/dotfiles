@@ -22,11 +22,11 @@ hostname_prefix_machines:
 
 machines:
   arwen:
-    codename: Arwen
+    displayName: Arwen
     profile: windows-desktop
 
   rev-9:
-    codename: Rev-9
+    displayName: Rev-9
     profile: linux-desktop
     packages:
       linux:
@@ -45,7 +45,7 @@ machines:
             port: 9999
 
   sonny:
-    codename: Sonny
+    displayName: Sonny
     profile: linux-minimal
     users:
       thanhph111:
@@ -55,5 +55,5 @@ machines:
         gitEmail: thanhph111@gmail.com
 
   tars:
-    codename: TARS
+    displayName: TARS
     profile: darwin-personal

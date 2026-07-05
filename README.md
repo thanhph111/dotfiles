@@ -6,12 +6,12 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/) for a consiste
 
 Machines are selected by a small local profile, not by creating package files for every host. Known hosts are declared in [`home/.chezmoidata/machines.yaml`](./home/.chezmoidata/machines.yaml); unknown hosts can choose an existing profile during `chezmoi init` without a repo change.
 
-| Codename | OS      | Profile           |
-| -------- | ------- | ----------------- |
-| Arwen    | Windows | `windows-desktop` |
-| Rev-9    | Linux   | `linux-desktop`   |
-| Sonny    | Linux   | `linux-minimal`   |
-| TARS     | macOS   | `darwin-personal` |
+| Display name | OS      | Profile           |
+| ------------ | ------- | ----------------- |
+| Arwen        | Windows | `windows-desktop` |
+| Rev-9        | Linux   | `linux-desktop`   |
+| Sonny        | Linux   | `linux-minimal`   |
+| TARS         | macOS   | `darwin-personal` |
 
 | Profile             | Use for                             |
 | ------------------- | ----------------------------------- |
@@ -35,7 +35,7 @@ See [`docs/config`](./docs/config/README.md) for the full config model. The shor
 Known machines are auto-detected. For a new machine, this only needs to be a useful local name; it does not need a committed package manifest.
 
 ```bash
-sudo scutil --set ComputerName "Grid"  # or your codename
+sudo scutil --set ComputerName "Grid"  # or your display name
 ```
 
 ### 2. Install chezmoi and clone
@@ -48,7 +48,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)"
 ./bin/chezmoi init -S ~/Documents/Projects/Personal/dotfiles thanhph111
 ```
 
-For an unknown host, init asks for a codename, one reusable profile, and whether the machine is headless. It also asks whether to keep the profile/default identity or customize this machine locally. Local answers are written to the machine's chezmoi config, so they are not asked again on normal `chezmoi apply`.
+For an unknown host, init asks for a display name, one reusable profile, and whether the machine is headless. It also asks whether to keep the profile/default identity or customize this machine locally. Local answers are written to the machine's chezmoi config, so they are not asked again on normal `chezmoi apply`.
 
 Only commit a new machine entry when the machine should become known to the repo, for example because its hostname should auto-select a profile, it has shared-user rules, or the same identity needs to be reused later.
 

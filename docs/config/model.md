@@ -26,7 +26,7 @@ There are two paths, because identity and packages are different kinds of choice
 
 ## Identity And Trust Flow
 
-Identity and trust means fields like `codename`, `profile`, `vault`, `hasSudo`, `shared`, and Git identity.
+Identity and trust means fields like `displayName`, `profile`, `vault`, `hasSudo`, `shared`, and Git identity.
 
 Setup starts in [`home/.chezmoi.toml.tmpl`](../../home/.chezmoi.toml.tmpl). Normal templates read the final identity and trust values from [`resolved-machine.json`](../../home/.chezmoitemplates/resolved-machine.json).
 
@@ -47,7 +47,7 @@ For an unknown interactive machine, the flow is:
 ```text
 global machine defaults
 -> operating-system default profile
--> local codename/profile prompts
+-> local display name/profile prompts
 -> selected profile defaults
 -> local headless/setup prompts
 ```

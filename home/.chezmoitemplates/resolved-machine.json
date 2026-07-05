@@ -1,19 +1,40 @@
+{{- /*
+This template emits one JSON object with the final machine identity.
+
+It is included by other templates and scripts, so the rendered output must
+stay valid JSON. Use template comments like this one for notes; do not add
+normal JSON comments below.
+*/ -}}
+{{- /*
+Start from chezmoi's hostname. On macOS, prefer ComputerName when
+available because that is the friendly machine name this repo matches.
+*/ -}}
 {{- $hostname := .chezmoi.hostname -}}
 {{- if and (eq .chezmoi.os "darwin") (lookPath "scutil") -}}
 {{-     $hostname = output "scutil" "--get" "ComputerName" | trim -}}
 {{- end -}}
 
+{{- /*
+The caller passes the data catalogs into this template. That keeps this
+resolver reusable while leaving ownership in the YAML files:
+- machines.yaml owns known hostnames and machine exceptions
+- profiles.yaml owns reusable shapes
+- the local chezmoi config owns private unknown-machine answers
+*/ -}}
 {{- $machines := get . "machines" | default dict -}}
 {{- $hostnameMachines := get . "hostname_machines" | default dict -}}
 {{- $hostnamePrefixMachines := get . "hostname_prefix_machines" | default list -}}
-{{- $localCodename := get . "codename" | default "" -}}
+{{- $localDisplayName := get . "displayName" | default "" -}}
+
+{{- /*
+Known machine lookup is based only on hostname.
+
+Exact hostname wins. Prefix matches are a fallback for families of hosts.
+Local displayName is deliberately not part of this lookup, because a saved
+label should not be able to make this host resolve as another known machine.
+*/ -}}
 {{- $hostnameKey := lower $hostname -}}
-{{- $machineKey := "" -}}
-{{- if and $localCodename (hasKey $machines (lower $localCodename)) -}}
-{{-     $machineKey = lower $localCodename -}}
-{{- else -}}
-{{-     $machineKey = get $hostnameMachines $hostnameKey | default "" -}}
-{{- end -}}
+{{- $machineKey := get $hostnameMachines $hostnameKey | default "" -}}
 {{- range $match := $hostnamePrefixMachines -}}
 {{-     if and (not $machineKey) (hasPrefix $match.prefix $hostnameKey) -}}
 {{-         $machineKey = $match.machine -}}
@@ -26,6 +47,13 @@
 {{- end -}}
 {{- $knownMachine := not (empty $machineKey) -}}
 
+{{- /*
+Choose the profile before merging the rest of the identity.
+
+Unknown machines may use a saved local profile. Known machines use the
+profile from machines.yaml when one is set, because checked-in machine
+facts are the owner for known hosts.
+*/ -}}
 {{- $profileDefaults := get . "profile_defaults" | default dict -}}
 {{- $defaultProfile := get $profileDefaults .chezmoi.os | default "linux-desktop" -}}
 {{- $profileName := $defaultProfile -}}
@@ -37,17 +65,41 @@
 {{- end -}}
 
 {{- $profiles := get . "profiles" | default dict -}}
+{{- if not (hasKey $profiles $profileName) -}}
+{{-     fail (printf "unknown chezmoi profile %q" $profileName) -}}
+{{- end -}}
 {{- $profileSpec := get $profiles $profileName | default dict -}}
 {{- $profileConfigDefaults := get $profileSpec "defaults" | default dict -}}
 
+{{- /*
+Build the base identity.
+
+The display name starts as the real hostname. Known machines may replace
+it with the checked-in displayName. Unknown machines may use a saved local
+displayName, but only after we already proved this is not a known machine.
+*/ -}}
 {{- $machineDefaults := get . "machine_defaults" | default dict -}}
 {{- $globalDefaults := get $machineDefaults "global" | default dict -}}
 {{- $osDefaults := get (get $machineDefaults "by_os" | default dict) .chezmoi.os | default dict -}}
+{{- $baseDisplayName := $hostname -}}
+{{- if $knownMachine -}}
+{{-     $baseDisplayName = get $machine "displayName" | default $hostname -}}
+{{- else if $localDisplayName -}}
+{{-     $baseDisplayName = $localDisplayName -}}
+{{- end -}}
 {{- $baseIdentity := dict
-    "codename" (get $machine "codename" | default $localCodename | default $hostname)
+    "displayName" $baseDisplayName
     "profile" $profileName
 -}}
 
+{{- /*
+Local overrides are for unknown machines only.
+
+The current shape stores those values under .local. The compatibility
+block below also reads the old top-level shape when .local is empty, but
+only for unknown machines. This keeps old one-off machines working while
+preventing stale local answers from changing a known host like Rev-9.
+*/ -}}
 {{- $localOverrides := get . "local" | default dict -}}
 
 {{- if and (not $knownMachine) (empty $localOverrides) -}}
@@ -63,18 +115,47 @@
 {{-     if hasKey . "gitSigningKey" }}{{ $_ := set $localOverrides "gitSigningKey" (get . "gitSigningKey") }}{{ end -}}
 {{- end -}}
 
+{{- /*
+Known machines can still have per-user overrides in machines.yaml.
+
+That is checked-in data, so it is allowed for known hosts. It is useful
+for things like a different Git identity for one user on a shared machine.
+*/ -}}
 {{- $userOverrides := get $machine "users" | default dict -}}
 {{- $userOverride := get $userOverrides .chezmoi.username | default (get $userOverrides "default") | default dict -}}
 
+{{- /*
+Merge identity sources from broadest to narrowest.
+
+Later sources win:
+1. global defaults
+2. operating system defaults
+3. base identity
+4. profile defaults
+5. known machine settings
+6. per-user machine settings
+7. local unknown-machine overrides
+
+The last source is added only for unknown machines.
+*/ -}}
 {{- $resolved := dict -}}
-{{- range $source := list $globalDefaults $osDefaults $baseIdentity $profileConfigDefaults $machine $userOverride $localOverrides -}}
-{{-     range $key := list "codename" "profile" "personal" "vault" "headless" "client" "agent" "shared" "hasSudo" "gitName" "gitEmail" "gitSigningKey" -}}
+{{- $identitySources := list $globalDefaults $osDefaults $baseIdentity $profileConfigDefaults $machine $userOverride -}}
+{{- if not $knownMachine -}}
+{{-     $identitySources = append $identitySources $localOverrides -}}
+{{- end -}}
+{{- range $source := $identitySources -}}
+{{-     range $key := list "displayName" "profile" "personal" "vault" "headless" "client" "agent" "shared" "hasSudo" "gitName" "gitEmail" "gitSigningKey" -}}
 {{-         if hasKey $source $key -}}
 {{-             $_ := set $resolved $key (get $source $key) -}}
 {{-         end -}}
 {{-     end -}}
 {{- end -}}
 
+{{- /*
+Force headless mode in environments that should not rely on desktop tools
+or interactive prompts. This final override is intentional: container and
+image users should stay headless even if a broader default says otherwise.
+*/ -}}
 {{- if or
         (env "CODESPACES")
         (env "REMOTE_CONTAINERS_IPC")
@@ -83,5 +164,11 @@
 {{-     $_ := set $resolved "headless" true -}}
 {{- end -}}
 
+{{- /*
+machineKey tells callers whether the host matched machines.yaml.
+
+It is empty for unknown machines. Callers should use this as a signal,
+not as a human-friendly display name.
+*/ -}}
 {{- $_ := set $resolved "machineKey" $machineKey -}}
 {{- $resolved | toJson }}
