@@ -1,2 +1,4 @@
 [global]
-load_dotenv = true
+# Projects that want .env loading should opt in from their trusted .envrc with:
+# dotenv_if_exists .env
+load_dotenv = false

@@ -57,29 +57,3 @@ alias python=python3
 alias pip=pip3
 alias mute-spotify-ads='(mute-spotify-ads >/dev/null 2>&1 &)'
 alias npm-exec='PATH=$(npm bin):$PATH'
-
-# Load KEY=value files into the current shell.  This intentionally stays a
-# function, not an alias, so `set -a` is restored even when the file errors.
-# shellcheck disable=SC3043
-export_env_file() {
-    local env_file="${1:-.env}"
-    local had_allexport=0
-    local env_status
-
-    if [ ! -r "$env_file" ]; then
-        printf '%s\n' "export_env_file: cannot read $env_file" >&2
-        return 1
-    fi
-
-    case "$-" in
-    *a*) had_allexport=1 ;;
-    esac
-
-    set -a
-    # shellcheck source=/dev/null
-    . "$env_file"
-    env_status=$?
-
-    [ "$had_allexport" = 1 ] || set +a
-    return "$env_status"
-}

@@ -58,7 +58,7 @@ dotfiles_source_dir "$SHELL_MODULE_DIR"
 # shell hooks, so keeping them at the end avoids hidden ordering bugs.
 dotfiles_source_dir "$DOTFILES_SHELL_ROOT/final.d"
 
-# Compatibility for terminal profiles that pass:
+# Trusted terminal profile compatibility for:
 #   bash -is eval 'some command'
 #   zsh -ils eval 'some command'
 #

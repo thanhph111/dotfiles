@@ -135,16 +135,41 @@
 {{- if hasKey $userOverride "gitSigningKey" }}{{ $gitSigningKey = get $userOverride "gitSigningKey" }}{{ end -}}
 
 {{- $sourceDir := .chezmoi.workingTree | default (dir .chezmoi.sourceDir) -}}
-{{- $scriptPathEntries := list
-        "/opt/homebrew/bin"
-        "/usr/local/bin"
-        "/home/linuxbrew/.linuxbrew/bin"
+{{- $scriptPathEntries := list -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-     $scriptPathEntries = list
         (joinPath .chezmoi.homeDir ".local/bin")
+        "/opt/homebrew/bin"
+        "/opt/homebrew/sbin"
+        "/usr/local/bin"
+        "/usr/local/sbin"
+        "/usr/bin"
+        "/bin"
+        "/usr/sbin"
+        "/sbin"
 -}}
-{{- range $pathEntry := splitList ":" (env "PATH") -}}
-{{-     if and $pathEntry (not (has $pathEntry $scriptPathEntries)) -}}
-{{-         $scriptPathEntries = append $scriptPathEntries $pathEntry -}}
-{{-     end -}}
+{{- else if eq .chezmoi.os "linux" -}}
+{{-     $scriptPathEntries = list
+        (joinPath .chezmoi.homeDir ".local/bin")
+        "/home/linuxbrew/.linuxbrew/bin"
+        "/home/linuxbrew/.linuxbrew/sbin"
+        "/usr/local/bin"
+        "/usr/local/sbin"
+        "/usr/bin"
+        "/bin"
+        "/usr/sbin"
+        "/sbin"
+-}}
+{{- else if ne .chezmoi.os "windows" -}}
+{{-     $scriptPathEntries = list
+        (joinPath .chezmoi.homeDir ".local/bin")
+        "/usr/local/bin"
+        "/usr/local/sbin"
+        "/usr/bin"
+        "/bin"
+        "/usr/sbin"
+        "/sbin"
+-}}
 {{- end -}}
 
 umask = 0o022
