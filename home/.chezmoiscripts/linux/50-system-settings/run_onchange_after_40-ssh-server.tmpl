@@ -39,6 +39,25 @@ remove_file() {
     fi
 }
 
+find_command() {
+    local name="$1"
+    shift
+
+    if command -v "$name" >/dev/null; then
+        command -v "$name"
+        return 0
+    fi
+
+    for path in "$@"; do
+        if [[ -x "$path" ]]; then
+            printf '%s\n' "$path"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 service_load_state() {
     sudo systemctl show -p LoadState --value "$1" 2>/dev/null || true
 }
@@ -114,8 +133,8 @@ write_file /etc/ssh/sshd_config.d/accept-env.conf <<'EOF'
 AcceptEnv OMP_CONFIG
 EOF
 
-if command -v sshd >/dev/null; then
-    sudo sshd -t
+if sshd_path="$(find_command sshd /usr/sbin/sshd /usr/local/sbin/sshd)"; then
+    sudo "$sshd_path" -t
     if set_ssh_service true && [[ "$changed" == true ]]; then
         sudo systemctl reload ssh 2>/dev/null || sudo systemctl reload sshd 2>/dev/null || true
     fi
