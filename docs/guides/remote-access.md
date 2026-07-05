@@ -64,7 +64,7 @@ Rev-9 leaves UFW inbound SSH and xrdp rules disabled. That is right when access 
 
 The UFW script refuses to reset UFW during a direct SSH session when no enabled rule allows TCP port 22.
 
-It allows loopback tunnel sessions because UFW does not need a public inbound SSH rule for that path.
+It allows local proxy sessions because UFW does not need a public inbound SSH rule for that path. That includes tunnels that reach sshd through `127.0.0.1` and tunnels that reach sshd through the machine's own LAN IP.
 
 Use this override only when you already have another way back in:
 

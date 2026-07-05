@@ -68,17 +68,28 @@ for port in "${enabled_tcp_ports[@]}"; do
     validate_port "$port"
 done
 
+ssh_client_address=''
 ssh_local_address=''
 if [[ -n "${SSH_CONNECTION:-}" ]]; then
-    read -r _ _ ssh_local_address _ <<<"$SSH_CONNECTION"
+    read -r ssh_client_address _ ssh_local_address _ <<<"$SSH_CONNECTION"
 fi
 
-ssh_is_loopback_tunnel=false
+ssh_is_local_proxy=false
+case "$ssh_client_address" in
+    127.*|::1|localhost) ssh_is_local_proxy=true ;;
+esac
 case "$ssh_local_address" in
-    127.*|::1|localhost) ssh_is_loopback_tunnel=true ;;
+    127.*|::1|localhost) ssh_is_local_proxy=true ;;
 esac
 
-if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" && "$ssh_policy_allows_ssh" != true && "$ssh_is_loopback_tunnel" != true ]]; then
+# Cloudflare Tunnel can proxy SSH to sshd through the machine's own LAN IP
+# instead of 127.0.0.1. In that case sshd sees both ends of the connection
+# as the same local address, and UFW does not need a public inbound SSH rule.
+if [[ -n "$ssh_client_address" && "$ssh_client_address" == "$ssh_local_address" ]]; then
+    ssh_is_local_proxy=true
+fi
+
+if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" && "$ssh_policy_allows_ssh" != true && "$ssh_is_local_proxy" != true ]]; then
     if [[ "${DOTFILES_ALLOW_UFW_LOCKOUT:-}" != 1 ]]; then
         die "refusing to reset UFW over direct SSH because resolved UFW rules do not allow TCP port 22; set DOTFILES_ALLOW_UFW_LOCKOUT=1 to override"
     fi
