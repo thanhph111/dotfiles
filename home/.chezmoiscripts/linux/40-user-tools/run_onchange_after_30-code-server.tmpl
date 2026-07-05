@@ -1,0 +1,42 @@
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- $codeServer := get $system "code_server" | default dict -}}
+{{- $codeServerEnabled := get $codeServer "enabled" | default false -}}
+{{- $codeCommand := get $codeServer "command" | default "code" -}}
+{{- if and (eq .chezmoi.os "linux") (not (get $machine "shared")) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+unit=code-server.service
+code_server_enabled={{ if $codeServerEnabled }}true{{ else }}false{{ end }}
+code_command={{ $codeCommand | quote }}
+
+if ! command -v systemctl >/dev/null; then
+    echo "Skipping code-server service changes because systemctl is not installed" >&2
+    exit 0
+fi
+
+if ! systemctl --user show-environment >/dev/null 2>&1; then
+    echo "Skipping code-server service changes because the user systemd session is unavailable" >&2
+    exit 0
+fi
+
+systemctl --user daemon-reload
+
+if [[ "$code_server_enabled" == true ]]; then
+    if ! command -v "$code_command" >/dev/null 2>&1; then
+        echo "Skipping code-server enable because $code_command is not installed" >&2
+        systemctl --user disable --now "$unit" 2>/dev/null || true
+        exit 0
+    fi
+
+    systemctl --user enable --now "$unit"
+else
+    systemctl --user disable --now "$unit" 2>/dev/null || true
+fi
+
+{{- end -}}

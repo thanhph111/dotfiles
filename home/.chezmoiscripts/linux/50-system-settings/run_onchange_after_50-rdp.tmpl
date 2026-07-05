@@ -1,0 +1,46 @@
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- $rdp := get $system "rdp" | default dict -}}
+{{- $rdpEnabled := get $rdp "enabled" | default false -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared"))) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+rdp_enabled={{ if $rdpEnabled }}true{{ else }}false{{ end }}
+
+service_load_state() {
+    sudo systemctl show -p LoadState --value "$1" 2>/dev/null || true
+}
+
+service_exists() {
+    [[ "$(service_load_state "$1")" == loaded ]]
+}
+
+set_service() {
+    local enabled="$1"
+    local unit="$2"
+
+    if ! service_exists "$unit"; then
+        return
+    fi
+
+    if [[ "$enabled" == true ]]; then
+        sudo systemctl enable --now "$unit"
+    else
+        sudo systemctl disable --now "$unit"
+    fi
+}
+
+if ! command -v systemctl >/dev/null; then
+    echo "Skipping RDP service changes because systemctl is not installed" >&2
+    exit 0
+fi
+
+set_service "$rdp_enabled" xrdp-sesman.service
+set_service "$rdp_enabled" xrdp.service
+
+{{- end -}}

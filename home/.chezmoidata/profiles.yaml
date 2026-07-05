@@ -97,8 +97,14 @@ profiles:
           sudoers_disable_admin_flag: false
           rtc_local_time: false
           account_avatar: false
-          ufw: false
-          ssh: false
+          ufw:
+            enabled: false
+          ssh_server:
+            enabled: false
+          rdp:
+            enabled: false
+          code_server:
+            enabled: false
 
   linux-vm-dev:
     defaults:

@@ -2,13 +2,20 @@
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
 {{- $linux := get $packages "linux" | default dict -}}
 {{- $system := get $linux "system" | default dict -}}
-{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.ssh) -}}
+{{- $sshServer := get $system "ssh_server" | default dict -}}
+{{- $sshServerEnabled := get $sshServer "enabled" | default false -}}
+{{- $disablePasswordLogin := get $sshServer "disable_password_login" | default true -}}
+{{- $trustedUserCaKeys := get $sshServer "trusted_user_ca_keys" | default "/etc/ssh/ca.pub" -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared"))) -}}
 
 #!/usr/bin/env bash
 
 set -euo pipefail
 
 changed=false
+ssh_server_enabled={{ if $sshServerEnabled }}true{{ else }}false{{ end }}
+disable_password_login={{ if $disablePasswordLogin }}true{{ else }}false{{ end }}
+trusted_user_ca_keys={{ $trustedUserCaKeys | quote }}
 
 write_file() {
     local path="$1"
@@ -23,24 +30,97 @@ write_file() {
     rm -f "$tmp"
 }
 
+remove_file() {
+    local path="$1"
+
+    if sudo test -e "$path"; then
+        sudo rm -f "$path"
+        changed=true
+    fi
+}
+
+service_load_state() {
+    sudo systemctl show -p LoadState --value "$1" 2>/dev/null || true
+}
+
+service_exists() {
+    [[ "$(service_load_state "$1")" == loaded ]]
+}
+
+set_ssh_service() {
+    local enabled="$1"
+    local unit
+
+    if ! command -v systemctl >/dev/null; then
+        echo "Skipping SSH service changes because systemctl is not installed" >&2
+        return 1
+    fi
+
+    for unit in ssh.service sshd.service; do
+        if service_exists "$unit"; then
+            if [[ "$enabled" == true ]]; then
+                sudo systemctl enable --now "$unit"
+            else
+                sudo systemctl disable --now "$unit"
+            fi
+            return 0
+        fi
+    done
+
+    echo "Skipping SSH service changes because no SSH server unit is installed" >&2
+    return 1
+}
+
+remove_managed_config() {
+    remove_file /etc/ssh/sshd_config.d/disable-password-login.conf
+    remove_file /etc/ssh/sshd_config.d/trust-ca.conf
+    remove_file /etc/ssh/sshd_config.d/accept-env.conf
+}
+
+if [[ "$ssh_server_enabled" != true ]]; then
+    if set_ssh_service false; then
+        remove_managed_config
+    else
+        echo "Leaving managed SSH config files in place because the SSH service could not be disabled safely" >&2
+    fi
+    exit 0
+fi
+
+if [[ "$disable_password_login" == true ]]; then
 write_file /etc/ssh/sshd_config.d/disable-password-login.conf <<'EOF'
 ChallengeResponseAuthentication no
 PasswordAuthentication no
 EOF
+else
+    remove_file /etc/ssh/sshd_config.d/disable-password-login.conf
+fi
 
-write_file /etc/ssh/sshd_config.d/trust-ca.conf <<'EOF'
+if [[ -n "$trusted_user_ca_keys" ]]; then
+    if sudo test -s "$trusted_user_ca_keys"; then
+write_file /etc/ssh/sshd_config.d/trust-ca.conf <<EOF
 PubkeyAuthentication yes
-TrustedUserCAKeys /etc/ssh/ca.pub
+TrustedUserCAKeys $trusted_user_ca_keys
 EOF
+    else
+        echo "Skipping TrustedUserCAKeys because $trusted_user_ca_keys is missing or empty" >&2
+        remove_file /etc/ssh/sshd_config.d/trust-ca.conf
+    fi
+else
+    remove_file /etc/ssh/sshd_config.d/trust-ca.conf
+fi
 
 write_file /etc/ssh/sshd_config.d/accept-env.conf <<'EOF'
 # Oh My Posh config
 AcceptEnv OMP_CONFIG
 EOF
 
-if [[ "$changed" == true ]]; then
+if command -v sshd >/dev/null; then
     sudo sshd -t
-    sudo systemctl reload ssh 2>/dev/null || sudo systemctl reload sshd 2>/dev/null || true
+    if set_ssh_service true && [[ "$changed" == true ]]; then
+        sudo systemctl reload ssh 2>/dev/null || sudo systemctl reload sshd 2>/dev/null || true
+    fi
+else
+    echo "Skipping SSH service enable because sshd is not installed" >&2
 fi
 
 {{- end -}}

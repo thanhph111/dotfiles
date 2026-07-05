@@ -50,8 +50,24 @@ packages:
         package: libpam-ssh-agent-auth
       rtc_local_time: true
       account_avatar: true
-      ufw: true
-      ssh: true
+      ufw:
+        enabled: true
+        default_incoming: deny
+        default_outgoing: allow
+        allow_tcp_ports: []
+      ssh_server:
+        enabled: false
+        open_firewall: false
+        disable_password_login: true
+        trusted_user_ca_keys: /etc/ssh/ca.pub
+      rdp:
+        enabled: false
+        open_firewall: false
+      code_server:
+        enabled: false
+        command: code
+        host: 127.0.0.1
+        port: 9999
 
   darwin:
     brew:

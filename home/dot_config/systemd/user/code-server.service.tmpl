@@ -1,5 +1,14 @@
-{{- $code := lookPath "code" -}}
-{{- if $code -}}
+{{- $packages := includeTemplate "resolved-packages.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $packages "linux" | default dict -}}
+{{- $system := get $linux "system" | default dict -}}
+{{- $codeServer := get $system "code_server" | default dict -}}
+{{- $codeCommand := get $codeServer "command" | default "code" -}}
+{{- $host := "127.0.0.1" -}}
+{{- $port := 9999 -}}
+{{- $host = get $codeServer "host" | default $host -}}
+{{- $port = get $codeServer "port" | default $port -}}
+{{- if and (eq .chezmoi.os "linux") (not (get $machine "shared")) -}}
 [Unit]
 Description=Visual Studio Code Server
 Documentation=https://code.visualstudio.com/docs
@@ -7,7 +16,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ $code }} serve-web --port 9999 --without-connection-token
+ExecStart=/usr/bin/env {{ $codeCommand }} serve-web --host {{ $host }} --port {{ $port }} --accept-server-license-terms
 Restart=always
 
 [Install]

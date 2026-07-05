@@ -33,6 +33,16 @@ machines:
         system:
           sudo_ssh_agent_auth:
             enabled: true
+          ssh_server:
+            enabled: true
+            open_firewall: false
+          rdp:
+            enabled: true
+            open_firewall: false
+          code_server:
+            enabled: true
+            host: 127.0.0.1
+            port: 9999
 
   sonny:
     codename: Sonny

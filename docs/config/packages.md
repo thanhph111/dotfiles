@@ -61,6 +61,38 @@ profiles:
 
 Plain meaning: use `home/.apt/linux-desktop` for APT packages and `home/.Brewfiles/linux-desktop` for Homebrew packages.
 
+## Remote access
+
+Remote access is opt-in. A profile can install common server packages, but managed services stay stopped unless the resolved package data asks for them. UFW is fully owned by the resolved config: apply resets UFW, sets the defaults below, and then adds only the listed rules.
+
+Useful Linux system settings:
+
+```yaml
+packages:
+  linux:
+    system:
+      code_server:
+        enabled: true
+        command: code
+        host: 127.0.0.1
+        port: 9999
+      ssh_server:
+        enabled: true
+        open_firewall: true
+        disable_password_login: true
+        trusted_user_ca_keys: /etc/ssh/ca.pub
+      rdp:
+        enabled: false
+        open_firewall: false
+      ufw:
+        enabled: true
+        default_incoming: deny
+        default_outgoing: allow
+        allow_tcp_ports: []
+```
+
+Plain meaning: start the SSH server, allow SSH through UFW, and manage SSH server hardening. RDP stays stopped. The VS Code web service stays bound to localhost; reach it with SSH forwarding, Tailscale, Cloudflare Access, or another named access layer. Cloudflare Tunnel normally needs outgoing access only, so it does not need an inbound UFW rule for a localhost service; use `ssh_server.enabled: true` with `open_firewall: false` for that shape. Manual UFW rules are removed on apply; put every wanted port in data.
+
 ## Homebrew
 
 Homebrew is one Brewfile per profile.

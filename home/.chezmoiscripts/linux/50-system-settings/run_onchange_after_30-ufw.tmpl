@@ -2,15 +2,81 @@
 {{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
 {{- $linux := get $packages "linux" | default dict -}}
 {{- $system := get $linux "system" | default dict -}}
-{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $system.ufw) -}}
+{{- $ufw := get $system "ufw" | default dict -}}
+{{- $sshServer := get $system "ssh_server" | default dict -}}
+{{- $rdp := get $system "rdp" | default dict -}}
+{{- $ufwEnabled := get $ufw "enabled" | default false -}}
+{{- $ufwDefaultIncoming := get $ufw "default_incoming" | default "deny" -}}
+{{- $ufwDefaultOutgoing := get $ufw "default_outgoing" | default "allow" -}}
+{{- $ufwAllowTcpPorts := get $ufw "allow_tcp_ports" | default list -}}
+{{- $sshServerEnabled := get $sshServer "enabled" | default false -}}
+{{- $sshOpenFirewall := and $sshServerEnabled (get $sshServer "open_firewall" | default false) -}}
+{{- $rdpOpenFirewall := and (get $rdp "enabled" | default false) (get $rdp "open_firewall" | default false) -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $ufwEnabled) -}}
 
 #!/usr/bin/env bash
 
 set -euo pipefail
 
-sudo ufw allow ssh
-sudo ufw allow 36270/tcp
-sudo ufw allow 3389/tcp
+default_incoming={{ $ufwDefaultIncoming | quote }}
+default_outgoing={{ $ufwDefaultOutgoing | quote }}
+ssh_server_enabled={{ if $sshServerEnabled }}true{{ else }}false{{ end }}
+
+allow_tcp_ports=(
+{{- if $sshOpenFirewall }}
+    "22"
+{{- end }}
+{{- if $rdpOpenFirewall }}
+    "3389"
+{{- end }}
+{{- range $port := $ufwAllowTcpPorts }}
+    {{ printf "%v" $port | quote }}
+{{- end }}
+)
+
+die() {
+    printf 'ufw setup: %s\n' "$*" >&2
+    exit 1
+}
+
+validate_policy() {
+    case "$1" in
+        allow|deny|reject) ;;
+        *) die "$2 must be allow, deny, or reject; got $1" ;;
+    esac
+}
+
+validate_port() {
+    local port="$1"
+    local port_number
+
+    [[ $port =~ ^[0-9]+$ ]] || die "TCP port must be a number; got $port"
+    port_number=$((10#$port))
+    ((port_number >= 1 && port_number <= 65535)) ||
+        die "TCP port must be between 1 and 65535; got $port"
+}
+
+validate_policy "$default_incoming" default_incoming
+validate_policy "$default_outgoing" default_outgoing
+
+for port in "${allow_tcp_ports[@]}"; do
+    validate_port "$port"
+done
+
+if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" && "$ssh_server_enabled" != true ]]; then
+    if [[ "${DOTFILES_ALLOW_UFW_LOCKOUT:-}" != 1 ]]; then
+        die "refusing to reset UFW over SSH because the SSH server is disabled by resolved config; set DOTFILES_ALLOW_UFW_LOCKOUT=1 to override"
+    fi
+fi
+
+sudo ufw --force reset
+sudo ufw default "$default_incoming" incoming
+sudo ufw default "$default_outgoing" outgoing
+
+for port in "${allow_tcp_ports[@]}"; do
+    sudo ufw allow "${port}/tcp"
+done
+
 sudo ufw --force enable
 
 {{- end -}}

@@ -78,6 +78,39 @@ machines:
 
 This is how Rev-9 enables sudo SSH agent auth without changing every `linux-desktop` machine.
 
+## Opt into remote access for one Linux machine
+
+Use a machine override so the default desktop stays local-only. This starts the SSH server and opens SSH in UFW:
+
+```yaml
+machines:
+  grid:
+    codename: Grid
+    profile: linux-desktop
+    packages:
+      linux:
+        system:
+          ssh_server:
+            enabled: true
+            open_firewall: true
+            trusted_user_ca_keys: /etc/ssh/ca.pub
+```
+
+UFW is owned by this repo. If you add an extra port by hand and it is not in `ufw.allow_tcp_ports`, the next apply removes it.
+
+Enable RDP only for a machine that really needs it:
+
+```yaml
+machines:
+  grid:
+    packages:
+      linux:
+        system:
+          rdp:
+            enabled: true
+            open_firewall: true
+```
+
 ## Give one user sudo on a shared machine
 
 Use a per-user rule:
