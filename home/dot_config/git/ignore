@@ -95,7 +95,7 @@ $RECYCLE.BIN/
 /.fleet
 
 #: Claude AI local settings
-**/.claude/settings.local.json
+**/.claude/
 
 #: Codex local settings
 **/.codex/environments/
