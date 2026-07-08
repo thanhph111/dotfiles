@@ -4,6 +4,8 @@ tap "homebrew/linux-fonts"
 brew "asciinema"
 # Official Amazon AWS command-line interface
 brew "awscli"
+# Programmable completion for Bash 4.2+
+brew "bash-completion@2"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
 # Bash scripts that integrate bat with various command-line tools
