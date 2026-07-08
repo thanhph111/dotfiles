@@ -6,7 +6,7 @@
             "alignment": "left",
             "segments": [
                 {
-                    "properties": {
+                    "options": {
                         "cache_duration": "none"
                     },
                     "template": "{{ .UserName }}@{{ .HostName }} ",
@@ -15,7 +15,7 @@
                     "style": "plain"
                 },
                 {
-                    "properties": {
+                    "options": {
                         "cache_duration": "none",
                         "style": "full"
                     },
@@ -25,7 +25,7 @@
                     "style": "plain"
                 },
                 {
-                    "properties": {
+                    "options": {
                         "branch_icon": "",
                         "cache_duration": "none",
                         "fetch_status": true
@@ -41,7 +41,7 @@
             "alignment": "left",
             "segments": [
                 {
-                    "properties": {
+                    "options": {
                         "always_enabled": true,
                         "cache_duration": "none"
                     },
@@ -57,5 +57,5 @@
             "newline": true
         }
     ],
-    "version": 3
+    "version": 4
 }

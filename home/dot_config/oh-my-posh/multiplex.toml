@@ -4,9 +4,10 @@
 # : https://onlineunicodetools.com/escape-unicode
 # : https://dencode.com/en/string/unicode-escape
 
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 console_title_template = '{{ .Shell }} ✤ {{ .Folder }}'
 final_space = true
-version = 3
+version = 4
 
 [upgrade]
 notice = false
@@ -42,7 +43,7 @@ background = 'p:red'
 type = 'time'
 style = 'diamond'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -62,7 +63,7 @@ background = 'p:yellow'
 type = 'session'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -84,7 +85,7 @@ background = 'p:yellow'
 type = 'os'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -94,10 +95,10 @@ background = 'p:yellow'
 type = 'shell'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
-[blocks.segments.properties.mapped_shell_names]
+[blocks.segments.options.mapped_shell_names]
 bash = 'Bash'
 fish = 'Fish'
 lua = 'Lua'
@@ -111,7 +112,7 @@ background = 'p:yellow'
 type = 'text'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -122,7 +123,7 @@ background = 'p:blue'
 type = 'path'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 enable_hyperlink = true
 folder_icon = ''
@@ -131,7 +132,7 @@ home_icon = ''
 max_depth = 1.0
 style = 'agnoster_short'
 
-[blocks.segments.properties.mapped_locations]
+[blocks.segments.options.mapped_locations]
 '/' = '漣› '
 'C\:' = '漣 '
 '~/Desktop/Projects' = ' '
@@ -152,7 +153,7 @@ background = 'p:green'
 type = 'python'
 style = 'powerline'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -218,7 +219,7 @@ background_templates = [
     '{{ if gt .Behind 0 }}p:red{{ end }}',
 ]
 
-[blocks.segments.properties]
+[blocks.segments.options]
 branch_ahead_icon = '󰆸'
 branch_behind_icon = '󰆹'
 branch_gone_icon = ' '
@@ -247,7 +248,7 @@ background = 'p:red'
 type = 'status'
 style = 'diamond'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks]]
@@ -263,7 +264,7 @@ background = 'p:green'
 type = 'executiontime'
 style = 'diamond'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 style = 'austin'
 
@@ -278,7 +279,7 @@ foreground = 'p:blue'
 type = 'text'
 style = 'plain'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
 
 [[blocks.segments]]
@@ -286,5 +287,5 @@ template = '{{ if .Env.OMP_SUFFIX }}{{ .Env.OMP_SUFFIX }}{{ end }}'
 type = 'text'
 style = 'plain'
 
-[blocks.segments.properties]
+[blocks.segments.options]
 cache_duration = 'none'
