@@ -2,29 +2,53 @@
 
 # Zsh completion.
 
+# "menu select" uses Zsh's menu-selection module.  Loading it explicitly keeps
+# completion behavior stable across systems where the module is not autoloaded.
+zmodload -i zsh/complist
+
+# Completion functions are found through fpath.  Keep local completions first so
+# this repo can override vendor completions, then add package-manager completions.
+# Zsh ties fpath and FPATH together, so working with the array keeps the code
+# easier to read than editing the colon-separated FPATH string by hand.
+# This file is sourced through a loader function, so mark fpath globally unique.
+typeset -gaU fpath
+
+[[ -d "$SHELL_MODULE_DIR/completions" ]] &&
+    fpath=("$SHELL_MODULE_DIR/completions" "${fpath[@]}")
+
 if dotfiles_command_exists brew; then
     HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-    FPATH="$HOMEBREW_PREFIX/share/zsh/site-functions:${FPATH}"
+    [[ -d "$HOMEBREW_PREFIX/share/zsh/site-functions" ]] &&
+        fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" "${fpath[@]}")
 fi
 
-# Add user completions before compinit builds the completion cache.
-[[ -d "$SHELL_MODULE_DIR/completions" ]] &&
-    FPATH="$SHELL_MODULE_DIR/completions:${FPATH}"
-
-# Case-insensitive completion with increasingly flexible matching.
+# Completion matching is staged from strict to flexible:
+# 1. exact prefix match,
+# 2. case-insensitive match,
+# 3. case-insensitive partial-word match around common separators.
 zstyle ':completion:*' matcher-list \
+    '' \
     'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
-    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
-    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' \
-    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+    'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*'
 
+zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "$SHELL_CACHE_DIR/completions"
+zstyle ':completion:*' accept-exact-dirs true
+zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' list-suffixes true
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:git:*' tag-order common-commands alias-commands
 
+[[ -n "${LS_COLORS:-}" ]] &&
+    zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
 setopt nolistambiguous
+setopt autolist
+setopt automenu
+unsetopt menucomplete
 setopt globdots
 setopt globstarshort
 

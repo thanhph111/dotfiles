@@ -11,12 +11,13 @@ $include /etc/inputrc
 "\e[C": forward-char
 "\e[D": backward-char
 
-# Autocomplete either in capital letters or not
+# Match completion candidates without caring about letter case.
 set completion-ignore-case On
 
-# Cycle through results when tab
-# TAB: menu-complete
-# "\e[Z": menu-complete-backward
+# Treat "-" and "_" as similar during case-insensitive completion.
+set completion-map-case On
+
+# Keep Tab predictable: complete the common prefix first, then show choices.
 TAB: complete
 
 # "\e[3~": backward-kill-word
@@ -27,20 +28,24 @@ TAB: complete
 # `Ctrl` + `Backspace` to kill word
 # "\C-h": backward-kill-word
 
-# Colors for menu completion
+# Colors and markers for completion lists.
 set colored-stats On
+set colored-completion-prefix On
 
-# Maximum number of characters to be the common prefix to display for completions
+# Keep the already-typed part short when Readline shows many choices.
 set completion-prefix-display-length 3
 
+set completion-query-items 200
 set mark-symlinked-directories On
 set show-all-if-ambiguous On
 set show-all-if-unmodified On
+set skip-completed-text On
 set visible-stats On
 set expand-tilde Off
 
-#: Don't auto execute when pasting output have linebreaks,
-#: we need a comfirm <Enter> to make it run
-#: Also try to open editing mode <C-x C-e> before pasting something,
-#: if it looks good, save it and exit, the shell will executing it.
-set enable-bracketed-paste
+# Do not run pasted text until Enter is pressed.  This protects against pasted
+# commands that contain line breaks.
+#
+# For complex pasted commands, Ctrl-X Ctrl-E opens the current command line in
+# $EDITOR so it can be reviewed before it runs.
+set enable-bracketed-paste On

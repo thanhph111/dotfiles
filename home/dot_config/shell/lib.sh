@@ -56,17 +56,29 @@ dotfiles_expand_home() {
 dotfiles_source_dir() {
     [ -d "$1" ] || return 0
 
-    # Zsh treats an unmatched glob as an error by default.  Null-glob keeps an
-    # empty module directory quiet while Bash and sh keep their normal behavior.
-    [ -n "${ZSH_VERSION:-}" ] && setopt local_options null_glob
+    # List the directory with find rather than a "$1"/* glob.  An empty directory
+    # makes zsh abort on the unmatched glob unless a zsh-only option is set, and
+    # this loader stays shell-neutral.  sort restores the by-name order a glob
+    # would give (00-base.sh before 90-paths.sh); find prints in directory order.
+    # "! -name '.*'" skips hidden files so a stray .DS_Store is never sourced.
+    dotfiles_modules="$(
+        find "$1" -mindepth 1 -maxdepth 1 ! -name '.*' -print 2>/dev/null | sort
+    )"
 
-    for dotfiles_module in "$1"/*; do
+    # Read the list on fd 3, not stdin.  A sourced module may read stdin or test
+    # whether stdin is a terminal, so leave fd 0 alone: otherwise the module sees
+    # this list as its input and drains it, cutting the loop short.
+    while IFS= read -r dotfiles_module <&3; do
+        [ -n "$dotfiles_module" ] || continue
         [ -f "$dotfiles_module" ] || continue
         # shellcheck disable=SC1090
         . "$dotfiles_module"
-    done
+    done 3<<EOF
+$dotfiles_modules
+EOF
 
     unset dotfiles_module
+    unset dotfiles_modules
 }
 
 # Remove loader helpers after startup has finished.  They are useful while the

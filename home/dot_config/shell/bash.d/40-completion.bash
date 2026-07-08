@@ -2,21 +2,18 @@
 
 # Bash completion.
 
-! shopt -oq posix && dotfiles_include /etc/bash_completion
+if ! shopt -oq posix; then
+    if dotfiles_command_exists brew; then
+        HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+        dotfiles_include "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
+    fi
 
-if dotfiles_command_exists brew; then
-    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-    dotfiles_include "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
-
-    for completion in "$HOMEBREW_PREFIX"/etc/bash_completion.d/*; do
-        dotfiles_include "$completion"
-    done
-    unset completion
+    # Modern bash-completion lazy-loads command completions when Tab is pressed.
+    # Source only one framework here; do not also loop through completion.d files,
+    # because that directory is an old eager-load path and the framework already
+    # handles it when needed.
+    [ -n "${BASH_COMPLETION_VERSINFO:-}" ] ||
+        dotfiles_include /usr/share/bash-completion/bash_completion
+    [ -n "${BASH_COMPLETION_VERSINFO:-}" ] ||
+        dotfiles_include /etc/bash_completion
 fi
-
-if dotfiles_command_exists kubectl; then
-    alias k=kubectl
-    complete -o default -F __start_kubectl k 2>/dev/null || true
-fi
-
-dotfiles_source_dir "$SHELL_MODULE_DIR/completions"
