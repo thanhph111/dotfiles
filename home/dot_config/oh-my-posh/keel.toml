@@ -72,7 +72,7 @@ template = "{{ .Path }} "
 [blocks.segments.options]
 style = "agnoster_short"
 folder_separator_icon = "/"
-folder_icon = "..."
+folder_icon = "…"
 home_icon = "~"
 max_depth = 2
 
@@ -132,7 +132,7 @@ duration = "none"
 type = "status"
 style = "plain"
 foreground = "p:prompt"
-template = "{{ if .Error }}<p:error>exit:{{ .String }}</> {{ end }}<p:prompt>></>"
+template = "{{ if .Error }}<p:error>exit:{{ .String }}</> {{ end }}<p:prompt>$</>"
 
 [blocks.segments.options]
 always_enabled = true
