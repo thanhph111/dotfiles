@@ -1,0 +1,96 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $windows := get $features "windows" | default dict -}}
+{{- $user := get $windows "user" | default dict -}}
+{{- $environment := get $user "environment" | default dict -}}
+{{- if (and (eq .chezmoi.os "windows") $environment.enabled) -}}
+
+{{- $variables := get $environment "variables" | default dict -}}
+{{- $pathEntries := get $environment "path_entries" | default list -}}
+# Windows user environment hash: {{ $environment | toJson | sha256sum }}
+
+$ErrorActionPreference = 'Stop'
+
+function Expand-DotfilesEnvironmentValue {
+    param([Parameter(Mandatory)][string] $Value)
+
+    [Environment]::ExpandEnvironmentVariables($Value)
+}
+
+function Normalize-DotfilesPathEntry {
+    param([AllowEmptyString()][string] $PathEntry)
+
+    if ([string]::IsNullOrWhiteSpace($PathEntry)) {
+        return ''
+    }
+
+    $expanded = Expand-DotfilesEnvironmentValue $PathEntry.Trim()
+    $trimmed = $expanded.Trim().TrimEnd([char[]] @('\', '/'))
+
+    if ([string]::IsNullOrWhiteSpace($trimmed)) {
+        return ''
+    }
+
+    $trimmed
+}
+
+$environmentVariables = [ordered] @{
+{{- range $name, $value := $variables }}
+    '{{ $name | replace "'" "''" }}' = '{{ $value | replace "'" "''" }}'
+{{- end }}
+}
+
+foreach ($name in $environmentVariables.Keys) {
+    $value = Expand-DotfilesEnvironmentValue $environmentVariables[$name]
+    $current = [Environment]::GetEnvironmentVariable($name, 'User')
+
+    if ($current -ne $value) {
+        [Environment]::SetEnvironmentVariable($name, $value, 'User')
+    }
+}
+
+$desiredPathEntries = @(
+{{- range $pathEntry := $pathEntries }}
+    '{{ $pathEntry | replace "'" "''" }}'
+{{- end }}
+)
+
+$currentPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$pathEntries = @()
+
+if (-not [string]::IsNullOrWhiteSpace($currentPath)) {
+    $pathEntries = $currentPath -split [Regex]::Escape([IO.Path]::PathSeparator) |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+}
+
+$seenPathEntries = [System.Collections.Generic.HashSet[string]]::new(
+    [StringComparer]::OrdinalIgnoreCase
+)
+
+foreach ($entry in $pathEntries) {
+    $normalized = Normalize-DotfilesPathEntry $entry
+    if ($normalized) {
+        [void] $seenPathEntries.Add($normalized)
+    }
+}
+
+$pathChanged = $false
+
+foreach ($entry in $desiredPathEntries) {
+    $expanded = Expand-DotfilesEnvironmentValue $entry
+    $normalized = Normalize-DotfilesPathEntry $expanded
+
+    if ($normalized -and $seenPathEntries.Add($normalized)) {
+        $pathEntries += $expanded
+        $pathChanged = $true
+    }
+}
+
+if ($pathChanged) {
+    [Environment]::SetEnvironmentVariable(
+        'Path',
+        ($pathEntries -join [IO.Path]::PathSeparator),
+        'User'
+    )
+}
+
+{{- end -}}

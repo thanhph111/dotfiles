@@ -1,0 +1,15 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $windows := get $features "windows" | default dict -}}
+{{- $user := get $windows "user" | default dict -}}
+{{- $dotfilesHidden := get $user "dotfiles_hidden" | default dict -}}
+{{- if (and (eq .chezmoi.os "windows") $dotfilesHidden.enabled) -}}
+
+$ErrorActionPreference = 'Stop'
+
+Get-ChildItem -LiteralPath $HOME -Force -Filter '.*' |
+    Where-Object { $_.Name -notin @('.', '..') } |
+    ForEach-Object {
+        $_.Attributes = $_.Attributes -bor [IO.FileAttributes]::Hidden
+    }
+
+{{- end -}}

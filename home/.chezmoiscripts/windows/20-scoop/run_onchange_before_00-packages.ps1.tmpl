@@ -12,7 +12,7 @@ $scoop = "$HOME\.scoop\shims\scoop.cmd"
 
 if (-Not (Test-Path $scoop)) {
     $installerScript = 'https://get.scoop.sh'
-    Invoke-Expression "& {$(Invoke-RestMethod -Uri $installerScript)} -RunAsAdmin -ScoopDir '$HOME\.scoop' -ScoopCacheDir '$HOME\.cache\scoop'"
+    Invoke-Expression "& {$(Invoke-RestMethod -Uri $installerScript)} -ScoopDir '$HOME\.scoop' -ScoopCacheDir '$HOME\.cache\scoop'"
 }
 
 & $scoop bucket add main

@@ -115,6 +115,19 @@ features:
     tools:
       mise:
         enabled: true
-    system:
-      settings:
+    user:
+      environment:
         enabled: true
+        variables:
+          XDG_CONFIG_HOME: '%USERPROFILE%\.config'
+          XDG_CACHE_HOME: '%USERPROFILE%\.cache'
+          XDG_STATE_HOME: '%USERPROFILE%\.local\state'
+          XDG_DATA_HOME: '%USERPROFILE%\.local\share'
+          GOPATH: '%USERPROFILE%\.local\share\go'
+        path_entries:
+          - '%USERPROFILE%\.local\bin'
+      dotfiles_hidden:
+        enabled: true
+    input:
+      natural_scroll:
+        enabled: false

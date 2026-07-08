@@ -15,7 +15,9 @@
 
 {{- if eq .chezmoi.os "windows" }}
 	longpaths = true
+	{{- if stat "C:/Windows/System32/OpenSSH/ssh.exe" }}
 	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+	{{- end }}
 {{- end }}
 
 {{- if or $gitName $gitEmail $gitSigningKey }}

@@ -12,6 +12,8 @@ Default feature settings live in [`features.yaml`](../../home/.chezmoidata/featu
 | ---------- | ---------------------------------------------------- |
 | `install`  | Package managers and their manifest choices.         |
 | `tools`    | User-level tool setup, such as mise.                 |
+| `user`     | User-scoped environment and preferences.             |
+| `input`    | Keyboard, mouse, and pointing-device behavior.       |
 | `desktop`  | Desktop settings, GNOME, avatars, and GUI behavior.  |
 | `system`   | Operating system settings.                           |
 | `security` | Trust-sensitive system setup.                        |
@@ -68,7 +70,11 @@ Important groups:
 - `install.winget`: winget manifests.
 - `install.scoop`: scoop manifests.
 - `tools.mise`: user tools managed by mise.
-- `system.settings`: Windows settings scripts.
+- `user.environment`: user environment variables and user `Path`.
+- `user.dotfiles_hidden`: hide dotfiles in the home directory.
+- `input.natural_scroll`: natural scroll registry setting. This is off by default and requires an elevated shell when enabled.
+
+Windows is treated as a desktop/client OS here. Dotfiles does not install or start OpenSSH Server on Windows.
 
 ## Add a feature
 

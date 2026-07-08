@@ -7,10 +7,11 @@
 {{- range $winget.manifests }}
 # winget import hash: {{ . }} {{ include (joinPath ".winget" .) | sha256sum }}
 
+$manifest = Join-Path $env:CHEZMOI_SOURCE_DIR '.winget\{{ . }}'
+
 winget import `
-    --import-file "$env:CHEZMOI_SOURCE_DIR\.winget\{{ . }}" `
-    --ignore-unavailable `
-    --ignore-versions `
+    --import-file $manifest `
+    --no-upgrade `
     --accept-package-agreements `
     --accept-source-agreements `
     --disable-interactivity

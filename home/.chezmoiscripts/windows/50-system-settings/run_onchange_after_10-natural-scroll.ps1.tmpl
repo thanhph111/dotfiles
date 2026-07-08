@@ -1,0 +1,25 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $windows := get $features "windows" | default dict -}}
+{{- $input := get $windows "input" | default dict -}}
+{{- $naturalScroll := get $input "natural_scroll" | default dict -}}
+{{- if (and (eq .chezmoi.os "windows") $naturalScroll.enabled) -}}
+
+$ErrorActionPreference = 'Stop'
+
+$principal = [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
+$isAdministrator = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $isAdministrator) {
+    throw 'windows input natural_scroll needs an Administrator PowerShell. Run chezmoi apply from an elevated shell, or disable features.windows.input.natural_scroll.'
+}
+
+$mouseDevices = Get-ItemProperty `
+    -Path 'HKLM:\SYSTEM\CurrentControlSet\Enum\HID\*\*\Device Parameters' `
+    -Name FlipFlopWheel `
+    -ErrorAction SilentlyContinue
+
+foreach ($device in $mouseDevices) {
+    Set-ItemProperty -LiteralPath $device.PSPath -Name FlipFlopWheel -Value 1
+}
+
+{{- end -}}
