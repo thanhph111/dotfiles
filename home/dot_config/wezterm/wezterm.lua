@@ -265,7 +265,7 @@ end
 
 -- macOS & Linux specific configurations
 config.set_environment_variables = {
-    OMP_CONFIG = "~/.config/oh-my-posh/multiplex.toml",
+    OMP_CONFIG = "~/.config/oh-my-posh/keel.toml",
 }
 
 -- macOS specific configurations

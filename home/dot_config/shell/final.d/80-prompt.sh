@@ -11,7 +11,7 @@
 if dotfiles_command_exists oh-my-posh; then
     omp_config="${OMP_CONFIG:-${POSH_THEME:-}}"
     if [ -z "$omp_config" ]; then
-        omp_config="$USER_CONFIG_DIR/oh-my-posh/probua.minimal.omp.json"
+        omp_config="$USER_CONFIG_DIR/oh-my-posh/keel.toml"
     fi
 
     omp_config="$(dotfiles_expand_home "$omp_config")"

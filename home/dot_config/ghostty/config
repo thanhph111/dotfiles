@@ -1,4 +1,4 @@
-env = OMP_CONFIG=~/.config/oh-my-posh/probua.minimal.omp.json
+env = OMP_CONFIG=~/.config/oh-my-posh/keel.toml
 
 adjust-cell-height = -10%
 adjust-cursor-thickness = +50%
