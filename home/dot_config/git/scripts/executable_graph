@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+indent='        '
+subject='%C(auto)%h%C(reset) %C(bold)%s%C(reset) %C(auto)%d%C(reset)'
+signature="${indent}%C(blue)%G?%C(reset) %C(cyan)%GT%C(reset) %C(magenta)%GS%C(reset)"
+commit="${indent}%C(bold dim)Commit:%C(reset) %C(dim)%cd%C(reset) %C(yellow)(%cr)%C(reset) %C(brightgreen)%cl%C(reset)"
+author="${indent}%C(bold dim)Author:%C(reset) %C(dim)%ad%C(reset) %C(yellow)(%ar)%C(reset) %C(green)%al%C(reset)"
+format="${subject}%n${signature}%n${commit}%n${author}%n"
+
+exec git log \
+    --graph \
+    --abbrev-commit \
+    --decorate \
+    --date-order \
+    --date=human \
+    --format="format:${format}" \
+    "$@"

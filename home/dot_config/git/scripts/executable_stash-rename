@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$#" -ne 2 ]; then
+    echo 'usage: git stash-rename stash@{n} new-name' >&2
+    exit 2
+fi
+
+rev=$(git rev-parse --verify --quiet "$1") || exit 1
+git stash drop "$1" >/dev/null
+git stash store -m "$2" "$rev"

@@ -22,6 +22,7 @@ zstyle ':completion:*' cache-path "$SHELL_CACHE_DIR/completions"
 zstyle ':completion:*' list-suffixes true
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
+zstyle ':completion:*:*:git:*' tag-order common-commands alias-commands
 
 setopt nolistambiguous
 setopt globdots

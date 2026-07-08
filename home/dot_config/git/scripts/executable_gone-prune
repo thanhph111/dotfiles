@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+script_dir=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
+
+git fetch --prune
+"$script_dir/gone-list" |
+    while IFS= read -r branch; do
+        [ -n "$branch" ] || continue
+        git branch -D -- "$branch"
+    done

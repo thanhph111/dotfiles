@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+git for-each-ref \
+    --format='%(upstream:track) %(refname:short)' \
+    refs/heads |
+    while IFS=' ' read -r track branch; do
+        [ "$track" = '[gone]' ] || continue
+        [ -n "$branch" ] || continue
+        printf '%s\n' "$branch"
+    done

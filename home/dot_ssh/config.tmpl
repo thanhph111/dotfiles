@@ -1,28 +1,13 @@
 #: vim: set nospell filetype=sshconfig:
 
-{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
-
 {{- if eq .chezmoi.os "darwin" }}
+# UseKeychain is an Apple SSH option. Some macOS machines may use a non-Apple
+# ssh binary, so keep this ignore rule before any Host or Include block.
+IgnoreUnknown UseKeychain
+
 # OrbStack 'orb' SSH host for Linux machines
 # This only works if it's at the top of ssh_config (before any Host blocks).
 Include ~/.orbstack/ssh/config
-{{- end }}
-
-Host *
-    AddKeysToAgent yes
-    IgnoreUnknown UseKeychain
-    UseKeychain yes
-
-{{- if eq .chezmoi.os "darwin" }}
-    {{- if stat (joinPath .chezmoi.homeDir "Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh") }}
-    # Secretive SSH agent socket
-    IdentityAgent "~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
-    {{- else if stat (joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock") }}
-    # 1Password SSH agent socket
-    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    {{- end }}
-{{- else if not (get $machine "shared") }}
-    IdentityFile ~/.ssh/keys/thanhph111
 {{- end }}
 
 # Per-project SSH overrides. Projects drop files here; this is just plumbing.
@@ -37,3 +22,18 @@ Include ~/.sky/generated/ssh/*
 Host i-*
     User ec2-user
     ProxyCommand ~/.ssh/ssm-proxy '%h' '%p'
+
+# General defaults stay last. OpenSSH keeps the first value it sees for most
+# options, so earlier host/project blocks must get the first chance to decide.
+Host *
+    AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+    UseKeychain yes
+    {{- if stat (joinPath .chezmoi.homeDir "Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh") }}
+    # Secretive SSH agent socket
+    IdentityAgent "~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+    {{- else if stat (joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock") }}
+    # 1Password SSH agent socket
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    {{- end }}
+{{- end }}
