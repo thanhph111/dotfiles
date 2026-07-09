@@ -11,12 +11,13 @@
 command -v fzf >/dev/null 2>&1 || return 0
 [[ -t 0 && -t 1 ]] || return 0
 
-if fzf --zsh >/dev/null 2>&1; then
-    source <(fzf --zsh)
+if _fzf_shell_integration="$(fzf --zsh 2>/dev/null)"; then
+    eval "$_fzf_shell_integration"
 elif [[ -n "${FZF_REPO_DIR:-}" ]]; then
     [[ $- == *i* ]] && source "$FZF_REPO_DIR/shell/completion.zsh" 2>/dev/null
     source "$FZF_REPO_DIR/shell/key-bindings.zsh" 2>/dev/null
 fi
+unset _fzf_shell_integration
 
 # fzf's generated Zsh script owns CTRL-T, ALT-C, and CTRL-R.
 #

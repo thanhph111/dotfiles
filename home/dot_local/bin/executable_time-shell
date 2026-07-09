@@ -1,9 +1,147 @@
 #!/usr/bin/env bash
 
-# Measure a shell booting
+# Measure shell startup.
 
-shell=${1-$SHELL}
+usage() {
+    cat <<EOF
+Usage: time-shell [options] [shell]
 
-for _ in $(seq 1 4); do
-    /usr/bin/time "$shell" -i -c exit
+Options:
+  -n, --runs COUNT  Number of runs. Default: 4.
+  -l, --login       Start a login shell too.
+  -p, --pty         Run through a pseudo-terminal.
+  -h, --help        Show this help.
+EOF
+}
+
+runs=4
+login=0
+pty=0
+shell=
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+    -n | --runs)
+        [ "$#" -gt 1 ] || {
+            printf '%s\n' "time-shell: missing value for $1" >&2
+            exit 2
+        }
+        runs=$2
+        shift 2
+        ;;
+    -l | --login)
+        login=1
+        shift
+        ;;
+    -p | --pty)
+        pty=1
+        shift
+        ;;
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    --)
+        shift
+        break
+        ;;
+    -*)
+        printf '%s\n' "time-shell: unknown option $1" >&2
+        usage >&2
+        exit 2
+        ;;
+    *)
+        shell=$1
+        shift
+        break
+        ;;
+    esac
+done
+
+if [ "$#" -gt 0 ]; then
+    if [ -z "$shell" ]; then
+        shell=$1
+        shift
+    fi
+
+    if [ "$#" -gt 0 ]; then
+        printf '%s\n' "time-shell: too many arguments: $*" >&2
+        usage >&2
+        exit 2
+    fi
+fi
+
+[ -n "$shell" ] || shell=${SHELL:-}
+[ -n "$shell" ] || {
+    printf '%s\n' 'time-shell: no shell given and SHELL is unset' >&2
+    exit 2
+}
+
+case "$runs" in
+'' | *[!0-9]* | 0)
+    printf '%s\n' "time-shell: runs must be a positive number" >&2
+    exit 2
+    ;;
+esac
+
+if [[ "$shell" == */* ]]; then
+    shell_path=$shell
+else
+    shell_path=$(command -v "$shell" 2>/dev/null) || {
+        printf '%s\n' "time-shell: shell not found: $shell" >&2
+        exit 127
+    }
+fi
+
+[ -x "$shell_path" ] || {
+    printf '%s\n' "time-shell: shell is not executable: $shell_path" >&2
+    exit 126
+}
+
+shell_name=${shell_path##*/}
+shell_version=$("$shell_path" --version 2>/dev/null | sed -n '1p')
+
+printf 'shell: %s -> %s\n' "$shell" "$shell_path"
+[ -n "$shell_version" ] && printf 'version: %s\n' "$shell_version"
+
+case "$shell_name" in
+bash)
+    if [ "$login" -eq 1 ]; then
+        shell_args=(-li -c exit)
+    else
+        shell_args=(-i -c exit)
+    fi
+    ;;
+zsh)
+    if [ "$login" -eq 1 ]; then
+        shell_args=(-ilc exit)
+    else
+        shell_args=(-ic exit)
+    fi
+    ;;
+*)
+    if [ "$login" -eq 1 ]; then
+        shell_args=(-l -i -c exit)
+    else
+        shell_args=(-i -c exit)
+    fi
+    ;;
+esac
+
+if [ "$pty" -eq 1 ] && ! command -v script >/dev/null 2>&1; then
+    printf '%s\n' 'time-shell: --pty needs the script command' >&2
+    exit 127
+fi
+
+for ((run = 1; run <= runs; run++)); do
+    if [ "$pty" -eq 1 ]; then
+        if script --version 2>/dev/null | sed -n '1p' | grep -qi 'util-linux'; then
+            printf -v script_command '%q ' "$shell_path" "${shell_args[@]}"
+            /usr/bin/time script -q -e -c "${script_command% }" /dev/null
+        else
+            /usr/bin/time script -q /dev/null "$shell_path" "${shell_args[@]}"
+        fi
+    else
+        /usr/bin/time "$shell_path" "${shell_args[@]}"
+    fi
 done

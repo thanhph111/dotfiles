@@ -16,23 +16,6 @@ if dotfiles_command_exists mise; then
     unset dotfiles_mise_activation
 fi
 
-# GitHub CLI Copilot aliases are generated slowly, so cache them per shell.
-GH_COPILOT_ALIAS_FILE="$SHELL_CACHE_DIR/gh_copilot_alias"
-
-regenerate_gh_copilot_alias() {
-    dotfiles_command_exists gh &&
-        gh auth status >/dev/null 2>&1 &&
-        gh extension list | grep -q 'github/gh-copilot' &&
-        gh copilot alias -- "$SHELL_NAME" >"$GH_COPILOT_ALIAS_FILE"
-}
-
-if [ ! -f "$GH_COPILOT_ALIAS_FILE" ] ||
-    [ -n "$(find "$GH_COPILOT_ALIAS_FILE" -mtime +1 2>/dev/null)" ]; then
-    regenerate_gh_copilot_alias
-fi
-
-dotfiles_include "$GH_COPILOT_ALIAS_FILE"
-
 # Pyenv builds on macOS sometimes need framework Python.
 alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
 
@@ -87,6 +70,3 @@ fi
 
 # OrbStack shell helpers, when installed.
 dotfiles_include "$HOME/.orbstack/shell/init.$SHELL_NAME"
-
-unset GH_COPILOT_ALIAS_FILE
-unset -f regenerate_gh_copilot_alias 2>/dev/null || true

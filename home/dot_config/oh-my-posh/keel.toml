@@ -111,7 +111,7 @@ fetch_stash_count = true
 source = "cli"
 
 [blocks.segments.cache]
-duration = "none"
+duration = "5s"
 
 # slow command duration
 [[blocks.segments]]

@@ -36,7 +36,13 @@ export USER_CONFIG_DIR="$XDG_CONFIG_HOME"
 export USER_CACHE_DIR="$XDG_CACHE_HOME"
 export DOTFILES_SHELL_ROOT
 
-dotfiles_source_dir "$DOTFILES_SHELL_ROOT/profile.d"
+# Profile modules run in fixed order.  Keep this list explicit so startup does
+# not need to scan the directory on every new shell.
+dotfiles_include "$DOTFILES_SHELL_ROOT/profile.d/00-base.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/profile.d/10-package-managers.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/profile.d/20-language-env.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/profile.d/30-app-env.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/profile.d/90-paths.sh"
 
 export PATH
 

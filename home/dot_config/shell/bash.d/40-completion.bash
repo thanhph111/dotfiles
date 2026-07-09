@@ -5,8 +5,7 @@
 if ! shopt -oq posix; then
     dotfiles_completion_loaded="${BASH_COMPLETION_VERSINFO:+1}"
 
-    if dotfiles_command_exists brew; then
-        HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+    if [ -n "${HOMEBREW_PREFIX:-}" ]; then
         dotfiles_brew_completion="$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
 
         if [ -r "$dotfiles_brew_completion" ]; then

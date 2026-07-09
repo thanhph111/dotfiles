@@ -18,8 +18,10 @@
 export FZF_CONFIG_READY=1
 
 if ! dotfiles_command_exists fzf; then
-    if [ -z "${FZF_REPO_DIR:-}" ] && dotfiles_command_exists brew; then
-        FZF_REPO_DIR="$(brew --prefix fzf 2>/dev/null || true)"
+    if [ -z "${FZF_REPO_DIR:-}" ] &&
+        [ -n "${HOMEBREW_PREFIX:-}" ] &&
+        [ -d "$HOMEBREW_PREFIX/opt/fzf" ]; then
+        FZF_REPO_DIR="$HOMEBREW_PREFIX/opt/fzf"
         export FZF_REPO_DIR
     fi
     [ -n "${FZF_REPO_DIR:-}" ] && dotfiles_path_append "$FZF_REPO_DIR/bin"

@@ -16,8 +16,7 @@ typeset -gaU fpath
 [[ -d "$SHELL_MODULE_DIR/completions" ]] &&
     fpath=("$SHELL_MODULE_DIR/completions" "${fpath[@]}")
 
-if dotfiles_command_exists brew; then
-    HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
     [[ -d "$HOMEBREW_PREFIX/share/zsh/site-functions" ]] &&
         fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" "${fpath[@]}")
 fi
@@ -53,4 +52,14 @@ setopt globdots
 setopt globstarshort
 
 autoload -U colors && colors
-autoload -Uz compinit && compinit -d "$SHELL_CACHE_DIR/completion"
+autoload -Uz compinit
+# `compinit -C` skips some checks, so only use it while the dump file is fresh.
+# A normal run below refreshes stale or missing completion state.
+if zmodload -F zsh/stat b:zstat 2>/dev/null &&
+    zmodload zsh/datetime 2>/dev/null &&
+    [[ -r "$SHELL_CACHE_DIR/completion" ]] &&
+    ((EPOCHSECONDS - $(zstat +mtime "$SHELL_CACHE_DIR/completion") < 86400)); then
+    compinit -C -d "$SHELL_CACHE_DIR/completion"
+else
+    compinit -d "$SHELL_CACHE_DIR/completion"
+fi

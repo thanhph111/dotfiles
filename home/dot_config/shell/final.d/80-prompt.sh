@@ -8,7 +8,17 @@
 
 [ "${TERM_PROGRAM:-}" = Apple_Terminal ] && return 0
 
-if dotfiles_command_exists oh-my-posh; then
+dotfiles_use_oh_my_posh=1
+if [ "$SHELL_NAME" = bash ]; then
+    # Oh My Posh's Bash init uses syntax that Apple Bash 3.2 cannot parse.
+    # Keep that old shell usable by skipping Oh My Posh here.
+    # shellcheck disable=SC3028
+    case "${BASH_VERSION:-}" in
+    "" | [123].*) dotfiles_use_oh_my_posh=0 ;;
+    esac
+fi
+
+if [ "$dotfiles_use_oh_my_posh" = 1 ] && dotfiles_command_exists oh-my-posh; then
     omp_config="${OMP_CONFIG:-${POSH_THEME:-}}"
     if [ -z "$omp_config" ]; then
         omp_config="$USER_CONFIG_DIR/oh-my-posh/keel.toml"
@@ -33,3 +43,4 @@ else
 fi
 
 unset omp_config
+unset dotfiles_use_oh_my_posh

@@ -45,18 +45,42 @@ unset DOTFILES_KEEP_HELPERS
 export SHELL_NAME
 export SHELL_CACHE_DIR="$USER_CACHE_DIR/$SHELL_NAME"
 export SHELL_MODULE_DIR="$DOTFILES_SHELL_ROOT/$SHELL_NAME.d"
-mkdir -p "$SHELL_CACHE_DIR" "$SHELL_MODULE_DIR"
+[ -d "$SHELL_CACHE_DIR" ] || mkdir -p "$SHELL_CACHE_DIR"
 
-# Common interactive behavior comes first.
-dotfiles_source_dir "$DOTFILES_SHELL_ROOT/interactive.d"
+# Common interactive behavior comes first.  These are fixed startup modules, so
+# source them directly instead of scanning the directory every time.
+dotfiles_include "$DOTFILES_SHELL_ROOT/interactive.d/00-core.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/interactive.d/10-functions.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/interactive.d/20-aliases.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/interactive.d/30-tools.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/interactive.d/40-fzf.sh"
 
 # Bash/Zsh details come next: history, completion, key bindings, and terminal
 # integrations.  Prompt hooks run after these so they can see final shell state.
-dotfiles_source_dir "$SHELL_MODULE_DIR"
+case "$SHELL_NAME" in
+bash)
+    dotfiles_include "$SHELL_MODULE_DIR/10-functions.bash"
+    dotfiles_include "$SHELL_MODULE_DIR/20-history.bash"
+    dotfiles_include "$SHELL_MODULE_DIR/30-keymap.bash"
+    dotfiles_include "$SHELL_MODULE_DIR/40-completion.bash"
+    dotfiles_include "$SHELL_MODULE_DIR/50-fzf.bash"
+    dotfiles_include "$SHELL_MODULE_DIR/60-kitty.bash"
+    ;;
+zsh)
+    dotfiles_include "$SHELL_MODULE_DIR/10-functions.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/20-history.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/30-keymap.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/40-completion.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/50-fzf.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/60-kitty.zsh"
+    dotfiles_include "$SHELL_MODULE_DIR/70-plugins.zsh"
+    ;;
+esac
 
 # Final hooks are deliberately last.  Prompt engines and direnv both install
 # shell hooks, so keeping them at the end avoids hidden ordering bugs.
-dotfiles_source_dir "$DOTFILES_SHELL_ROOT/final.d"
+dotfiles_include "$DOTFILES_SHELL_ROOT/final.d/80-prompt.sh"
+dotfiles_include "$DOTFILES_SHELL_ROOT/final.d/90-direnv.sh"
 
 # Trusted terminal profile compatibility for:
 #   bash -is eval 'some command'
