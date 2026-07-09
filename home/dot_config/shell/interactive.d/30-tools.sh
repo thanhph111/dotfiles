@@ -16,35 +16,14 @@ if dotfiles_command_exists mise; then
     unset dotfiles_mise_activation
 fi
 
-# Pyenv builds on macOS sometimes need framework Python.
-alias pyenv='PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv'
-
-# Podman as a Docker replacement when available.
+# Podman shell completions, when installed.
 if dotfiles_command_exists podman; then
-    alias docker=podman
     eval "$(podman completion "$SHELL_NAME")"
 fi
-dotfiles_command_exists podman-compose && alias docker-compose=podman-compose
 
 # Ripgrep reads extra default flags from this file when present.
 [ -f "$USER_CONFIG_DIR/ripgrep/config" ] &&
     export RIPGREP_CONFIG_PATH="$USER_CONFIG_DIR/ripgrep/config"
-
-# GVM is expensive to load, so load it only when first used.
-if [ -r "$HOME/.gvm/scripts/gvm" ]; then
-    _dotfiles_lazy_load_gvm() {
-        unalias gvm
-        # shellcheck disable=SC1091
-        . "$HOME/.gvm/scripts/gvm"
-    }
-    alias gvm='_dotfiles_lazy_load_gvm && gvm'
-fi
-
-# grc wrappers.  Keep this small because too many wrappers make command behavior
-# hard to predict.
-if dotfiles_command_exists grc; then
-    dotfiles_command_exists go && alias go='grc go'
-fi
 
 # Prefer bat for paging when available.
 dotfiles_command_exists batman && alias man=batman
@@ -61,7 +40,6 @@ fi
 
 if dotfiles_command_exists kitty; then
     alias diff_kitty='kitty +kitten diff'
-    alias hg='kitty +kitten hyperlinked_grep'
     alias icat='kitty +kitten icat'
     alias set_kitty_dark='echo "include themes/Multiplex_Dark.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'
     alias set_kitty_light='echo "include themes/Multiplex_Light.conf" > "$USER_CONFIG_DIR/kitty/current-theme.conf"'

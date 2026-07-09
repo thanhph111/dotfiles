@@ -32,12 +32,6 @@ dotfiles_path_prepend "$XDG_DATA_HOME/npm/bin"
 # Next.js.
 export NEXT_TELEMETRY_DISABLED=1
 
-# Java through jenv.  Put jenv on PATH before checking for it.
-dotfiles_path_prepend "$HOME/.jenv/bin"
-if dotfiles_command_exists jenv; then
-    eval "$(jenv init -)"
-fi
-
 # Android Studio.
 export ANDROID_HOME="$XDG_DATA_HOME/android"
 
@@ -54,9 +48,6 @@ export DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 export PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Poetry.
-dotfiles_command_exists poetry && export POETRY_VIRTUALENVS_IN_PROJECT=1
-
 # IPython and Jupyter.
 export IPYTHONDIR="$XDG_CONFIG_HOME/ipython"
 export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME/jupyter"
@@ -67,10 +58,3 @@ export KERAS_HOME="$XDG_STATE_HOME/keras"
 
 # Gauge.
 export GAUGE_HOME="$XDG_DATA_HOME/gauge"
-
-# Pyenv.  The root must be known before pyenv is found.
-export PYENV_ROOT="$XDG_DATA_HOME/pyenv"
-dotfiles_path_prepend "$PYENV_ROOT/bin"
-if dotfiles_command_exists pyenv; then
-    eval "$(pyenv init -)"
-fi
