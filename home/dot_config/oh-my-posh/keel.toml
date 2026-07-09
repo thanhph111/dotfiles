@@ -67,14 +67,21 @@ duration = "none"
 type = "path"
 style = "plain"
 foreground = "p:path"
-template = "{{ .Path }} "
+template = """{{ regexReplaceAll `([^/\\\\]{13})[^/\\\\]{5,}([^/\\\\]{5})([/\\\\]|$)` .Path `${1}…${2}${3}` }} """
 
 [blocks.segments.options]
 style = "agnoster_short"
 folder_separator_icon = "/"
 folder_icon = "…"
 home_icon = "~"
-max_depth = 2
+max_depth = 4
+
+[blocks.segments.options.mapped_locations]
+# Delta marks a collapsed project root without looking like a real home folder.
+"~/Documents/Projects/Work" = "Δ/Work"
+"~/Documents/Projects/Personal" = "Δ/Personal"
+'~\Documents\Projects\Work' = 'Δ\Work'
+'~\Documents\Projects\Personal' = 'Δ\Personal'
 
 [blocks.segments.cache]
 duration = "none"
@@ -100,12 +107,13 @@ template = """\
 """
 
 [blocks.segments.options]
-branch_ahead_icon = "ahead:"
-branch_behind_icon = "behind:"
-branch_gone_icon = "gone:"
+branch_ahead_icon = "↑"
+branch_behind_icon = "↓"
+# Oh My Posh uses this for both missing tracking and deleted remote branches.
+branch_gone_icon = "local"
 branch_icon = ""
-branch_identical_icon = "="
-branch_max_length = 32
+branch_identical_icon = "≡"
+branch_template = """{{ regexReplaceAll "^(.{24}).{6,}(.{8})$" .Branch "${1}…${2}" }}"""
 fetch_status = true
 fetch_stash_count = true
 source = "cli"
