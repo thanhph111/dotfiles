@@ -19,8 +19,6 @@ brew "fd"
 brew "fresh-editor"
 # Command-line fuzzy finder written in Go
 brew "fzf"
-# Interact with Google Gemini AI models from the command-line
-brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
@@ -67,6 +65,8 @@ cask "arc"
 cask "bettertouchtool"
 # 3D creation suite
 cask "blender"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Terminal-based AI coding assistant
@@ -75,8 +75,6 @@ cask "claude-code"
 cask "cloudflare-warp"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
-# OpenAI's Codex desktop app for managing coding agents
-cask "codex-app"
 # Menu bar usage monitor for Codex and Claude
 cask "codexbar"
 # Brings the power of Copilot coding agent directly to your terminal
