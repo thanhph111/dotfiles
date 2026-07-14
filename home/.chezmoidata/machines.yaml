@@ -33,6 +33,11 @@ machines:
           security:
             sudo_ssh_agent_auth:
               enabled: true
+          network:
+            ufw:
+              rules:
+                ssh:
+                  enabled: true
           services:
             ssh_server:
               enabled: true
