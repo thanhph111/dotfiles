@@ -1,6 +1,7 @@
 [tools]
 dprint = 'latest'
 markdownlint-cli2 = 'latest'
+node = '24'
 prek = 'latest'
 uv = 'latest'
 shfmt = "latest"
