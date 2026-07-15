@@ -9,8 +9,9 @@
 set -euo pipefail
 
 # mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+# mise lock hash: {{ include "dot_config/mise/mise.lock" | sha256sum }}
 
 command -v mise >/dev/null || exit 0
-mise install --yes
+mise install --yes --locked --cd "$HOME"
 
 {{- end -}}
