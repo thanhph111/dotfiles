@@ -137,11 +137,11 @@ for ((run = 1; run <= runs; run++)); do
     if [ "$pty" -eq 1 ]; then
         if script --version 2>/dev/null | sed -n '1p' | grep -qi 'util-linux'; then
             printf -v script_command '%q ' "$shell_path" "${shell_args[@]}"
-            /usr/bin/time script -q -e -c "${script_command% }" /dev/null
+            time script -q -e -c "${script_command% }" /dev/null
         else
-            /usr/bin/time script -q /dev/null "$shell_path" "${shell_args[@]}"
+            time script -q /dev/null "$shell_path" "${shell_args[@]}"
         fi
     else
-        /usr/bin/time "$shell_path" "${shell_args[@]}"
+        time "$shell_path" "${shell_args[@]}"
     fi
 done
