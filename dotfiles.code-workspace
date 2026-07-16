@@ -55,7 +55,6 @@
             "editor.wordWrap": "wordWrapColumn",
             "editor.wordWrapColumn": 100
         },
-        "python.terminal.activateEnvironment": true,
         "python.testing.pytestArgs": [],
         "python.testing.pytestEnabled": false,
         "ruff.importStrategy": "fromEnvironment",
