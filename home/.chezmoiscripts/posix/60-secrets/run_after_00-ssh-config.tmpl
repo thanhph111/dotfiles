@@ -7,6 +7,8 @@ set -euo pipefail
 
 command -v op >/dev/null || exit 0
 
+# This note owns private host connection details. 1Password SSH Bookmarks own
+# key selection through the generated ~/.ssh/1Password/config file.
 secret_ref={{ printf "op://%s/SSH servers/notesPlain" $vault | quote }}
 if ! config="$(op read "$secret_ref" 2>/dev/null)"; then
     echo "Skipping SSH private config: 1Password is unavailable or locked."

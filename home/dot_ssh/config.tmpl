@@ -4,7 +4,13 @@
 # UseKeychain is an Apple SSH option. Some macOS machines may use a non-Apple
 # ssh binary, so keep this ignore rule before any Host or Include block.
 IgnoreUnknown UseKeychain
+{{- end }}
 
+# Match 1Password SSH bookmarks with the public keys managed by 1Password.
+# The desktop app owns this generated file and removes it when disabled.
+Include ~/.ssh/1Password/config
+
+{{- if eq .chezmoi.os "darwin" }}
 # OrbStack 'orb' SSH host for Linux machines
 # This only works if it's at the top of ssh_config (before any Host blocks).
 Include ~/.orbstack/ssh/config
