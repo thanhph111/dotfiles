@@ -1,13 +1,6 @@
 # Remote access
 
-This guide covers the pieces that affect remote login or remote control:
-
-- SSH server
-- UFW firewall rules
-- xrdp
-- code-server
-- SSH agent forwarding
-- sudo with SSH agent auth
+This guide explains the shared rules for remotely reachable services, UFW firewall policy, SSH agent forwarding, and sudo with SSH agent auth.
 
 ## Services and firewall are separate
 
@@ -37,28 +30,36 @@ features:
 
 This keeps the firewall policy visible in one place.
 
-## Rev-9 shape
+## Samba
 
-Rev-9 enables SSH server, xrdp, and code-server:
+When `services.samba.enabled` is true, package setup installs Samba and system setup creates the configured share. The share is writable only through the current Linux user's Samba login. Guest access, SMB1, and old NetBIOS discovery are disabled.
+
+For example, this machine override enables Samba without changing its separately owned UFW rule:
 
 ```yaml
 machines:
   entries:
-    rev-9:
+    <machine-key>:
       features:
         linux:
           services:
-            ssh_server:
+            samba:
               enabled: true
-            xrdp:
-              enabled: true
-            code_server:
-              enabled: true
-              host: 127.0.0.1
-              port: 9999
 ```
 
-Rev-9 leaves UFW inbound SSH and xrdp rules disabled. That is right when access goes through a tunnel or private path that does not need a public inbound firewall opening.
+The resolved firewall value still comes from the operating-system defaults and profile. If the Samba rule remains disabled, use that shape only when a separate private network path can reach the host.
+
+Create the Samba password once after the first apply:
+
+```bash
+sudo smbpasswd -a "$USER"
+```
+
+The password is deliberately not stored in this repo.
+
+Network routing and client enrollment are outside this repo. Enabling Samba does not open TCP port 445; UFW owns that choice separately. Use a private network path and do not expose SMB to the public internet.
+
+After a client can reach the host, connect to `smb://<host>/<share-name>`.
 
 ## UFW lockout guard
 
@@ -78,7 +79,7 @@ The code-server feature controls whether the user service is enabled or disabled
 
 The support unit file can still render on non-shared Linux machines. That is okay: the script decides whether the service is active.
 
-Default bind:
+Example loopback-only bind:
 
 ```yaml
 code_server:
@@ -97,9 +98,9 @@ Agent forwarding lets a remote machine ask your local SSH agent to prove that it
 Keep forwarding host-specific:
 
 ```sshconfig
-Host trusted-server
-    HostName example.com
-    User thanhph111
+Host <ssh-alias>
+    HostName <hostname>
+    User <username>
     ForwardAgent yes
 ```
 
@@ -135,7 +136,7 @@ ssh-add -L
 On the remote machine, add only the chosen public key:
 
 ```bash
-key='ssh-ed25519 AAAA... comment'
+key='<public-key>'
 printf '%s\n' "$key" | sudo tee /etc/security/sudo_authorized_keys/"$USER" >/dev/null
 sudo chown root:root /etc/security/sudo_authorized_keys/"$USER"
 sudo chmod 0644 /etc/security/sudo_authorized_keys/"$USER"
@@ -150,7 +151,8 @@ sudo rm -f /etc/security/sudo_authorized_keys/"$USER"
 Test from another terminal while keeping one root-capable session open:
 
 ```bash
-ssh trusted-server
+ssh_alias='<ssh-alias>'
+ssh "$ssh_alias"
 sudo -k
 sudo -v
 ```

@@ -22,15 +22,4 @@ On remote machines, use the same signing key through SSH agent forwarding only f
 
 Agent forwarding lets the remote machine ask your local agent to sign. The key still stays on your local machine, but the remote host can ask the agent to use it while the connection is open.
 
-Keep forwarding host-specific with files under `~/.ssh/config.d/`:
-
-```sshconfig
-Host trusted-server
-    HostName example.com
-    User thanhph111
-    ForwardAgent yes
-```
-
-Do not enable `ForwardAgent yes` under `Host *`.
-
-For the wider remote access model, see [remote access](./remote-access.md).
+Keep forwarding host-specific. For the SSH config example and the wider trust rules, see [SSH agent forwarding](./remote-access.md#ssh-agent-forwarding).
