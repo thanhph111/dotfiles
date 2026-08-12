@@ -3,6 +3,8 @@
 {{- $linux := get $features "linux" | default dict -}}
 {{- $install := get $linux "install" | default dict -}}
 {{- $apt := get $install "apt" | default dict -}}
+{{- $services := get $linux "services" | default dict -}}
+{{- $samba := get $services "samba" | default dict -}}
 {{- if (and (eq .chezmoi.os "linux") (lookPath "apt-get") (get $machine "hasSudo") (not (get $machine "shared")) $apt.enabled) -}}
 
 #!/usr/bin/env bash
@@ -63,6 +65,9 @@ packages+=(cloudflared)
 {{- end }}
 {{- if $apt.repositories.openvpn3.enabled }}
 packages+=(openvpn3)
+{{- end }}
+{{- if (get $samba "enabled" | default false) }}
+packages+=(samba)
 {{- end }}
 
 sudo apt-get update

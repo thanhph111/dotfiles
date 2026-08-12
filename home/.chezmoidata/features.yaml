@@ -68,6 +68,10 @@ features:
         default_incoming: deny
         default_outgoing: allow
         rules:
+          samba:
+            enabled: false
+            protocol: tcp
+            port: 445
           ssh:
             enabled: false
             protocol: tcp
@@ -88,6 +92,10 @@ features:
         command: code
         host: 127.0.0.1
         port: 9999
+      samba:
+        enabled: false
+        share_name: Shared
+        directory: Shared
 
   darwin:
     install:
