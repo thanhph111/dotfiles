@@ -42,19 +42,15 @@ chezmoi execute-template '{{ includeTemplate "resolved-features.json" . }}' |
     jq -S .
 ```
 
-## Render Rev-9
+## Render another machine
+
+Use quoted placeholders to inspect a machine without changing the current chezmoi config:
 
 ```bash
 chezmoi execute-template \
-    --override-data '{"chezmoi":{"os":"linux","hostname":"Rev-9","username":"thanhph111","homeDir":"/home/thanhph111"}}' \
+    --override-data '{"chezmoi":{"os":"<operating-system>","hostname":"<hostname>","username":"<username>","homeDir":"<home-directory>"}}' \
     '{{ includeTemplate "resolved-features.json" . }}' |
-    jq -S '.linux | {install, security, network, services}'
+    jq -S .
 ```
 
-Rev-9 should show:
-
-- `services.ssh_server.enabled: true`
-- `services.xrdp.enabled: true`
-- `services.code_server.enabled: true`
-- `network.ufw.rules.ssh.enabled: false`
-- `network.ufw.rules.xrdp.enabled: false`
+Use `linux`, `darwin`, or `windows` for `<operating-system>`.

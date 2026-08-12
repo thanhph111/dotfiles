@@ -7,7 +7,7 @@ This guide is for a new machine or a fresh reinstall.
 Known machines are matched by hostname. On macOS, chezmoi uses `ComputerName`, so set it before init:
 
 ```bash
-sudo scutil --set ComputerName "Grid"
+sudo scutil --set ComputerName "<machine-name>"
 ```
 
 For an unknown machine, the name only needs to be useful to you. It does not need a committed machine entry.

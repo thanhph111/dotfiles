@@ -10,7 +10,7 @@ It manages shell files, app config, package lists, desktop settings, services, a
 - Understand how config is resolved: [config model](./docs/model.md).
 - Add a machine or profile: [add a machine](./docs/guides/add-machine.md).
 - Change packages, apps, or settings lists: [change manifests](./docs/guides/change-manifests.md).
-- Work on SSH, RDP, code-server, UFW, or sudo: [remote access](./docs/guides/remote-access.md).
+- Work on remote access and network services: [remote access](./docs/guides/remote-access.md).
 - Review shell startup trust: [shell startup](./docs/guides/shell-startup.md).
 - Run checks before applying: [checks](./docs/guides/checks.md).
 
@@ -34,16 +34,7 @@ The source files are:
 
 Local chezmoi config is for private facts on unknown machines. It does not override features. Features come from defaults, then the selected profile, then the matched machine.
 
-## Known machines
-
-| Machine | OS      | Profile           |
-| ------- | ------- | ----------------- |
-| Arwen   | Windows | `windows-desktop` |
-| Rev-9   | Linux   | `linux-desktop`   |
-| Sonny   | Linux   | `linux-minimal`   |
-| TARS    | macOS   | `darwin-personal` |
-
-Known machines are matched by hostname. Unknown machines can choose a profile during `chezmoi init` without adding a new file or committing a host entry.
+[`machines.yaml`](./home/.chezmoidata/machines.yaml) is the only inventory of known machines; the docs do not copy that list. Known machines are matched by hostname. Unknown machines can choose a profile during `chezmoi init` without adding a new file or committing a host entry.
 
 ## Common commands
 

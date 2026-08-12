@@ -29,7 +29,9 @@ The YAML catalogs use the same words in each file:
 - `defaults`: broad starting values.
 - `choices`: setup options shown to a user.
 - `matches`: lookup tables that point to entries.
-- `entries`: named records such as `rev-9` or `linux-desktop`.
+- `entries`: named records keyed by a machine or profile name.
+
+In documentation examples, text inside `<...>` is a placeholder that must be replaced. Catalog keys such as `entries`, feature names such as `ssh_server`, and literal settings such as `enabled: true` are not placeholders.
 
 Machine and profile facts use existing lower camel case names such as `displayName`, `hasSudo`, and `gitSigningKey`.
 
@@ -58,7 +60,7 @@ machine defaults
 -> local setup answers
 ```
 
-Local answers do not override known machines. That keeps stale local config from changing a host like Rev-9 after the hostname already matched.
+Local answers do not override known machines. That keeps stale local config from changing a known host after its hostname already matched.
 
 ## Feature flow
 

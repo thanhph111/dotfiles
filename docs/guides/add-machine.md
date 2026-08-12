@@ -16,12 +16,12 @@ Add one match entry and one machine entry:
 machines:
   matches:
     hostnames:
-      grid: grid
+      <hostname>: <machine-key>
 
   entries:
-    grid:
-      displayName: Grid
-      profile: darwin-personal
+    <machine-key>:
+      displayName: <display-name>
+      profile: <profile-name>
 ```
 
 Use a known machine when hostname detection matters or when the host has a stable override.
@@ -33,7 +33,7 @@ Create a profile when the same shape will repeat on more than one machine:
 ```yaml
 profiles:
   entries:
-    linux-build:
+    <profile-name>:
       defaults:
         headless: true
       features:
@@ -42,18 +42,18 @@ profiles:
             apt:
               enabled: true
               manifests:
-                - linux-build
+                - <manifest-name>
             homebrew:
               enabled: true
               manifests:
-                - linux-build
+                - <manifest-name>
 ```
 
 Then add matching manifests:
 
 ```text
-home/.apt/linux-build
-home/.Brewfiles/linux-build
+home/.apt/<manifest-name>
+home/.Brewfiles/<manifest-name>
 ```
 
 ## Host-only feature override
@@ -63,7 +63,7 @@ Use this when one named host differs from its profile:
 ```yaml
 machines:
   entries:
-    rev-9:
+    <machine-key>:
       features:
         linux:
           security:
@@ -71,7 +71,7 @@ machines:
               enabled: true
 ```
 
-Plain meaning: Rev-9 enables sudo SSH agent auth without changing every Linux desktop.
+Plain meaning: the matched machine enables sudo SSH agent auth without changing every machine that uses its profile.
 
 ## Per-user fact override
 
@@ -80,9 +80,9 @@ Use this when one user on a shared machine needs different facts:
 ```yaml
 machines:
   entries:
-    sonny:
+    <machine-key>:
       users:
-        thanhph111:
+        <username>:
           shared: false
           hasSudo: true
 ```

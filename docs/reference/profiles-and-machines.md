@@ -26,7 +26,7 @@ Example:
 ```yaml
 profiles:
   entries:
-    linux-vm-dev:
+    <profile-name>:
       defaults:
         headless: true
       features:
@@ -35,13 +35,13 @@ profiles:
             homebrew:
               enabled: true
               manifests:
-                - linux-vm-dev
+                - <manifest-name>
           security:
             sudo_ssh_agent_auth:
               enabled: true
 ```
 
-Plain meaning: every `linux-vm-dev` machine is headless, uses the VM Homebrew manifest, and enables sudo SSH agent auth.
+Plain meaning: every machine using `<profile-name>` is headless, uses `<manifest-name>`, and enables sudo SSH agent auth.
 
 ## Profile choices
 
@@ -67,9 +67,9 @@ The global match registry maps hostnames to machine keys:
 machines:
   matches:
     hostnames:
-      rev-9: rev-9
+      <hostname>: <machine-key>
     hostnamePrefixes:
-      vm02-: sonny
+      <hostname-prefix>: <machine-key>
 ```
 
 Exact hostname keys cannot be duplicated because they are YAML map keys. Prefix keys work the same way.
@@ -79,19 +79,17 @@ A machine entry owns profile, host-only facts, and host-only features:
 ```yaml
 machines:
   entries:
-    rev-9:
-      displayName: Rev-9
-      profile: linux-desktop
+    <machine-key>:
+      displayName: <display-name>
+      profile: <profile-name>
       features:
         linux:
           services:
             ssh_server:
               enabled: true
-            xrdp:
-              enabled: true
 ```
 
-Plain meaning: Rev-9 uses the Linux desktop shape, then enables Rev-9-only services.
+Plain meaning: the matched machine uses a reusable profile, then enables one host-only service.
 
 Exact hostname matches win over prefix matches. If more than one prefix matches, the longest prefix wins.
 
@@ -102,11 +100,11 @@ Use `users` when a shared known host has different facts for different accounts:
 ```yaml
 machines:
   entries:
-    sonny:
-      displayName: Sonny
-      profile: linux-minimal
+    <machine-key>:
+      displayName: <display-name>
+      profile: <profile-name>
       users:
-        thanhph111:
+        <username>:
           shared: false
           hasSudo: true
 ```

@@ -23,14 +23,7 @@ chezmoi execute-template '{{ includeTemplate "resolved-features.json" . }}' |
     jq -S .
 ```
 
-## Render Rev-9
-
-```bash
-chezmoi execute-template \
-    --override-data '{"chezmoi":{"os":"linux","hostname":"Rev-9","username":"thanhph111","homeDir":"/home/thanhph111"}}' \
-    '{{ includeTemplate "resolved-features.json" . }}' |
-    jq -S '.linux | {security, network, services}'
-```
+To inspect a different machine without changing the current config, use the generic [render another machine](../reference/resolvers.md#render-another-machine) example.
 
 ## Preview apply
 
