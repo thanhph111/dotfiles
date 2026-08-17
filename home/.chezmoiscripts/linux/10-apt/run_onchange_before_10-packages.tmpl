@@ -19,6 +19,7 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 packages=()
+nvidia_toolkit_packages=()
 
 read_package_manifest() {
     local manifest="$1"
@@ -54,6 +55,20 @@ packages+=(powershell)
 {{- if $apt.repositories.docker.enabled }}
 packages+=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 {{- end }}
+{{- if $apt.repositories.nvidia_container_toolkit.enabled }}
+nvidia_toolkit_version={{ $apt.repositories.nvidia_container_toolkit.package_version | quote }}
+if [[ ! "$nvidia_toolkit_version" =~ ^[0-9][0-9A-Za-z.+:~_-]*$ ]]; then
+    printf 'Invalid NVIDIA Container Toolkit package version: %s\n' "$nvidia_toolkit_version" >&2
+    exit 1
+fi
+
+nvidia_toolkit_packages=(
+    "nvidia-container-toolkit=${nvidia_toolkit_version}"
+    "nvidia-container-toolkit-base=${nvidia_toolkit_version}"
+    "libnvidia-container-tools=${nvidia_toolkit_version}"
+    "libnvidia-container1=${nvidia_toolkit_version}"
+)
+{{- end }}
 {{- if $apt.repositories.ibus_bamboo.enabled }}
 packages+=(ibus ibus-bamboo)
 {{- end }}
@@ -71,6 +86,10 @@ packages+=(samba)
 {{- end }}
 
 sudo apt-get update
+
+if ((${#nvidia_toolkit_packages[@]})); then
+    sudo apt-get install -y --allow-downgrades "${nvidia_toolkit_packages[@]}"
+fi
 
 if ((${#packages[@]})); then
     sudo apt-get install -y "${packages[@]}"

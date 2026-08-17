@@ -28,6 +28,7 @@ Linux features live under `features.linux`.
 Important groups:
 
 - `install.apt`: APT repositories and package manifests.
+- `install.apt.repositories.nvidia_container_toolkit`: pinned NVIDIA Container Toolkit packages and Docker runtime setup.
 - `install.homebrew`: Linuxbrew package manifests and font links.
 - `install.flatpak`: user Flatpak apps from Flathub.
 - `desktop.gnome`: GNOME extensions and settings.

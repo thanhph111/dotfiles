@@ -19,7 +19,11 @@ OS_VERSION_ID="{{ .chezmoi.osRelease.versionID }}"
 ARCH="$(dpkg --print-architecture)"
 apt_sources_changed=false
 
-sudo install -d -m 0755 /etc/apt/keyrings /usr/share/keyrings /etc/apt/sources.list.d
+sudo install -d -m 0755 \
+    /etc/apt/keyrings \
+    /etc/apt/preferences.d \
+    /etc/apt/sources.list.d \
+    /usr/share/keyrings
 
 install_if_changed() {
     local src="$1"
@@ -42,6 +46,20 @@ download_file() {
     curl -fsSL "$url" >"$tmp"
     install_if_changed "$tmp" "$dest" "$mode"
     rm -f "$tmp"
+}
+
+download_dearmored_key() {
+    local url="$1"
+    local dest="$2"
+    local armored
+    local dearmored
+
+    armored="$(mktemp)"
+    dearmored="$(mktemp)"
+    curl -fsSL "$url" >"$armored"
+    gpg --batch --yes --dearmor --output "$dearmored" "$armored"
+    install_if_changed "$dearmored" "$dest" 0644
+    rm -f "$armored" "$dearmored"
 }
 
 write_source() {
@@ -79,6 +97,7 @@ ensure_debian_components() {
     for source in /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/Debian.sources; do
         sudo test -f "$source" || continue
         tmp="$(mktemp)"
+        # shellcheck disable=SC2024 # The root read and user-owned temporary output are intentional.
         sudo awk '
             BEGIN {
                 n = split("{{ range $apt.debian_components.values }} {{ . }}{{ end }}", want, " ")
@@ -186,6 +205,42 @@ Suites: ${DIST_CODENAME}
 Components: stable
 Architectures: ${ARCH}
 Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+fi
+{{- end }}
+
+{{- if $apt.repositories.nvidia_container_toolkit.enabled }}
+if [[ "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
+    if [[ "$ARCH" != "amd64" && "$ARCH" != "arm64" ]]; then
+        printf 'NVIDIA Container Toolkit does not publish a stable Debian repository for %s\n' "$ARCH" >&2
+        exit 1
+    fi
+
+    nvidia_toolkit_version={{ $apt.repositories.nvidia_container_toolkit.package_version | quote }}
+    if [[ ! "$nvidia_toolkit_version" =~ ^[0-9][0-9A-Za-z.+:~_-]*$ ]]; then
+        printf 'Invalid NVIDIA Container Toolkit package version: %s\n' "$nvidia_toolkit_version" >&2
+        exit 1
+    fi
+
+    download_dearmored_key \
+        https://nvidia.github.io/libnvidia-container/gpgkey \
+        /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+    remove_legacy_source /etc/apt/sources.list.d/libnvidia-container.list
+    remove_legacy_source /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    remove_legacy_source /etc/apt/sources.list.d/nvidia-docker.list
+    write_source /etc/apt/sources.list.d/nvidia-container-toolkit.sources <<EOF
+Types: deb
+URIs: https://nvidia.github.io/libnvidia-container/stable/deb/${ARCH}
+Suites: /
+Architectures: ${ARCH}
+Signed-By: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+EOF
+
+    write_source /etc/apt/preferences.d/nvidia-container-toolkit.pref <<EOF
+Package: nvidia-container-toolkit nvidia-container-toolkit-base libnvidia-container-tools libnvidia-container1
+Pin: version ${nvidia_toolkit_version}
+Pin-Priority: 1001
 EOF
 fi
 {{- end }}

@@ -25,3 +25,28 @@ run = 'prek --all-files'
 [tasks.apply]
 description = 'Apply dotfile changes without setup scripts'
 run = 'chezmoi apply --exclude=scripts'
+
+[tasks.nvidia-check]
+description = 'Check the host NVIDIA driver and Docker runtime'
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+for command in docker nvidia-container-cli nvidia-smi systemctl; do
+    if ! command -v "$command" >/dev/null 2>&1; then
+        printf 'Missing command: %s\n' "$command" >&2
+        exit 1
+    fi
+done
+
+sudo systemctl is-active --quiet docker.service
+nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
+sudo nvidia-container-cli info >/dev/null
+
+if ! sudo docker info 2>/dev/null | grep -Eq '^[[:space:]]*Runtimes:.*(^|[[:space:]])nvidia([[:space:]]|$)'; then
+    echo 'Docker has not registered the nvidia runtime' >&2
+    exit 1
+fi
+
+echo 'NVIDIA container runtime is ready.'
+'''

@@ -30,6 +30,11 @@ machines:
       profile: linux-desktop
       features:
         linux:
+          install:
+            apt:
+              repositories:
+                nvidia_container_toolkit:
+                  enabled: true
           security:
             sudo_ssh_agent_auth:
               enabled: true

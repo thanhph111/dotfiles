@@ -37,6 +37,10 @@ packages+=(
 packages+=(software-properties-common)
 {{- end }}
 
+{{- if (and $useApt $apt.repositories.nvidia_container_toolkit.enabled) }}
+packages+=(gnupg2)
+{{- end }}
+
 sudo apt-get update
 sudo apt-get install -y "${packages[@]}"
 
