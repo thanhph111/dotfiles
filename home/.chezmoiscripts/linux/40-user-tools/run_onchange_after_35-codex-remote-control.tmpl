@@ -68,7 +68,7 @@ if ! "$codex_bin" login status >/dev/null 2>&1; then
     echo "Codex Remote is enabled but stopped because Codex is not signed in." >&2
     echo "Run: codex login --device-auth" >&2
     echo "Then: systemctl --user start $unit" >&2
-    echo "Then: codex remote-control pair" >&2
+    echo "Then: open ChatGPT mobile Remote and select this machine" >&2
     exit 0
 fi
 

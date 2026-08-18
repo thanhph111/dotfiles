@@ -99,7 +99,7 @@ The service uses Codex's normal `~/.codex` state. Its login, configuration, skil
 
 The service makes outbound connections and does not add a listening port or a UFW rule. Do not add a public app-server hostname for it.
 
-Direct phone pairing to a Linux host is experimental. Current [OpenAI Remote documentation](https://learn.chatgpt.com/docs/remote) officially lists Mac and Windows hosts. Treat the following pairing step as the acceptance test for the installed CLI and mobile app versions.
+Direct phone access to a Linux host is experimental. Current [OpenAI Remote documentation](https://learn.chatgpt.com/docs/remote) officially lists Mac and Windows hosts. Treat Rev-9 appearing in the mobile app as the acceptance test for the installed CLI and mobile app versions.
 
 After the first apply, sign in from the host terminal. Device authentication works over SSH:
 
@@ -108,14 +108,15 @@ codex login --device-auth
 codex login status
 ```
 
-Start the enabled service, then print a short-lived pairing code:
+Start the enabled service:
 
 ```bash
 systemctl --user start codex-remote-control.service
-codex remote-control pair
 ```
 
-Enter that code in ChatGPT mobile's Remote setup if manual code entry is available. If the app does not offer manual pairing or rejects the Linux host, use a supported Mac or Windows Remote host and connect that desktop app to this machine over SSH.
+The foreground service registers Rev-9 with the signed-in account. Open ChatGPT mobile's Remote screen and select Rev-9. Do not run `codex remote-control pair` for this service: that command talks to the CLI-managed background daemon created by `codex remote-control start`, not the foreground process owned by systemd.
+
+If the app does not show Rev-9 or rejects the Linux host, use a supported Mac or Windows Remote host and connect that desktop app to this machine over SSH.
 
 Check the durable service with:
 
