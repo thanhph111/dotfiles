@@ -95,6 +95,8 @@ features:
         command: code
         host: 127.0.0.1
         port: 9999
+      codex_remote_control:
+        enabled: false
       samba:
         enabled: false
         share_name: Shared

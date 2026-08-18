@@ -91,6 +91,50 @@ code_server:
 
 Binding to `127.0.0.1` means the service listens only on the machine itself. Reach it through a tunnel or local proxy.
 
+## Codex Remote
+
+The `codex_remote_control` feature installs the official standalone Codex CLI when it is missing and enables `codex-remote-control.service`. The service runs `codex remote-control` in the foreground so systemd owns its complete lifecycle. It does not run the CLI's separate background-daemon command.
+
+The service uses Codex's normal `~/.codex` state. Its login, configuration, skills, and saved chats are therefore the same ones used by the ordinary CLI on that machine. Never commit or expose `~/.codex/auth.json`; it contains login tokens.
+
+The service makes outbound connections and does not add a listening port or a UFW rule. Do not add a public app-server hostname for it.
+
+Direct phone pairing to a Linux host is experimental. Current [OpenAI Remote documentation](https://learn.chatgpt.com/docs/remote) officially lists Mac and Windows hosts. Treat the following pairing step as the acceptance test for the installed CLI and mobile app versions.
+
+After the first apply, sign in from the host terminal. Device authentication works over SSH:
+
+```bash
+codex login --device-auth
+codex login status
+```
+
+Start the enabled service, then print a short-lived pairing code:
+
+```bash
+systemctl --user start codex-remote-control.service
+codex remote-control pair
+```
+
+Enter that code in ChatGPT mobile's Remote setup if manual code entry is available. If the app does not offer manual pairing or rejects the Linux host, use a supported Mac or Windows Remote host and connect that desktop app to this machine over SSH.
+
+Check the durable service with:
+
+```bash
+systemctl --user status codex-remote-control.service --no-pager
+journalctl --user --unit=codex-remote-control.service --lines=100 --no-pager
+```
+
+The apply script enables systemd user lingering when the feature is on. Lingering starts the user service during boot without waiting for a desktop login. A cold-reboot test is still required before relying on the host remotely.
+
+Review and apply Codex upgrades deliberately. The official standalone installer handles both installation and updates:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALL_DIR="$HOME/.local/bin" CODEX_NON_INTERACTIVE=1 sh
+systemctl --user restart codex-remote-control.service
+codex --version
+systemctl --user is-active codex-remote-control.service
+```
+
 ## SSH agent forwarding
 
 Agent forwarding lets a remote machine ask your local SSH agent to prove that it holds a key. The private key stays on the local machine.

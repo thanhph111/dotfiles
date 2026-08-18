@@ -47,6 +47,8 @@ machines:
               enabled: true
               host: 127.0.0.1
               port: 9999
+            codex_remote_control:
+              enabled: true
             samba:
               enabled: true
 

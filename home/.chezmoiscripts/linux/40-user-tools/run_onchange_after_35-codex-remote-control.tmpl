@@ -1,0 +1,77 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $services := get $linux "services" | default dict -}}
+{{- $codexRemoteControl := get $services "codex_remote_control" | default dict -}}
+{{- $codexRemoteControlEnabled := get $codexRemoteControl "enabled" | default false -}}
+{{- if and (eq .chezmoi.os "linux") (not (get $machine "shared")) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Unit hash: {{ include "dot_config/systemd/user/codex-remote-control.service.tmpl" | sha256sum }}
+unit=codex-remote-control.service
+codex_remote_control_enabled={{ if $codexRemoteControlEnabled }}true{{ else }}false{{ end }}
+codex_bin="$HOME/.local/bin/codex"
+
+if ! command -v systemctl >/dev/null; then
+    echo "Skipping Codex Remote service changes because systemctl is not installed" >&2
+    exit 0
+fi
+
+if ! systemctl --user show-environment >/dev/null 2>&1; then
+    echo "Skipping Codex Remote service changes because the user systemd session is unavailable" >&2
+    exit 0
+fi
+
+systemctl --user daemon-reload
+
+if [[ "$codex_remote_control_enabled" != true ]]; then
+    systemctl --user disable --now "$unit" 2>/dev/null || true
+    exit 0
+fi
+
+# Codex is installed only to support this service, so installation belongs in
+# the same provisioning flow. Upgrades remain an explicit operator action.
+if [[ ! -x "$codex_bin" ]]; then
+    curl -fsSL https://chatgpt.com/codex/install.sh |
+        CODEX_INSTALL_DIR="$HOME/.local/bin" CODEX_NON_INTERACTIVE=1 sh
+fi
+
+if [[ ! -x "$codex_bin" ]]; then
+    echo "Codex installer did not create $codex_bin" >&2
+    systemctl --user disable --now "$unit" 2>/dev/null || true
+    exit 1
+fi
+
+"$codex_bin" --version
+
+# A user service normally stops when the user logs out. Lingering keeps this
+# user manager running after logout and starts it during boot.
+current_user="$(id -un)"
+if ! command -v loginctl >/dev/null; then
+    echo "Cannot make Codex Remote durable because loginctl is not installed" >&2
+    exit 1
+fi
+
+if [[ "$(loginctl show-user "$current_user" --property=Linger --value)" != yes ]]; then
+    sudo loginctl enable-linger "$current_user"
+fi
+
+systemctl --user enable "$unit"
+
+# Login is an explicit account action. Enable the unit now, but avoid a restart
+# loop until the operator has completed `codex login` on this machine.
+if ! "$codex_bin" login status >/dev/null 2>&1; then
+    systemctl --user stop "$unit" 2>/dev/null || true
+    echo "Codex Remote is enabled but stopped because Codex is not signed in." >&2
+    echo "Run: codex login --device-auth" >&2
+    echo "Then: systemctl --user start $unit" >&2
+    echo "Then: codex remote-control pair" >&2
+    exit 0
+fi
+
+systemctl --user restart "$unit"
+
+{{- end -}}

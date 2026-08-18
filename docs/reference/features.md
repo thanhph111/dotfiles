@@ -38,6 +38,7 @@ Important groups:
 - `services.ssh_server`: OpenSSH server config.
 - `services.xrdp`: RDP service.
 - `services.code_server`: user code-server service.
+- `services.codex_remote_control`: durable Codex Remote user service.
 - `services.samba`: authenticated access to one user folder over SMB.
 
 Services do not open firewall ports by themselves. UFW owns firewall policy in one place:
