@@ -45,7 +45,6 @@ export DOTNET_CLI_HOME="$XDG_CACHE_HOME/dotnet"
 # Python.
 [ -f "$XDG_CONFIG_HOME/python/startup" ] &&
     export PYTHONSTARTUP="$XDG_CONFIG_HOME/python/startup"
-export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 export PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # IPython and Jupyter.
