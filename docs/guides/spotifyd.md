@@ -6,9 +6,9 @@ The token stays in `~/.cache/spotifyd/oauth/credentials.json`. It is a secret. N
 
 LAN discovery is disabled. Spotifyd signs in to Spotify directly, so WARP does not need to carry local multicast traffic and UFW does not need Spotify discovery rules.
 
-## First login on Rev-9
+## First login on a headless server
 
-Use Rev-9's local GNOME desktop or its existing private RDP session. The browser and OAuth callback must both run on Rev-9.
+Spotifyd listens for the OAuth callback only on the server's loopback address. When the browser runs on another machine, use a temporary SSH local forward. This does not open a public route or firewall port.
 
 Review and apply the dotfiles first:
 
@@ -18,7 +18,15 @@ chezmoi apply
 systemctl --user daemon-reload
 ```
 
-Stop the old process, protect files created during login, and start the browser login:
+From the machine running the browser, connect to the server using its existing private SSH name:
+
+```bash
+ssh -o ExitOnForwardFailure=yes \
+    -L 127.0.0.1:8000:127.0.0.1:8000 \
+    <server-private-SSH-name>
+```
+
+Keep that SSH session open. In its server shell, stop the old process, protect files created during login, and start the browser login:
 
 ```bash
 systemctl --user stop spotifyd.service
@@ -27,7 +35,7 @@ umask 077
 spotifyd authenticate
 ```
 
-Complete the Spotify login in the browser. When the terminal reports a successful login, protect the saved token and start the player:
+Open the printed `Browse to` link on the machine running the browser. The local forward carries its loopback callback to Spotifyd on the server. When the server terminal reports a successful login, protect the saved token and start the player:
 
 ```bash
 chmod 700 "$HOME/.cache/spotifyd/oauth"
@@ -42,4 +50,4 @@ systemctl --user is-active spotifyd.service
 journalctl --user --unit=spotifyd.service --lines=40 --no-pager
 ```
 
-The service should report an OAuth login and authentication. Spotify should list Rev-9 without opening a public Cloudflare route or a local UFW port.
+The service should report an OAuth login and authentication. Spotify should list the configured device name without opening a public route or a local firewall port.
