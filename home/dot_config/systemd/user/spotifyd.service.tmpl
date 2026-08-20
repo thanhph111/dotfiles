@@ -9,6 +9,9 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
+CacheDirectory=spotifyd
+CacheDirectoryMode=0700
+UMask=0077
 ExecStart={{ $spotifyd }} --no-daemon
 Restart=always
 RestartSec=12

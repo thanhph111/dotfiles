@@ -1,7 +1,7 @@
 [global]
-#: Zero authentication will only allow spotifyd to be discovered in the local network
-# username_cmd = "op read op://Service/Spotify/username"
-# password_cmd = "op read op://Service/Spotify/password"
+# `spotifyd authenticate` writes the OAuth login below this private cache.
+# Keep that login outside Git and use Spotify's account service instead of LAN discovery.
+cache_path = {{ joinPath .chezmoi.homeDir ".cache/spotifyd" | quote }}
+disable_discovery = true
 device_name = {{ .chezmoi.hostname | quote }}
 initial_volume = 70
-zeroconf_port = 36270
