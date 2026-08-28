@@ -11,7 +11,9 @@ Type=simple
 WorkingDirectory=%h
 # systemd owns the foreground process. Do not nest `codex remote-control start`,
 # which starts a second daemon outside systemd's process lifecycle.
-ExecStart=%h/.local/bin/codex remote-control
+# Homebrew owns the Codex executable and uses this standard Linux prefix.
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:%h/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin
+ExecStart=/home/linuxbrew/.linuxbrew/bin/codex remote-control
 Restart=always
 RestartSec=5
 

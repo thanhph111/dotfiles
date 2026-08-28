@@ -93,7 +93,7 @@ Binding to `127.0.0.1` means the service listens only on the machine itself. Rea
 
 ## Codex Remote
 
-The `codex_remote_control` feature installs the official standalone Codex CLI when it is missing and enables `codex-remote-control.service`. The service runs `codex remote-control` in the foreground so systemd owns its complete lifecycle. It does not run the CLI's separate background-daemon command.
+The `codex_remote_control` feature expects the official Codex CLI installed by the selected Linux Homebrew manifest and enables `codex-remote-control.service`. The service runs `codex remote-control` in the foreground so systemd owns its complete lifecycle. It does not run the CLI's separate background-daemon command.
 
 The service uses Codex's normal `~/.codex` state. Its login, configuration, skills, and saved chats are therefore the same ones used by the ordinary CLI on that machine. Never commit or expose `~/.codex/auth.json`; it contains login tokens.
 
@@ -127,10 +127,10 @@ journalctl --user --unit=codex-remote-control.service --lines=100 --no-pager
 
 The apply script enables systemd user lingering when the feature is on. Lingering starts the user service during boot without waiting for a desktop login. A cold-reboot test is still required before relying on the host remotely.
 
-Review and apply Codex upgrades deliberately. The official standalone installer handles both installation and updates:
+Review and apply Codex upgrades deliberately. Homebrew owns the CLI installation and update:
 
 ```bash
-curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALL_DIR="$HOME/.local/bin" CODEX_NON_INTERACTIVE=1 sh
+brew upgrade --cask codex
 systemctl --user restart codex-remote-control.service
 codex --version
 systemctl --user is-active codex-remote-control.service

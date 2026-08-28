@@ -9,14 +9,13 @@ set -euo pipefail
 #: Remove soft limit
 ulimit -n "$(ulimit -Hn)"
 
-case "$CHEZMOI_ARCH" in
-arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
-amd64)
-    if [[ "$CHEZMOI_OS" == darwin ]]; then
-        HOMEBREW_PREFIX="/usr/local"
-    else
-        HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
-    fi
+case "$CHEZMOI_OS:$CHEZMOI_ARCH" in
+darwin:arm64) HOMEBREW_PREFIX="/opt/homebrew" ;;
+darwin:amd64) HOMEBREW_PREFIX="/usr/local" ;;
+linux:*) HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew" ;;
+*)
+    echo "Unsupported Homebrew platform: $CHEZMOI_OS:$CHEZMOI_ARCH" >&2
+    exit 1
     ;;
 esac
 
