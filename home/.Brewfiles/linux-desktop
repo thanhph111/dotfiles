@@ -74,10 +74,10 @@ brew "zsh"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# OpenAI's coding agent that runs in your terminal
-cask "codex"
 # Terminal-based AI coding assistant
 cask "claude-code"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
 cask "font-fira-code"
 cask "font-jetbrains-mono"
 cask "font-jetbrains-mono-nerd-font"
