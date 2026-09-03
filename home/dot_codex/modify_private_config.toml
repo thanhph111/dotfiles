@@ -10,9 +10,10 @@ file, overwrites only the managed keys, and writes everything else back
 unchanged. Removing a key from agents.yaml does not remove it from the
 machine.
 
-toToml drops comments and sorts keys. Codex keeps that layout on its own
-later edits, so `chezmoi status` only shows drift when Codex appends a new
-table; the next apply folds it back in.
+When every managed key already holds its value, the current file is returned
+byte for byte, so Codex's own formatting and additions never show up as
+drift. Only a real difference triggers a rewrite, and that rewrite comes out
+with sorted keys and no comments.
 
 The codex-lb base URL differs per machine (Rev-9 hosts the balancer), so it
 comes from the resolved features instead of agents.yaml.
@@ -27,4 +28,9 @@ comes from the resolved features instead of agents.yaml.
 {{- $managed := deepCopy .agents.codex.config -}}
 {{- $managed = setValueAtPath "model_providers.codex-lb.base_url" $url $managed -}}
 {{- $managed = setValueAtPath "experimental_realtime_ws_base_url" $url $managed -}}
-{{- mergeOverwrite $current $managed | toToml -}}
+{{- $merged := mergeOverwrite (deepCopy $current) $managed -}}
+{{- if eq (toJson $current) (toJson $merged) -}}
+{{-     .chezmoi.stdin -}}
+{{- else -}}
+{{-     toToml $merged -}}
+{{- end -}}

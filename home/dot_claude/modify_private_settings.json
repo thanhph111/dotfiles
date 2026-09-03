@@ -9,10 +9,16 @@ autoMode stay machine-local: they grow per machine and can hold
 work-specific text. Removing a key from agents.yaml does not remove it from
 the machine.
 
-The file is written with two-space indentation like Claude Code does, but
-with sorted keys. Claude Code keeps that order on its own later edits and
-appends new keys at the end.
+When every managed key already holds its value, the current file is returned
+byte for byte, so Claude Code's own formatting and additions never show up
+as drift. Only a real difference triggers a rewrite, written with two-space
+indentation and sorted keys.
 */ -}}
 {{- $current := dict -}}
 {{- if .chezmoi.stdin -}}{{- $current = .chezmoi.stdin | fromJson -}}{{- end -}}
-{{ mergeOverwrite $current (deepCopy .agents.claude.settings) | toPrettyJson "  " }}
+{{- $merged := mergeOverwrite (deepCopy $current) (deepCopy .agents.claude.settings) -}}
+{{- if eq (toJson $current) (toJson $merged) -}}
+{{-     .chezmoi.stdin -}}
+{{- else -}}
+{{-     $merged | toPrettyJson "  " -}}
+{{- end -}}

@@ -37,8 +37,8 @@ Plain meaning:
 
 - Change a preference in `agents.yaml` and apply; the app's own entries survive.
 - Remove a key from `agents.yaml` and the machine keeps its current value. Delete it by hand, or add a `deleteValueAtPath` line to the template for one apply.
-- The merged files come out with sorted keys and no comments. Both apps keep that layout on their own later edits.
-- After an app appends something new, `chezmoi status` shows `MM` on that file and `chezmoi diff` shows a reorder. The next apply folds it in.
+- When every managed key already holds its value, the template returns the file untouched, byte for byte. The apps' own formatting and additions never show up as drift.
+- Only a real difference in a managed key triggers a rewrite, for example after you edit `agents.yaml` or switch models in the app. That rewrite comes out with sorted keys and no comments; both apps keep the layout they find.
 
 Restart Codex after `config.toml` changes. Claude Code reloads its settings on its own.
 
@@ -67,7 +67,7 @@ The two merged files are the only targets with app state in them. Before the fir
    chezmoi apply --exclude=scripts
    ```
 
-If something is wrong, copy the `.bak` files back. A later `chezmoi status` showing `MM` on these two files is normal after the apps write to them; see the merge rule above.
+If something is wrong, copy the `.bak` files back. A later `chezmoi status` showing `MM` on one of these files means a managed key changed on the machine, for example a model switched in the app. Apply to restore the repo value, or edit `agents.yaml` to adopt the new one.
 
 ## Per-machine values
 
