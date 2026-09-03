@@ -1,7 +1,48 @@
 // Documentation: https://zed.dev/docs/configuring-zed
 {
+    // Editor. Only values that differ from Zed's defaults are listed.
+    "base_keymap": "VSCode",
+    "buffer_font_family": "Liga SFMono Nerd Font",
+    "buffer_font_fallbacks": [
+        "SFMono Nerd Font",
+        "SF Mono",
+        "JetBrainsMono Nerd Font",
+        "JetBrains Mono",
+        "FiraCode Nerd Font",
+        "FiraCode NF",
+        "Fira Code",
+        "Menlo"
+    ],
+    "buffer_font_size": 12,
+    "ui_font_family": ".SystemUIFont",
+    "ui_font_size": 16,
+    "theme": {
+        "mode": "system",
+        "light": "Ayu Light",
+        "dark": "Ayu Dark"
+    },
+    "icon_theme": "Zed (Default)",
+    "colorize_brackets": true,
+    "rounded_selection": false,
+    "semantic_tokens": "full",
+    "seed_search_query_from_cursor": "selection",
+    "sticky_scroll": {
+        "enabled": true
+    },
+    "minimap": {
+        "show": "always"
+    },
+    "soft_wrap": "bounded",
+    "wrap_guides": [80],
+
+    // Window
+    "use_system_window_tabs": true,
+    "confirm_quit": true,
+
+    // Panels
     "project_panel": {
-        "dock": "left"
+        "dock": "left",
+        "sort_order": "unicode"
     },
     "outline_panel": {
         "dock": "right"
@@ -12,18 +53,12 @@
     "git_panel": {
         "dock": "left"
     },
+
+    // Agent and edit predictions
     "agent_servers": {},
     "edit_predictions": {
         "provider": "zed"
     },
-    "file_scan_exclusions": [
-        "**/__pycache__",
-        "**/.git",
-        "**/.venv",
-        "**/*.lock",
-        "**/node_modules"
-    ],
-    "icon_theme": "Zed (Default)",
     "agent": {
         "default_profile": "ask",
         "dock": "right",
@@ -38,20 +73,34 @@
             "model": "gpt-5.5"
         }
     },
-    "buffer_font_size": 13,
-    "buffer_font_family": "SF Mono",
-    "ui_font_family": ".SystemUIFont",
-    "ui_font_size": 16,
-    "theme": {
-        "mode": "system",
-        "light": "Ayu Light",
-        "dark": "Ayu Dark"
-    },
+
+    // Files
+    "file_scan_exclusions": [
+        "**/__pycache__",
+        "**/.git",
+        "**/.venv",
+        "**/*.lock",
+        "**/node_modules"
+    ],
+
+    // Terminal
     "terminal": {
-        "font_family": "FiraCode Nerd Font",
-        "font_size": 13,
+        "font_family": "Liga SFMono Nerd Font",
+        "font_fallbacks": [
+            "SFMono Nerd Font Medium",
+            "SF Mono",
+            "JetBrainsMono Nerd Font",
+            "JetBrains Mono",
+            "FiraCode NF",
+            "Fira Code",
+            "Menlo"
+        ],
+        "font_size": 12.5,
         "font_weight": 500,
         "blinking": "on",
+        "cursor_shape": "bar",
+        "bell": "system",
+        "option_as_meta": true,
         "shell": {
             "with_arguments": {
                 "program": "/bin/zsh",
@@ -62,10 +111,13 @@
             "DOTFILES_HISTORY": "private"
         }
     },
+
     "telemetry": {
         "diagnostics": false,
         "metrics": false
     },
+
+    // Languages. Editor settings above already apply to every language.
     "languages": {
         "Python": {
             "language_servers": ["ruff"],
@@ -91,6 +143,7 @@
             "tab_size": 4
         }
     },
+
     "auto_install_extensions": {
         "git-firefly": true,
         "html": true,
