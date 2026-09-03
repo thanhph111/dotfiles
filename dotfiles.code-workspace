@@ -14,6 +14,7 @@
 
         // Files
         "files.associations": {
+            "**/home/**/modify_*": "go-template",
             "**/home/.Brewfiles/**": "ruby",
             "**/home/.apt/**": "plaintext",
             "**/home/.chezmoitemplates/**": "go-template",
