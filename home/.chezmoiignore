@@ -10,6 +10,24 @@
 !.vimrc
 !.ssh
 
+{{/* AI coding agents: hand-written config only. State, caches, and logins stay local. */}}
+!.agents
+!.claude
+.claude/**
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/agents
+!.claude/agents/**
+!.claude/rules
+!.claude/rules/**
+!.claude/skills
+!.claude/skills/**
+!.claude/keybindings.json
+!.codex
+.codex/**
+!.codex/AGENTS.md
+!.codex/config.toml
+
 {{/* Linux and macOS */}}
 {{ if eq .chezmoi.os "linux" "darwin" }}
 !.cache
