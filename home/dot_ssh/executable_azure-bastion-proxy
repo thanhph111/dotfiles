@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+program=${0##*/}
+
+usage() {
+    cat <<'EOF'
+Usage:
+  azure-bastion-proxy BASTION_RESOURCE_GROUP BASTION_NAME TARGET_VM PORT
+
+Connect SSH through an Azure Bastion native-client tunnel.
+
+The Bastion host must have native tunneling enabled. The target VM must already
+be running and must accept SSH from the Bastion subnet. This script never starts,
+stops, or changes the Bastion host or target VM.
+
+TARGET_VM is looked up by name in the active Azure subscription. The lookup must
+find exactly one VM.
+EOF
+}
+
+die() {
+    printf '%s: %s\n' "$program" "$*" >&2
+    exit 1
+}
+
+if (($# == 1)) && [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+    usage
+    exit 0
+fi
+
+(($# == 4)) || {
+    usage >&2
+    exit 2
+}
+
+bastion_resource_group=$1
+bastion_name=$2
+target_vm=$3
+port=$4
+
+# Keep values safe to pass as Azure CLI arguments. These names come from the
+# SSH config, but rejecting option-like or unexpected values makes failures clear.
+resource_name_pattern='^[A-Za-z0-9._() -]+$'
+[[ $bastion_resource_group != -* ]] || die "invalid Bastion resource group"
+[[ $bastion_name != -* ]] || die "invalid Bastion name"
+[[ $target_vm != -* ]] || die "invalid target VM name"
+[[ $bastion_resource_group =~ $resource_name_pattern ]] || die "invalid Bastion resource group"
+[[ $bastion_name =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid Bastion name"
+[[ $target_vm =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid target VM name"
+
+[[ $port =~ ^[0-9]+$ ]] || die "port must be a number"
+port_number=$((10#$port))
+((port_number >= 1 && port_number <= 65535)) || die "port must be between 1 and 65535"
+
+command -v nc >/dev/null 2>&1 || die "nc was not found in PATH"
+command -v python3 >/dev/null 2>&1 || die "python3 was not found in PATH"
+
+# Prefer an active Azure CLI. Fall back to mise so this also works when SSH is
+# launched by VS Code outside a project directory.
+if command -v az >/dev/null 2>&1; then
+    azure=(az)
+elif command -v mise >/dev/null 2>&1; then
+    azure=(mise x azure-cli -- az)
+else
+    die "Azure CLI was not found; install az or mise"
+fi
+
+# This machine keeps Azure CLI state outside the default ~/.azure directory.
+# Respect an explicit override on other machines.
+if [[ -z ${AZURE_CONFIG_DIR:-} && -d $HOME/.local/share/azure ]]; then
+    export AZURE_CONFIG_DIR="$HOME/.local/share/azure"
+fi
+
+"${azure[@]}" account show --output none --only-show-errors ||
+    die "Azure CLI is not signed in"
+
+target_resource_ids=$(
+    "${azure[@]}" resource list \
+        --name "$target_vm" \
+        --resource-type Microsoft.Compute/virtualMachines \
+        --query '[].id' \
+        --output tsv \
+        --only-show-errors
+) || die "could not look up target VM $target_vm"
+
+[[ -n $target_resource_ids ]] || die "could not find target VM $target_vm"
+[[ $target_resource_ids != *$'\n'* ]] ||
+    die "more than one VM is named $target_vm in the active Azure subscription"
+target_resource_id=$target_resource_ids
+
+tunneling_enabled=$(
+    "${azure[@]}" resource show \
+        --resource-group "$bastion_resource_group" \
+        --name "$bastion_name" \
+        --resource-type Microsoft.Network/bastionHosts \
+        --query properties.enableTunneling \
+        --output tsv \
+        --only-show-errors
+) || die "could not read Bastion host $bastion_resource_group/$bastion_name"
+
+[[ $tunneling_enabled == true ]] ||
+    die "native tunneling is not enabled on $bastion_resource_group/$bastion_name"
+
+# Ask the kernel for a free loopback port. Azure CLI will bind it immediately
+# below; the small gap is acceptable because each SSH connection has its own port.
+local_port=$(
+    python3 - <<'PY'
+import socket
+
+with socket.socket() as listener:
+    listener.bind(("127.0.0.1", 0))
+    print(listener.getsockname()[1])
+PY
+)
+
+work_dir=$(mktemp -d "${TMPDIR:-/tmp}/azure-bastion-proxy.XXXXXX")
+tunnel_log=$work_dir/tunnel.log
+tunnel_pid=
+
+cleanup() {
+    if [[ -n $tunnel_pid ]]; then
+        local pid=$tunnel_pid
+        tunnel_pid=
+        kill "$pid" >/dev/null 2>&1 || true
+        wait "$pid" 2>/dev/null || true
+    fi
+    rm -rf "$work_dir"
+}
+trap cleanup EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+"${azure[@]}" network bastion tunnel \
+    --resource-group "$bastion_resource_group" \
+    --name "$bastion_name" \
+    --target-resource-id "$target_resource_id" \
+    --resource-port "$port_number" \
+    --port "$local_port" \
+    --only-show-errors \
+    >"$tunnel_log" 2>&1 &
+tunnel_pid=$!
+
+# Wait until Azure CLI owns the chosen port without opening an early connection.
+# Opening a probe connection can consume the first Bastion tunnel session.
+ready=false
+for _ in {1..120}; do
+    kill -0 "$tunnel_pid" 2>/dev/null || break
+    if ! python3 - "$local_port" <<'PY'; then
+import errno
+import socket
+import sys
+
+port = int(sys.argv[1])
+with socket.socket() as probe:
+    try:
+        probe.bind(("127.0.0.1", port))
+    except OSError as error:
+        raise SystemExit(0 if error.errno == errno.EADDRINUSE else 1) from error
+raise SystemExit(1)
+PY
+        sleep 0.25
+        continue
+    fi
+    ready=true
+    break
+done
+
+if [[ $ready != true ]]; then
+    if [[ -s $tunnel_log ]]; then
+        tail -n 20 "$tunnel_log" >&2
+    fi
+    die "Azure Bastion tunnel did not become ready"
+fi
+
+# Keep this wrapper alive while nc carries the SSH byte stream. The EXIT trap
+# stops Azure CLI as soon as SSH or VS Code closes the connection.
+nc 127.0.0.1 "$local_port"
