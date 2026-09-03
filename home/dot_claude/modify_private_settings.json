@@ -1,0 +1,18 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /*
+Merge the Claude Code preferences from .chezmoidata/agents.yaml into
+~/.claude/settings.json.
+
+Claude Code writes its own keys here (/model, /effort, plugin installs, auto
+mode). Only the keys in agents.yaml are owned by the repo. permissions and
+autoMode stay machine-local: they grow per machine and can hold
+work-specific text. Removing a key from agents.yaml does not remove it from
+the machine.
+
+The file is written with two-space indentation like Claude Code does, but
+with sorted keys. Claude Code keeps that order on its own later edits and
+appends new keys at the end.
+*/ -}}
+{{- $current := dict -}}
+{{- if .chezmoi.stdin -}}{{- $current = .chezmoi.stdin | fromJson -}}{{- end -}}
+{{ mergeOverwrite $current (deepCopy .agents.claude.settings) | toPrettyJson "  " }}

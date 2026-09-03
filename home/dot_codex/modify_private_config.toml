@@ -1,0 +1,30 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /*
+Merge the Codex preferences from .chezmoidata/agents.yaml into
+~/.codex/config.toml.
+
+Codex and the desktop app keep their own state in this file: project trust,
+plugin toggles, marketplaces, notices, skill toggles. Replacing the whole
+file would drop that state on every apply. This template reads the current
+file, overwrites only the managed keys, and writes everything else back
+unchanged. Removing a key from agents.yaml does not remove it from the
+machine.
+
+toToml drops comments and sorts keys. Codex keeps that layout on its own
+later edits, so `chezmoi status` only shows drift when Codex appends a new
+table; the next apply folds it back in.
+
+The codex-lb base URL differs per machine (Rev-9 hosts the balancer), so it
+comes from the resolved features instead of agents.yaml.
+*/ -}}
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $apps := get (get $features .chezmoi.os | default dict) "apps" | default dict -}}
+{{- $url := get (get $apps "codex" | default dict) "provider_base_url" | default "" -}}
+{{- if not $url -}}
+{{-     fail (printf "features.%s.apps.codex.provider_base_url is not set" .chezmoi.os) -}}
+{{- end -}}
+{{- $current := .chezmoi.stdin | fromToml -}}
+{{- $managed := deepCopy .agents.codex.config -}}
+{{- $managed = setValueAtPath "model_providers.codex-lb.base_url" $url $managed -}}
+{{- $managed = setValueAtPath "experimental_realtime_ws_base_url" $url $managed -}}
+{{- mergeOverwrite $current $managed | toToml -}}

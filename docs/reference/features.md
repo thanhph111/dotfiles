@@ -40,6 +40,7 @@ Important groups:
 - `services.code_server`: user code-server service.
 - `services.codex_remote_control`: durable Codex Remote user service.
 - `services.samba`: authenticated access to one user folder over SMB.
+- `apps.codex`: base URL of the Codex model provider (`codex-lb`).
 
 Services do not open firewall ports by themselves. UFW owns firewall policy in one place:
 
@@ -63,6 +64,7 @@ Important groups:
 - `tools.mise`: user tools managed by mise.
 - `system.defaults`: macOS defaults.
 - `apps.openclaw`: OpenClaw setup for agent-style machines.
+- `apps.codex`: base URL of the Codex model provider (`codex-lb`).
 
 ## Windows
 
@@ -76,6 +78,7 @@ Important groups:
 - `user.environment`: user environment variables and user `Path`.
 - `user.dotfiles_hidden`: hide dotfiles in the home directory.
 - `input.natural_scroll`: natural scroll registry setting. This is off by default and requires an elevated shell when enabled.
+- `apps.codex`: base URL of the Codex model provider (`codex-lb`).
 
 Windows is treated as a desktop/client OS here. Dotfiles does not install or start OpenSSH Server on Windows.
 

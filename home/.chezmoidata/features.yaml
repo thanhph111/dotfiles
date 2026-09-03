@@ -101,6 +101,9 @@ features:
         enabled: false
         share_name: Shared
         directory: Shared
+    apps:
+      codex:
+        provider_base_url: https://codex-lb.thanhph111.com/backend-api/codex
 
   darwin:
     install:
@@ -116,6 +119,8 @@ features:
     apps:
       openclaw:
         enabled: true
+      codex:
+        provider_base_url: https://codex-lb.thanhph111.com/backend-api/codex
 
   windows:
     install:
@@ -144,3 +149,6 @@ features:
     input:
       natural_scroll:
         enabled: false
+    apps:
+      codex:
+        provider_base_url: https://codex-lb.thanhph111.com/backend-api/codex

@@ -1,0 +1,74 @@
+agents:
+  # Preferences merged into ~/.codex/config.toml. Keys mirror the TOML layout.
+  # The codex-lb base URL is a per-machine feature: features.<os>.apps.codex.provider_base_url.
+  codex:
+    config:
+      model: gpt-5.6-luna
+      model_reasoning_effort: max
+      plan_mode_reasoning_effort: xhigh
+      approval_policy: never
+      sandbox_mode: danger-full-access
+      approvals_reviewer: user
+      service_tier: default
+      model_provider: codex-lb
+      model_providers:
+        codex-lb:
+          # Codex compares this case-sensitively with "OpenAI" to enable its backend routes (remote compaction and friends).
+          name: OpenAI
+          wire_api: responses
+          supports_websockets: true
+          requires_openai_auth: true
+      features:
+        multi_agent: true
+        prevent_idle_sleep: true
+        responses_websockets: true
+        remote_connections: true
+        terminal_resize_reflow: true
+        memories: true
+        external_migration: true
+        goals: true
+        js_repl: false
+      notice:
+        hide_rate_limit_model_nudge: true
+        fast_default_opt_out: true
+        hide_full_access_warning: true
+      tui:
+        status_line:
+          - model-with-reasoning
+          - current-dir
+          - context-usage
+      mcp_servers:
+        openaiDeveloperDocs:
+          url: https://developers.openai.com/mcp
+      desktop:
+        git-commit-instructions: 'Commit messages follow this repository''s convention: check its AGENTS.md, CLAUDE.md, and CONTRIBUTING first, and match the recent git log when they say nothing. With no convention anywhere, write a sentence-case imperative subject. No Co-Authored-By trailer, no generated-with footer, no tool attribution.'
+        git-pull-request-merge-method: squash
+        git-branch-prefix: feature/
+
+  # Preferences merged into ~/.claude/settings.json. Keys mirror the JSON layout.
+  # enabledPlugins records intent only; install a plugin once per machine with `claude plugin install`.
+  claude:
+    settings:
+      model: opus[1m]
+      effortLevel: xhigh
+      tui: fullscreen
+      skipWorkflowUsageWarning: true
+      remoteControlAtStartup: false
+      inputNeededNotifEnabled: true
+      agentPushNotifEnabled: true
+      # Commits and PRs are the user's own: no Co-Authored-By trailer, no footer, no session link.
+      attribution:
+        commit: ''
+        pr: ''
+        sessionUrl: false
+      enabledPlugins:
+        commit-commands@claude-plugins-official: true
+        pyright-lsp@claude-plugins-official: true
+        rust-analyzer-lsp@claude-plugins-official: true
+        frontend-design@claude-plugins-official: true
+        codex@openai-codex: true
+      extraKnownMarketplaces:
+        openai-codex:
+          source:
+            source: github
+            repo: openai/codex-plugin-cc

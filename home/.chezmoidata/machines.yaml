@@ -51,6 +51,10 @@ machines:
               enabled: true
             samba:
               enabled: true
+          apps:
+            codex:
+              # codex-lb runs on this host in Docker, so skip the Cloudflare round trip.
+              provider_base_url: http://127.0.0.1:2455/backend-api/codex
 
     sonny:
       displayName: Sonny

@@ -20,6 +20,7 @@ A feature is behavior managed by this repo, such as installing APT packages, app
 - [`resolved-machine.json`](../home/.chezmoitemplates/resolved-machine.json) returns final facts for scripts and templates.
 - [`resolved-features.json`](../home/.chezmoitemplates/resolved-features.json) returns final features for scripts and templates.
 - Manifest files own concrete lists of packages, apps, extensions, and settings.
+- [`agents.yaml`](../home/.chezmoidata/agents.yaml) owns the Codex and Claude Code preferences that are merged into their config files.
 - Scripts and templates apply the final facts and features.
 
 ## Catalog words
