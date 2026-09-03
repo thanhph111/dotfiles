@@ -28,6 +28,9 @@
 !.codex/AGENTS.md
 !.codex/config.toml
 
+{{/* mise writes its own lockfile and topgrade upgrades tools per machine, so the lock is state, not config. */}}
+.config/mise/mise.lock
+
 {{/* Linux and macOS */}}
 {{ if eq .chezmoi.os "linux" "darwin" }}
 !.cache
