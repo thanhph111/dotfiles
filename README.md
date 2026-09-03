@@ -11,6 +11,7 @@ It manages shell files, app config, package lists, desktop settings, services, a
 - Add a machine or profile: [add a machine](./docs/guides/add-machine.md).
 - Change packages, apps, or settings lists: [change manifests](./docs/guides/change-manifests.md).
 - Work on remote access and network services: [remote access](./docs/guides/remote-access.md).
+- Manage Codex and Claude Code config: [AI tools](./docs/guides/ai-tools.md).
 - Set up NVIDIA GPU access for containers: [NVIDIA containers](./docs/guides/nvidia-containers.md).
 - Review shell startup trust: [shell startup](./docs/guides/shell-startup.md).
 - Run checks before applying: [checks](./docs/guides/checks.md).
