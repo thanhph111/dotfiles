@@ -1,0 +1,21 @@
+#!/usr/bin/osascript
+#!/usr/bin/osascript
+-- AppleScript to centralize Finder windows with a fixed size of 886x604
+
+-- Desired window size
+set newWidth to 886
+set newHeight to 604
+
+tell application "Finder"
+	-- Extract the top-left and bottom-right coordinates of the window
+	set {winLeft, winTop, winRight, winBottom} to bounds of Finder window 1
+
+	-- Calculate the new position to centralize the window on the current display
+	set newLeft to winLeft + (winRight - winLeft - newWidth) / 2
+	set newTop to winTop + (winBottom - winTop - newHeight) / 2
+	set newRight to newLeft + newWidth
+	set newBottom to newTop + newHeight
+
+	-- Set the new bounds for all Finder windows
+	set bounds of Finder windows to {newLeft, newTop, newRight, newBottom}
+end tell
