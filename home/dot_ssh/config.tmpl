@@ -29,6 +29,16 @@ Host i-*
     User ec2-user
     ProxyCommand ~/.ssh/ssm-proxy '%h' '%p'
 
+# SSH to Azure VMs through an Azure Bastion native-client tunnel. The Bastion
+# resource group and name are account-specific, so the host blocks live in the
+# 1Password "SSH servers" note that becomes ~/.ssh/config.d/1password, not here:
+#
+#     Host azure-*
+#         ProxyCommand ~/.ssh/azure-bastion-proxy <resource-group> <bastion-name> '%h' '%p'
+#
+# The proxy looks the VM up by name, so %h must be the VM name: add a HostName
+# line when the alias differs. Run ~/.ssh/azure-bastion-proxy --help for details.
+
 # General defaults stay last. OpenSSH keeps the first value it sees for most
 # options, so earlier host/project blocks must get the first chance to decide.
 Host *
