@@ -94,6 +94,8 @@ chezmoi apply
 
 The working agreement lives in `home/.chezmoitemplates/agent-constitution.md`. Keep it under 200 lines: both agents load it into every session, and shorter files are followed more reliably.
 
+The agreement is written to outlast model releases, so it describes how you want to work and stays silent about any one model's habits. Rules that exist only to counter a model's quirk belong in settings, where a version bump can change them without touching the text: `outputStyle` for Claude Code, `model_verbosity` and `personality` for Codex, both in `agents.yaml`. Revisit the agreement when an agent keeps doing something you dislike across models, not when a vendor publishes a new prompting guide.
+
 ## Add a shared skill
 
 1. Put `SKILL.md` under `home/dot_agents/skills/<name>/`.
