@@ -121,8 +121,7 @@ If the app does not show Rev-9 or rejects the Linux host, use a supported Mac or
 Check the durable service with:
 
 ```bash
-systemctl --user status codex-remote-control.service --no-pager
-journalctl --user --unit=codex-remote-control.service --lines=100 --no-pager
+dot-service check codex-remote-control.service
 ```
 
 The apply script enables systemd user lingering when the feature is on. Lingering starts the user service during boot without waiting for a desktop login. A cold-reboot test is still required before relying on the host remotely.

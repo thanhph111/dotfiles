@@ -1,23 +1,36 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S usage bash
+
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate the terminal and editor theme"
+#USAGE cmd "switch" help="Switch kitty and the Vim windows inside it" {
+#USAGE     arg "<mode>" help="Which theme to switch to" {
+#USAGE         choices "dark" "light"
+#USAGE     }
+#USAGE }
 
 DEFAULT_DARK_THEME="dark"
 DEFAULT_LIGHT_THEME="light"
 DEFAULT_KITTY_DARK_THEME="$HOME/.config/kitty/themes/Multiplex_Dark.conf"
 DEFAULT_KITTY_LIGHT_THEME="$HOME/.config/kitty/themes/Multiplex_Light.conf"
 
-#: Get the current theme
-theme="$1"
-[[ -z "$theme" ]] && exit 1
-if [[ "$theme" == "dark" ]]; then
+case "${1:-}" in
+switch) ;;
+*)
+    echo "usage: dot-theme switch dark|light" >&2
+    exit 2
+    ;;
+esac
+
+if [[ "${usage_mode:-}" == "dark" ]]; then
     theme="$DEFAULT_DARK_THEME"
     kitty_theme="$DEFAULT_KITTY_DARK_THEME"
     vim_background=dark
-elif [[ "$theme" == "light" ]]; then
+else
     theme="$DEFAULT_LIGHT_THEME"
     kitty_theme="$DEFAULT_KITTY_LIGHT_THEME"
     vim_background=light
-else
-    exit 1
 fi
 
 #: Switch Google Chrome theme {{{

@@ -49,6 +49,13 @@ exclude = '^home/dot_config/shell/zsh\.d/.*\.zsh$'
 types = ["shell"]
 
 [[repos.hooks]]
+id = "shellcheck-usage"
+name = "shellcheck (usage scripts)"
+entry = "mise x -- shellcheck"
+language = "system"
+files = '^home/dot_local/bin/executable_dot-'
+
+[[repos.hooks]]
 id = "zsh-n"
 name = "zsh -n"
 entry = "bash -c 'for file do zsh -n \"$file\" || exit; done' --"

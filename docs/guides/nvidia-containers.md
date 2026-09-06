@@ -37,7 +37,7 @@ It preserves Docker's other daemon settings and does not select NVIDIA as the de
 Run the read-only host check:
 
 ```bash
-mise run nvidia-check
+dot-nvidia check
 ```
 
 It checks the host driver, Docker service, registered `nvidia` runtime, and the toolkit's access to the driver. Application-level GPU use needs an application-specific workload. For a media server, force a transcode and confirm both the GPU process and output codec; a normal HTTP health check is not enough.

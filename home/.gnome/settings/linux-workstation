@@ -77,9 +77,9 @@ mouse-sensitive=true
 mouse-sensitive-fullscreen-window=false
 
 [org/gnome/shell/extensions/nightthemeswitcher/commands]
-enabled=true
-sunrise='switch-theme light'
-sunset='switch-theme dark'
+enabled=false
+sunrise='dot-theme switch light'
+sunset='dot-theme switch dark'
 
 [org/gnome/shell/extensions/nightthemeswitcher/cursor-variants]
 day='DMZ-Black'

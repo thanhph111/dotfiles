@@ -63,3 +63,12 @@ if zmodload -F zsh/stat b:zstat 2>/dev/null &&
 else
     compinit -d "$SHELL_CACHE_DIR/completion"
 fi
+
+# Commands whose shebang runs `usage` carry their own spec, and one fallback
+# handler completes all of them.  It must come after compinit, which is what
+# installs the completion system this hooks into.
+if dotfiles_command_exists usage; then
+    dotfiles_usage_completion="$(usage generate completion-init zsh 2>/dev/null)" &&
+        eval "$dotfiles_usage_completion"
+    unset dotfiles_usage_completion
+fi

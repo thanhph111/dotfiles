@@ -87,6 +87,8 @@ brew "topgrade"
 brew "typst"
 # Formatter for typst
 brew "typstfmt"
+# Tool for working with usage-spec CLIs
+brew "usage"
 # Internet file retriever
 brew "wget"
 # Check your $HOME for unwanted files and directories

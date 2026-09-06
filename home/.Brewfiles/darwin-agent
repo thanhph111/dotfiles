@@ -22,6 +22,8 @@ brew "openclaw-cli"
 brew "antoniorodr/memo/memo"
 # Fast CLI for Apple Reminders
 brew "steipete/tap/remindctl"
+# Tool for working with usage-spec CLIs
+brew "usage"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh

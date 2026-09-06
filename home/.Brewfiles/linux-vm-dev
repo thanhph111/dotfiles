@@ -41,6 +41,8 @@ brew "rclone"
 brew "ripgrep"
 # Upgrade all the things
 brew "topgrade"
+# Tool for working with usage-spec CLIs
+brew "usage"
 # Vi 'workalike' with many additional features
 brew "vim"
 # UNIX shell (command interpreter)

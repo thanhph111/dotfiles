@@ -1,0 +1,48 @@
+#!/usr/bin/env -S usage bash
+
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate the Spotifyd player service"
+#USAGE cmd "login" help="Run the OAuth login and protect the saved token"
+
+# Spotifyd's OAuth login is seven steps, and three of them exist only to keep
+# the saved token private: the 0700 cache directory, the umask, and the two
+# chmods afterwards.  Getting those wrong leaves a world-readable credential,
+# which is why this is a command rather than a list in the guide.
+
+set -euo pipefail
+
+case "${1:-}" in
+login) ;;
+*)
+    echo "usage: dot-spotifyd login" >&2
+    exit 2
+    ;;
+esac
+
+cache="$HOME/.cache/spotifyd"
+
+# Spotifyd listens for the OAuth callback on the server's loopback address
+# only, so a headless host needs the browser machine to forward it first.  This
+# command cannot open that tunnel: it runs on the far side of it.
+if [[ -z "${SSH_CONNECTION:-}" ]]; then
+    echo "Not in an SSH session. If the browser runs elsewhere, connect with:"
+    echo "    ssh -o ExitOnForwardFailure=yes -L 127.0.0.1:8000:127.0.0.1:8000 <host>"
+    echo
+fi
+
+systemctl --user stop spotifyd.service
+
+install -d -m 700 "$cache"
+
+# Everything spotifyd writes during login must be private from the moment it
+# is created, not only after the chmods below.
+umask 077
+spotifyd authenticate
+
+chmod 700 "$cache/oauth"
+chmod 600 "$cache/oauth/credentials.json"
+
+systemctl --user start spotifyd.service
+systemctl --user is-active spotifyd.service

@@ -1,7 +1,22 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S usage bash
 
-#: Reset key that match default value
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate GNOME settings"
+#USAGE cmd "reset-defaults" help="Reset every key whose value already equals its default"
+
 #: Reference: https://askubuntu.com/q/196896
+
+set -e
+
+case "${1:-}" in
+reset-defaults) ;;
+*)
+    echo "usage: dot-gnome reset-defaults" >&2
+    exit 2
+    ;;
+esac
 
 for schema in $(/bin/gsettings list-schemas | sort); do
     for key in $(/bin/gsettings list-keys "$schema" | sort); do

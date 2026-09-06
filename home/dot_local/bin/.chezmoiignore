@@ -1,10 +1,16 @@
 {{/* Linux */}}
 {{ if eq .chezmoi.os "linux" }}
+{{/* The workspace cleaner reads the macOS Code support path. */}}
+dot-vscode
 {{ end }}
 
 {{/* macOS */}}
 {{ if eq .chezmoi.os "darwin" }}
 app
+dot-gnome
+dot-nvidia
+dot-service
+dot-spotifyd
 {{ end }}
 
 {{/* Windows */}}

@@ -26,28 +26,20 @@ ssh -o ExitOnForwardFailure=yes \
     <server-private-SSH-name>
 ```
 
-Keep that SSH session open. In its server shell, stop the old process, protect files created during login, and start the browser login:
+Keep that SSH session open. In its server shell, run the login:
 
 ```bash
-systemctl --user stop spotifyd.service
-install -d -m 700 "$HOME/.cache/spotifyd"
-umask 077
-spotifyd authenticate
+dot-spotifyd login
 ```
 
-Open the printed `Browse to` link on the machine running the browser. The local forward carries its loopback callback to Spotifyd on the server. When the server terminal reports a successful login, protect the saved token and start the player:
+That stops the player, creates the cache directory private, runs the login under a `077` umask, tightens the saved token afterwards, and starts the player again. Doing those by hand is how a world-readable credential gets left behind, which is why it is a command. See [Operation commands](./operation-commands.md).
 
-```bash
-chmod 700 "$HOME/.cache/spotifyd/oauth"
-chmod 600 "$HOME/.cache/spotifyd/oauth/credentials.json"
-systemctl --user start spotifyd.service
-```
+Open the printed `Browse to` link on the machine running the browser. The local forward carries its loopback callback to Spotifyd on the server.
 
 Verify the service and then open Spotify's device list while WARP is connected:
 
 ```bash
-systemctl --user is-active spotifyd.service
-journalctl --user --unit=spotifyd.service --lines=40 --no-pager
+dot-service check spotifyd.service
 ```
 
 The service should report an OAuth login and authentication. Spotify should list the configured device name without opening a public route or a local firewall port.

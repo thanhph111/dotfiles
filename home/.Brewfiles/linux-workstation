@@ -77,6 +77,8 @@ brew "tealdeer"
 brew "topgrade"
 # Lightweight BitTorrent client
 brew "transmission-cli"
+# Tool for working with usage-spec CLIs
+brew "usage"
 # Vi 'workalike' with many additional features
 brew "vim"
 # Access X11 clipboards from the command-line

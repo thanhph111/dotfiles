@@ -1,7 +1,22 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S usage bash
 
-# This script is used to clean the VSCode workspaces that don't exist
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate Visual Studio Code state"
+#USAGE cmd "clean-workspaces" help="Delete workspace storage for folders that no longer exist"
+
 # Reference: https://gist.github.com/3v1n0/8e27c06ca88159fdc140533608edbe37
+
+set -e
+
+case "${1:-}" in
+clean-workspaces) ;;
+*)
+    echo "usage: dot-vscode clean-workspaces" >&2
+    exit 2
+    ;;
+esac
 
 # CONFIG_PATH=~/.config/Code
 CONFIG_PATH="$HOME/Library/Application Support/Code"

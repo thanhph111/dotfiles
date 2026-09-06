@@ -1,0 +1,36 @@
+#!/usr/bin/env -S usage bash
+
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate the Homebrew manifest"
+#USAGE cmd "dump" help="Write the installed packages to a Brewfile" {
+#USAGE     arg "[file]" help="Brewfile to write, default ~/.Brewfile"
+#USAGE }
+
+# On Linux and macOS ~/.Brewfile links to the first Homebrew manifest of the
+# active profile, so dumping with no argument rewrites that profile's manifest.
+
+set -e
+
+case "${1:-}" in
+dump) ;;
+*)
+    echo "usage: dot-brew dump [file]" >&2
+    exit 2
+    ;;
+esac
+
+if ! command -v brew >/dev/null; then
+    echo "Homebrew is not installed. Aborting." >&2
+    exit 1
+fi
+
+brewfile="${usage_file:-$HOME/.Brewfile}"
+args=(--formula --tap --cask)
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    args+=(--cask --mas)
+fi
+
+brew bundle dump --force --file="$brewfile" "${args[@]}"

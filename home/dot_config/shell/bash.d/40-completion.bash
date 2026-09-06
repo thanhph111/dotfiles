@@ -34,3 +34,12 @@ if ! shopt -oq posix; then
 
     unset dotfiles_brew_completion dotfiles_completion_loaded
 fi
+
+# Commands whose shebang runs `usage` carry their own spec, and one default
+# handler completes all of them.  It has to be registered after the framework
+# above so the previous default handler stays reachable for everything else.
+if dotfiles_command_exists usage; then
+    dotfiles_usage_completion="$(usage generate completion-init bash 2>/dev/null)" &&
+        eval "$dotfiles_usage_completion"
+    unset dotfiles_usage_completion
+fi

@@ -1,14 +1,18 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S usage bash
 
-# Real-time NVIDIA GPU monitoring script
-# Usage: nvidia-monitor [OPTIONS]
-# Options:
-#   -i, --interval SECONDS    Update interval in seconds (default: 1)
-#   -c, --compact            Show compact output
-#   -t, --temperature        Show temperature only
-#   -m, --memory             Show memory usage only
-#   -u, --utilization        Show GPU utilization only
-#   -h, --help               Show this help message
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Operate the NVIDIA GPU and its container runtime"
+#USAGE cmd "check" help="Check the host driver and the Docker runtime"
+#USAGE cmd "monitor" help="Watch GPU state until interrupted" {
+#USAGE     flag "-i --interval <seconds>" help="Update interval, default 1"
+#USAGE     flag "-c --compact" help="Show compact output"
+#USAGE     flag "-t --temperature" help="Show temperature only"
+#USAGE     flag "-m --memory" help="Show memory usage only"
+#USAGE     flag "-u --utilization" help="Show GPU utilization only"
+#USAGE     flag "--no-clear" help="Do not clear the screen between updates"
+#USAGE }
 
 set -euo pipefail
 
@@ -30,36 +34,28 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# Function to show help
-show_help() {
-    cat <<EOF
-Real-time NVIDIA GPU monitoring script
+# Function to check if nvidia-smi is available
+check_runtime() {
+    for command in docker nvidia-container-cli nvidia-smi systemctl; do
+        if ! command -v "$command" >/dev/null 2>&1; then
+            printf 'Missing command: %s\n' "$command" >&2
+            exit 1
+        fi
+    done
 
-Usage: $(basename "$0") [OPTIONS]
+    sudo systemctl is-active --quiet docker.service
+    nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
+    sudo nvidia-container-cli info >/dev/null
 
-Options:
-    -i, --interval SECONDS    Update interval in seconds (default: 1)
-    -c, --compact            Show compact output
-    -t, --temperature        Show temperature only
-    -m, --memory             Show memory usage only
-    -u, --utilization        Show GPU utilization only
-        --no-clear           Don't clear screen between updates (default: clear)
-    -h, --help               Show this help message
+    if ! sudo docker info 2>/dev/null |
+        grep -Eq '^[[:space:]]*Runtimes:.*(^|[[:space:]])nvidia([[:space:]]|$)'; then
+        echo 'Docker has not registered the nvidia runtime' >&2
+        exit 1
+    fi
 
-Examples:
-    $(basename "$0")                    # Default monitoring
-    $(basename "$0") -i 2               # Update every 2 seconds
-    $(basename "$0") -c                 # Compact view
-    $(basename "$0") -t                 # Temperature only
-    $(basename "$0") -m                 # Memory usage only
-    $(basename "$0") -u                 # GPU utilization only
-    $(basename "$0") -c --no-clear      # Compact view without clearing screen
-
-Press Ctrl+C to exit.
-EOF
+    echo 'NVIDIA container runtime is ready.'
 }
 
-# Function to check if nvidia-smi is available
 check_nvidia_smi() {
     if ! command -v nvidia-smi &>/dev/null; then
         echo -e "${RED}Error: nvidia-smi not found. Please install NVIDIA drivers.${NC}" >&2
@@ -232,48 +228,31 @@ cleanup() {
     exit 0
 }
 
-# Parse command line arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-    -i | --interval)
-        INTERVAL="$2"
-        if ! [[ "$INTERVAL" =~ ^[0-9]+(\.[0-9]+)?$ ]] || (($(echo "$INTERVAL <= 0" | bc -l))); then
-            echo -e "${RED}Error: Interval must be a positive number${NC}" >&2
-            exit 1
-        fi
-        shift 2
-        ;;
-    -c | --compact)
-        COMPACT=true
-        shift
-        ;;
-    -t | --temperature)
-        TEMP_ONLY=true
-        shift
-        ;;
-    -m | --memory)
-        MEMORY_ONLY=true
-        shift
-        ;;
-    -u | --utilization)
-        UTIL_ONLY=true
-        shift
-        ;;
-    --no-clear)
-        CLEAR_SCREEN=false
-        shift
-        ;;
-    -h | --help)
-        show_help
-        exit 0
-        ;;
-    *)
-        echo -e "${RED}Error: Unknown option $1${NC}" >&2
-        show_help
-        exit 1
-        ;;
-    esac
-done
+# Take the parsed flags from the spec.  The interval is the one value the
+# spec cannot check, because it is a positive number rather than a choice.
+INTERVAL="${usage_interval:-1}"
+[[ "${usage_compact:-}" == true ]] && COMPACT=true
+[[ "${usage_temperature:-}" == true ]] && TEMP_ONLY=true
+[[ "${usage_memory:-}" == true ]] && MEMORY_ONLY=true
+[[ "${usage_utilization:-}" == true ]] && UTIL_ONLY=true
+[[ "${usage_no_clear:-}" == true ]] && CLEAR_SCREEN=false
+
+case "${1:-}" in
+check)
+    check_runtime
+    exit 0
+    ;;
+monitor) ;;
+*)
+    echo 'usage: dot-nvidia check|monitor' >&2
+    exit 2
+    ;;
+esac
+
+if ! [[ "$INTERVAL" =~ ^[0-9]+(\.[0-9]+)?$ ]] || (($(echo "$INTERVAL <= 0" | bc -l))); then
+    echo -e "${RED}Error: Interval must be a positive number${NC}" >&2
+    exit 1
+fi
 
 # Check if nvidia-smi is available
 check_nvidia_smi

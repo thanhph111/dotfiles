@@ -1,0 +1,54 @@
+#!/usr/bin/env -S usage bash
+
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Inspect and control systemd user services"
+#USAGE cmd "check" help="Show whether a unit is running, then its recent log" {
+#USAGE     arg "<unit>" help="Systemd user unit"
+#USAGE }
+#USAGE cmd "log" help="Show a unit's log" {
+#USAGE     arg "<unit>" help="Systemd user unit"
+#USAGE     flag "-f --follow" help="Keep printing new lines until interrupted"
+#USAGE }
+#USAGE cmd "restart" help="Restart a unit" {
+#USAGE     arg "<unit>" help="Systemd user unit"
+#USAGE }
+#USAGE complete "unit" run="systemctl --user list-unit-files --no-legend --no-pager | awk '{print $1}'"
+
+# Status and log are the pair this repo's guides prescribe for every managed
+# unit.  Writing them once here means the unit name is completed from the live
+# list instead of typed from memory.
+
+set -euo pipefail
+
+unit="${usage_unit:-}"
+
+[[ -n "$unit" ]] || {
+    echo "usage: dot-service check|log|restart <unit> [--follow]" >&2
+    exit 2
+}
+
+case "${1:-}" in
+check)
+    # status exits non-zero for an inactive unit, which is information, not a
+    # failure of this command.
+    systemctl --user status "$unit" --no-pager || true
+    journalctl --user --unit="$unit" --lines=50 --no-pager
+    ;;
+log)
+    if [[ "${usage_follow:-}" == true ]]; then
+        journalctl --user --unit="$unit" --follow
+    else
+        journalctl --user --unit="$unit" --lines=100 --no-pager
+    fi
+    ;;
+restart)
+    systemctl --user restart "$unit"
+    systemctl --user is-active "$unit"
+    ;;
+*)
+    echo "usage: dot-service check|log|restart <unit> [--follow]" >&2
+    exit 2
+    ;;
+esac

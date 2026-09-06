@@ -61,6 +61,8 @@ brew "topgrade"
 brew "transmission-cli"
 # Markup-based typesetting system
 brew "typst"
+# Tool for working with usage-spec CLIs
+brew "usage"
 # Vi 'workalike' with many additional features
 brew "vim"
 # Access X11 clipboards from the command-line
