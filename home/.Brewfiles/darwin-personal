@@ -1,3 +1,4 @@
+tap "neurosnap/tap"
 tap "shaunsingh/sfmono-nerd-font-ligaturized", trusted: { casks: ["font-sf-mono-nerd-font-ligaturized"] }
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
@@ -47,6 +48,8 @@ brew "xdg-ninja"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Session attach/detach for the terminal
+brew "neurosnap/tap/zmx", trusted: true
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password

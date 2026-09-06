@@ -25,6 +25,7 @@ notice = false
 [palette]
 # ANSI colors follow the active terminal theme, so they travel well between
 # macOS, Linux, SSH, dark themes, and light themes.
+zmx = "lightCyan"
 session = "yellow"
 ssh = "cyan"
 path = "lightBlue"
@@ -44,7 +45,10 @@ error = "lightRed"
 type = "prompt"
 alignment = "left"
 
-# user@host
+# zmx session, then user@host
+#
+# A zmx session survives disconnects, so the shell in front of you may be one
+# you started days ago from another machine.  Nothing else on screen says so.
 [[blocks.segments]]
 type = "session"
 style = "plain"
@@ -53,6 +57,9 @@ foreground_templates = [
     "{{ if .Root }}p:error{{ end }}",
 ]
 template = """\
+{{ if .Env.ZMX_SESSION }}\
+    <p:zmx>zmx:{{ .Env.ZMX_SESSION }} </>\
+{{ end }}\
 {{ if .SSHSession }}\
     <p:ssh>ssh:</>\
 {{ end }}\

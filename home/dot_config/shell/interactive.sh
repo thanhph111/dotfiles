@@ -77,8 +77,10 @@ zsh)
     ;;
 esac
 
-# Final hooks are deliberately last.  Prompt engines and direnv both install
-# shell hooks, so keeping them at the end avoids hidden ordering bugs.
+# Final hooks are deliberately last.  The zmx refresh, prompt engines, and
+# direnv all install shell hooks, so keeping them at the end avoids hidden
+# ordering bugs.
+dotfiles_include "$DOTFILES_SHELL_ROOT/final.d/70-zmx.sh"
 dotfiles_include "$DOTFILES_SHELL_ROOT/final.d/80-prompt.sh"
 dotfiles_include "$DOTFILES_SHELL_ROOT/final.d/90-direnv.sh"
 

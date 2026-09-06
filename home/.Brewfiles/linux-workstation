@@ -1,5 +1,6 @@
 tap "homebrew/bundle"
 tap "homebrew/linux-fonts"
+tap "neurosnap/tap"
 # Record and share terminal sessions
 brew "asciinema"
 # Official Amazon AWS command-line interface
@@ -100,3 +101,5 @@ brew "homebrew/linux-fonts/font-fira-code-nerd-font"
 brew "homebrew/linux-fonts/font-jetbrains-mono"
 # Developer targeted fonts with a high number of glyphs
 brew "homebrew/linux-fonts/font-jetbrains-mono-nerd-font"
+# Session attach/detach for the terminal
+brew "neurosnap/tap/zmx", trusted: true

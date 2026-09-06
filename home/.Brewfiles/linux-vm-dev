@@ -1,3 +1,4 @@
+tap "neurosnap/tap"
 # Programmable completion for Bash 4.2+
 brew "bash-completion@2"
 # Clone of cat(1) with syntax highlighting and Git integration
@@ -48,3 +49,5 @@ brew "zsh"
 brew "zsh-autosuggestions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Session attach/detach for the terminal
+brew "neurosnap/tap/zmx", trusted: true

@@ -47,7 +47,12 @@ style = 'diamond'
 cache_duration = 'none'
 
 [[blocks.segments]]
+# The zmx marker names the session this shell lives in.  A zmx session
+# outlives its connection, so it may be one started days ago elsewhere.
 template = """\
+{{ if .Env.ZMX_SESSION }} \
+    󰆍 {{ .Env.ZMX_SESSION }}\
+{{ end }}\
 {{ if .SSHSession }} \
     󰌘\
 {{ end }}\

@@ -25,6 +25,7 @@ Use these when you are making a change.
 - [Change manifests](./guides/change-manifests.md)
 - [Git signing](./guides/git-signing.md)
 - [Remote access](./guides/remote-access.md)
+- [Terminal sessions](./guides/terminal-sessions.md)
 - [AI tools](./guides/ai-tools.md)
 - [Shell startup](./guides/shell-startup.md)
 - [Spotifyd](./guides/spotifyd.md)

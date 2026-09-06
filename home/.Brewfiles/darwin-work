@@ -1,3 +1,4 @@
+tap "neurosnap/tap"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Bourne-Again SHell, a UNIX command interpreter
@@ -100,6 +101,8 @@ brew "zsh-syntax-highlighting"
 brew "mark"
 # Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
 brew "bun"
+# Session attach/detach for the terminal
+brew "neurosnap/tap/zmx", trusted: true
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password
