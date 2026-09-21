@@ -39,6 +39,8 @@ if [[ "$(loginctl show-user "$current_user" --property=Linger --value)" != yes ]
 fi
 
 systemctl --user enable "$unit"
+# An explicit apply retries a unit that reached its start limit.
+systemctl --user reset-failed "$unit"
 # `restart` also starts the unit when it is currently inactive.
 systemctl --user restart "$unit"
 

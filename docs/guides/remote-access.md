@@ -124,6 +124,20 @@ Check the durable service with:
 dot-service check codex-remote-control.service
 ```
 
+The service retries failures after 30 seconds and stops after three starts within five minutes. After the start limit is reached, it stays failed until you reset and start it. The journal includes Remote transport warnings so you can distinguish authentication errors from connection failures.
+
+If the journal reports `401` with `token_revoked`, sign in again. `codex login status` can still report a saved ChatGPT login even when the server rejects its token:
+
+```bash
+systemctl --user stop codex-remote-control.service
+codex login --device-auth
+systemctl --user reset-failed codex-remote-control.service
+systemctl --user start codex-remote-control.service
+dot-service check codex-remote-control.service
+```
+
+Complete the device login before starting the service. Restarting alone does not repair a revoked token. Keep the existing Remote enrollment and saved chats.
+
 The apply script enables systemd user lingering when the feature is on. Lingering starts the user service during boot without waiting for a desktop login. A cold-reboot test is still required before relying on the host remotely.
 
 Review and apply Codex upgrades deliberately. Homebrew owns the CLI installation and update:

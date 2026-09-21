@@ -5,6 +5,9 @@ Description=Codex Remote Control
 Documentation=https://learn.chatgpt.com/docs/developer-commands
 Wants=network-online.target
 After=network-online.target
+# Stop persistent authentication failures after three starts within five minutes.
+StartLimitIntervalSec=300
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -13,9 +16,11 @@ WorkingDirectory=%h
 # which starts a second daemon outside systemd's process lifecycle.
 # Homebrew owns the Codex executable and uses this standard Linux prefix.
 Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:%h/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin
+# Include the Remote transport error behind the CLI's generic connection error.
+Environment=RUST_LOG=error,codex_app_server_transport::transport::remote_control=warn
 ExecStart=/home/linuxbrew/.linuxbrew/bin/codex remote-control
-Restart=always
-RestartSec=5
+Restart=on-failure
+RestartSec=30
 
 [Install]
 WantedBy=default.target
