@@ -56,9 +56,18 @@ export AZURE_DEVOPS_CACHE_DIR="$XDG_CACHE_HOME/azure-devops"
 # Modal.
 export MODAL_CONFIG_PATH="$XDG_CONFIG_HOME/modal.toml"
 
-# Docker and Minikube.
+# Docker, Kubernetes, and Minikube.
+#
+# KUBECONFIG moves the cluster credentials file and KUBECACHEDIR moves
+# kubectl's discovery and HTTP caches, so kubectl no longer uses ~/.kube.
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export KUBECONFIG="$XDG_CONFIG_HOME/kube/config"
+export KUBECACHEDIR="$XDG_CACHE_HOME/kube"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
+
+# Ansible.  ANSIBLE_HOME is the root for Ansible's per-user defaults: installed
+# collections and roles, the Galaxy cache and token, and control-path sockets.
+export ANSIBLE_HOME="$XDG_DATA_HOME/ansible"
 
 # CUDA.
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
