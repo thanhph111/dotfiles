@@ -44,3 +44,11 @@ The caller controls the command string. Do not feed this argument from a project
 Chezmoi scripts use a fixed `PATH` from known user, package-manager, and system directories.
 
 They should not inherit the full caller `PATH`, because `chezmoi apply` may run from a project shell with project-local commands.
+
+## Non-login shells
+
+Login shells load the session environment through `~/.zprofile` or `~/.profile`, and interactive shells through `~/.zshrc` or `~/.bashrc`. A plain `zsh -c` is neither. Editors, coding agents, launchd jobs, and `ssh host command` start shells this way, so `~/.zshenv` loads the same profile for them. Without it, tools run with no XDG variables and write into `$HOME`.
+
+Zsh reads `~/.zshenv` for every shell, including scripts, so the file only does the work when the environment is missing. A shell started from an already-configured shell inherits `DOTFILES_SHELL_ROOT` and skips it. On macOS it also runs `path_helper` first, because login shells get the system `PATH` from `/etc/zprofile` and zsh skips that file here.
+
+Bash has no such file. A non-interactive Bash, including `ssh host command` on a machine whose login shell is Bash, only has the environment its parent passed down.

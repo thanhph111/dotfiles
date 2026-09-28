@@ -45,6 +45,7 @@
 !.bashrc
 !.profile
 !.zprofile
+!.zshenv
 !.zshrc
 {{ end }}
 

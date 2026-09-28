@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+# Zsh environment for shells that skip the login files.
+#
+# Zsh reads this file for every shell it starts.  Login shells already load the
+# session environment through ~/.zprofile and interactive shells through
+# ~/.zshrc, so this file covers the one case those two miss: a non-login,
+# non-interactive shell.  Editors, coding agents, launchd jobs, and
+# "ssh host command" all start shells that way.  Without this file they run
+# tools with no XDG variables set, and the tools write into $HOME instead.
+#
+# This runs for every zsh process, including scripts, so do the work only when
+# it is actually missing.  A child of an already-configured shell inherits
+# DOTFILES_SHELL_ROOT and skips the whole block.
+
+if [[ ! -o login && ! -o interactive && -z "${DOTFILES_SHELL_ROOT:-}" ]]; then
+    # Login shells get /etc/paths and /etc/paths.d from path_helper in
+    # /etc/zprofile, which zsh skips for this kind of shell.  Run it first so
+    # both kinds of shell start from the same system PATH.
+    [[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
+
+    dotfiles_config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+    dotfiles_profile="$dotfiles_config_home/shell/profile.sh"
+    [ -r "$dotfiles_profile" ] || dotfiles_profile="$HOME/.config/shell/profile.sh"
+
+    if [[ -r "$dotfiles_profile" ]]; then
+        DOTFILES_SHELL_ROOT="${dotfiles_profile%/*}"
+        export DOTFILES_SHELL_ROOT
+        # shellcheck source=dot_config/shell/profile.sh
+        . "$dotfiles_profile"
+    fi
+    unset dotfiles_config_home dotfiles_profile
+fi
