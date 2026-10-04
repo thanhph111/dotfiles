@@ -23,26 +23,93 @@ esac
 
 cache="$HOME/.cache/spotifyd"
 
-# Spotifyd listens for the OAuth callback on the server's loopback address
-# only, so a headless host needs the browser machine to forward it first.  This
-# command cannot open that tunnel: it runs on the far side of it.
-if [[ -z "${SSH_CONNECTION:-}" ]]; then
-    echo "Not in an SSH session. If the browser runs elsewhere, connect with:"
-    echo "    ssh -o ExitOnForwardFailure=yes -L 127.0.0.1:8000:127.0.0.1:8000 <host>"
-    echo
+headless=false
+if [[ -n "${SSH_CONNECTION:-}${SSH_CLIENT:-}" || -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
+    headless=true
+    command -v curl >/dev/null || {
+        echo "Headless login requires curl." >&2
+        exit 1
+    }
 fi
 
+auth_pid=
+restart_player=false
+if systemctl --user is-active --quiet spotifyd.service; then
+    restart_player=true
+fi
 systemctl --user stop spotifyd.service
+
+cleanup_login() {
+    local status=$?
+    if [[ -n "$auth_pid" ]]; then
+        kill "$auth_pid" 2>/dev/null || true
+        wait "$auth_pid" 2>/dev/null || true
+    fi
+    if [[ "$restart_player" == true ]]; then
+        if ! systemctl --user start spotifyd.service; then
+            echo "Could not restore spotifyd.service after login." >&2
+            status=1
+        fi
+    fi
+    exit "$status"
+}
+trap cleanup_login EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 install -d -m 700 "$cache"
 
 # Everything spotifyd writes during login must be private from the moment it
 # is created, not only after the chmods below.
 umask 077
-spotifyd authenticate
+if [[ "$headless" == true ]]; then
+    # Replay the browser's callback on this host. The login process keeps the
+    # verifier needed to exchange its code, so credentials stay on the server.
+    exec 3< <(exec spotifyd authenticate </dev/null 2>&1)
+    auth_pid=$!
+    while IFS= read -r line <&3; do
+        printf '%s\n' "$line"
+        if [[ ! "$line" =~ OAuth\ server\ listening\ on\ (127\.0\.0\.1:[0-9]+) ]]; then
+            continue
+        fi
+        callback_uri="http://${BASH_REMATCH[1]}/login"
+
+        printf '\n%s\n' \
+            "Open the Browse to link in your browser and approve Spotify." \
+            "If the browser cannot open 127.0.0.1, copy the full address from its address bar." \
+            "Paste that address below. If the browser reports success, press Enter."
+        while true; do
+            printf 'Returned URL: '
+            if ! IFS= read -r -s callback_url; then
+                printf '\nLogin cancelled.\n' >&2
+                exit 1
+            fi
+            printf '\n'
+            if [[ -z "$callback_url" ]]; then
+                break
+            fi
+            case "$callback_url" in
+            "$callback_uri"\?*)
+                curl --noproxy '*' --globoff --fail --silent --show-error \
+                    --max-time 10 --output /dev/null --url "$callback_url"
+                break
+                ;;
+            *)
+                echo "Paste the returned $callback_uri? address, including its query." >&2
+                ;;
+            esac
+        done
+    done
+    exec 3<&-
+    wait "$auth_pid"
+    auth_pid=
+else
+    spotifyd authenticate
+fi
 
 chmod 700 "$cache/oauth"
 chmod 600 "$cache/oauth/credentials.json"
 
 systemctl --user start spotifyd.service
+restart_player=false
 systemctl --user is-active spotifyd.service

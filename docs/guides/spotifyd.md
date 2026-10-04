@@ -8,7 +8,7 @@ LAN discovery is disabled. Spotifyd signs in to Spotify directly, so WARP does n
 
 ## First login on a headless server
 
-Spotifyd listens for the OAuth callback only on the server's loopback address. When the browser runs on another machine, use a temporary SSH local forward. This does not open a public route or firewall port.
+Run the login on the server from your normal SSH session. The command accepts the returned browser URL and sends the callback to Spotifyd locally.
 
 Review and apply the dotfiles first:
 
@@ -18,23 +18,21 @@ chezmoi apply
 systemctl --user daemon-reload
 ```
 
-From the machine running the browser, connect to the server using its existing private SSH name:
-
-```bash
-ssh -o ExitOnForwardFailure=yes \
-    -L 127.0.0.1:8000:127.0.0.1:8000 \
-    <server-private-SSH-name>
-```
-
-Keep that SSH session open. In its server shell, run the login:
+In the server shell, run the login:
 
 ```bash
 dot-spotifyd login
 ```
 
-That stops the player, creates the cache directory private, runs the login under a `077` umask, tightens the saved token afterwards, and starts the player again. Doing those by hand is how a world-readable credential gets left behind, which is why it is a command. See [Operation commands](./operation-commands.md).
+Complete these steps in your browser and the same server terminal:
 
-Open the printed `Browse to` link on the machine running the browser. The local forward carries its loopback callback to Spotifyd on the server.
+1. Open the printed `Browse to` link in your browser and approve Spotify access.
+2. After approval, copy the full `http://127.0.0.1:8000/login?...` URL from the address bar. A connection error on this page is expected when the browser runs on another machine.
+3. Paste the URL at the command's `Returned URL` prompt and press Enter. The pasted URL is hidden. If the browser already reports success, press Enter without pasting a URL.
+
+The command sends the callback to the server's local listener, protects the saved credentials, and starts the player. If you cancel or login fails, it stops the login process and restarts the player if it was running before login.
+
+The browser URL contains a temporary login code. Paste it into the command's prompt so it stays out of shell history. See [Operation commands](./operation-commands.md).
 
 Verify the service and then open Spotify's device list while WARP is connected:
 
