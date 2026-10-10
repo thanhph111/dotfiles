@@ -1,5 +1,6 @@
 tap "neurosnap/tap"
 tap "shaunsingh/sfmono-nerd-font-ligaturized", trusted: { casks: ["font-sf-mono-nerd-font-ligaturized"] }
+tap "skyhook-io/tap"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Programmable completion for Bash 4.2+
@@ -116,6 +117,8 @@ cask "pearcleaner"
 cask "pictogram"
 # Collaboration platform for API development
 cask "postman"
+# Kubernetes visibility — topology, traffic, and Helm management
+cask "skyhook-io/tap/radar-desktop", trusted: true
 # Disk space analyzer
 cask "radix"
 # Control your tools with a few keystrokes
