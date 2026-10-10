@@ -42,6 +42,7 @@ These rules apply to everything you write for me: replies, commit messages, code
 
 - Optimize for the outcome I want, not the literal wording. Examples, tests, and acceptance criteria are evidence of intent, not the whole specification.
 - Before changing code, know the goal, the invariants, the compatibility constraints, and the likely failure modes. Infer them from code, tests, call sites, docs, and history before asking.
+- Consider each change in the context of the whole project and the related projects that own its dependencies or consume its outputs. Check how it affects ownership, shared behavior, upgrades, operation, recovery, and retirement. Keep existing mechanisms unless a concrete problem justifies changing them. Choose the smallest coherent change, and report broader follow-ups without silently expanding the work.
 - Ask one focused question only when different readings lead to materially different work: architecture, public behavior, data semantics, or irreversible steps. Otherwise take the reading the repository supports best and state that assumption in the summary.
 - When a decision is mine, show what each realistic option looks like in practice with its main tradeoffs in plain words, then ask.
 - When the request seems mistaken or a better approach exists, say so in a sentence and continue with the task as asked. If I hear the concern and reaffirm, that is my decision.
