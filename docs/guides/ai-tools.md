@@ -29,6 +29,15 @@ claude plugin install codex@openai-codex
 
 Repeat the install line for each plugin listed in `agents.yaml`. Codex plugins are toggled in the app; the toggles it writes to `config.toml` stay machine-local.
 
+## MCP connections
+
+Configure Model Context Protocol (MCP) connections in each agent on each machine. Keep their endpoints, credentials, and enabled state out of `agents.yaml`.
+
+- Codex stores personal connections in `~/.codex/config.toml`. A project can declare its connections in `.codex/config.toml`. See [Codex MCP configuration](https://developers.openai.com/codex/mcp).
+- Claude Code stores user-wide and private project connections in `~/.claude.json`, which this repo ignores. Shared project connections belong in the project's `.mcp.json`. See [Claude Code MCP scopes](https://code.claude.com/docs/en/mcp#mcp-installation-scopes).
+
+Use user scope for a personal connection you want across projects. Claude Code's default scope limits a connection to the current project. Plugins manage the servers they provide.
+
 ## The merge rule
 
 Codex writes project trust, plugin toggles, marketplaces, and notices into `config.toml`. Claude Code writes `/model`, `/effort`, plugin installs, and auto mode into `settings.json`. A plain managed file would delete that state on every apply, so both files are `modify_` templates: the repo wins for the keys in `agents.yaml`, the app wins for everything else.
@@ -37,8 +46,9 @@ Plain meaning:
 
 - Change a preference in `agents.yaml` and apply; the app's own entries survive.
 - Remove a key from `agents.yaml` and the machine keeps its current value. Delete it by hand, or add a `deleteValueAtPath` line to the template for one apply.
+- Model and reasoning choices stay local to both agents, so an apply preserves choices made in the app or CLI.
 - When every managed key already holds its value, the template returns the file untouched, byte for byte. The apps' own formatting and additions never show up as drift.
-- Only a real difference in a managed key triggers a rewrite, for example after you edit `agents.yaml` or switch models in the app. That rewrite comes out with sorted keys and no comments; both apps keep the layout they find.
+- Only a real difference in a managed key triggers a rewrite, for example after you edit `agents.yaml` or change the approval policy in the app. That rewrite comes out with sorted keys and no comments; both apps keep the layout they find.
 
 Restart Codex after `config.toml` changes. Claude Code reloads its settings on its own.
 
@@ -67,11 +77,11 @@ The two merged files are the only targets with app state in them. Before the fir
    chezmoi apply --exclude=scripts
    ```
 
-If something is wrong, copy the `.bak` files back. A later `chezmoi status` showing `MM` on one of these files means a managed key changed on the machine, for example a model switched in the app. Apply to restore the repo value, or edit `agents.yaml` to adopt the new one.
+If something is wrong, copy the `.bak` files back. A later `chezmoi status` showing `MM` on one of these files means a managed key changed on the machine, for example an approval policy switched in the app. Apply to restore the repo value, or edit `agents.yaml` to adopt the new one.
 
 ## Per-machine values
 
-The `codex-lb` base URL is the one value that differs per machine:
+Codex uses the `codex-lb` provider declared in `agents.yaml`. Its base URL comes from the machine's resolved features:
 
 ```yaml
 features:
@@ -82,6 +92,8 @@ features:
 ```
 
 Rev-9 hosts the balancer in Docker and points at `http://127.0.0.1:2455/backend-api/codex` in `machines.yaml`. Other machines reach the public URL through Cloudflare Access, which lets WARP-enrolled devices through without a service token. A machine that still needs the token can add `http_headers` under `[model_providers.codex-lb]` by hand; the merge keeps it.
+
+Service configuration and operation belong to [docker-apps' codex-lb stack](https://github.com/thanhph111/docker-apps/blob/main/stacks/codex-lb/README.md).
 
 ## Change a preference
 
@@ -107,4 +119,6 @@ The agreement is written to outlast model releases, so it describes how you want
 
 ## Secrets
 
-Nothing here needs a secret. Logins live in `~/.codex/auth.json`, `~/.claude/.credentials.json` on Linux, and the macOS keychain. Log in once on each machine; never copy those files into the repo.
+Logins live in `~/.codex/auth.json`, `~/.claude/.credentials.json` on Linux, and the macOS keychain. Log in once on each machine; never copy those files into the repo.
+
+Provider credentials and authentication headers also stay local. The merge preserves these unmanaged entries in `config.toml`, and chezmoi restricts the file to its owner.

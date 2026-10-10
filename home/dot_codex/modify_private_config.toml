@@ -17,6 +17,8 @@ with sorted keys and no comments.
 
 The codex-lb base URL differs per machine (Rev-9 hosts the balancer), so it
 comes from the resolved features instead of agents.yaml.
+
+Model choices, reasoning effort, and MCP connections stay local to Codex.
 */ -}}
 {{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
 {{- $apps := get (get $features .chezmoi.os | default dict) "apps" | default dict -}}
