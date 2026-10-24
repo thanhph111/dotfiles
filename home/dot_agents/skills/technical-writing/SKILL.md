@@ -101,7 +101,7 @@ Source: Kohl, The Global English Style Guide (SAS Press). Guideline text fetched
 - Apply the **humanizer** skill to every doc this skill touches. That skill owns the catalog of AI-writing patterns: stock vocabulary, filler, hedging, formatting tells.
 - PR descriptions and commit messages are writing too. Every layer except Diátaxis applies to them. A PR body is a briefing that a reviewer can read in under a minute. Do not paste swarm logs, SHA lists, or metric tables. Link them.
 - Product UI strings are not documentation. Use your product's copy guidelines for those.
-- Indent a code snippet the way the language's own formatter does. Write real paths and real symbols. Make every count or tree claim true at the commit that lands it, and include the command that regenerates it.
+- Indent a code snippet the way the language's own formatter does. Write real paths and real symbols. Link to the file or command that gives a count, a default, or a tree instead of copying it. When a doc must state one, make it true at the commit that lands it, and include the command that regenerates it.
 
 ## Worked example
 
@@ -124,4 +124,4 @@ Apply to any prose this skill covers. Item 1 applies only to document sets:
 5. Is "only" next to the word it changes? Does every "it" point at one thing? Does every clause keep its verb?
 6. Does each thing have exactly one name across the docs?
 7. Would a developer say these words out loud? Replace invented metaphors and fancy synonyms with the plain word or the real symbol name.
-8. Are all symbols, paths, and counts real at this commit, with the commands that regenerate the counts?
+8. Are all symbols and paths real at this commit? Does each count, default, or tree link to the source that gives it, or name the command that regenerates it?

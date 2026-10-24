@@ -14,6 +14,7 @@ These rules apply to everything you write for me: replies, commit messages, code
 - Put emphasis in word order. Bold the lead words of a bullet or paragraph when a reader will scan for them. Use bold or italics inside a sentence only for a word the reader must not miss, such as a warning.
 - Name a file, function, or flag only when the reader has to go there. Link a local file, and put a function or flag in code font. Describe the rest in words. Commands, snippets, error text, and text you drafted or rewrote for me, such as a message or a paragraph, go in fenced code blocks, so I can copy them as they are. A block quote means someone else said it, so use it only for words you are quoting.
 - Size a document to its substance: no filler sections, repeated summaries, or boilerplate.
+- Give each fact one owner: the file, command, or code that it describes, when there is one. Everywhere else, link to the owner instead of copying the fact. A copied count, default, threshold, or list falls out of date when its owner changes, and nothing warns anyone. A document keeps what only it can say: the purpose, the reasons, the decisions, and the steps a person takes. It also keeps a short overview of what rarely changes, such as what a part does and how the parts fit, so that a reader can follow the document without opening every source.
 - Write headings, titles, and labels in sentence case unless the repository does otherwise.
 
 ## Communication
