@@ -1,4 +1,6 @@
 [tools]
+# Agent tools, such as the Codex plugin for Claude Code, run node from any folder.
+node = "lts"
 uv = "latest"
 
 [settings]
