@@ -38,6 +38,13 @@ machines:
           security:
             sudo_ssh_agent_auth:
               enabled: true
+          network:
+            ufw:
+              rules:
+                k3s_pods:
+                  enabled: true
+                k3s_services:
+                  enabled: true
           services:
             ssh_server:
               enabled: true
@@ -50,6 +57,8 @@ machines:
             codex_remote_control:
               enabled: true
             samba:
+              enabled: true
+            k3s:
               enabled: true
           apps:
             codex:

@@ -21,7 +21,7 @@ enabled_tcp_ports=(
 {{- range $ruleName := keys $ufwRules | sortAlpha }}
 {{-     $rule := get $ufwRules $ruleName -}}
 {{-     $ruleEnabled := get $rule "enabled" | default false -}}
-{{-     if $ruleEnabled -}}
+{{-     if (and $ruleEnabled (not (hasKey $rule "from"))) -}}
 {{-         $protocol := get $rule "protocol" | default "tcp" -}}
 {{-         if ne $protocol "tcp" -}}
 {{-             fail (printf "ufw rule %q uses unsupported protocol %q; only tcp is supported" $ruleName $protocol) -}}
@@ -34,6 +34,19 @@ enabled_tcp_ports=(
 {{-             $sshAllowed = true -}}
 {{-         end -}}
     {{ $port | quote }}
+{{-     end -}}
+{{- end }}
+)
+
+# A rule with `from` allows all traffic from one network instead of one port.
+allowed_sources=(
+{{- range $ruleName := keys $ufwRules | sortAlpha }}
+{{-     $rule := get $ufwRules $ruleName -}}
+{{-     if (and (get $rule "enabled" | default false) (hasKey $rule "from")) -}}
+{{-         if (or (hasKey $rule "port") (hasKey $rule "protocol")) -}}
+{{-             fail (printf "ufw rule %q sets from together with port or protocol; a rule allows either one network or one TCP port" $ruleName) -}}
+{{-         end }}
+    {{ get $rule "from" | quote }}
 {{-     end -}}
 {{- end }}
 )
@@ -61,11 +74,29 @@ validate_port() {
         die "TCP port must be between 1 and 65535; got $port"
 }
 
+validate_source() {
+    local source="$1"
+    local octet
+    local -a octets
+
+    [[ $source =~ ^([0-9]{1,3}(\.[0-9]{1,3}){3})/([0-9]{1,2})$ ]] ||
+        die "source must be an IPv4 network such as 10.42.0.0/16; got $source"
+    ((10#${BASH_REMATCH[3]} <= 32)) || die "source prefix must be at most 32; got $source"
+    IFS=. read -r -a octets <<<"${BASH_REMATCH[1]}"
+    for octet in "${octets[@]}"; do
+        ((10#$octet <= 255)) || die "source address parts must be at most 255; got $source"
+    done
+}
+
 validate_policy "$default_incoming" default_incoming
 validate_policy "$default_outgoing" default_outgoing
 
 for port in "${enabled_tcp_ports[@]}"; do
     validate_port "$port"
+done
+
+for source in "${allowed_sources[@]}"; do
+    validate_source "$source"
 done
 
 ssh_client_address=''
@@ -101,6 +132,10 @@ sudo ufw default "$default_outgoing" outgoing
 
 for port in "${enabled_tcp_ports[@]}"; do
     sudo ufw allow "${port}/tcp"
+done
+
+for source in "${allowed_sources[@]}"; do
+    sudo ufw allow from "$source"
 done
 
 sudo ufw --force enable

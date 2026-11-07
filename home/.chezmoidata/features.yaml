@@ -71,6 +71,13 @@ features:
         default_incoming: deny
         default_outgoing: allow
         rules:
+          # k3s pods reach the API server and the kubelet on the host itself.
+          k3s_pods:
+            enabled: false
+            from: 10.42.0.0/16
+          k3s_services:
+            enabled: false
+            from: 10.43.0.0/16
           samba:
             enabled: false
             protocol: tcp
@@ -101,6 +108,9 @@ features:
         enabled: false
         share_name: Shared
         directory: Shared
+      k3s:
+        enabled: false
+        version: v1.37.2+k3s1
     apps:
       codex:
         provider_base_url: https://codex-lb.thanhph111.com/backend-api/codex

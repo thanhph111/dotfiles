@@ -1,0 +1,85 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $services := get $linux "services" | default dict -}}
+{{- $k3s := get $services "k3s" | default dict -}}
+{{- $install := get $linux "install" | default dict -}}
+{{- $apt := get $install "apt" | default dict -}}
+{{- $repositories := get $apt "repositories" | default dict -}}
+{{- $nvidiaToolkit := get $repositories "nvidia_container_toolkit" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) (get $k3s "enabled" | default false)) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# k3s finds the NVIDIA runtime only when it starts, so this script runs again,
+# and restarts k3s, whenever the toolkit changes.
+# NVIDIA Container Toolkit: {{ $nvidiaToolkit | toJson }}
+
+version={{ get $k3s "version" | quote }}
+
+die() {
+    printf 'k3s setup: %s\n' "$*" >&2
+    exit 1
+}
+
+minor_version() {
+    [[ "$1" =~ ^v1\.([0-9]+)\.[0-9]+\+k3s[0-9]+$ ]] || return 1
+    printf '%s\n' "${BASH_REMATCH[1]}"
+}
+
+# Runs a command until it succeeds or the given number of seconds has passed.
+retry() {
+    local seconds="$1"
+    shift
+    local deadline=$((SECONDS + seconds))
+
+    until "$@" >/dev/null 2>&1; do
+        ((SECONDS < deadline)) || return 1
+        sleep 2
+    done
+}
+
+target_minor=$(minor_version "$version") || die "invalid k3s version: $version"
+
+# Kubernetes supports neither downgrades nor skipping a minor version.
+if command -v k3s >/dev/null 2>&1; then
+    installed=$(k3s --version | awk 'NR == 1 { print $3 }')
+    installed_minor=$(minor_version "$installed") || die "cannot read the installed k3s version: $installed"
+    if ((target_minor < installed_minor || target_minor > installed_minor + 1)); then
+        die "cannot move from $installed to $version; raise k3s one minor version at a time"
+    fi
+fi
+
+config="$(mktemp)"
+installer="$(mktemp)"
+trap 'rm -f "$config" "$installer"' EXIT
+
+# The platform runs its own gateway on loopback, so k3s must not deploy its
+# packaged Traefik and ServiceLB, which take the host's ports 80 and 443.
+cat >"$config" <<'EOF'
+disable:
+  - traefik
+  - servicelb
+secrets-encryption: true
+EOF
+sudo install -D -m 0600 "$config" /etc/rancher/k3s/config.yaml
+
+# The installer from the release's own tag installs that release and checks the
+# binary's hash. It restarts k3s, so a changed configuration takes effect too.
+# kubectl keeps meaning the Homebrew client, so the installer adds no symlinks.
+curl -fsSL "https://raw.githubusercontent.com/k3s-io/k3s/${version/+/%2B}/install.sh" -o "$installer"
+INSTALL_K3S_VERSION="$version" INSTALL_K3S_SYMLINK=skip INSTALL_K3S_FORCE_RESTART=true sh "$installer"
+
+retry 300 sudo k3s kubectl wait --for=condition=Ready nodes --all --timeout=10s ||
+    die 'the node did not become Ready'
+retry 300 sudo k3s kubectl --namespace kube-system wait --for=condition=Available deployment/coredns --timeout=10s ||
+    die 'CoreDNS did not become available; with UFW on, enable the k3s_pods and k3s_services rules'
+
+if command -v nvidia-container-runtime >/dev/null 2>&1; then
+    sudo grep -q nvidia /var/lib/rancher/k3s/agent/etc/containerd/config.toml ||
+        die 'k3s did not register the NVIDIA runtime'
+fi
+
+{{- end -}}

@@ -13,6 +13,7 @@ It manages shell files, app config, package lists, desktop settings, services, a
 - Work on remote access and network services: [remote access](./docs/guides/remote-access.md).
 - Manage Codex and Claude Code config: [AI tools](./docs/guides/ai-tools.md).
 - Set up NVIDIA GPU access for containers: [NVIDIA containers](./docs/guides/nvidia-containers.md).
+- Run the k3s host of the container platform: [k3s](./docs/guides/k3s.md).
 - Review shell startup trust: [shell startup](./docs/guides/shell-startup.md).
 - Run checks before applying: [checks](./docs/guides/checks.md).
 

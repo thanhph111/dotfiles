@@ -40,6 +40,7 @@ Important groups:
 - `services.code_server`: user code-server service.
 - `services.codex_remote_control`: durable Codex Remote user service.
 - `services.samba`: authenticated access to one user folder over SMB.
+- `services.k3s`: the pinned k3s release and its configuration. See [k3s](../guides/k3s.md).
 - `apps.codex`: base URL of the Codex model provider (`codex-lb`).
 
 Services do not open firewall ports by themselves. UFW owns firewall policy in one place:
@@ -52,6 +53,17 @@ network:
         enabled: true
         protocol: tcp
         port: 22
+```
+
+A rule with `from` instead of a port allows all traffic from one IPv4 network. k3s uses two such rules for its pod and service networks:
+
+```yaml
+network:
+  ufw:
+    rules:
+      k3s_pods:
+        enabled: true
+        from: 10.42.0.0/16
 ```
 
 ## macOS

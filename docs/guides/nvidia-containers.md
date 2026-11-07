@@ -32,6 +32,8 @@ sudo nvidia-ctk runtime configure --runtime=docker
 
 It preserves Docker's other daemon settings and does not select NVIDIA as the default runtime.
 
+On a host that also runs [k3s](./k3s.md), k3s registers the toolkit's runtimes in its own containerd when it starts, and its setup script restarts k3s whenever the toolkit changes. Pods ask for the GPU with `runtimeClassName: nvidia`.
+
 ## Verify
 
 Run the read-only host check:
