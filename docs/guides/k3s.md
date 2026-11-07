@@ -1,6 +1,6 @@
 # k3s
 
-k3s is a compact Kubernetes for one machine. On Rev-9 it runs `lotus`, the container platform for my projects. Dotfiles owns the host side of the cluster, and the infrastructure repository owns everything inside it, as its [platform architecture](https://github.com/thanhph111/infrastructure/blob/main/docs/platform/architecture.md) describes.
+k3s is a compact Kubernetes for one machine. On Rev-9 it runs Lotus, the container platform for my projects. Dotfiles owns the host side of the cluster, and the infrastructure repository owns everything inside it, as its [platform architecture](https://github.com/thanhph111/infrastructure/blob/main/docs/platform/architecture.md) describes.
 
 ## Ownership
 
