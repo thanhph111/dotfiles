@@ -1,0 +1,25 @@
+{{- $features := includeTemplate "resolved-features.json" . | fromJson -}}
+{{- $machine := includeTemplate "resolved-machine.json" . | fromJson -}}
+{{- $linux := get $features "linux" | default dict -}}
+{{- $network := get $linux "network" | default dict -}}
+{{- $reversePathFilter := get $network "reverse_path_filter" | default dict -}}
+{{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) (get $reversePathFilter "enabled" | default false)) -}}
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# The kernel uses the higher of "all" and an interface's own value, so "all"
+# makes strict every interface left at 0, and "default" covers new interfaces.
+config=/etc/sysctl.d/60-reverse-path-filter.conf
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+cat >"$tmp" <<'EOF'
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+EOF
+sudo install -D -m 0644 "$tmp" "$config"
+sudo sysctl --quiet --load="$config"
+
+{{- end -}}

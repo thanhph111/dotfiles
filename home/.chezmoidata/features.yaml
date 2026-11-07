@@ -94,6 +94,10 @@ features:
             enabled: false
             protocol: tcp
             port: 3389
+      # Strict mode drops an incoming packet whose source address the host
+      # would not route back through the interface it arrived on.
+      reverse_path_filter:
+        enabled: false
     services:
       ssh_server:
         enabled: false

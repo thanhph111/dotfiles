@@ -35,6 +35,7 @@ Important groups:
 - `security.sudoers_disable_admin_flag`: sudoers cleanup.
 - `security.sudo_ssh_agent_auth`: sudo through a trusted forwarded SSH agent.
 - `network.ufw`: UFW firewall policy.
+- `network.reverse_path_filter`: strict reverse-path filtering, which drops an incoming packet whose source address the host would not route back through the interface it arrived on.
 - `services.ssh_server`: OpenSSH server config.
 - `services.xrdp`: RDP service.
 - `services.code_server`: user code-server service.

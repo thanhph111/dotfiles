@@ -45,6 +45,11 @@ machines:
                   enabled: true
                 k3s_services:
                   enabled: true
+            # Its kernel otherwise accepts LAN packets that forge a pod or
+            # container address, and k3s's network policy chains accept a
+            # live pod's address before UFW sees it.
+            reverse_path_filter:
+              enabled: true
           services:
             ssh_server:
               enabled: true
