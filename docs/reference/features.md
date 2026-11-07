@@ -55,7 +55,7 @@ network:
         port: 22
 ```
 
-A rule with `from` instead of a port allows all traffic from one IPv4 network. k3s uses two such rules for its pod and service networks:
+A rule with `from` instead of a port allows all traffic from one IPv4 network. With `interface`, it allows that traffic only when it arrives through that network interface. k3s uses two such rules for its pod and service networks:
 
 ```yaml
 network:
@@ -64,6 +64,7 @@ network:
       k3s_pods:
         enabled: true
         from: 10.42.0.0/16
+        interface: cni0
 ```
 
 ## macOS

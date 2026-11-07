@@ -51,6 +51,8 @@ The script installs the pinned release with the installer from that release's ow
 
 UFW denies incoming traffic by default, and pods reach the API server and the kubelet on the host itself. The `k3s_pods` and `k3s_services` rules allow k3s's default pod and service networks, as the [k3s requirements](https://docs.k3s.io/installation/requirements) ask. Without them, CoreDNS never becomes available, and the script stops with that message.
 
+Both rules accept traffic only through `cni0`, the bridge that every pod on a single node uses. A rule on the source address alone would also accept a packet that a host on the LAN sends with a forged pod address, on any port. That includes flannel's VXLAN port 8472/udp, which k3s says must not be exposed.
+
 The API server's port 6443 stays closed to the LAN. An enrolled WARP device reaches it through the tunnel's private route to Rev-9, because `cloudflared` connects to it from the host itself.
 
 ## Upgrade

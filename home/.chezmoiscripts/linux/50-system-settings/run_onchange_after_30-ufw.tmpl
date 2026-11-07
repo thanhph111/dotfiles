@@ -22,6 +22,9 @@ enabled_tcp_ports=(
 {{-     $rule := get $ufwRules $ruleName -}}
 {{-     $ruleEnabled := get $rule "enabled" | default false -}}
 {{-     if (and $ruleEnabled (not (hasKey $rule "from"))) -}}
+{{-         if hasKey $rule "interface" -}}
+{{-             fail (printf "ufw rule %q sets interface without from; only a rule with from can name an interface" $ruleName) -}}
+{{-         end -}}
 {{-         $protocol := get $rule "protocol" | default "tcp" -}}
 {{-         if ne $protocol "tcp" -}}
 {{-             fail (printf "ufw rule %q uses unsupported protocol %q; only tcp is supported" $ruleName $protocol) -}}
@@ -39,6 +42,8 @@ enabled_tcp_ports=(
 )
 
 # A rule with `from` allows all traffic from one network instead of one port.
+# Each entry is the network, then the interface the traffic must arrive
+# through when the rule names one.
 allowed_sources=(
 {{- range $ruleName := keys $ufwRules | sortAlpha }}
 {{-     $rule := get $ufwRules $ruleName -}}
@@ -46,7 +51,7 @@ allowed_sources=(
 {{-         if (or (hasKey $rule "port") (hasKey $rule "protocol")) -}}
 {{-             fail (printf "ufw rule %q sets from together with port or protocol; a rule allows either one network or one TCP port" $ruleName) -}}
 {{-         end }}
-    {{ get $rule "from" | quote }}
+    {{ printf "%v %v" (get $rule "from") (get $rule "interface" | default "") | trim | quote }}
 {{-     end -}}
 {{- end }}
 )
@@ -88,6 +93,10 @@ validate_source() {
     done
 }
 
+validate_interface() {
+    [[ $1 =~ ^[A-Za-z0-9_.-]{1,15}$ ]] || die "interface must be a network interface name; got $1"
+}
+
 validate_policy "$default_incoming" default_incoming
 validate_policy "$default_outgoing" default_outgoing
 
@@ -95,8 +104,10 @@ for port in "${enabled_tcp_ports[@]}"; do
     validate_port "$port"
 done
 
-for source in "${allowed_sources[@]}"; do
+for source_rule in "${allowed_sources[@]}"; do
+    read -r source interface <<<"$source_rule"
     validate_source "$source"
+    [[ -z "$interface" ]] || validate_interface "$interface"
 done
 
 ssh_client_address=''
@@ -134,8 +145,13 @@ for port in "${enabled_tcp_ports[@]}"; do
     sudo ufw allow "${port}/tcp"
 done
 
-for source in "${allowed_sources[@]}"; do
-    sudo ufw allow from "$source"
+for source_rule in "${allowed_sources[@]}"; do
+    read -r source interface <<<"$source_rule"
+    if [[ -n "$interface" ]]; then
+        sudo ufw allow in on "$interface" from "$source"
+    else
+        sudo ufw allow from "$source"
+    fi
 done
 
 sudo ufw --force enable

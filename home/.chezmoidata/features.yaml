@@ -72,12 +72,16 @@ features:
         default_outgoing: allow
         rules:
           # k3s pods reach the API server and the kubelet on the host itself.
+          # On one node that traffic arrives only through the bridge cni0, so a
+          # LAN host that forges a pod address does not match these rules.
           k3s_pods:
             enabled: false
             from: 10.42.0.0/16
+            interface: cni0
           k3s_services:
             enabled: false
             from: 10.43.0.0/16
+            interface: cni0
           samba:
             enabled: false
             protocol: tcp
