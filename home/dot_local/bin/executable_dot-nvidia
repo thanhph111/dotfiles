@@ -4,7 +4,7 @@
 # shellcheck shell=bash
 
 #USAGE about "Operate the NVIDIA GPU and its container runtime"
-#USAGE cmd "check" help="Check the host driver and the Docker runtime"
+#USAGE cmd "check" help="Check the host driver and the container runtimes that use it"
 #USAGE cmd "monitor" help="Watch GPU state until interrupted" {
 #USAGE     flag "-i --interval <seconds>" help="Update interval, default 1"
 #USAGE     flag "-c --compact" help="Show compact output"
@@ -36,20 +36,27 @@ NC='\033[0m' # No Color
 
 # Function to check if nvidia-smi is available
 check_runtime() {
-    for command in docker nvidia-container-cli nvidia-smi systemctl; do
+    for command in nvidia-container-cli nvidia-smi; do
         if ! command -v "$command" >/dev/null 2>&1; then
             printf 'Missing command: %s\n' "$command" >&2
             exit 1
         fi
     done
 
-    sudo systemctl is-active --quiet docker.service
     nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
     sudo nvidia-container-cli info >/dev/null
 
-    if ! sudo docker info 2>/dev/null |
-        grep -Eq '^[[:space:]]*Runtimes:.*(^|[[:space:]])nvidia([[:space:]]|$)'; then
-        echo 'Docker has not registered the nvidia runtime' >&2
+    if command -v docker >/dev/null 2>&1; then
+        sudo systemctl is-active --quiet docker.service
+        if ! sudo docker info 2>/dev/null |
+            grep -Eq '^[[:space:]]*Runtimes:.*(^|[[:space:]])nvidia([[:space:]]|$)'; then
+            echo 'Docker has not registered the nvidia runtime' >&2
+            exit 1
+        fi
+    fi
+    if command -v k3s >/dev/null 2>&1 &&
+        ! sudo grep -q nvidia /var/lib/rancher/k3s/agent/etc/containerd/config.toml; then
+        echo 'k3s has not registered the nvidia runtime' >&2
         exit 1
     fi
 

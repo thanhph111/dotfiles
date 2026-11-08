@@ -6,6 +6,8 @@
 {{- $repositories := get $apt "repositories" | default dict -}}
 {{- $nvidiaToolkit := get $repositories "nvidia_container_toolkit" | default dict -}}
 {{- $nvidiaToolkitEnabled := get $nvidiaToolkit "enabled" | default false -}}
+{{- $docker := get $repositories "docker" | default dict -}}
+{{- $dockerEnabled := get $docker "enabled" | default false -}}
 {{- if (and (eq .chezmoi.os "linux") (get $machine "hasSudo") (not (get $machine "shared")) $nvidiaToolkitEnabled) -}}
 
 #!/usr/bin/env bash
@@ -19,13 +21,16 @@ die() {
     exit 1
 }
 
-for command in docker nvidia-container-cli nvidia-ctk nvidia-smi systemctl; do
+for command in nvidia-container-cli nvidia-ctk nvidia-smi; do
     command -v "$command" >/dev/null 2>&1 || die "$command is not installed"
 done
 
+nvidia-smi >/dev/null || die 'the NVIDIA driver cannot access a GPU'
+
+{{- if $dockerEnabled }}
+command -v docker >/dev/null 2>&1 || die 'docker is not installed'
 [[ "$(systemctl show -p LoadState --value docker.service 2>/dev/null || true)" == loaded ]] ||
     die 'docker.service is not installed'
-nvidia-smi >/dev/null || die 'the NVIDIA driver cannot access a GPU'
 
 # NVIDIA owns the daemon.json merge behavior. Do not make its runtime the
 # default: Compose stacks must ask for the GPU explicitly.
@@ -36,6 +41,7 @@ sudo systemctl is-active --quiet docker.service || die 'docker.service did not r
 if ! sudo docker info 2>/dev/null | grep -Eq '^[[:space:]]*Runtimes:.*(^|[[:space:]])nvidia([[:space:]]|$)'; then
     die 'Docker did not register the nvidia runtime'
 fi
+{{- end }}
 
 sudo nvidia-container-cli info >/dev/null || die 'the NVIDIA runtime cannot access the host driver'
 

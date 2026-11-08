@@ -1,6 +1,6 @@
 # NVIDIA containers
 
-The NVIDIA Container Toolkit gives selected Docker Compose services access to a host GPU. The application still has to ask for a GPU; the NVIDIA runtime is not Docker's default runtime.
+The NVIDIA Container Toolkit gives containers access to a host GPU: pods in [k3s](./k3s.md), and Docker services on a machine that enables Docker. A workload still has to ask for the GPU, because the NVIDIA runtime is never the default.
 
 ## Ownership
 
@@ -8,23 +8,23 @@ Dotfiles owns the host side:
 
 - NVIDIA's production APT repository and signing key;
 - the exact toolkit package version;
-- Docker's NVIDIA runtime registration;
-- the Docker restart and host-level verification.
+- Docker's NVIDIA runtime registration and restart, on a machine that enables Docker;
+- host-level verification.
 
-Each application repository owns whether its Compose service requests the GPU and which video features it enables.
+Each application owns whether its workload requests the GPU and which video features it enables.
 
 The feature is off by default and enabled per machine in `machines.yaml`. `features.yaml` owns the pinned package version. Upgrade it deliberately there after reviewing NVIDIA's release notes.
 
 ## Apply
 
-Preview every setup script because this change installs packages, updates `/etc/docker/daemon.json`, and restarts Docker:
+Preview every setup script, because this change installs packages and, where Docker is enabled, updates `/etc/docker/daemon.json` and restarts Docker:
 
 ```bash
 chezmoi diff --exclude=none --no-pager
 chezmoi apply
 ```
 
-The runtime setup uses NVIDIA's supported command:
+Where Docker is enabled, the runtime setup uses NVIDIA's supported command:
 
 ```bash
 sudo nvidia-ctk runtime configure --runtime=docker
@@ -42,7 +42,7 @@ Run the read-only host check:
 dot-nvidia check
 ```
 
-It checks the host driver, Docker service, registered `nvidia` runtime, and the toolkit's access to the driver. Application-level GPU use needs an application-specific workload. For a media server, force a transcode and confirm both the GPU process and output codec; a normal HTTP health check is not enough.
+It checks the host driver, the toolkit's access to it, and the `nvidia` runtime of Docker and of k3s, each where it is installed. Application-level GPU use needs an application-specific workload. For a media server, force a transcode and confirm both the GPU process and output codec; a normal HTTP health check is not enough.
 
 ## References
 
