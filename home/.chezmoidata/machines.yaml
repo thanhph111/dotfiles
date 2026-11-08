@@ -33,6 +33,9 @@ machines:
           install:
             apt:
               repositories:
+                # Containers run only in k3s, which has its own containerd.
+                docker:
+                  enabled: false
                 nvidia_container_toolkit:
                   enabled: true
           security:

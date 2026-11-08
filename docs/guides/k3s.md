@@ -86,7 +86,7 @@ sudo k3s kubectl --namespace kube-system get pods
 sudo grep nvidia /var/lib/rancher/k3s/agent/etc/containerd/config.toml
 ```
 
-k3s runs its own containerd, so Docker and its Compose stacks keep running beside it.
+k3s runs its own containerd and needs no Docker.
 
 ## Remove
 
