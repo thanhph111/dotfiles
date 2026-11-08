@@ -63,6 +63,12 @@ disable:
   - traefik
   - servicelb
 secrets-encryption: true
+{{- with get $k3s "tls_san" }}
+tls-san:
+{{- range . }}
+  - {{ . }}
+{{- end }}
+{{- end }}
 EOF
 sudo install -D -m 0600 "$config" /etc/rancher/k3s/config.yaml
 

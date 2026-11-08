@@ -119,6 +119,9 @@ features:
       k3s:
         enabled: false
         version: v1.37.2+k3s1
+        # Extra names that the API server's certificate covers, such as a
+        # private name that people reach it by through WARP.
+        tls_san: []
     apps:
       codex:
         provider_base_url: https://codex-lb.thanhph111.com/backend-api/codex

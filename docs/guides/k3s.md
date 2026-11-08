@@ -1,6 +1,6 @@
 # k3s
 
-k3s is a compact Kubernetes for one machine. On Rev-9 it runs Lotus, the container platform for my projects. Dotfiles owns the host side of the cluster, and the infrastructure repository owns everything inside it, as its [platform architecture](https://github.com/thanhph111/infrastructure/blob/main/docs/platform/architecture.md) describes.
+k3s is a compact Kubernetes for one machine. On Rev-9 it runs Lotus, an environment of the container platform for my projects. Dotfiles owns the host side of the cluster, and the infrastructure repository owns everything inside it, as its [platform architecture](https://github.com/thanhph111/infrastructure/blob/main/docs/platform/architecture.md) describes.
 
 ## Ownership
 
@@ -47,6 +47,7 @@ The script installs the pinned release with the installer from that release's ow
 
 - **No packaged Traefik or ServiceLB.** They would take the host's ports 80 and 443. The platform runs its own gateway on `127.0.0.1` instead.
 - **Secrets encryption.** k3s encrypts Secrets in its datastore.
+- **Extra API server names** in `tls_san`. The certificate covers the machine's own names, so a tool that reaches the API server by another name needs it listed. Rev-9 lists `lotus.home.arpa`, which Cloudflare Gateway resolves to Rev-9 for the owner, for tools such as Radar on the Mac. Changing the list restarts k3s once, and the running pods keep running.
 - **A root-only admin kubeconfig.** k3s writes `/etc/rancher/k3s/k3s.yaml` owned by root with mode `0600`. If my user could read it, every process of mine, the Codex Remote service included, would hold cluster-admin rights. Use `sudo k3s kubectl` on the host. The plain `kubectl` command stays the Homebrew client.
 
 ## Firewall

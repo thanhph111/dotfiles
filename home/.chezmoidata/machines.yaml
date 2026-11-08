@@ -65,6 +65,9 @@ machines:
               enabled: true
             k3s:
               enabled: true
+              # The private name of the environment Lotus's API server,
+              # which Cloudflare Gateway resolves to this host for WARP.
+              tls_san: [lotus.home.arpa]
           apps:
             codex:
               # codex-lb runs on this host in Docker, so skip the Cloudflare round trip.
