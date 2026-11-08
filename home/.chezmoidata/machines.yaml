@@ -70,8 +70,10 @@ machines:
               tls_san: [lotus.home.arpa]
           apps:
             codex:
-              # codex-lb runs on this host in Docker, so skip the Cloudflare round trip.
-              provider_base_url: http://127.0.0.1:2455/backend-api/codex
+              # Codex LB runs on this host as a tenant of Lotus, at the address
+              # that its record grants, which only this host reaches, so the
+              # Codex CLI skips the Cloudflare round trip.
+              provider_base_url: http://10.43.0.21:2455/backend-api/codex
 
     sonny:
       displayName: Sonny
