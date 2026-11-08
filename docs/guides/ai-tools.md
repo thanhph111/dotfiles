@@ -93,7 +93,7 @@ features:
 
 Rev-9 hosts the balancer in Docker and points at `http://127.0.0.1:2455/backend-api/codex` in `machines.yaml`. Other machines reach the public URL through Cloudflare Access, which lets WARP-enrolled devices through without a service token. A machine that still needs the token can add `http_headers` under `[model_providers.codex-lb]` by hand; the merge keeps it.
 
-Service configuration and operation belong to [docker-apps' codex-lb stack](https://github.com/thanhph111/docker-apps/blob/main/stacks/codex-lb/README.md).
+Service configuration and operation belong to [homelab-apps' codex-lb stack](https://github.com/thanhph111/homelab-apps/blob/main/stacks/codex-lb/README.md).
 
 ## Change a preference
 
