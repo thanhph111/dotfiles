@@ -46,6 +46,8 @@ brew "telnet"
 brew "topgrade"
 # Tool for working with usage-spec CLIs
 brew "usage"
+# Port of OpenAI's Whisper model in C/C++
+brew "whisper.cpp"
 # Check your $HOME for unwanted files and directories
 brew "xdg-ninja"
 # Fish-like fast/unobtrusive autosuggestions for zsh
@@ -62,6 +64,8 @@ cask "1password-cli"
 cask "affinity"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
+# Agent orchestration platform
+cask "antigravity"
 # Terminal interface for Antigravity agents
 cask "antigravity-cli"
 # Temporary notes with calculations and extensible features
@@ -96,6 +100,8 @@ cask "font-sf-mono-nerd-font-ligaturized"
 cask "font-sf-pro"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
+# Web browser
+cask "google-chrome"
 # Download manager for URLs, magnet links, and torrent files
 cask "thsnkhn/harbor/harbor", trusted: true
 # Utility to hide menu bar items
@@ -122,6 +128,8 @@ cask "skyhook-io/tap/radar-desktop", trusted: true
 cask "radix"
 # Control your tools with a few keystrokes
 cask "raycast"
+# Client for the Progress ShareFile storage service
+cask "sharefile"
 # Screenshot measurement and annotation tool
 cask "shottr"
 # Music streaming service
@@ -153,6 +161,7 @@ mas "Folder Preview", id: 6698876601
 mas "Folder Quick Look", id: 6753110395
 mas "HacKit", id: 1549557075
 mas "Keynote", id: 361285480
+mas "Microsoft Excel", id: 462058435
 mas "Microsoft PowerPoint", id: 462062816
 mas "Numbers", id: 361304891
 mas "OneDrive", id: 823766827
