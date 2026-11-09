@@ -1,0 +1,47 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "local>thanhph111/infrastructure//github/accounts/thanhph111/renovate/default.json5"
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "description": "The k3s release that dotfiles installs",
+            "managerFilePatterns": [
+                "/^home/\\.chezmoidata/features\\.yaml$/"
+            ],
+            "matchStrings": [
+                "k3s:\\s+enabled:\\s+\\w+\\s+version:\\s*(?<currentValue>v\\S+)"
+            ],
+            "depNameTemplate": "k3s-io/k3s",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+k3s(?<build>\\d+)$"
+        },
+        {
+            "customType": "regex",
+            "description": "The NVIDIA Container Toolkit packages that dotfiles pins, without their Debian revision",
+            "managerFilePatterns": [
+                "/^home/\\.chezmoidata/features\\.yaml$/"
+            ],
+            "matchStrings": [
+                "nvidia_container_toolkit:\\s+enabled:\\s+\\w+\\s+package_version:\\s*(?<currentValue>\\d+\\.\\d+\\.\\d+)-\\d+"
+            ],
+            "depNameTemplate": "NVIDIA/nvidia-container-toolkit",
+            "datasourceTemplate": "github-releases",
+            "extractVersionTemplate": "^v(?<version>.+)$"
+        }
+    ],
+    "packageRules": [
+        {
+            "description": "Raise k3s one minor version at a time, after checking that Flux supports it, as the k3s guide says",
+            "matchDepNames": [
+                "k3s-io/k3s"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "major"
+            ],
+            "dependencyDashboardApproval": true
+        }
+    ]
+}
