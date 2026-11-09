@@ -33,10 +33,6 @@ brew "jq"
 brew "k9s"
 # Kubernetes command-line interface
 brew "kubernetes-cli"
-# Lazier way to manage everything docker
-brew "lazydocker"
-# Run a Kubernetes cluster locally
-brew "minikube"
 # Polyglot runtime manager (asdf rust clone)
 brew "mise"
 # Remote terminal application
@@ -79,6 +75,8 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 # Session attach/detach for the terminal
 brew "neurosnap/tap/zmx", trusted: true
+# Terminal interface for Antigravity agents
+cask "antigravity-cli"
 # Terminal-based AI coding assistant
 cask "claude-code"
 # OpenAI's coding agent that runs in your terminal
