@@ -10,13 +10,20 @@ file, overwrites only the managed keys, and writes everything else back
 unchanged. Removing a key from agents.yaml does not remove it from the
 machine.
 
-When every managed key already holds its value, the current file is returned
-byte for byte, so Codex's own formatting and additions never show up as
-drift. Only a real difference triggers a rewrite, and that rewrite comes out
-with sorted keys and no comments.
+When every managed key already holds its value and the provider switch sits
+at the top, the current file is returned byte for byte, so Codex's own
+formatting and additions never show up as drift. Anything else triggers a
+rewrite, and that rewrite comes out with the switch, then sorted keys and no
+comments.
 
 The codex-lb base URL differs per machine (Rev-9 hosts the balancer), so it
 comes from the resolved features instead of agents.yaml.
+
+The template declares the codex-lb provider but never selects it. The file
+starts with a provider switch: model_provider and
+experimental_realtime_ws_base_url, each commented out unless the machine
+already sets it. Commenting or uncommenting them is a hand edit that an
+apply keeps.
 
 Model choices, reasoning effort, and MCP connections stay local to Codex.
 */ -}}
@@ -29,10 +36,26 @@ Model choices, reasoning effort, and MCP connections stay local to Codex.
 {{- $current := .chezmoi.stdin | fromToml -}}
 {{- $managed := deepCopy .agents.codex.config -}}
 {{- $managed = setValueAtPath "model_providers.codex-lb.base_url" $url $managed -}}
-{{- $managed = setValueAtPath "experimental_realtime_ws_base_url" $url $managed -}}
 {{- $merged := mergeOverwrite (deepCopy $current) $managed -}}
-{{- if eq (toJson $current) (toJson $merged) -}}
+{{- $provider := printf "# model_provider = %s" (toJson "codex-lb") -}}
+{{- if hasKey $current "model_provider" -}}
+{{-     $provider = printf "model_provider = %s" (toJson $current.model_provider) -}}
+{{- end -}}
+{{- $realtime := printf "# experimental_realtime_ws_base_url = %s" (toJson $url) -}}
+{{- if hasKey $current "experimental_realtime_ws_base_url" -}}
+{{-     $realtime = printf "experimental_realtime_ws_base_url = %s" (toJson $current.experimental_realtime_ws_base_url) -}}
+{{- end -}}
+{{- $switch := list
+      "# Codex provider: uncomment both lines below to route Codex through codex-lb."
+      "# Comment them out again to use this machine's ChatGPT login. Restart Codex after a change."
+      $provider
+      $realtime
+      "" "" | join "\n" -}}
+{{- if and (eq (toJson $current) (toJson $merged)) (hasPrefix $switch .chezmoi.stdin) -}}
 {{-     .chezmoi.stdin -}}
 {{- else -}}
-{{-     toToml $merged -}}
+{{-     $body := deleteValueAtPath "model_provider" $merged -}}
+{{-     $body = deleteValueAtPath "experimental_realtime_ws_base_url" $body -}}
+{{-     $switch -}}
+{{-     toToml $body -}}
 {{- end -}}

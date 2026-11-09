@@ -79,9 +79,17 @@ The two merged files are the only targets with app state in them. Before the fir
 
 If something is wrong, copy the `.bak` files back. A later `chezmoi status` showing `MM` on one of these files means a managed key changed on the machine, for example an approval policy switched in the app. Apply to restore the repo value, or edit `agents.yaml` to adopt the new one.
 
-## Per-machine values
+## Codex provider
 
-Codex uses the `codex-lb` provider declared in `agents.yaml`. Its base URL comes from the machine's resolved features:
+`agents.yaml` declares the `codex-lb` provider but does not select it. Each machine chooses with a switch at the top of `~/.codex/config.toml`: a `model_provider` line and an `experimental_realtime_ws_base_url` line, commented out by default.
+
+- Uncomment both lines to route the machine through codex-lb, including Codex's realtime websocket.
+- Comment them out again to use the built-in OpenAI provider and the account Codex is logged in with.
+- Restart Codex after a change. For the desktop app, quit it fully, not just its window.
+
+An apply keeps whichever state the lines are in. A file without the switch at the top gets it on the next apply, which rewrites the file once as described in the merge rule. A new machine therefore starts on its own account.
+
+The provider's base URL comes from the machine's resolved features:
 
 ```yaml
 features:

@@ -2,9 +2,9 @@ agents:
   # Model choices, reasoning effort, and MCP connections stay local to each agent.
   # Preferences merged into ~/.codex/config.toml. Keys mirror the TOML layout.
   # The codex-lb base URL is a per-machine feature: features.<os>.apps.codex.provider_base_url.
+  # model_provider stays local, so each machine chooses codex-lb or its own login by hand.
   codex:
     config:
-      model_provider: codex-lb
       approval_policy: never
       sandbox_mode: danger-full-access
       approvals_reviewer: user
