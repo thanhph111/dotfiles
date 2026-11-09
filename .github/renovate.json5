@@ -1,7 +1,62 @@
+// dotfiles is public, and Renovate does not let a public repository read a
+// preset from a private one. So this config repeats the default preset in
+// thanhph111/infrastructure, github/accounts/thanhph111/renovate/default.json5,
+// and adds dotfiles' own managers and rules. Change both together.
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "local>thanhph111/infrastructure//github/accounts/thanhph111/renovate/default.json5"
+        "config:best-practices"
+    ],
+    "labels": [
+        "dependencies"
+    ],
+    "minimumReleaseAge": "7 days",
+    "internalChecksFilter": "strict",
+    "prConcurrentLimit": 2,
+    "major": {
+        "dependencyDashboardApproval": true
+    },
+    "pre-commit": {
+        "enabled": true
+    },
+    "packageRules": [
+        {
+            "description": "Raise k3s one minor version at a time, after checking that Flux supports it, as the k3s guide says",
+            "matchDepNames": [
+                "k3s-io/k3s"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "major"
+            ],
+            "dependencyDashboardApproval": true
+        },
+        {
+            "description": "Digests and lock files have no release timestamps, so a minimum age would hold them forever",
+            "matchUpdateTypes": [
+                "pinDigest",
+                "digest",
+                "lockFileMaintenance"
+            ],
+            "minimumReleaseAge": null
+        },
+        {
+            "description": "GHCR images have no release timestamps either",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "/^ghcr\\.io\\//"
+            ],
+            "minimumReleaseAge": null
+        },
+        {
+            "description": "Move the tools that check a repository together",
+            "matchManagers": [
+                "mise"
+            ],
+            "groupName": "project check tools"
+        }
     ],
     "customManagers": [
         {
@@ -29,19 +84,40 @@
             "depNameTemplate": "NVIDIA/nvidia-container-toolkit",
             "datasourceTemplate": "github-releases",
             "extractVersionTemplate": "^v(?<version>.+)$"
-        }
-    ],
-    "packageRules": [
+        },
         {
-            "description": "Raise k3s one minor version at a time, after checking that Flux supports it, as the k3s guide says",
-            "matchDepNames": [
-                "k3s-io/k3s"
+            "customType": "regex",
+            "description": "dprint's own plugins, named in their URL",
+            "managerFilePatterns": [
+                "/(^|/)\\.?dprint\\.jsonc?$/"
             ],
-            "matchUpdateTypes": [
-                "minor",
-                "major"
+            "matchStrings": [
+                "https://plugins\\.dprint\\.dev/(?<depName>[a-z]+)-(?<currentValue>\\d+\\.\\d+\\.\\d+)\\.wasm"
             ],
-            "dependencyDashboardApproval": true
+            "packageNameTemplate": "dprint/dprint-plugin-{{{depName}}}",
+            "datasourceTemplate": "github-releases"
+        },
+        {
+            "customType": "regex",
+            "description": "Other authors' dprint plugins, named by their repository in the URL",
+            "managerFilePatterns": [
+                "/(^|/)\\.?dprint\\.jsonc?$/"
+            ],
+            "matchStrings": [
+                "https://plugins\\.dprint\\.dev/(?<depName>[^/\"\\s]+/[^/\"\\s]+?)-(?<currentValue>v?\\d+\\.\\d+\\.\\d+)\\.wasm"
+            ],
+            "datasourceTemplate": "github-releases"
+        },
+        {
+            "customType": "regex",
+            "description": "The hook repositories that prek runs",
+            "managerFilePatterns": [
+                "/(^|/)prek\\.toml$/"
+            ],
+            "matchStrings": [
+                "repo = \"https://github\\.com/(?<depName>[^\"\\s]+)\"\\s+rev = \"(?<currentValue>[^\"]+)\""
+            ],
+            "datasourceTemplate": "github-tags"
         }
     ]
 }
