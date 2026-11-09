@@ -1,6 +1,6 @@
 tap "neurosnap/tap"
 tap "shaunsingh/sfmono-nerd-font-ligaturized", trusted: { casks: ["font-sf-mono-nerd-font-ligaturized"] }
-tap "skyhook-io/tap"
+tap "skyhook-io/tap", trusted: true
 tap "thsnkhn/harbor", trusted: true
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
@@ -97,7 +97,7 @@ cask "font-sf-pro"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
 # Download manager for URLs, magnet links, and torrent files
-cask "thsnkhn/harbor/harbor"
+cask "thsnkhn/harbor/harbor", trusted: true
 # Utility to hide menu bar items
 cask "hiddenbar"
 # Free and open-source media player
