@@ -25,7 +25,7 @@ features:
             enabled: true
           nvidia_container_toolkit:
             enabled: false
-            package_version: 1.20.0-1
+            package_version: 1.20.1-1
           ibus_bamboo:
             enabled: true
           cloudflare_warp:
