@@ -58,10 +58,23 @@ export MODAL_CONFIG_PATH="$XDG_CONFIG_HOME/modal.toml"
 
 # Docker, Kubernetes, and Minikube.
 #
-# KUBECONFIG moves the cluster credentials file and KUBECACHEDIR moves
-# kubectl's discovery and HTTP caches, so kubectl no longer uses ~/.kube.
+# Every kubeconfig sits in ~/.config/kube as <cluster>.yaml: a real file when a
+# task writes it there, or a symlink to the file that its owner keeps, so no
+# credential is ever copied. Radar scans the same folder. KUBECONFIG lists them
+# after a state file that takes the current context, so switching never rewrites
+# another owner's file; a symlink whose target is missing is left out. A new
+# kubeconfig shows up in the next shell. KUBECACHEDIR moves kubectl's discovery
+# and HTTP caches, so kubectl no longer uses ~/.kube.
 export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
-export KUBECONFIG="$XDG_CONFIG_HOME/kube/config"
+KUBECONFIG="$XDG_STATE_HOME/kube/config$(
+    find "$XDG_CONFIG_HOME/kube" -mindepth 1 -maxdepth 1 -name '*.yaml' 2>/dev/null | sort |
+        while IFS= read -r dotfiles_kubeconfig; do
+            if [ -f "$dotfiles_kubeconfig" ]; then
+                printf ':%s' "$dotfiles_kubeconfig"
+            fi
+        done
+)"
+export KUBECONFIG
 export KUBECACHEDIR="$XDG_CACHE_HOME/kube"
 export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
 

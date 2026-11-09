@@ -1,0 +1,3 @@
+{{- /* OrbStack owns its kubeconfig. An empty target removes the symlink. */ -}}
+{{- $target := joinPath .chezmoi.homeDir ".orbstack" "k8s" "config.yml" -}}
+{{- if stat $target }}{{ $target }}{{ end -}}
