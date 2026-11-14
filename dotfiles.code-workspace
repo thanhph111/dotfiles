@@ -98,12 +98,12 @@
             // Ascending case-sensitive order
             "astral-sh.ty",
             "charliermarsh.ruff",
-            "davidanson.vscode-markdownlint",
             "dprint.dprint",
             "hverlin.mise-vscode",
             "ms-python.debugpy",
             "ms-python.python",
             "romantomjak.go-template",
+            "rvben.rumdl",
             "timonwong.shellcheck",
             "zokugun.explicit-folding"
         ]

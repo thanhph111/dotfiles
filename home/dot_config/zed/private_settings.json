@@ -148,8 +148,8 @@
         "git-firefly": true,
         "html": true,
         "log": true,
-        "markdownlint": true,
         "mermaid": true,
+        "rumdl": true,
         "toml": true
     }
 }

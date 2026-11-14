@@ -64,9 +64,9 @@ files = '^home/dot_config/shell/zsh\.d/.*\.zsh$'
 types = ["shell"]
 
 [[repos.hooks]]
-id = "markdownlint-cli2"
-name = "markdownlint-cli2"
-entry = "mise x -- markdownlint-cli2 --fix"
+id = "rumdl"
+name = "rumdl"
+entry = "mise x -- rumdl check --fix"
 language = "system"
 types = ["markdown"]
 

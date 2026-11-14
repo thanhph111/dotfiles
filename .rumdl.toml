@@ -1,0 +1,9 @@
+[global]
+disable = ["line-length"]
+
+[no-hard-tabs]
+code-blocks = false
+spaces-per-tab = 4
+
+[no-duplicate-heading]
+siblings-only = true
