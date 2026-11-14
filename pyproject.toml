@@ -19,3 +19,9 @@ line-length = 100
 
 [tool.ruff.format]
 skip-magic-trailing-comma = true
+
+[tool.tombi.files]
+exclude = [
+    "home/.chezmoitemplates/**",
+    "home/**/modify_*",
+]
