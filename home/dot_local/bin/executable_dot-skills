@@ -1,0 +1,186 @@
+#!/usr/bin/env -S usage bash
+
+# ShellCheck cannot read the usage shebang, so name the shell for it.
+# shellcheck shell=bash
+
+#USAGE about "Check and update agent skills"
+#USAGE cmd "status" help="Check upstream skills and compare customized skills against upstream"
+#USAGE cmd "diff" help="Show upstream changes since the recorded ref for customized skills" {
+#USAGE     arg "[skill]" help="Check only one customized skill"
+#USAGE }
+#USAGE cmd "update" help="Update upstream skills with npx skills, then check customized skills"
+#USAGE complete "skill" run="{% raw %}chezmoi execute-template '{{ range (get (get .agents `skills` | default dict) `customized` | default (list)) }}{{ println .name }}{{ end }}'{% endraw %}"
+
+set -euo pipefail
+
+export GH_PAGER=cat
+program=${0##*/}
+tmpdir=""
+
+cleanup() {
+    if [[ -n $tmpdir ]]; then
+        rm -rf "$tmpdir"
+    fi
+}
+trap cleanup EXIT
+
+require_cmd() {
+    local cmd=$1
+    command -v "$cmd" >/dev/null 2>&1 || {
+        printf "%s: '%s' is required\n" "$program" "$cmd" >&2
+        exit 1
+    }
+}
+
+resolve_npx() {
+    if command -v npx >/dev/null 2>&1; then
+        npx_cmd=(npx)
+    elif command -v mise >/dev/null 2>&1; then
+        npx_cmd=(mise x node@lts -- npx)
+    else
+        printf "%s: 'npx' or 'mise' is required\n" "$program" >&2
+        exit 1
+    fi
+}
+
+list_customized() {
+    chezmoi execute-template '{{ range (get (get .agents "skills" | default dict) "customized" | default (list)) }}{{ .name }}|{{ .repo }}|{{ .path }}|{{ .ref }}{{ "\n" }}{{ end }}'
+}
+
+# Resolve latest upstream commit for <repo>/<path>; return 1 if unreachable or missing.
+resolve_latest_commit() {
+    local name=$1
+    local repo=$2
+    local path=$3
+    local latest
+
+    if ! latest=$(gh api "repos/$repo/commits?path=$path&per_page=1" --jq '.[0].sha // empty'); then
+        printf '%s: %s: failed to query %s (%s)\n' "$program" "$name" "$repo" "$path" >&2
+        return 1
+    fi
+    if [[ -z $latest ]]; then
+        printf '%s: %s: upstream path not found in %s (%s)\n' "$program" "$name" "$repo" "$path" >&2
+        return 1
+    fi
+
+    printf '%s\n' "$latest"
+}
+
+check_customized() {
+    local name repo path ref latest short_ref short_latest
+    local sha subject found_ref commit_count
+    local status=0
+
+    require_cmd chezmoi
+    require_cmd gh
+
+    printf 'Customized skills:\n'
+    while IFS='|' read -r name repo path ref; do
+        [[ -n $name ]] || continue
+        latest=$(resolve_latest_commit "$name" "$repo" "$path") || {
+            status=1
+            continue
+        }
+        short_ref=${ref:0:12}
+        short_latest=${latest:0:12}
+
+        if [[ $latest == "$ref" ]]; then
+            printf '  %s: up to date (%s)\n' "$name" "$short_ref"
+            continue
+        fi
+
+        printf '  %s: upstream changed (%s..%s)\n' "$name" "$short_ref" "$short_latest"
+        found_ref=0
+        commit_count=0
+        while IFS=$'\t' read -r sha subject; do
+            if [[ $sha == "$ref" ]]; then
+                found_ref=1
+                break
+            fi
+            commit_count=$((commit_count + 1))
+            printf '    %s %s\n' "${sha:0:12}" "$subject"
+        done < <(gh api "repos/$repo/commits?path=$path&per_page=20" --jq '.[] | "\(.sha)\t\(.commit.message | split("\n")[0])"')
+        if ((found_ref == 0 && commit_count == 20)); then
+            printf "    ... (showing latest 20 commits; run '%s diff %s' for full patch)\n" "$program" "$name"
+        fi
+        printf "    Run '%s diff %s' to inspect upstream changes.\n" "$program" "$name"
+    done < <(list_customized)
+
+    return "$status"
+}
+
+diff_customized() {
+    local target=${1:-}
+    local matched=0
+    local status=0
+    local name repo path ref latest short_ref short_latest
+
+    require_cmd chezmoi
+    require_cmd gh
+    tmpdir=$(mktemp -d)
+
+    while IFS='|' read -r name repo path ref; do
+        [[ -n $name ]] || continue
+        if [[ -n $target && $name != "$target" ]]; then
+            continue
+        fi
+        matched=1
+
+        latest=$(resolve_latest_commit "$name" "$repo" "$path") || {
+            status=1
+            continue
+        }
+        short_ref=${ref:0:12}
+        short_latest=${latest:0:12}
+
+        if [[ $latest == "$ref" ]]; then
+            printf '%s: up to date (%s)\n' "$name" "$short_ref"
+            continue
+        fi
+
+        if ! gh api -H "Accept: application/vnd.github.raw+json" \
+            "repos/$repo/contents/$path?ref=$ref" >"$tmpdir/$name.base" ||
+            ! gh api -H "Accept: application/vnd.github.raw+json" \
+                "repos/$repo/contents/$path?ref=$latest" >"$tmpdir/$name.head"; then
+            printf '%s: %s: failed to fetch file revisions from %s\n' "$program" "$name" "$repo" >&2
+            status=1
+            continue
+        fi
+
+        printf '==> %s (%s %s..%s)\n' "$name" "$repo" "$short_ref" "$short_latest"
+        diff -u \
+            --label "a/$path@$short_ref" \
+            --label "b/$path@$short_latest" \
+            "$tmpdir/$name.base" "$tmpdir/$name.head" || true
+        printf 'To mark reviewed, set ref in home/.chezmoidata/agents.yaml to: %s\n' "$latest"
+    done < <(list_customized)
+
+    if [[ -n $target && $matched -eq 0 ]]; then
+        printf "%s: unknown customized skill '%s'\n" "$program" "$target" >&2
+        return 1
+    fi
+
+    return "$status"
+}
+
+case "${1:-}" in
+status)
+    resolve_npx
+    "${npx_cmd[@]}" --yes skills check --global || true
+    printf '\n'
+    check_customized
+    ;;
+diff)
+    diff_customized "${usage_skill:-}"
+    ;;
+update)
+    resolve_npx
+    "${npx_cmd[@]}" --yes skills update --global
+    printf '\n'
+    check_customized
+    ;;
+*)
+    printf 'usage: %s status|diff [skill]|update\n' "$program" >&2
+    exit 2
+    ;;
+esac

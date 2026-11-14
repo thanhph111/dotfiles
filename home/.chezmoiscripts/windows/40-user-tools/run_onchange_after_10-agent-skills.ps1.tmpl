@@ -1,0 +1,35 @@
+{{- $skills := get (get .agents "skills" | default dict) "upstream" | default (list) -}}
+{{- if and (eq .chezmoi.os "windows") (gt (len $skills) 0) -}}
+# upstream skills hash: {{ toJson $skills | sha256sum }}
+
+$ErrorActionPreference = 'Stop'
+
+$npxCmd = Get-Command npx -ErrorAction SilentlyContinue
+$miseCmd = Get-Command mise -ErrorAction SilentlyContinue
+if (-not $npxCmd -and -not $miseCmd) {
+    Write-Output "Skipping agent skills: npx and mise are not available."
+    exit 0
+}
+
+function Ensure-Skill {
+    param([string]$Name, [string]$Repo)
+
+    $agentPath = Join-Path $HOME ".agents\skills\$Name"
+    $claudePath = Join-Path $HOME ".claude\skills\$Name"
+    if ((Test-Path $agentPath) -and (Test-Path $claudePath)) {
+        return
+    }
+
+    if ($npxCmd) {
+        & $npxCmd.Source --yes skills add $Repo -s $Name -g -a codex -a claude-code -y
+    } else {
+        & $miseCmd.Source x node@lts -- npx --yes skills add $Repo -s $Name -g -a codex -a claude-code -y
+    }
+    if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+    }
+}
+{{ range $skills -}}
+Ensure-Skill -Name {{ .name | quote }} -Repo {{ .repo | quote }}
+{{ end -}}
+{{- end -}}

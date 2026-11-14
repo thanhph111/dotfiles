@@ -116,14 +116,31 @@ The working agreement lives in `home/.chezmoitemplates/agent-constitution.md`. K
 
 The agreement is written to outlast model releases, so it describes how you want to work and stays silent about any one model's habits. Rules that exist only to counter a model's quirk belong in settings, where a version bump can change them without touching the text: `outputStyle` for Claude Code, `model_verbosity` and `personality` for Codex, both in `agents.yaml`. Revisit the agreement when an agent keeps doing something you dislike across models, not when a vendor publishes a new prompting guide.
 
-## Add a shared skill
+## Add and update shared skills
+
+### Custom or forked skills
 
 1. Put `SKILL.md` under `home/dot_agents/skills/<name>/`.
 2. When Claude Code should see it too, add `home/dot_claude/skills/<name>/SKILL.md.tmpl` containing:
 
-```gotemplate
-{{ include "dot_agents/skills/<name>/SKILL.md" -}}
-```
+   ```gotemplate
+   {{ include "dot_agents/skills/<name>/SKILL.md" -}}
+   ```
+
+3. When the skill is forked from an upstream repository, add its `name`, `repo`, `path`, and last-reviewed commit `ref` under `agents.skills.customized` in `home/.chezmoidata/agents.yaml`.
+
+### Unmodified upstream skills
+
+1. Add the skill's `name` and `repo` under `agents.skills.upstream` in `home/.chezmoidata/agents.yaml`.
+2. Apply with `chezmoi apply`. The `run_onchange_after_10-agent-skills` script installs missing skills for Codex and Claude Code using `npx skills`, and `topgrade` updates them via `npx skills update --global`.
+
+`github_cli_skills` is disabled in `home/.chezmoitemplates/topgrade.toml` because `gh skill` expects frontmatter metadata that chezmoi-managed skills omit and does not support root-`SKILL.md` repositories.
+
+### Check for skill updates
+
+- `dot-skills status` checks `agents.skills.upstream` with `npx skills check --global` and reports any newer upstream commits on `agents.skills.customized`.
+- `dot-skills diff [skill]` prints the upstream patch since the recorded `ref` for customized skills without overwriting local edits.
+- `dot-skills update` updates `agents.skills.upstream` globally and then runs the customized check.
 
 ## Secrets
 

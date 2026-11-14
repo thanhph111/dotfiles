@@ -65,3 +65,20 @@ agents:
           source:
             source: github
             repo: openai/codex-plugin-cc
+
+  # Upstream skills are installed per machine via `npx skills` and kept current by topgrade.
+  # Customized skills live under home/dot_agents/skills/ and record their last-reviewed
+  # upstream commit here so `dot-skills` can check upstream changes without overwriting edits.
+  skills:
+    upstream:
+      - name: humanizer
+        repo: blader/humanizer
+    customized:
+      - name: find-skills
+        repo: vercel-labs/skills
+        path: skills/find-skills/SKILL.md
+        ref: 773fb2c7bbf16781670a3520affc4abd0c6151ae
+      - name: technical-writing
+        repo: cursor/plugins
+        path: pstack/skills/technical-writing/SKILL.md
+        ref: 23e4138daa01c42d4969f7a5465f82704e64f798

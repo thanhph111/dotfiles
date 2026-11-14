@@ -12,6 +12,7 @@ disable = [
     "cargo",
     "claude_code",
     "containers",
+    "github_cli_skills",
     "helm",
     "node",
     "pip3",

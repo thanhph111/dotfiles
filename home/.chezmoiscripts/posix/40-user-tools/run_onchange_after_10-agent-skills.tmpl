@@ -1,0 +1,31 @@
+{{- $skills := get (get .agents "skills" | default dict) "upstream" | default (list) -}}
+{{- if and (eq .chezmoi.os "darwin" "linux") (gt (len $skills) 0) -}}
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# upstream skills hash: {{ toJson $skills | sha256sum }}
+
+if command -v npx >/dev/null 2>&1; then
+    npx_cmd=(npx)
+elif command -v mise >/dev/null 2>&1; then
+    npx_cmd=(mise x node@lts -- npx)
+else
+    echo "Skipping agent skills: npx and mise are not available."
+    exit 0
+fi
+
+ensure_skill() {
+    local name=$1
+    local repo=$2
+
+    if [[ -e "$HOME/.agents/skills/$name" && -e "$HOME/.claude/skills/$name" ]]; then
+        return 0
+    fi
+
+    "${npx_cmd[@]}" --yes skills add "$repo" -s "$name" -g -a codex -a claude-code -y
+}
+{{ range $skills -}}
+ensure_skill {{ .name | quote }} {{ .repo | quote }}
+{{ end -}}
+{{- end -}}
