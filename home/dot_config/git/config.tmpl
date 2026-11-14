@@ -39,6 +39,15 @@
 
 [gpg "ssh"]
 	allowedSignersFile = ~/.config/git/allowed_signers
+	{{- if eq .chezmoi.os "darwin" }}
+	{{- $lib := joinPath .chezmoi.homeDir "Library" }}
+	{{- $secretiveSock := joinPath $lib "Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh" }}
+	{{- $onePasswordSock := joinPath $lib "Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" }}
+	{{- $opSshSign := "/Applications/1Password.app/Contents/MacOS/op-ssh-sign" }}
+	{{- if and (not (stat $secretiveSock)) (stat $onePasswordSock) (stat $opSshSign) }}
+	program = {{ $opSshSign }}
+	{{- end }}
+	{{- end }}
 {{- end }}
 
 [commit]
